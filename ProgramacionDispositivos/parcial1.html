@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parcial 1 — Fundamentos Android | UPIICSA</title>
+<style>
+:root{--ipn-red:#8B0000;--ipn-gold:#C8A951;--ipn-dark:#1A1A2E;--p1:#1565C0;--p1l:#E3F2FD;--green:#2E7D32;--greenl:#E8F5E9;--radius:12px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f0f1a;color:#eee;height:100vh;overflow:hidden;}
+#progress-bar{position:fixed;top:0;left:0;height:4px;background:var(--ipn-gold);transition:width .3s;z-index:100;}
+#nav-top{position:fixed;top:4px;left:0;right:0;background:rgba(26,26,46,.95);backdrop-filter:blur(8px);padding:8px 20px;display:flex;align-items:center;justify-content:space-between;z-index:90;border-bottom:1px solid rgba(200,169,81,.2);}
+.nav-brand{color:var(--ipn-gold);font-weight:800;font-size:13px;letter-spacing:.5px;}
+.nav-counter{color:rgba(255,255,255,.6);font-size:12px;}
+.nav-arrows{display:flex;gap:8px;}
+.nav-arrows button{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px;transition:all .2s;}
+.nav-arrows button:hover{background:var(--ipn-gold);color:var(--ipn-dark);}
+#slides-container{padding-top:52px;height:100vh;display:flex;align-items:stretch;}
+.slide{display:none;width:100%;padding:30px 60px;overflow-y:auto;animation:fadeIn .3s ease;}
+.slide.active{display:flex;flex-direction:column;justify-content:flex-start;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* Portada */
+.cover{background:linear-gradient(135deg,var(--ipn-dark) 0%,#16213E 50%,var(--ipn-red) 100%);min-height:calc(100vh - 52px);align-items:center;justify-content:center;text-align:center;gap:20px;}
+.cover-badge{background:rgba(200,169,81,.15);border:1px solid var(--ipn-gold);color:var(--ipn-gold);padding:5px 18px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;}
+.cover h1{font-size:clamp(28px,5vw,52px);font-weight:900;line-height:1.1;color:#fff;}
+.cover h1 span{color:var(--ipn-gold);}
+.cover-sub{color:rgba(255,255,255,.7);font-size:16px;}
+.cover-pills{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.pill{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;}
+.parcial-badge{background:var(--p1);color:#fff;font-size:18px;font-weight:800;padding:10px 28px;border-radius:12px;margin-top:8px;}
+
+/* Slide header */
+.slide-header{margin-bottom:24px;}
+.slide-number{display:inline-block;background:var(--p1);color:#fff;font-size:11px;font-weight:800;padding:3px 12px;border-radius:20px;letter-spacing:1px;margin-bottom:8px;}
+.slide-title{font-size:clamp(20px,3vw,32px);font-weight:800;color:#fff;line-height:1.2;}
+.slide-subtitle{color:rgba(255,255,255,.55);font-size:14px;margin-top:4px;}
+.ut-tag{display:inline-block;background:rgba(21,101,192,.3);border:1px solid var(--p1);color:#90CAF9;font-size:10px;font-weight:700;padding:2px 10px;border-radius:10px;margin-bottom:6px;}
+
+/* Cards */
+.card-grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));margin:16px 0;}
+.card{border-radius:var(--radius);padding:20px;}
+.card-metafora{background:#FFF8E1;color:#333;border-left:4px solid var(--ipn-gold);}
+.card-teoria{background:var(--p1l);color:#1A237E;border-left:4px solid var(--p1);}
+.card-practica{background:var(--greenl);color:#1B5E20;border-left:4px solid var(--green);}
+.card-dato{background:#FFEBEE;color:#B71C1C;border-left:4px solid var(--ipn-red);}
+.card-dark{background:#1E1E2E;color:#EEFFFF;border-radius:var(--radius);padding:20px;}
+.card h4{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.card p,.card li{font-size:13px;line-height:1.7;}
+.card ul{padding-left:18px;}
+
+/* Code */
+pre{background:#1E1E2E;border-radius:10px;padding:18px;overflow-x:auto;font-size:12.5px;line-height:1.7;border:1px solid rgba(255,255,255,.08);}
+code{font-family:'Cascadia Code','Fira Code','Consolas',monospace;}
+.kw{color:#C792EA;}
+.ty{color:#FFCB6B;}
+.str{color:#C3E88D;}
+.cm{color:#546E7A;font-style:italic;}
+.ann{color:#F07178;}
+.num{color:#F78C6C;}
+.fn{color:#82AAFF;}
+.base{color:#EEFFFF;}
+
+/* Diagram */
+.diagram{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center;margin:16px 0;}
+.diag-box{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:12px 18px;text-align:center;font-size:13px;font-weight:600;}
+.diag-arrow{color:var(--ipn-gold);font-size:20px;}
+
+/* Timeline */
+.timeline{display:flex;gap:0;margin:16px 0;overflow-x:auto;}
+.tl-item{flex:1;min-width:120px;padding:12px;border-top:3px solid var(--ipn-gold);background:rgba(255,255,255,.05);text-align:center;font-size:11px;}
+.tl-item .tl-year{font-size:14px;font-weight:800;color:var(--ipn-gold);}
+.tl-item .tl-desc{color:rgba(255,255,255,.7);margin-top:4px;}
+
+/* Table */
+table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0;}
+th{background:var(--p1);color:#fff;padding:10px 14px;text-align:left;}
+td{padding:9px 14px;border-bottom:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.85);}
+tr:nth-child(even) td{background:rgba(255,255,255,.04);}
+
+/* Cycle diagram */
+.cycle{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;margin:16px 0;}
+.cycle-step{background:var(--p1);color:#fff;border-radius:10px;padding:10px 16px;font-size:12px;font-weight:700;text-align:center;min-width:110px;}
+.cycle-step.destroy{background:var(--ipn-red);}
+.cycle-step.resume{background:var(--green);}
+.cycle-arrow{color:var(--ipn-gold);font-size:18px;}
+
+/* Topic list */
+.topic-list{list-style:none;display:flex;flex-direction:column;gap:8px;margin:12px 0;}
+.topic-list li{background:rgba(255,255,255,.06);border-radius:8px;padding:10px 14px;font-size:13px;display:flex;align-items:flex-start;gap:10px;}
+.topic-dot{width:8px;height:8px;border-radius:50%;background:var(--ipn-gold);flex-shrink:0;margin-top:5px;}
+
+/* Scroll hint */
+.scroll-hint{position:fixed;bottom:12px;right:20px;color:rgba(255,255,255,.3);font-size:11px;}
+
+/* Two column */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:12px 0;}
+@media(max-width:700px){.two-col{grid-template-columns:1fr;}}
+
+.highlight-box{background:linear-gradient(135deg,rgba(21,101,192,.2),rgba(21,101,192,.05));border:1px solid rgba(21,101,192,.4);border-radius:var(--radius);padding:16px 20px;margin:12px 0;}
+
+/* Index slide */
+.index-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:20px 0;}
+.index-card{border-radius:var(--radius);padding:24px;cursor:pointer;transition:transform .2s,box-shadow .2s;border:2px solid transparent;}
+.index-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,.4);}
+.index-card .ic-num{font-size:36px;font-weight:900;margin-bottom:8px;}
+.index-card h3{font-size:16px;font-weight:800;margin-bottom:6px;}
+.index-card p{font-size:12px;opacity:.8;line-height:1.6;}
+.ic1{background:linear-gradient(135deg,#1565C0,#0D47A1);color:#fff;}
+.ic2{background:linear-gradient(135deg,#2E7D32,#1B5E20);color:#fff;}
+.ic3{background:linear-gradient(135deg,#6A1B9A,#4A148C);color:#fff;}
+.ic4{background:linear-gradient(135deg,#00695C,#004D40);color:#fff;}
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<div id="nav-top">
+  <span class="nav-brand">IPN · UPIICSA — Programación de Dispositivos Móviles</span>
+  <span class="nav-counter" id="counter">1 / 16</span>
+  <div class="nav-arrows">
+    <button onclick="prev()" title="Anterior (←)">&#8592;</button>
+    <button onclick="next()" title="Siguiente (→)">&#8594;</button>
+  </div>
+</div>
+
+<div id="slides-container">
+
+<!-- ═══════════ SLIDE 0: PORTADA ═══════════ -->
+<div class="slide active cover">
+  <div class="cover-badge">Parcial 1 · Semanas 1–5</div>
+  <h1>Programación de<br><span>Dispositivos Móviles</span></h1>
+  <p class="cover-sub">UPIICSA · IPN · Semestre 5 · Plan 2022</p>
+  <div class="cover-pills">
+    <span class="pill">📱 Android + Kotlin</span>
+    <span class="pill">🏗 Proyecto CityReport</span>
+    <span class="pill">🔄 Aula Invertida</span>
+  </div>
+  <div class="parcial-badge">PARCIAL 1 — Fundamentos del Desarrollo Móvil</div>
+  <p style="color:rgba(255,255,255,.5);font-size:12px;margin-top:12px;">← → para navegar · Espacio para avanzar</p>
+</div>
+
+<!-- ═══════════ SLIDE 1: ÍNDICE ═══════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="slide-number">PARCIAL 1</div>
+    <div class="slide-title">¿Qué vamos a aprender?</div>
+    <div class="slide-subtitle">Unidad Temática I completa + inicio de UT II</div>
+  </div>
+  <div class="index-grid">
+    <div class="index-card ic1" onclick="goTo(2)">
+      <div class="ic-num">01</div>
+      <h3>UT I · Fundamentos</h3>
+      <p>Dispositivos, evolución Android, arquitectura del SO y ciclo de vida</p>
+    </div>
+    <div class="index-card ic2" onclick="goTo(7)">
+      <div class="ic-num">02</div>
+      <h3>UT I · Ambiente de Desarrollo</h3>
+      <p>Android Studio, SDK, AVD Manager y primer proyecto</p>
+    </div>
+    <div class="index-card ic3" onclick="goTo(9)">
+      <div class="ic-num">03</div>
+      <h3>UT II · Kotlin Básico</h3>
+      <p>Tipos de datos, control de flujo y orientación a objetos</p>
+    </div>
+    <div class="index-card ic4" onclick="goTo(13)">
+      <div class="ic-num">04</div>
+      <h3>UT II · Patrón MVC</h3>
+      <p>Separación de responsabilidades aplicada a Android</p>
+    </div>
+  </div>
+  <div class="highlight-box">
+    <strong>Proyecto integrador:</strong> Al final del parcial tendrás un APK funcional de <strong>CityReport</strong> con 3 pantallas navegables y un formulario de captura de incidencias.
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 2: UT I PANORAMA ═══════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="ut-tag">UNIDAD TEMÁTICA I</div>
+    <div class="slide-title">Contexto General del Desarrollo Móvil</div>
+    <div class="slide-subtitle">Identifica los fundamentos técnicos de la tecnología móvil</div>
+  </div>
+  <div class="two-col">
+    <div>
+      <ul class="topic-list">
+        <li><span class="topic-dot"></span><strong>1.1</strong> Elementos principales de dispositivos móviles y fundamentos técnicos</li>
+        <li><span class="topic-dot"></span><strong>1.2</strong> Evolución del ecosistema móvil</li>
+        <li><span class="topic-dot"></span><strong>1.3</strong> Preparación del ambiente de desarrollo</li>
+        <li><span class="topic-dot"></span><strong>1.4</strong> Arquitectura móvil, SO y ciclo de vida de una app</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card card-dato">
+        <h4>⚡ Carga horaria UT I</h4>
+        <p><strong>3h</strong> teoría con docente<br><strong>2h</strong> práctica en laboratorio<br><strong>3h</strong> aprendizaje autónomo</p>
+      </div>
+      <div class="card card-practica" style="margin-top:12px;">
+        <h4>🔨 Prácticas</h4>
+        <p>Práctica 1: Configuración del ambiente<br>Práctica 2: Salida de datos en emulador y dispositivo físico</p>
+      </div>
+    </div>
+  </div>
+  <div class="card card-metafora">
+    <h4>🔮 ¿Por qué estudiar desarrollo móvil hoy?</h4>
+    <p>Hay <strong>6,900 millones</strong> de smartphones en el mundo. Aprender desarrollo Android es como aprender a construir tiendas en el centro comercial más concurrido del planeta — todos están ahí.</p>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 3: HARDWARE MÓVIL ═══════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="ut-tag">1.1 FUNDAMENTOS TÉCNICOS</div>
+    <div class="slide-title">Anatomía de un Smartphone</div>
+    <div class="slide-subtitle">Un smartphone es una computadora, una cámara, un GPS y un laboratorio de sensores en un bolsillo</div>
+  </div>
+  <div class="card card-metafora">
+    <h4>🔮 Metáfora</h4>
+    <p>Un smartphone es una computadora de escritorio miniaturizada que además tiene <strong>ojos</strong> (cámara), <strong>oídos</strong> (micrófono), <strong>sentido del equilibrio</strong> (acelerómetro) y <strong>siempre sabe dónde está</strong> (GPS). Como desarrollador, tienes acceso a todo ese hardware desde tu código.</p>
+  </div>
+  <div class="card-grid">
+    <div class="card card-teoria">
+      <h4>📖 Procesamiento</h4>
+      <ul>
+        <li>SoC (System on Chip): CPU + GPU integrados</li>
+        <li>RAM: 4–16 GB (apps en memoria)</li>
+        <li>Almacenamiento interno: UFS 3.1/4.0</li>
+        <li>Chip de seguridad (TrustZone)</li>
+      </ul>
+    </div>
+    <div class="card card-teoria">
+      <h4>📖 Sensores clave</h4>
+      <ul>
+        <li>GPS / GNSS → geolocalización</li>
+        <li>Acelerómetro → detección de movimiento</li>
+        <li>Giroscopio → orientación</li>
+        <li>Cámara frontal y trasera</li>
+        <li>Sensor de huella / Face ID</li>
+      </ul>
+    </div>
+    <div class="card card-teoria">
+      <h4>📖 Conectividad</h4>
+      <ul>
+        <li>4G LTE / 5G</li>
+        <li>WiFi 6/6E</li>
+        <li>Bluetooth 5.x</li>
+        <li>NFC (pagos sin contacto)</li>
+        <li>USB-C / carga inalámbrica</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 4: EVOLUCIÓN ANDROID ═══════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="ut-tag">1.2 EVOLUCIÓN</div>
+    <div class="slide-title">Historia y Evolución de Android</div>
+    <div class="slide-subtitle">De 2008 a Android 16 — la plataforma móvil más usada del mundo</div>
+  </div>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-year">2008</div><div class="tl-desc">Android 1.0<br>HTC Dream</div></div>
+    <div class="tl-item"><div class="tl-year">2011</div><div class="tl-desc">Android 4.0<br>Holo Design</div></div>
+    <div class="tl-item"><div class="tl-year">2014</div><div class="tl-desc">Android 5.0<br>Material Design</div></div>
+    <div class="tl-item"><div class="tl-year">2017</div><div class="tl-desc">Kotlin oficial<br>Android 8.0</div></div>
+    <div class="tl-item"><div class="tl-year">2019</div><div class="tl-desc">Jetpack<br>Android 10</div></div>
+    <div class="tl-item"><div class="tl-year">2021</div><div class="tl-desc">Compose<br>Android 12</div></div>
+    <div class="tl-item"><div class="tl-year">2025</div><div class="tl-desc">Android 16<br>Predictive AI</div></div>
+  </div>
+  <div class="two-col">
+    <div>
+      <table>
+        <tr><th></th><th>Android</th><th>iOS</th></tr>
+        <tr><td>Cuota mercado</td><td>72%</td><td>27%</td></tr>
+        <tr><td>Lenguaje principal</td><td>Kotlin</td><td>Swift</td></tr>
+        <tr><td>Open Source</td><td>✅ AOSP</td><td>❌ Cerrado</td></tr>
+        <tr><td>Distribución</td><td>Google Play + APK</td><td>App Store</td></tr>
+        <tr><td>Dispositivos</td><td>Todos los fabricantes</td><td>Solo Apple</td></tr>
+      </table>
+    </div>
+    <div class="card card-metafora">
+      <h4>🔮 ¿Por qué Kotlin sobre Java?</h4>
+      <p>Google declaró Kotlin como lenguaje <strong>primario</strong> en 2019. Kotlin es a Java lo que un coche automático es a uno manual: misma carretera, mucho menos esfuerzo. Menos código, menos errores, más expresividad.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 5: ARQUITECTURA ANDROID ═══════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="ut-tag">1.4 ARQUITECTURA</div>
+    <div class="slide-title">Capas del Sistema Operativo Android</div>
+    <div class="slide-subtitle">Android es como un edificio de 5 pisos — cada capa sirve a la de arriba</div>
+  </div>
+  <div class="card card-metafora">
+    <h4>🔮 Metáfora</h4>
+    <p>Android es como un edificio: el <strong>sótano</strong> (Linux Kernel) maneja el hardware, los <strong>pisos intermedios</strong> (HAL, Runtime) traducen instrucciones, y el <strong>penthouse</strong> (tus apps) es donde viven los usuarios. Tú construyes en el penthouse, pero todo funciona gracias a los pisos de abajo.</p>
+  </div>
+  <div class="diagram">
+    <div class="diag-box" style="background:rgba(139,0,0,.3);border-color:var(--ipn-red);width:100%;text-align:center;">📱 Applications (Tu App, Google Maps, WhatsApp…)</div>
+  </div>
+  <div class="diagram">
+    <div class="diag-box" style="background:rgba(21,101,192,.3);border-color:#42A5F5;flex:1;">Application Framework<br><small>Activity Manager, Content Providers, View System</small></div>
+  </div>
+  <div class="diagram">
+    <div class="diag-box" style="background:rgba(46,125,50,.3);border-color:#66BB6A;flex:1;">Android Runtime (ART)<br><small>Compilación AOT + JIT</small></div>
+    <div class="diag-box" style="background:rgba(46,125,50,.3);border-color:#66BB6A;flex:1;">Native C/C++ Libraries<br><small>libc, OpenGL, SQLite</small></div>
+  </div>
+  <div class="diagram">
+    <div class="diag-box" style="background:rgba(100,100,100,.3);border-color:#aaa;flex:1;">Linux Kernel<br><small>Drivers, seguridad, gestión de memoria y energía</small></div>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 6: CICLO DE VIDA ═══════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="ut-tag">1.4.2 CICLO DE VIDA</div>
+    <div class="slide-title">Ciclo de Vida de una Activity</div>
+    <div class="slide-subtitle">El evento más importante en Android — todo pasa a través de él</div>
+  </div>
+  <div class="card card-metafora">
+    <h4>🔮 Metáfora</h4>
+    <p>El ciclo de vida de una Activity es como el día de una persona: <strong>nace</strong> (onCreate), <strong>despierta</strong> (onStart), <strong>trabaja activamente</strong> (onResume), <strong>toma un descanso</strong> (onPause), <strong>duerme</strong> (onStop), <strong>muere</strong> (onDestroy). Android puede "matarla" mientras duerme si necesita memoria.</p>
+  </div>
+  <div class="cycle">
+    <div class="cycle-step">onCreate()<br><small>Inicialización</small></div><div class="cycle-arrow">→</div>
+    <div class="cycle-step resume">onStart()<br><small>Visible</small></div><div class="cycle-arrow">→</div>
+    <div class="cycle-step resume">onResume()<br><small>Activa</small></div><div class="cycle-arrow">→</div>
+    <div class="cycle-step" style="background:#E65100">onPause()<br><small>Parcialmente oculta</small></div><div class="cycle-arrow">→</div>
+    <div class="cycle-step" style="background:#4A148C">onStop()<br><small>Invisible</small></div><div class="cycle-arrow">→</div>
+    <div class="cycle-step destroy">onDestroy()<br><small>Liberación</small></div>
+  </div>
+  <pre><code><span class="kw">class</span> <span class="ty">MainActivity</span> : <span class="ty">AppCompatActivity</span>() {
+    <span class="kw">override fun</span> <span class="fn">onCreate</span>(savedInstanceState: <span class="ty">Bundle</span>?) {
+        <span class="kw">super</span>.<span class="fn">onCreate</span>(savedInstanceState)
+        <span class="fn">setContentView</span>(<span class="ty">R</span>.layout.activity_main)
+        <span class="cm">// ✅ Aquí inicializas Views, ViewModels, etc.</span>
+    }
+    <span class="kw">override fun</span> <span class="fn">onResume</span>() {
+        <span class="kw">super</span>.<span class="fn">onResume</span>()
+        <span class="cm">// ✅ App en primer plano — reanuda animaciones, sensores</span>
+    }
+    <span class="kw">override fun</span> <span class="fn">onStop</span>() {
+        <span class="kw">super</span>.<span class="fn">onStop</span>()
+        <span class="cm">// ✅ Pausa operaciones costosas — app no visible</span>
+    }
+}</code></pre>
+</div>
+
+<!-- ═══════════ SLIDE 7: ANDROID STUDIO ═══════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="ut-tag">1.3 AMBIENTE DE DESARROLLO</div>
+    <div class="slide-title">Configurando Android Studio</div>
+    <div class="slide-subtitle">El taller completo del desarrollador Android</div>
+  </div>
+  <div class="card card-metafora">
+    <h4>🔮 Metáfora</h4>
+    <p>Android Studio es el <strong>taller del carpintero</strong>: sin las herramientas correctas (SDK, emulador, Gradle) no puedes construir nada funcional, sin importar cuánto talento tengas. Configurarlo bien desde el inicio ahorra horas de frustración.</p>
+  </div>
+  <div class="two-col">
+    <div>
+      <div class="card card-practica">
+        <h4>🔨 Pasos de instalación</h4>
+        <ul>
+          <li>1. Descargar Android Studio Meerkat (2025)</li>
+          <li>2. Instalar SDK Platform 35 (Android 15)</li>
+          <li>3. Crear AVD: Pixel 8, API 35</li>
+          <li>4. Habilitar HAXM o Hypervisor (emulador rápido)</li>
+          <li>5. Instalar plugin Kotlin (ya incluido)</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card card-teoria">
+        <h4>📖 Componentes clave</h4>
+        <ul>
+          <li><strong>SDK Manager:</strong> descarga versiones de Android</li>
+          <li><strong>AVD Manager:</strong> crea y gestiona emuladores</li>
+          <li><strong>Gradle:</strong> sistema de construcción (el "chef" que ensambla tu APK)</li>
+          <li><strong>Layout Editor:</strong> diseña vistas visualmente</li>
+          <li><strong>Logcat:</strong> consola de depuración</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="card card-dark">
+    <h4 style="color:var(--ipn-gold);">📁 Estructura de un proyecto Android</h4>
+    <pre style="background:transparent;padding:0;border:none;"><code><span class="base">CityReport/
+├── app/
+│   ├── </span><span class="str">src/main/</span><span class="base">
+│   │   ├── </span><span class="str">java/</span><span class="base">        </span><span class="cm">← Tu código Kotlin</span><span class="base">
+│   │   ├── </span><span class="str">res/</span><span class="base">         </span><span class="cm">← layouts XML, imágenes, strings</span><span class="base">
+│   │   └── </span><span class="str">AndroidManifest.xml</span><span class="base">  </span><span class="cm">← "pasaporte" de tu app</span><span class="base">
+│   └── </span><span class="str">build.gradle.kts</span><span class="base">  </span><span class="cm">← dependencias del módulo</span><span class="base">
+└── </span><span class="str">build.gradle.kts</span><span class="base">      </span><span class="cm">← configuración raíz</span></code></pre>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 8: PRÁCTICA 1 ═══════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="ut-tag">PRÁCTICA 1 Y 2</div>
+    <div class="slide-title">Primer Proyecto: Hello CityReport</div>
+    <div class="slide-subtitle">De cero a APK funcionando en emulador y dispositivo real</div>
+  </div>
+  <div class="card card-practica">
+    <h4>🔨 Lo que harás en esta práctica</h4>
+    <ul>
+      <li>Crear nuevo proyecto: Empty Activity, Kotlin, minSdk 26</li>
+      <li>Modificar <code>activity_main.xml</code> para mostrar "Bienvenido a CityReport"</li>
+      <li>Ejecutar en AVD (emulador) y en dispositivo físico (ADB USB)</li>
+      <li>Usar Logcat para imprimir mensajes de debug</li>
+      <li>Crear repositorio GitHub del equipo y hacer primer commit</li>
+    </ul>
+  </div>
+  <pre><code><span class="cm">// MainActivity.kt — Primer código del semestre</span>
+<span class="kw">class</span> <span class="ty">MainActivity</span> : <span class="ty">AppCompatActivity</span>() {
+    <span class="kw">private lateinit var</span> binding: <span class="ty">ActivityMainBinding</span>
+
+    <span class="kw">override fun</span> <span class="fn">onCreate</span>(savedInstanceState: <span class="ty">Bundle</span>?) {
+        <span class="kw">super</span>.<span class="fn">onCreate</span>(savedInstanceState)
+        binding = <span class="ty">ActivityMainBinding</span>.<span class="fn">inflate</span>(layoutInflater)
+        <span class="fn">setContentView</span>(binding.root)
+
+        binding.tvBienvenida.<span class="fn">text</span> = <span class="str">"¡Bienvenido a CityReport!"</span>
+        binding.btnEmpezar.<span class="fn">setOnClickListener</span> {
+            <span class="ty">Log</span>.<span class="fn">d</span>(<span class="str">"CityReport"</span>, <span class="str">"Botón presionado 🚀"</span>)
+        }
+    }
+}</code></pre>
+  <div class="card card-dato">
+    <h4>⚡ Tip del docente</h4>
+    <p>Habilita <strong>USB Debugging</strong> en tu celular: Configuración → Acerca del teléfono → toca <em>Número de compilación</em> 7 veces → Opciones para desarrolladores → USB Debugging. ¡Probar en dispositivo real siempre es diferente al emulador!</p>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 9: KOTLIN BÁSICO ═══════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="ut-tag">2.1 KOTLIN — TIPOS Y VARIABLES</div>
+    <div class="slide-title">Kotlin: El lenguaje de Android moderno</div>
+    <div class="slide-subtitle">Conciso, seguro, expresivo — todo lo que Java debió haber sido</div>
+  </div>
+  <div class="card card-metafora">
+    <h4>🔮 Metáfora: val vs var</h4>
+    <p><strong>val</strong> es como grabar en piedra — una vez definido, no cambia. <strong>var</strong> es como escribir en pizarrón — puedes borrarlo y cambiarlo. La regla de oro: usa <code>val</code> siempre que puedas, <code>var</code> solo cuando necesites cambiar el valor.</p>
+  </div>
+  <pre><code><span class="cm">// Variables e inferencia de tipos</span>
+<span class="kw">val</span> nombreApp: <span class="ty">String</span> = <span class="str">"CityReport"</span>   <span class="cm">// inmutable</span>
+<span class="kw">var</span> contadorReportes: <span class="ty">Int</span> = <span class="num">0</span>           <span class="cm">// mutable</span>
+<span class="kw">val</span> version = <span class="num">1.5</span>                        <span class="cm">// Double por inferencia</span>
+<span class="kw">var</span> activo: <span class="ty">Boolean</span> = <span class="kw">true</span>
+
+<span class="cm">// Null Safety — la protección contra NPE</span>
+<span class="kw">var</span> usuario: <span class="ty">String</span>? = <span class="kw">null</span>            <span class="cm">// nullable con ?</span>
+<span class="kw">val</span> longitud = usuario?.<span class="fn">length</span> ?: <span class="num">0</span>   <span class="cm">// Elvis: si null → 0</span>
+<span class="kw">val</span> upper = usuario!!.<span class="fn">uppercase</span>()      <span class="cm">// !! = "confío en que no es null"</span>
+
+<span class="cm">// String templates</span>
+<span class="kw">val</span> msg = <span class="str">"La app </span><span class="kw">$</span>nombreApp tiene <span class="kw">${</span>contadorReportes + <span class="num">1</span><span class="kw">}</span> reportes"</span></code></pre>
+  <div class="card-grid">
+    <div class="card card-teoria">
+      <h4>📖 Tipos básicos</h4>
+      <ul>
+        <li><code>Int</code> — entero (32 bits)</li>
+        <li><code>Long</code> — entero grande</li>
+        <li><code>Double</code> — decimal</li>
+        <li><code>String</code> — texto</li>
+        <li><code>Boolean</code> — true/false</li>
+        <li><code>List, MutableList</code> — colecciones</li>
+      </ul>
+    </div>
+    <div class="card card-dato">
+      <h4>⚡ Kotlin vs Java</h4>
+      <p>Kotlin elimina el 90% de los NullPointerExceptions que plagaban apps Android escritas en Java. Google reportó una reducción de 20% en crashes en apps que migraron a Kotlin.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 10: KOTLIN OOP ═══════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="ut-tag">2.1.4 ORIENTACIÓN A OBJETOS</div>
+    <div class="slide-title">OOP en Kotlin: Clases, Data Classes y Lambdas</div>
+    <div class="slide-subtitle">Modelando el mundo real con objetos — el corazón de tu app</div>
+  </div>
+  <div class="card card-metafora">
+    <h4>🔮 Metáfora: Data Class</h4>
+    <p>Una <strong>data class</strong> es un formulario prellenado: automáticamente te da <code>toString()</code>, <code>equals()</code>, <code>copy()</code> y <code>hashCode()</code>. Sin data class tendrías que escribir 40 líneas de código para lo que Kotlin hace en 1.</p>
+  </div>
+  <pre><code><span class="cm">// Data class — el modelo de datos de CityReport</span>
+<span class="kw">data class</span> <span class="ty">Incidencia</span>(
+    <span class="kw">val</span> id: <span class="ty">Int</span>,
+    <span class="kw">val</span> titulo: <span class="ty">String</span>,
+    <span class="kw">val</span> descripcion: <span class="ty">String</span>,
+    <span class="kw">val</span> latitud: <span class="ty">Double</span> = <span class="num">0.0</span>,
+    <span class="kw">val</span> longitud: <span class="ty">Double</span> = <span class="num">0.0</span>,
+    <span class="kw">val</span> resuelta: <span class="ty">Boolean</span> = <span class="kw">false</span>
+)
+
+<span class="cm">// Enum para categorías</span>
+<span class="kw">enum class</span> <span class="ty">Categoria</span> { VIALIDAD, AGUA, LUZ, BASURA }
+
+<span class="cm">// Funciones de orden superior y lambdas</span>
+<span class="kw">val</span> incidencias = <span class="fn">listOf</span>(
+    <span class="ty">Incidencia</span>(<span class="num">1</span>, <span class="str">"Bache en Av. IPN"</span>, <span class="str">"Profundo y peligroso"</span>),
+    <span class="ty">Incidencia</span>(<span class="num">2</span>, <span class="str">"Alumbrado roto"</span>, <span class="str">"Sin luz desde el lunes"</span>, resuelta = <span class="kw">true</span>)
+)
+
+<span class="kw">val</span> pendientes = incidencias
+    .<span class="fn">filter</span> { !it.resuelta }          <span class="cm">// filtra las no resueltas</span>
+    .<span class="fn">map</span> { it.titulo }               <span class="cm">// extrae solo el título</span>
+    .<span class="fn">sortedBy</span> { it }                 <span class="cm">// ordena alfabéticamente</span></code></pre>
+  <div class="card card-teoria">
+    <h4>📖 Control de flujo — when</h4>
+    <pre style="background:#0a0a15;margin-top:8px;padding:12px;border-radius:8px;"><code><span class="kw">when</span> (incidencia.categoria) {
+    <span class="ty">Categoria</span>.VIALIDAD -> <span class="fn">mostrarIconoBache</span>()
+    <span class="ty">Categoria</span>.LUZ      -> <span class="fn">mostrarIconoLuz</span>()
+    <span class="kw">else</span>               -> <span class="fn">mostrarIconoDefault</span>()
+}
+<span class="cm">// when > switch: no necesita break, puede retornar valor</span></code></pre>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 11: KOTLIN FUNCIONES ═══════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="ut-tag">2.1 KOTLIN — FUNCIONES Y COLECCIONES</div>
+    <div class="slide-title">Funciones, Lambdas y Colecciones</div>
+    <div class="slide-subtitle">El superpoder de Kotlin para escribir menos código y expresar más</div>
+  </div>
+  <pre><code><span class="cm">// Función con parámetros por defecto</span>
+<span class="kw">fun</span> <span class="fn">crearReporte</span>(
+    titulo: <span class="ty">String</span>,
+    categoria: <span class="ty">Categoria</span> = <span class="ty">Categoria</span>.VIALIDAD,
+    urgente: <span class="ty">Boolean</span> = <span class="kw">false</span>
+): <span class="ty">Incidencia</span> {
+    <span class="kw">return</span> <span class="ty">Incidencia</span>(<span class="fn">generarId</span>(), titulo, <span class="str">""</span>)
+}
+
+<span class="cm">// Extension functions — añadir funciones a clases existentes</span>
+<span class="kw">fun</span> <span class="ty">String</span>.<span class="fn">esTituloValido</span>(): <span class="ty">Boolean</span> =
+    this.<span class="fn">isNotBlank</span>() &amp;&amp; this.length >= <span class="num">5</span>
+
+<span class="cm">// Uso:</span>
+<span class="kw">if</span> (binding.etTitulo.text.<span class="fn">toString</span>().<span class="fn">esTituloValido</span>()) {
+    <span class="fn">enviarReporte</span>()
+}
+
+<span class="cm">// Scope functions — operaciones fluidas</span>
+<span class="kw">val</span> reporte = <span class="ty">Incidencia</span>(<span class="num">1</span>, <span class="str">"Bache"</span>, <span class="str">""</span>).<span class="fn">apply</span> {
+    <span class="cm">// configurar dentro del objeto</span>
+}.<span class="fn">also</span> {
+    <span class="ty">Log</span>.<span class="fn">d</span>(<span class="str">"Repo"</span>, <span class="str">"Reporte creado: </span><span class="kw">$</span>it<span class="str">"</span>)
+}</code></pre>
+  <div class="card card-metafora">
+    <h4>🔮 Extension Functions</h4>
+    <p>Son como ponerle un accesorio nuevo a algo que ya existe — puedes agregar métodos a <code>String</code>, <code>List</code> o cualquier clase de Android sin modificar el código original. Es como personalizar tu teléfono con fundas sin romper el teléfono.</p>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 12: KOTLIN INTERFACES ═══════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="ut-tag">2.1.4 OOP AVANZADO</div>
+    <div class="slide-title">Interfaces, Herencia y Sealed Classes</div>
+    <div class="slide-subtitle">Diseñando código flexible y mantenible</div>
+  </div>
+  <div class="card card-metafora">
+    <h4>🔮 Metáfora: Interfaz</h4>
+    <p>Una <strong>interfaz</strong> es un contrato laboral: no dice <em>cómo</em> hacer el trabajo, solo <em>qué</em> trabajo debe hacerse. Cualquier clase que firme el contrato promete implementar esos métodos, pero cada una puede hacerlo a su manera.</p>
+  </div>
+  <pre><code><span class="cm">// Interfaz — define el contrato</span>
+<span class="kw">interface</span> <span class="ty">IncidenciaRepository</span> {
+    <span class="kw">suspend fun</span> <span class="fn">obtenerTodas</span>(): <span class="ty">List</span>&lt;<span class="ty">Incidencia</span>&gt;
+    <span class="kw">suspend fun</span> <span class="fn">guardar</span>(inc: <span class="ty">Incidencia</span>)
+    <span class="kw">suspend fun</span> <span class="fn">eliminar</span>(id: <span class="ty">Int</span>)
+}
+
+<span class="cm">// Sealed class — estados finitos y conocidos</span>
+<span class="kw">sealed class</span> <span class="ty">EstadoUI</span> {
+    <span class="kw">object</span> <span class="ty">Cargando</span> : <span class="ty">EstadoUI</span>()
+    <span class="kw">data class</span> <span class="ty">Exito</span>(<span class="kw">val</span> datos: <span class="ty">List</span>&lt;<span class="ty">Incidencia</span>&gt;) : <span class="ty">EstadoUI</span>()
+    <span class="kw">data class</span> <span class="ty">Error</span>(<span class="kw">val</span> mensaje: <span class="ty">String</span>) : <span class="ty">EstadoUI</span>()
+}
+
+<span class="cm">// Uso con when — el compilador sabe todos los casos</span>
+<span class="kw">when</span> (estado) {
+    <span class="kw">is</span> <span class="ty">EstadoUI</span>.<span class="ty">Cargando</span> -> <span class="fn">mostrarSpinner</span>(<span class="kw">true</span>)
+    <span class="kw">is</span> <span class="ty">EstadoUI</span>.<span class="ty">Exito</span>   -> <span class="fn">mostrarLista</span>(estado.datos)
+    <span class="kw">is</span> <span class="ty">EstadoUI</span>.<span class="ty">Error</span>   -> <span class="fn">mostrarError</span>(estado.mensaje)
+}</code></pre>
+  <div class="card card-dato">
+    <h4>⚡ ¿Por qué Sealed Classes?</h4>
+    <p>Representa estados de tu app que son finitos y conocidos. El compilador te obliga a manejar todos los casos en el <code>when</code> — si agregas un nuevo estado y olvidas manejarlo, <strong>el compilador te lo dice antes de ejecutar</strong>.</p>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 13: PATRÓN MVC ═══════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="ut-tag">2.2 PATRÓN MVC</div>
+    <div class="slide-title">Model–View–Controller en Android</div>
+    <div class="slide-subtitle">Separar responsabilidades: el principio más importante del diseño de software</div>
+  </div>
+  <div class="card card-metafora">
+    <h4>🔮 Metáfora: El Restaurante</h4>
+    <p><strong>Model</strong> = La cocina (prepara los datos, sin saber cómo se presentan) · <strong>View</strong> = El mesero y la mesa (presenta la información al cliente) · <strong>Controller</strong> = El gerente (recibe la orden, coordina cocina y mesero). Sin esta separación, el chef atendería mesas y el mesero cocinaría — caos total.</p>
+  </div>
+  <div class="diagram">
+    <div class="diag-box" style="background:rgba(21,101,192,.3);border-color:#42A5F5;">
+      <strong>Model</strong><br><small>Incidencia.kt<br>IncidenciaRepository<br>(datos y lógica)</small>
+    </div>
+    <div class="diag-arrow">⇆</div>
+    <div class="diag-box" style="background:rgba(139,0,0,.3);border-color:var(--ipn-red);">
+      <strong>Controller</strong><br><small>MainActivity.kt<br>(coordina Model y View)</small>
+    </div>
+    <div class="diag-arrow">⇆</div>
+    <div class="diag-box" style="background:rgba(46,125,50,.3);border-color:#66BB6A;">
+      <strong>View</strong><br><small>activity_main.xml<br>(layouts XML y widgets)</small>
+    </div>
+  </div>
+  <pre><code><span class="cm">// MODEL — solo datos</span>
+<span class="kw">data class</span> <span class="ty">Incidencia</span>(<span class="kw">val</span> id: <span class="ty">Int</span>, <span class="kw">val</span> titulo: <span class="ty">String</span>)
+
+<span class="cm">// CONTROLLER (Activity) — coordina</span>
+<span class="kw">class</span> <span class="ty">ListaActivity</span> : <span class="ty">AppCompatActivity</span>() {
+    <span class="kw">private val</span> repo = <span class="ty">IncidenciaRepositoryImpl</span>()
+
+    <span class="kw">override fun</span> <span class="fn">onCreate</span>(savedInstanceState: <span class="ty">Bundle</span>?) {
+        <span class="kw">super</span>.<span class="fn">onCreate</span>(savedInstanceState)
+        binding = <span class="ty">ActivityListaBinding</span>.<span class="fn">inflate</span>(layoutInflater)
+        <span class="fn">setContentView</span>(binding.root)
+        <span class="fn">cargarDatos</span>()
+    }
+    <span class="kw">private fun</span> <span class="fn">cargarDatos</span>() {
+        <span class="kw">val</span> lista = repo.<span class="fn">obtenerTodas</span>()
+        binding.recyclerView.adapter = <span class="ty">IncidenciaAdapter</span>(lista)
+        <span class="cm">// VIEW se actualiza a través del adapter</span>
+    }
+}</code></pre>
+</div>
+
+<!-- ═══════════ SLIDE 14: PROYECTO FASE 1 ═══════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="ut-tag">PROYECTO INTEGRADOR — FASE 1</div>
+    <div class="slide-title">CityReport: Arquitectura Base</div>
+    <div class="slide-subtitle">Entregable del Parcial 1 — APK con 3 pantallas navegables</div>
+  </div>
+  <div class="two-col">
+    <div>
+      <div class="card card-practica">
+        <h4>🔨 Checklist de entrega</h4>
+        <ul>
+          <li>✅ Repositorio GitHub del equipo</li>
+          <li>✅ 3 pantallas: Home, Nueva Incidencia, Detalle</li>
+          <li>✅ Navegación con NavGraph</li>
+          <li>✅ Modelo de datos: data class Incidencia</li>
+          <li>✅ RecyclerView con lista de incidencias</li>
+          <li>✅ Formulario de captura (datos en memoria)</li>
+          <li>✅ Arquitectura MVC aplicada</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card card-teoria">
+        <h4>📖 Stack tecnológico Fase 1</h4>
+        <ul>
+          <li>Kotlin 2.x</li>
+          <li>ViewBinding</li>
+          <li>Navigation Component</li>
+          <li>RecyclerView + ListAdapter</li>
+          <li>Material Design 3 básico</li>
+          <li>Gradle Version Catalogs</li>
+        </ul>
+      </div>
+      <div class="card card-dato" style="margin-top:12px;">
+        <h4>⚡ Criterios (30% del parcial)</h4>
+        <p>APK funcional + repositorio con historial de commits. Se evalúa arquitectura, código limpio y demostración en vivo.</p>
+      </div>
+    </div>
+  </div>
+  <pre><code><span class="cm">// NavGraph — define la navegación entre pantallas</span>
+<span class="cm">// res/navigation/nav_graph.xml</span>
+&lt;navigation app:startDestination=<span class="str">"@id/homeFragment"</span>&gt;
+    &lt;fragment android:id=<span class="str">"@+id/homeFragment"</span>&gt;
+        &lt;action android:id=<span class="str">"@+id/toNuevaIncidencia"</span>
+                app:destination=<span class="str">"@id/nuevaIncidenciaFragment"</span>/&gt;
+    &lt;/fragment&gt;
+    &lt;fragment android:id=<span class="str">"@+id/nuevaIncidenciaFragment"</span>/&gt;
+    &lt;fragment android:id=<span class="str">"@+id/detalleFragment"</span>/&gt;
+&lt;/navigation&gt;</code></pre>
+</div>
+
+<!-- ═══════════ SLIDE 15: RESUMEN ═══════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="slide-number">CIERRE PARCIAL 1</div>
+    <div class="slide-title">Lo que aprendiste — Mapa de conocimiento</div>
+    <div class="slide-subtitle">Semanas 1–5 · UT I + inicio UT II</div>
+  </div>
+  <div class="card-grid">
+    <div class="card card-teoria">
+      <h4>📖 UT I — Fundamentos</h4>
+      <ul>
+        <li>Anatomía del smartphone y sensores</li>
+        <li>Evolución de Android 1.0 → 16</li>
+        <li>Android Studio configurado</li>
+        <li>Capas del SO Android</li>
+        <li>Ciclo de vida de Activity</li>
+      </ul>
+    </div>
+    <div class="card card-teoria">
+      <h4>📖 UT II inicio — Kotlin</h4>
+      <ul>
+        <li>val/var, tipos, null safety</li>
+        <li>Data classes y enums</li>
+        <li>Funciones y lambdas</li>
+        <li>Herencia e interfaces</li>
+        <li>Sealed classes para estado</li>
+        <li>Patrón MVC en Android</li>
+      </ul>
+    </div>
+    <div class="card card-practica">
+      <h4>🔨 Habilidades prácticas</h4>
+      <ul>
+        <li>Configurar Android Studio</li>
+        <li>Crear y ejecutar un proyecto</li>
+        <li>Usar ViewBinding</li>
+        <li>Implementar RecyclerView</li>
+        <li>Diseñar con NavGraph</li>
+        <li>APK funcional en GitHub</li>
+      </ul>
+    </div>
+  </div>
+  <div class="highlight-box" style="text-align:center;margin-top:16px;">
+    <strong style="font-size:18px;color:var(--ipn-gold);">Parcial 2:</strong>
+    <span style="font-size:14px;"> MVP · Material Design 3 · GPS · Cámara · Notificaciones</span>
+  </div>
+</div>
+
+</div><!-- /slides-container -->
+
+<div class="scroll-hint">↑↓ para leer · ← → para navegar</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+let current = 0;
+const total = slides.length;
+
+function update() {
+  slides.forEach((s,i) => s.classList.toggle('active', i === current));
+  document.getElementById('counter').textContent = (current+1) + ' / ' + total;
+  document.getElementById('progress-bar').style.width = ((current+1)/total*100) + '%';
+}
+function next() { if(current < total-1){ current++; update(); } }
+function prev() { if(current > 0){ current--; update(); } }
+function goTo(n) { current = n; update(); }
+
+document.addEventListener('keydown', e => {
+  if(e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+  if(e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+});
+
+// Touch swipe
+let tx = 0;
+document.addEventListener('touchstart', e => tx = e.touches[0].clientX);
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - tx;
+  if(dx < -50) next();
+  if(dx > 50) prev();
+});
+
+update();
+</script>
+</body>
+</html>

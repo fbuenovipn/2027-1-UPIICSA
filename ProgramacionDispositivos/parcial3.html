@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parcial 3 — Almacenamiento y Nube | UPIICSA</title>
+<style>
+:root{--ipn-red:#8B0000;--ipn-gold:#C8A951;--ipn-dark:#1A1A2E;--p3:#6A1B9A;--p3l:#F3E5F5;--teal:#00695C;--teall:#E0F2F1;--radius:12px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f0f1a;color:#eee;height:100vh;overflow:hidden;}
+#progress-bar{position:fixed;top:0;left:0;height:4px;background:var(--ipn-gold);transition:width .3s;z-index:100;}
+#nav-top{position:fixed;top:4px;left:0;right:0;background:rgba(26,26,46,.95);backdrop-filter:blur(8px);padding:8px 20px;display:flex;align-items:center;justify-content:space-between;z-index:90;border-bottom:1px solid rgba(200,169,81,.2);}
+.nav-brand{color:var(--ipn-gold);font-weight:800;font-size:13px;}
+.nav-counter{color:rgba(255,255,255,.6);font-size:12px;}
+.nav-arrows{display:flex;gap:8px;}
+.nav-arrows button{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px;transition:all .2s;}
+.nav-arrows button:hover{background:var(--ipn-gold);color:var(--ipn-dark);}
+#slides-container{padding-top:52px;height:100vh;}
+.slide{display:none;width:100%;height:calc(100vh - 52px);padding:28px 60px;overflow-y:auto;animation:fadeIn .3s ease;}
+.slide.active{display:flex;flex-direction:column;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.cover{background:linear-gradient(135deg,var(--ipn-dark) 0%,#1a0a2e 50%,#4A148C 100%);min-height:calc(100vh - 52px);align-items:center!important;justify-content:center!important;text-align:center;gap:18px;}
+.cover-badge{background:rgba(106,27,154,.25);border:1px solid var(--p3);color:#CE93D8;padding:5px 18px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;}
+.cover h1{font-size:clamp(26px,5vw,50px);font-weight:900;line-height:1.1;color:#fff;}
+.cover h1 span{color:var(--ipn-gold);}
+.cover-sub{color:rgba(255,255,255,.7);font-size:15px;}
+.cover-pills{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.pill{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;}
+.parcial-badge{background:var(--p3);color:#fff;font-size:17px;font-weight:800;padding:10px 28px;border-radius:12px;}
+
+.slide-header{margin-bottom:20px;flex-shrink:0;}
+.slide-number{display:inline-block;background:var(--p3);color:#fff;font-size:11px;font-weight:800;padding:3px 12px;border-radius:20px;letter-spacing:1px;margin-bottom:6px;}
+.slide-title{font-size:clamp(18px,3vw,30px);font-weight:800;color:#fff;line-height:1.2;}
+.slide-subtitle{color:rgba(255,255,255,.5);font-size:13px;margin-top:4px;}
+.ut-tag{display:inline-block;background:rgba(106,27,154,.3);border:1px solid var(--p3);color:#CE93D8;font-size:10px;font-weight:700;padding:2px 10px;border-radius:10px;margin-bottom:6px;}
+
+.card-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));margin:12px 0;}
+.card{border-radius:var(--radius);padding:18px;}
+.card-metafora{background:#FFF8E1;color:#333;border-left:4px solid var(--ipn-gold);}
+.card-teoria{background:#EDE7F6;color:#4A148C;border-left:4px solid var(--p3);}
+.card-practica{background:var(--teall);color:#004D40;border-left:4px solid var(--teal);}
+.card-dato{background:#FFEBEE;color:#B71C1C;border-left:4px solid var(--ipn-red);}
+.card h4{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;}
+.card p,.card li{font-size:13px;line-height:1.65;}
+.card ul{padding-left:16px;}
+
+pre{background:#1E1E2E;border-radius:10px;padding:16px;overflow-x:auto;font-size:12px;line-height:1.65;border:1px solid rgba(255,255,255,.08);flex-shrink:0;}
+code{font-family:'Cascadia Code','Fira Code','Consolas',monospace;}
+.kw{color:#C792EA;}.ty{color:#FFCB6B;}.str{color:#C3E88D;}.cm{color:#546E7A;font-style:italic;}.ann{color:#F07178;}.num{color:#F78C6C;}.fn{color:#82AAFF;}.base{color:#EEFFFF;}
+
+.diagram{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;margin:12px 0;}
+.diag-box{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:10px 16px;text-align:center;font-size:12px;font-weight:600;}
+.diag-arrow{color:var(--ipn-gold);font-size:18px;}
+
+table{width:100%;border-collapse:collapse;font-size:12px;margin:10px 0;}
+th{background:var(--p3);color:#fff;padding:9px 12px;text-align:left;}
+td{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.85);}
+tr:nth-child(even) td{background:rgba(255,255,255,.04);}
+
+.topic-list{list-style:none;display:flex;flex-direction:column;gap:6px;margin:10px 0;}
+.topic-list li{background:rgba(255,255,255,.06);border-radius:8px;padding:9px 12px;font-size:13px;display:flex;align-items:flex-start;gap:8px;}
+.topic-dot{width:7px;height:7px;border-radius:50%;background:var(--ipn-gold);flex-shrink:0;margin-top:5px;}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:10px 0;}
+@media(max-width:700px){.two-col{grid-template-columns:1fr;}}
+
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:10px 0;}
+@media(max-width:800px){.three-col{grid-template-columns:1fr;}}
+
+.highlight-box{background:linear-gradient(135deg,rgba(106,27,154,.2),rgba(106,27,154,.05));border:1px solid rgba(106,27,154,.4);border-radius:var(--radius);padding:14px 18px;margin:10px 0;}
+
+.index-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:16px 0;}
+.index-card{border-radius:var(--radius);padding:22px;cursor:pointer;transition:transform .2s;}
+.index-card:hover{transform:translateY(-4px);}
+.index-card .ic-num{font-size:34px;font-weight:900;margin-bottom:8px;}
+.index-card h3{font-size:15px;font-weight:800;margin-bottom:5px;}
+.index-card p{font-size:12px;opacity:.8;line-height:1.5;}
+.ic1{background:linear-gradient(135deg,#00695C,#004D40);color:#fff;}
+.ic2{background:linear-gradient(135deg,#1565C0,#0D47A1);color:#fff;}
+.ic3{background:linear-gradient(135deg,var(--p3),#4A148C);color:#fff;}
+.ic4{background:linear-gradient(135deg,#E65100,#BF360C);color:#fff;}
+
+.arch-layer{border-radius:10px;padding:12px 18px;margin:6px 0;display:flex;align-items:center;gap:14px;font-size:13px;}
+.arch-layer .layer-icon{font-size:24px;flex-shrink:0;}
+.arch-layer strong{display:block;font-size:14px;margin-bottom:2px;}
+.arch-layer span{font-size:11px;opacity:.7;}
+
+.checklist{list-style:none;display:flex;flex-direction:column;gap:6px;}
+.checklist li{display:flex;align-items:center;gap:10px;font-size:13px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.07);}
+.checklist li:before{content:"✅";flex-shrink:0;}
+
+.scroll-hint{position:fixed;bottom:12px;right:20px;color:rgba(255,255,255,.3);font-size:11px;}
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<div id="nav-top">
+  <span class="nav-brand">IPN · UPIICSA — Programación de Dispositivos Móviles</span>
+  <span class="nav-counter" id="counter">1 / 17</span>
+  <div class="nav-arrows">
+    <button onclick="prev()">&#8592;</button>
+    <button onclick="next()">&#8594;</button>
+  </div>
+</div>
+
+<div id="slides-container">
+
+<!-- ══════ SLIDE 0: PORTADA ══════ -->
+<div class="slide active cover">
+  <div class="cover-badge">Parcial 3 · Semanas 11–15</div>
+  <h1>Almacenamiento,<br><span>Nube y Entrega Final</span></h1>
+  <p class="cover-sub">UPIICSA · IPN · Semestre 5 · Plan 2022</p>
+  <div class="cover-pills">
+    <span class="pill">🗄 Room Database</span>
+    <span class="pill">⚙ DataStore</span>
+    <span class="pill">☁ Firebase</span>
+    <span class="pill">🔐 Auth</span>
+    <span class="pill">⏱ WorkManager</span>
+  </div>
+  <div class="parcial-badge">PARCIAL 3 — Unidad Temática IV completa</div>
+  <p style="color:rgba(255,255,255,.5);font-size:12px;margin-top:10px;">← → para navegar · Espacio para avanzar</p>
+</div>
+
+<!-- ══════ SLIDE 1: ÍNDICE ══════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="slide-number">PARCIAL 3</div>
+    <div class="slide-title">¿Qué vamos a aprender?</div>
+    <div class="slide-subtitle">UT IV completa · 5 semanas · El almacenamiento hace tu app profesional</div>
+  </div>
+  <div class="index-grid">
+    <div class="index-card ic1" onclick="goTo(2)">
+      <div class="ic-num">01</div>
+      <h3>Persistencia Local</h3>
+      <p>DataStore para preferencias y Room Database para datos estructurados</p>
+    </div>
+    <div class="index-card ic2" onclick="goTo(6)">
+      <div class="ic-num">02</div>
+      <h3>Firebase Firestore</h3>
+      <p>Base de datos NoSQL en la nube con sincronización en tiempo real</p>
+    </div>
+    <div class="index-card ic3" onclick="goTo(10)">
+      <div class="ic-num">03</div>
+      <h3>Auth + Storage</h3>
+      <p>Autenticación de usuarios y almacenamiento de archivos multimedia</p>
+    </div>
+    <div class="index-card ic4" onclick="goTo(13)">
+      <div class="ic-num">04</div>
+      <h3>Sincronización</h3>
+      <p>WorkManager, StateFlow y arquitectura final del proyecto</p>
+    </div>
+  </div>
+  <div class="highlight-box">
+    <strong>Proyecto Fase 3 (Final):</strong> CityReport completo — datos persistentes localmente con Room, sincronizados en Firebase, autenticación real, fotos en Storage y notificaciones de sincronización con WorkManager.
+  </div>
+</div>
+
+<!-- ══════ SLIDE 2: PANORAMA UT IV ══════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="ut-tag">UNIDAD TEMÁTICA IV</div>
+    <div class="slide-title">Almacenamiento de Datos en Android</div>
+    <div class="slide-subtitle">Sin datos persistentes, tu app reinicia desde cero cada vez que se cierra</div>
+  </div>
+  <div class="card card-metafora">
+    <h4>🔮 Metáfora: El Periodista</h4>
+    <p>Una app sin almacenamiento es como un periodista sin libreta: cada vez que entrevista a alguien olvida todo al salir del cuarto. DataStore guarda notas rápidas, Room es su archivo completo de noticias, y Firebase es el periódico en línea donde todos pueden leer.</p>
+  </div>
+  <div class="three-col">
+    <div class="card card-teoria">
+      <h4>📖 4.1 Local</h4>
+      <ul>
+        <li>DataStore (preferencias)</li>
+        <li>Room Database (SQLite)</li>
+        <li>Entities, DAOs, Database</li>
+      </ul>
+    </div>
+    <div class="card card-teoria">
+      <h4>📖 4.2 Nube</h4>
+      <ul>
+        <li>Firebase Firestore (NoSQL)</li>
+        <li>Firebase Storage (archivos)</li>
+        <li>Firebase Auth</li>
+        <li>WorkManager (sync)</li>
+      </ul>
+    </div>
+    <div class="card card-practica">
+      <h4>🔨 4.3 Proyecto</h4>
+      <ul>
+        <li>App con almacenamiento permanente</li>
+        <li>Offline-first</li>
+        <li>Sincronización automática</li>
+        <li>Entrega final del semestre</li>
+      </ul>
+    </div>
+  </div>
+  <div class="diagram">
+    <div class="diag-box" style="background:rgba(0,105,92,.3);border-color:#26A69A;">Room (SQLite)<br><small>Datos locales</small></div>
+    <div class="diag-arrow">⇆</div>
+    <div class="diag-box" style="background:rgba(200,169,81,.15);border-color:var(--ipn-gold);">Repository<br><small>Decide fuente</small></div>
+    <div class="diag-arrow">⇆</div>
+    <div class="diag-box" style="background:rgba(106,27,154,.3);border-color:#AB47BC;">Firestore<br><small>Datos en nube</small></div>
+  </div>
+</div>
+
+<!-- ══════ SLIDE 3: DATASTORE ══════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="ut-tag">4.1 PREFERENCIAS DE USUARIO</div>
+    <div class="slide-title">DataStore — Reemplazando SharedPreferences</div>
+    <div class="slide-subtitle">Almacenamiento de preferencias asíncrono, seguro y reactive</div>
+  </div>
+  <div class="card card-metafora">
+    <h4>🔮 Metáfora</h4>
+    <p>DataStore es el <strong>cajón de tu escritorio</strong>: guarda las preferencias personales del usuario (tema oscuro, idioma, notificaciones activadas) que persisten entre sesiones. SharedPreferences era el cajón viejo que podía trabarse (bloqueaba el hilo principal). DataStore es el cajón nuevo con rieles suaves — nunca se traba.</p>
+  </div>
+  <div class="two-col">
+    <div>
+      <table>
+        <tr><th>Aspecto</th><th>SharedPreferences</th><th>DataStore</th></tr>
+        <tr><td>Thread-safe</td><td>❌ No</td><td>✅ Sí</td></tr>
+        <tr><td>Async</td><td>❌ Síncrono</td><td>✅ Flow</td></tr>
+        <tr><td>Type-safe</td><td>❌ No</td><td>✅ Sí</td></tr>
+        <tr><td>Manejo errores</td><td>❌ Silencioso</td><td>✅ Exceptions</td></tr>
+        <tr><td>Recomendado</td><td>❌ Deprecado</td><td>✅ Actual</td></tr>
+      </table>
+    </div>
+    <div>
+      <pre><code><span class="cm">// Definir las claves</span>
+<span class="kw">private val</span> Context.dataStore: <span class="ty">DataStore</span>&lt;<span class="ty">Preferences</span>&gt;
+    <span class="kw">by</span> <span class="fn">preferencesDataStore</span>(name = <span class="str">"ajustes_usuario"</span>)
+
+<span class="kw">val</span> TEMA_OSCURO = <span class="fn">booleanPreferencesKey</span>(<span class="str">"tema_oscuro"</span>)
+<span class="kw">val</span> NOTIF_ACTIVAS = <span class="fn">booleanPreferencesKey</span>(<span class="str">"notif"</span>)
+
+<span class="cm">// Guardar</span>
+<span class="kw">suspend fun</span> <span class="fn">guardarTema</span>(oscuro: <span class="ty">Boolean</span>) {
+    context.dataStore.<span class="fn">edit</span> { prefs ->
+        prefs[TEMA_OSCURO] = oscuro
+    }
+}
+<span class="cm">// Leer (Flow reactivo)</span>
+<span class="kw">val</span> temaFlow: <span class="ty">Flow</span>&lt;<span class="ty">Boolean</span>&gt; =
+    context.dataStore.data.<span class="fn">map</span> { prefs ->
+        prefs[TEMA_OSCURO] ?: <span class="kw">false</span>
+    }</code></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ SLIDE 4: ROOM INTRO ══════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="ut-tag">4.1.2 ROOM DATABASE</div>
+    <div class="slide-title">Room — SQLite con Superpoderes</div>
+    <div class="slide-subtitle">La capa de abstracción oficial de Jetpack sobre SQLite</div>
+  </div>
+  <div class="card card-metafora">
+    <h4>🔮 Metáfora: El Bibliotecario</h4>
+    <p>Room es el <strong>bibliotecario experto</strong> de tu app: sabe exactamente dónde está cada libro (dato), cómo buscarlo por tema o autor, cómo agregar nuevos y cómo retirar los obsoletos. Sin Room tendrías que escribir SQL crudo y manejar cursores manualmente — como buscar en una biblioteca sin catálogo.</p>
+  </div>
+  <div class="diagram">
+    <div class="diag-box" style="background:rgba(21,101,192,.3);border-color:#42A5F5;min-width:140px;">
+      <strong>@Entity</strong><br><small>Define la tabla<br>y sus columnas</small>
+    </div>
+    <div class="diag-arrow">+</div>
+    <div class="diag-box" style="background:rgba(46,125,50,.3);border-color:#66BB6A;min-width:140px;">
+      <strong>@Dao</strong><br><small>Queries SQL<br>como funciones Kotlin</small>
+    </div>
+    <div class="diag-arrow">+</div>
+    <div class="diag-box" style="background:rgba(106,27,154,.3);border-color:#AB47BC;min-width:140px;">
+      <strong>@Database</strong><br><small>Conexión y versión<br>de la base de datos</small>
+    </div>
+    <div class="diag-arrow">=</div>
+    <div class="diag-box" style="background:rgba(200,169,81,.2);border-color:var(--ipn-gold);min-width:140px;">
+      <strong>Room</strong><br><small>SQLite gestionado<br>automáticamente</small>
+    </div>
+  </div>
+  <pre><code><span class="cm">// 1. @Entity — define la tabla "incidencias"</span>
+<span class="ann">@Entity</span>(tableName = <span class="str">"incidencias"</span>)
+<span class="kw">data class</span> <span class="ty">IncidenciaEntity</span>(
+    <span class="ann">@PrimaryKey</span>(autoGenerate = <span class="kw">true</span>) <span class="kw">val</span> id: <span class="ty">Int</span> = <span class="num">0</span>,
+    <span class="ann">@ColumnInfo</span>(name = <span class="str">"titulo"</span>)       <span class="kw">val</span> titulo: <span class="ty">String</span>,
+    <span class="ann">@ColumnInfo</span>(name = <span class="str">"descripcion"</span>) <span class="kw">val</span> descripcion: <span class="ty">String</span>,
+    <span class="kw">val</span> latitud: <span class="ty">Double</span> = <span class="num">0.0</span>,
+    <span class="kw">val</span> longitud: <span class="ty">Double</span> = <span class="num">0.0</span>,
+    <span class="kw">val</span> fotoUrl: <span class="ty">String</span>? = <span class="kw">null</span>,
+    <span class="kw">val</span> fechaMs: <span class="ty">Long</span> = <span class="ty">System</span>.<span class="fn">currentTimeMillis</span>(),
+    <span class="kw">val</span> sincronizada: <span class="ty">Boolean</span> = <span class="kw">false</span>
+)</code></pre>
+</div>
+
+<!-- ══════ SLIDE 5: ROOM DAO + DB ══════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="ut-tag">4.1.2 ROOM — DAO Y DATABASE</div>
+    <div class="slide-title">DAOs y Base de Datos</div>
+    <div class="slide-subtitle">Queries como funciones Kotlin — Room genera el SQL por ti</div>
+  </div>
+  <pre><code><span class="cm">// 2. @Dao — operaciones sobre la tabla</span>
+<span class="ann">@Dao</span>
+<span class="kw">interface</span> <span class="ty">IncidenciaDao</span> {
+    <span class="ann">@Query</span>(<span class="str">"SELECT * FROM incidencias ORDER BY fechaMs DESC"</span>)
+    <span class="kw">fun</span> <span class="fn">obtenerTodas</span>(): <span class="ty">Flow</span>&lt;<span class="ty">List</span>&lt;<span class="ty">IncidenciaEntity</span>&gt;&gt;  <span class="cm">// reactivo</span>
+
+    <span class="ann">@Query</span>(<span class="str">"SELECT * FROM incidencias WHERE sincronizada = 0"</span>)
+    <span class="kw">suspend fun</span> <span class="fn">obtenerPendientes</span>(): <span class="ty">List</span>&lt;<span class="ty">IncidenciaEntity</span>&gt;
+
+    <span class="ann">@Insert</span>(onConflict = <span class="ty">OnConflictStrategy</span>.REPLACE)
+    <span class="kw">suspend fun</span> <span class="fn">insertar</span>(inc: <span class="ty">IncidenciaEntity</span>): <span class="ty">Long</span>
+
+    <span class="ann">@Update</span>
+    <span class="kw">suspend fun</span> <span class="fn">actualizar</span>(inc: <span class="ty">IncidenciaEntity</span>)
+
+    <span class="ann">@Delete</span>
+    <span class="kw">suspend fun</span> <span class="fn">eliminar</span>(inc: <span class="ty">IncidenciaEntity</span>)
+}
+
+<span class="cm">// 3. @Database — punto de entrada</span>
+<span class="ann">@Database</span>(entities = [<span class="ty">IncidenciaEntity</span>::<span class="kw">class</span>], version = <span class="num">1</span>, exportSchema = <span class="kw">false</span>)
+<span class="kw">abstract class</span> <span class="ty">CityReportDatabase</span> : <span class="ty">RoomDatabase</span>() {
+    <span class="kw">abstract fun</span> <span class="fn">incidenciaDao</span>(): <span class="ty">IncidenciaDao</span>
+
+    <span class="kw">companion object</span> {
+        <span class="ann">@Volatile</span> <span class="kw">private var</span> INSTANCE: <span class="ty">CityReportDatabase</span>? = <span class="kw">null</span>
+        <span class="kw">fun</span> <span class="fn">getInstance</span>(context: <span class="ty">Context</span>): <span class="ty">CityReportDatabase</span> =
+            INSTANCE ?: <span class="kw">synchronized</span>(<span class="kw">this</span>) {
+                <span class="ty">Room</span>.<span class="fn">databaseBuilder</span>(context, <span class="ty">CityReportDatabase</span>::<span class="kw">class</span>.java, <span class="str">"cityreport.db"</span>)
+                    .<span class="fn">build</span>().<span class="kw">also</span> { INSTANCE = it }
+            }
+    }
+}</code></pre>
+  <div class="card card-dato">
+    <h4>⚡ Flow reactivo desde Room</h4>
+    <p>Cuando devuelves <code>Flow&lt;List&lt;T&gt;&gt;</code> desde el DAO, Room emite automáticamente una nueva lista cada vez que se modifica la tabla. La UI se actualiza sola — sin polling ni callbacks manuales.</p>
+  </div>
+</div>
+
+<!-- ══════ SLIDE 6: FIREBASE INTRO ══════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="ut-tag">4.2 SERVICIOS EN LA NUBE</div>
+    <div class="slide-title">Firebase — La Plataforma Backend de Google</div>
+    <div class="slide-subtitle">Backend completo sin escribir servidores: base de datos, auth, storage y más</div>
+  </div>
+  <div class="card card-metafora">
+    <h4>🔮 Metáfora</h4>
+    <p>Firebase es como rentar un edificio de oficinas completamente equipado: el <strong>Firestore</strong> es la oficina de archivos, el <strong>Auth</strong> es el portero con lista de invitados, el <strong>Storage</strong> es el almacén de objetos grandes, y las <strong>Cloud Functions</strong> son los empleados que trabajan solos cuando tú no estás. Sin Firebase tendrías que construir el edificio desde cero.</p>
+  </div>
+  <div class="three-col">
+    <div class="card card-teoria">
+      <h4>📖 Firestore</h4>
+      <p>Base de datos NoSQL en la nube. Documentos y colecciones. Sincronización en tiempo real. Offline automático.</p>
+    </div>
+    <div class="card card-teoria">
+      <h4>📖 Authentication</h4>
+      <p>Email/contraseña, Google, GitHub, anónimo. JWT tokens. SDK nativo para Android.</p>
+    </div>
+    <div class="card card-teoria">
+      <h4>📖 Storage</h4>
+      <p>Archivos binarios: fotos, videos, PDFs. URLs de descarga pública o privada. Integrado con Auth.</p>
+    </div>
+  </div>
+  <pre><code><span class="cm">// Configuración en build.gradle.kts</span>
+plugins {
+    id(<span class="str">"com.google.gms.google-services"</span>)
+}
+dependencies {
+    implementation(platform(<span class="str">"com.google.firebase:firebase-bom:33.0.0"</span>))
+    implementation(<span class="str">"com.google.firebase:firebase-firestore-ktx"</span>)
+    implementation(<span class="str">"com.google.firebase:firebase-auth-ktx"</span>)
+    implementation(<span class="str">"com.google.firebase:firebase-storage-ktx"</span>)
+}
+<span class="cm">// google-services.json debe estar en app/ (descargado de Firebase Console)</span></code></pre>
+</div>
+
+<!-- ══════ SLIDE 7: FIRESTORE ══════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="ut-tag">4.2.1 FIREBASE FIRESTORE</div>
+    <div class="slide-title">Base de Datos NoSQL en Tiempo Real</div>
+    <div class="slide-subtitle">Documentos y colecciones — más flexible que tablas SQL, más potente que JSON plano</div>
+  </div>
+  <div class="card card-metafora">
+    <h4>🔮 Metáfora: La Carpeta de Archivos</h4>
+    <p>Firestore es como una enorme carpeta de archivos en la nube: cada <strong>carpeta</strong> (colección) contiene <strong>documentos</strong> (registros), y dentro de cada documento hay <strong>campos</strong> (datos). No necesitas definir la estructura antes de usarla — es como crear carpetas y archivos libremente, sin formularios de alta.</p>
+  </div>
+  <div class="two-col">
+    <div>
+      <div class="card card-teoria">
+        <h4>📖 Estructura Firestore</h4>
+        <pre style="background:#0a0a15;padding:10px;border-radius:8px;font-size:11px;"><code><span class="base">incidencias/          </span><span class="cm">← colección</span>
+<span class="base">  doc_abc123/         </span><span class="cm">← documento</span>
+<span class="base">    titulo: </span><span class="str">"Bache"</span>
+<span class="base">    latitud: </span><span class="num">19.432</span>
+<span class="base">    longitud: </span><span class="num">-99.133</span>
+<span class="base">    resuelta: </span><span class="kw">false</span>
+<span class="base">    fotos/            </span><span class="cm">← subcolección</span>
+<span class="base">      foto_001/</span></code></pre>
+      </div>
+    </div>
+    <div>
+      <pre><code><span class="kw">val</span> db = <span class="ty">Firebase</span>.firestore
+
+<span class="cm">// Guardar documento</span>
+<span class="kw">suspend fun</span> <span class="fn">guardarEnNube</span>(inc: <span class="ty">IncidenciaEntity</span>) {
+    db.<span class="fn">collection</span>(<span class="str">"incidencias"</span>)
+      .<span class="fn">document</span>(inc.id.<span class="fn">toString</span>())
+      .<span class="fn">set</span>(inc)
+      .<span class="fn">await</span>() <span class="cm">// suspending - no bloquea</span>
+}
+
+<span class="cm">// Listener tiempo real</span>
+db.<span class="fn">collection</span>(<span class="str">"incidencias"</span>)
+  .<span class="fn">whereEqualTo</span>(<span class="str">"resuelta"</span>, <span class="kw">false</span>)
+  .<span class="fn">addSnapshotListener</span> { snap, err ->
+      snap?.documents
+        ?.<span class="fn">mapNotNull</span> { it.<span class="fn">toObject</span>&lt;<span class="ty">IncidenciaEntity</span>&gt;() }
+        ?.<span class="fn">let</span> { presenter.<span class="fn">onDatosActualizados</span>(it) }
+  }</code></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ SLIDE 8: REPOSITORY PATTERN ══════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="ut-tag">4.2 + 4.1 PATRÓN REPOSITORY</div>
+    <div class="slide-title">Repository: Unificando Room y Firestore</div>
+    <div class="slide-subtitle">Single source of truth — la UI no sabe si los datos vienen de local o nube</div>
+  </div>
+  <div class="card card-metafora">
+    <h4>🔮 Metáfora: El Almacén de Distribución</h4>
+    <p>El Repository es como un almacén de distribución inteligente: cuando llega un pedido (solicitud de datos), primero revisa si hay stock local (Room). Si no hay o está desactualizado, hace el pedido a fábrica (Firestore). La tienda (UI) no sabe ni le importa de dónde viene el producto.</p>
+  </div>
+  <pre><code><span class="kw">class</span> <span class="ty">IncidenciaRepositoryImpl</span>(
+    <span class="kw">private val</span> dao: <span class="ty">IncidenciaDao</span>,
+    <span class="kw">private val</span> firestore: <span class="ty">FirebaseFirestore</span>
+) : <span class="ty">IncidenciaRepository</span> {
+
+    <span class="cm">// La UI observa SIEMPRE Room (offline-first)</span>
+    <span class="kw">override val</span> incidencias: <span class="ty">Flow</span>&lt;<span class="ty">List</span>&lt;<span class="ty">IncidenciaEntity</span>&gt;&gt;
+        <span class="kw">get</span>() = dao.<span class="fn">obtenerTodas</span>()
+
+    <span class="cm">// Guardar localmente primero, luego sincronizar</span>
+    <span class="kw">override suspend fun</span> <span class="fn">guardar</span>(inc: <span class="ty">IncidenciaEntity</span>) {
+        dao.<span class="fn">insertar</span>(inc) <span class="cm">// local inmediato</span>
+        <span class="kw">try</span> {
+            firestore.<span class="fn">collection</span>(<span class="str">"incidencias"</span>)
+                .<span class="fn">document</span>(inc.id.<span class="fn">toString</span>())
+                .<span class="fn">set</span>(inc).<span class="fn">await</span>()
+            dao.<span class="fn">actualizar</span>(inc.<span class="fn">copy</span>(sincronizada = <span class="kw">true</span>))
+        } <span class="kw">catch</span> (e: <span class="ty">Exception</span>) {
+            <span class="cm">// Sin conexión: WorkManager reintentará después</span>
+            <span class="ty">Log</span>.<span class="fn">w</span>(<span class="str">"Repo"</span>, <span class="str">"Pendiente de sync: </span><span class="kw">${</span>e.message<span class="kw">}</span><span class="str">"</span>)
+        }
+    }
+}</code></pre>
+</div>
+
+<!-- ══════ SLIDE 9: VIEWMODEL + STATEFLOW ══════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="ut-tag">4.2.3 SINCRONIZACIÓN DE DATOS</div>
+    <div class="slide-title">ViewModel y StateFlow</div>
+    <div class="slide-subtitle">La capa que conecta Repository con UI — sobrevive rotaciones de pantalla</div>
+  </div>
+  <div class="card card-metafora">
+    <h4>🔮 Metáfora: El Portavoz</h4>
+    <p>ViewModel es el <strong>portavoz</strong> del equipo: mantiene el estado actual de los datos y lo comunica a quien lo pida (Fragment, Activity). Si el periodista (pantalla) se va y vuelve (rotación), el portavoz sigue ahí con la misma información — no la pierde.</p>
+  </div>
+  <pre><code><span class="kw">class</span> <span class="ty">IncidenciaViewModel</span>(
+    <span class="kw">private val</span> repo: <span class="ty">IncidenciaRepository</span>
+) : <span class="ty">ViewModel</span>() {
+
+    <span class="cm">// Estado de UI como StateFlow</span>
+    <span class="kw">private val</span> _estado = <span class="ty">MutableStateFlow</span>&lt;<span class="ty">EstadoUI</span>&gt;(<span class="ty">EstadoUI</span>.<span class="ty">Cargando</span>)
+    <span class="kw">val</span> estado: <span class="ty">StateFlow</span>&lt;<span class="ty">EstadoUI</span>&gt; = _estado.<span class="fn">asStateFlow</span>()
+
+    <span class="kw">init</span> {
+        viewModelScope.<span class="fn">launch</span> {
+            repo.incidencias.<span class="fn">collect</span> { lista ->
+                _estado.<span class="fn">value</span> = <span class="ty">EstadoUI</span>.<span class="ty">Exito</span>(lista)
+            }
+        }
+    }
+
+    <span class="kw">fun</span> <span class="fn">guardarIncidencia</span>(inc: <span class="ty">IncidenciaEntity</span>) {
+        viewModelScope.<span class="fn">launch</span> {
+            _estado.<span class="fn">value</span> = <span class="ty">EstadoUI</span>.<span class="ty">Cargando</span>
+            <span class="kw">try</span> { repo.<span class="fn">guardar</span>(inc) }
+            <span class="kw">catch</span>(e: <span class="ty">Exception</span>) { _estado.<span class="fn">value</span> = <span class="ty">EstadoUI</span>.<span class="ty">Error</span>(e.message ?: <span class="str">""</span>) }
+        }
+    }
+}
+
+<span class="cm">// En Fragment — recolectar el estado</span>
+lifecycleScope.<span class="fn">launch</span> {
+    repeatOnLifecycle(<span class="ty">Lifecycle</span>.<span class="ty">State</span>.STARTED) {
+        viewModel.estado.<span class="fn">collect</span> { estado -> <span class="fn">actualizarUI</span>(estado) }
+    }
+}</code></pre>
+</div>
+
+<!-- ══════ SLIDE 10: FIREBASE AUTH ══════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="ut-tag">4.2 FIREBASE AUTHENTICATION</div>
+    <div class="slide-title">Autenticación de Usuarios</div>
+    <div class="slide-subtitle">Email, Google Sign-In y sesiones persistentes — sin servidor propio</div>
+  </div>
+  <div class="card card-metafora">
+    <h4>🔮 Metáfora: El Portero del Club</h4>
+    <p>Firebase Auth es el portero más confiable del mundo: verifica que seas quien dices ser (autenticación), recuerda tu cara para la próxima vez (sesión persistente), y si pierdes tu credencial (contraseña), te ayuda a recuperarla. Tú como desarrollador solo le dices "deja pasar a usuarios válidos".</p>
+  </div>
+  <pre><code><span class="kw">val</span> auth = <span class="ty">Firebase</span>.auth
+
+<span class="cm">// Registro con email/contraseña</span>
+<span class="kw">suspend fun</span> <span class="fn">registrar</span>(email: <span class="ty">String</span>, pass: <span class="ty">String</span>): <span class="ty">FirebaseUser</span>? {
+    <span class="kw">return try</span> {
+        auth.<span class="fn">createUserWithEmailAndPassword</span>(email, pass).<span class="fn">await</span>().user
+    } <span class="kw">catch</span> (e: <span class="ty">FirebaseAuthException</span>) { <span class="kw">null</span> }
+}
+
+<span class="cm">// Google Sign-In</span>
+<span class="kw">private fun</span> <span class="fn">configurarGoogleSignIn</span>() {
+    <span class="kw">val</span> gso = <span class="ty">GoogleSignInOptions</span>.<span class="ty">Builder</span>(<span class="ty">DEFAULT_SIGN_IN</span>)
+        .<span class="fn">requestIdToken</span>(<span class="fn">getString</span>(<span class="ty">R</span>.string.default_web_client_id))
+        .<span class="fn">requestEmail</span>().<span class="fn">build</span>()
+    googleSignInClient = <span class="ty">GoogleSignIn</span>.<span class="fn">getClient</span>(<span class="kw">this</span>, gso)
+}
+<span class="kw">private val</span> signInLauncher = <span class="fn">registerForActivityResult</span>(<span class="ty">StartActivityForResult</span>()) { result ->
+    <span class="kw">val</span> task = <span class="ty">GoogleSignIn</span>.<span class="fn">getSignedInAccountFromIntent</span>(result.data)
+    <span class="kw">val</span> credential = <span class="ty">GoogleAuthProvider</span>.<span class="fn">getCredential</span>(task.<span class="fn">getResult</span>().idToken, <span class="kw">null</span>)
+    lifecycleScope.<span class="fn">launch</span> { auth.<span class="fn">signInWithCredential</span>(credential).<span class="fn">await</span>() }
+}
+
+<span class="cm">// Verificar sesión activa</span>
+<span class="kw">val</span> usuarioActual: <span class="ty">FirebaseUser</span>? = auth.currentUser
+<span class="kw">if</span> (usuarioActual == <span class="kw">null</span>) <span class="fn">navegarALogin</span>() <span class="kw">else</span> <span class="fn">navegarAHome</span>()</code></pre>
+</div>
+
+<!-- ══════ SLIDE 11: FIREBASE STORAGE ══════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="ut-tag">4.2.2 ALMACENAMIENTO MULTIMEDIA</div>
+    <div class="slide-title">Firebase Storage — Fotos e Imágenes</div>
+    <div class="slide-subtitle">Subir, descargar y gestionar archivos binarios en la nube</div>
+  </div>
+  <div class="card card-metafora">
+    <h4>🔮 Metáfora: La Bodega Digital</h4>
+    <p>Firebase Storage es como una <strong>bodega de depósito</strong> digital: cada archivo tiene una dirección única (path), puedes subir cajas (archivos) de cualquier tamaño, y recuperarlas con su URL. La bodega puede ser pública (todos ven las fotos) o privada (solo el dueño autenticado).</p>
+  </div>
+  <pre><code><span class="kw">val</span> storage = <span class="ty">Firebase</span>.storage
+
+<span class="cm">// Subir foto de una incidencia</span>
+<span class="kw">suspend fun</span> <span class="fn">subirFoto</span>(uri: <span class="ty">Uri</span>, incidenciaId: <span class="ty">Int</span>): <span class="ty">String</span> {
+    <span class="kw">val</span> uid = <span class="ty">Firebase</span>.auth.currentUser?.uid ?: <span class="kw">throw</span> <span class="ty">Exception</span>(<span class="str">"No autenticado"</span>)
+    <span class="kw">val</span> ref = storage.reference
+        .<span class="fn">child</span>(<span class="str">"fotos/</span><span class="kw">$</span>uid<span class="str">/</span><span class="kw">$</span>incidenciaId<span class="str">.jpg"</span>)
+    ref.<span class="fn">putFile</span>(uri).<span class="fn">await</span>()
+    <span class="kw">return</span> ref.downloadUrl.<span class="fn">await</span>().<span class="fn">toString</span>() <span class="cm">// URL pública</span>
+}
+
+<span class="cm">// Cargar imagen con Coil (biblioteca de imágenes)</span>
+binding.ivFoto.<span class="fn">load</span>(incidencia.fotoUrl) {
+    <span class="fn">crossfade</span>(<span class="kw">true</span>)
+    <span class="fn">placeholder</span>(<span class="ty">R</span>.drawable.ic_foto_placeholder)
+    <span class="fn">error</span>(<span class="ty">R</span>.drawable.ic_error)
+    <span class="fn">transformations</span>(<span class="ty">RoundedCornersTransformation</span>(<span class="num">16f</span>))
+}
+
+<span class="cm">// Reglas de seguridad en Firebase Console:</span>
+<span class="cm">// match /fotos/{uid}/{allPaths=**} {</span>
+<span class="cm">//   allow read, write: if request.auth.uid == uid;</span>
+<span class="cm">// }</span></code></pre>
+  <div class="card card-dato">
+    <h4>⚡ Optimización de imágenes</h4>
+    <p>Comprime la foto antes de subir: usa <code>Bitmap.compress(JPEG, 80, outputStream)</code>. Una foto de 4MB comprimida pesa ~200KB — 20x menos transferencia y costo en Firebase.</p>
+  </div>
+</div>
+
+<!-- ══════ SLIDE 12: WORKMANAGER ══════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="ut-tag">4.2.3 SINCRONIZACIÓN</div>
+    <div class="slide-title">WorkManager — Tareas en Segundo Plano</div>
+    <div class="slide-subtitle">Garantía de ejecución: aunque el teléfono se reinicie, el trabajo se completa</div>
+  </div>
+  <div class="card card-metafora">
+    <h4>🔮 Metáfora: El Asistente Fiel</h4>
+    <p>WorkManager es el <strong>asistente más confiable</strong>: aunque cierres la app, aunque el teléfono se quede sin batería y reinicie, él recuerda exactamente qué trabajo quedó pendiente y lo completa cuando las condiciones son correctas (hay WiFi, la batería no está baja). No hay que recordarle — él solo sabe qué hacer.</p>
+  </div>
+  <pre><code><span class="cm">// 1. Definir el Worker</span>
+<span class="kw">class</span> <span class="ty">SyncWorker</span>(ctx: <span class="ty">Context</span>, params: <span class="ty">WorkerParameters</span>)
+    : <span class="ty">CoroutineWorker</span>(ctx, params) {
+
+    <span class="kw">override suspend fun</span> <span class="fn">doWork</span>(): <span class="ty">Result</span> {
+        <span class="kw">return try</span> {
+            <span class="kw">val</span> db = <span class="ty">CityReportDatabase</span>.<span class="fn">getInstance</span>(applicationContext)
+            <span class="kw">val</span> pendientes = db.incidenciaDao().<span class="fn">obtenerPendientes</span>()
+            pendientes.<span class="fn">forEach</span> { inc ->
+                <span class="ty">Firebase</span>.firestore.<span class="fn">collection</span>(<span class="str">"incidencias"</span>)
+                    .<span class="fn">document</span>(inc.id.<span class="fn">toString</span>()).<span class="fn">set</span>(inc).<span class="fn">await</span>()
+                db.incidenciaDao().<span class="fn">actualizar</span>(inc.<span class="fn">copy</span>(sincronizada = <span class="kw">true</span>))
+            }
+            <span class="ty">Result</span>.<span class="fn">success</span>()
+        } <span class="kw">catch</span> (e: <span class="ty">Exception</span>) {
+            <span class="ty">Result</span>.<span class="fn">retry</span>() <span class="cm">// reintenta automáticamente</span>
+        }
+    }
+}
+
+<span class="cm">// 2. Programar ejecución periódica con restricciones</span>
+<span class="kw">val</span> syncRequest = <span class="ty">PeriodicWorkRequestBuilder</span>&lt;<span class="ty">SyncWorker</span>&gt;(
+    <span class="num">15</span>, <span class="ty">TimeUnit</span>.MINUTES
+).<span class="fn">setConstraints</span>(
+    <span class="ty">Constraints</span>.<span class="ty">Builder</span>()
+        .<span class="fn">setRequiredNetworkType</span>(<span class="ty">NetworkType</span>.CONNECTED)
+        .<span class="fn">setRequiresBatteryNotLow</span>(<span class="kw">true</span>)
+        .<span class="fn">build</span>()
+).<fn>build</fn>()
+
+<span class="ty">WorkManager</span>.<span class="fn">getInstance</span>(context)
+    .<span class="fn">enqueueUniquePeriodicWork</span>(<span class="str">"sync_cityreport"</span>,
+        <span class="ty">ExistingPeriodicWorkPolicy</span>.KEEP, syncRequest)</code></pre>
+</div>
+
+<!-- ══════ SLIDE 13: ARQUITECTURA FINAL ══════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="ut-tag">4.3 ARQUITECTURA FINAL</div>
+    <div class="slide-title">Clean Architecture: UI → Domain → Data</div>
+    <div class="slide-subtitle">La arquitectura recomendada por Google para apps profesionales</div>
+  </div>
+  <div class="card card-metafora">
+    <h4>🔮 Metáfora: El Edificio</h4>
+    <p>La arquitectura en capas es como un edificio de 3 pisos: los <strong>cimientos</strong> (Data Layer: Room + Firestore) soportan la <strong>estructura</strong> (Domain Layer: repositorios y casos de uso), que sostiene el <strong>exterior</strong> (UI Layer: Fragments + ViewModels). Cada piso solo habla con el de abajo — nunca salta pisos.</p>
+  </div>
+  <div class="arch-layer" style="background:rgba(139,0,0,.25);border:1px solid rgba(139,0,0,.5);">
+    <div class="layer-icon">📱</div>
+    <div><strong>UI Layer</strong><span> — Fragments, Activities, ViewModels, StateFlow</span></div>
+  </div>
+  <div style="text-align:center;color:var(--ipn-gold);font-size:18px;margin:2px 0;">↓ solicita · ↑ emite estado</div>
+  <div class="arch-layer" style="background:rgba(200,169,81,.15);border:1px solid rgba(200,169,81,.4);">
+    <div class="layer-icon">⚙</div>
+    <div><strong>Domain Layer</strong><span> — Repository Interface, Use Cases, Modelos de dominio</span></div>
+  </div>
+  <div style="text-align:center;color:var(--ipn-gold);font-size:18px;margin:2px 0;">↓ solicita · ↑ retorna datos</div>
+  <div class="arch-layer" style="background:rgba(0,105,92,.25);border:1px solid rgba(0,105,92,.5);">
+    <div class="layer-icon">🗄</div>
+    <div><strong>Data Layer</strong><span> — Room DAO, Firestore, Firebase Storage, DataStore, WorkManager</span></div>
+  </div>
+  <div class="card card-dato" style="margin-top:12px;">
+    <h4>⚡ Regla de dependencia</h4>
+    <p>Las dependencias solo apuntan <strong>hacia adentro</strong>: UI conoce Domain, Domain conoce Data. Nunca al revés. Esto permite cambiar Room por otro ORM sin tocar la UI.</p>
+  </div>
+</div>
+
+<!-- ══════ SLIDE 14: PROYECTO FASE 3 ══════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="ut-tag">PROYECTO INTEGRADOR — FASE 3 (FINAL)</div>
+    <div class="slide-title">CityReport: Versión Completa</div>
+    <div class="slide-subtitle">APK final con datos persistentes, sincronización en nube y presentación ejecutiva</div>
+  </div>
+  <div class="two-col">
+    <div>
+      <ul class="checklist">
+        <li>Room Database con incidencias locales</li>
+        <li>DataStore: tema claro/oscuro, notificaciones</li>
+        <li>Firebase Auth: login con email y Google</li>
+        <li>Firestore: sincronización de incidencias</li>
+        <li>Firebase Storage: fotos de incidencias</li>
+        <li>WorkManager: sync periódico offline→nube</li>
+        <li>ViewModel + StateFlow en toda la app</li>
+        <li>Modo offline funcional completo</li>
+        <li>Documentación técnica en el repositorio</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card card-practica">
+        <h4>🔨 Stack final CityReport</h4>
+        <ul>
+          <li>Kotlin 2.x + Coroutines</li>
+          <li>Room 2.6.x + DataStore</li>
+          <li>Firebase BOM 33.x</li>
+          <li>WorkManager 2.9.x</li>
+          <li>Navigation 2.7.x</li>
+          <li>CameraX 1.3.x</li>
+          <li>Coil (imágenes)</li>
+          <li>Material Design 3</li>
+        </ul>
+      </div>
+      <div class="card card-dato" style="margin-top:12px;">
+        <h4>⚡ Criterios (40% del parcial)</h4>
+        <p>APK final + demo ejecutiva 10 min por equipo. Se evalúa persistencia real, sincronización funcional, auth y reporte técnico.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ SLIDE 15: PRÁCTICA INTEGRADORA ══════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="ut-tag">PRÁCTICA 1 Y 2 — UT IV</div>
+    <div class="slide-title">Guía de Prácticas del Parcial 3</div>
+    <div class="slide-subtitle">De Room a Firebase en dos sesiones de laboratorio</div>
+  </div>
+  <div class="two-col">
+    <div>
+      <div class="card card-practica">
+        <h4>🔨 Práctica 1 (3h) — Persistencia Local</h4>
+        <ul>
+          <li>Crear CityReportDatabase con Room</li>
+          <li>IncidenciaEntity con todas las columnas</li>
+          <li>IncidenciaDao con Flow reactivo</li>
+          <li>Integrar DataStore para preferencias</li>
+          <li>ViewModel conectado al DAO</li>
+          <li>Probar modo offline: guardar sin internet</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card card-practica">
+        <h4>🔨 Práctica 2 (3h) — Nube + Auth</h4>
+        <ul>
+          <li>Configurar Firebase en el proyecto</li>
+          <li>Implementar login con email y Google</li>
+          <li>Conectar Firestore en el Repository</li>
+          <li>Subir fotos a Firebase Storage</li>
+          <li>Registrar WorkManager para sync</li>
+          <li>Probar sincronización: offline → online</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <pre><code><span class="cm">// Tip: usa un emulador de Firebase para desarrollo</span>
+<span class="cm">// En Application.onCreate():</span>
+<span class="kw">if</span> (<span class="ty">BuildConfig</span>.DEBUG) {
+    <span class="ty">Firebase</span>.firestore.<span class="fn">useEmulator</span>(<span class="str">"10.0.2.2"</span>, <span class="num">8080</span>)
+    <span class="ty">Firebase</span>.auth.<span class="fn">useEmulator</span>(<span class="str">"10.0.2.2"</span>, <span class="num">9099</span>)
+    <span class="ty">Firebase</span>.storage.<span class="fn">useEmulator</span>(<span class="str">"10.0.2.2"</span>, <span class="num">9199</span>)
+}
+<span class="cm">// Ejecutar emulador: firebase emulators:start</span>
+<span class="cm">// No consume cuota de Firebase en desarrollo</span></code></pre>
+</div>
+
+<!-- ══════ SLIDE 16: RESUMEN FINAL ══════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="slide-number">CIERRE SEMESTRE</div>
+    <div class="slide-title">Mapa Completo del Semestre</div>
+    <div class="slide-subtitle">De cero a una app Android profesional en 15 semanas</div>
+  </div>
+  <div class="three-col">
+    <div class="card card-teoria" style="border-top:3px solid #1565C0;border-left:none;">
+      <h4>📖 Parcial 1 — Fundamentos</h4>
+      <ul>
+        <li>Hardware y ecosistema móvil</li>
+        <li>Android Studio + SDK</li>
+        <li>Kotlin: tipos, OOP, null safety</li>
+        <li>Ciclo de vida Activity</li>
+        <li>Patrón MVC</li>
+        <li>APK con navegación base</li>
+      </ul>
+    </div>
+    <div class="card card-teoria" style="border-top:3px solid #2E7D32;border-left:none;">
+      <h4>📖 Parcial 2 — Patrones + UI</h4>
+      <ul>
+        <li>Patrón MVP completo</li>
+        <li>CameraX + GPS</li>
+        <li>Notificaciones + canales</li>
+        <li>Navigation Component</li>
+        <li>Material Design 3</li>
+        <li>APK con hardware integrado</li>
+      </ul>
+    </div>
+    <div class="card card-teoria" style="border-top:3px solid var(--p3);border-left:none;">
+      <h4>📖 Parcial 3 — Datos</h4>
+      <ul>
+        <li>DataStore + Room</li>
+        <li>Firebase Firestore</li>
+        <li>Firebase Auth + Storage</li>
+        <li>WorkManager sync</li>
+        <li>Clean Architecture</li>
+        <li>APK final completo</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card card-metafora" style="margin-top:14px;">
+    <h4>🔮 Reflexión final del docente</h4>
+    <p>Construiste una app que usaría cualquier ciudadano de verdad. Aprendiste Kotlin, patrones de arquitectura, hardware del teléfono, bases de datos locales y en la nube. Eso es exactamente lo que hace un desarrollador Android profesional — y tú lo hiciste en un semestre.</p>
+  </div>
+  <div class="highlight-box" style="text-align:center;margin-top:10px;">
+    <strong style="font-size:16px;color:var(--ipn-gold);">¡Éxito en su presentación final!</strong>
+    <span style="display:block;font-size:13px;margin-top:4px;opacity:.8;">CityReport · UPIICSA · IPN · Semestre 5 · Plan 2022</span>
+  </div>
+</div>
+
+</div><!-- /slides-container -->
+
+<div class="scroll-hint">↑↓ leer · ← → navegar</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+let current = 0;
+const total = slides.length;
+function update() {
+  slides.forEach((s,i) => s.classList.toggle('active', i === current));
+  document.getElementById('counter').textContent = (current+1) + ' / ' + total;
+  document.getElementById('progress-bar').style.width = ((current+1)/total*100) + '%';
+}
+function next() { if(current < total-1){ current++; update(); } }
+function prev() { if(current > 0){ current--; update(); } }
+function goTo(n) { current = n; update(); }
+document.addEventListener('keydown', e => {
+  if(e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+  if(e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+});
+let tx = 0;
+document.addEventListener('touchstart', e => tx = e.touches[0].clientX);
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - tx;
+  if(dx < -50) next(); if(dx > 50) prev();
+});
+update();
+</script>
+</body>
+</html>
