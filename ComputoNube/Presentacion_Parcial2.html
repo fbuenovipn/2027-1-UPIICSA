@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parcial 2 — Cómputo en la Nube · UPIICSA · IPN</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--sky:#0369A1;--teal:#0D9488;--teal2:#2DD4BF;--purple:#7C3AED;--green:#16A34A;--gold:#D97706;--wine:#6B1A33;--bg:#F0FDFA;--card:#fff;--border:#CBD5E1;--text:#0F172A;--muted:#64748B;--r:12px;--sh:0 2px 16px rgba(0,0,0,.08)}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;font-size:15px}
+.slide{display:none;min-height:100vh;padding:24px 20px 90px;max-width:1100px;margin:0 auto;animation:fi .3s ease}
+.slide.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.nav{position:fixed;bottom:0;left:0;right:0;background:var(--teal);display:flex;justify-content:center;align-items:center;gap:12px;padding:10px 16px;z-index:100;box-shadow:0 -2px 12px rgba(0,0,0,.2)}
+.nav button{background:rgba(255,255,255,.18);color:#fff;border:none;padding:8px 22px;border-radius:20px;cursor:pointer;font-size:14px;font-weight:600;transition:background .2s}
+.nav button:hover{background:rgba(255,255,255,.35)}
+.nav button:disabled{opacity:.35;cursor:not-allowed}
+.nav-label{color:rgba(255,255,255,.8);font-size:13px;min-width:160px;text-align:center}
+.dots{display:flex;gap:5px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:320px}
+.dots span{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35);cursor:pointer;transition:background .2s,transform .2s}
+.dots span.active{background:var(--gold);transform:scale(1.4)}
+.print-btn{position:fixed;top:14px;right:16px;background:var(--teal);color:#fff;border:none;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;z-index:200}
+.snum{position:fixed;top:14px;left:16px;background:rgba(13,148,136,.12);color:var(--teal);border-radius:20px;padding:4px 14px;font-size:12px;font-weight:700;z-index:200}
+.banner{background:linear-gradient(135deg,var(--teal) 0%,var(--teal2) 60%,#5EEAD4 100%);color:#fff;border-radius:var(--r);padding:38px 32px;margin-bottom:22px;position:relative;overflow:hidden}
+.banner::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.07)}
+.banner .inst{font-size:12px;letter-spacing:2px;text-transform:uppercase;opacity:.8;margin-bottom:6px}
+.banner h1{font-size:2.1rem;font-weight:800;margin-bottom:8px}
+.banner .sub{font-size:.95rem;opacity:.85}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.badge{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:4px 14px;font-size:12px;font-weight:600}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--border);padding:22px;margin-bottom:16px}
+.card h3{font-size:1rem;font-weight:700;margin-bottom:12px;color:var(--teal)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:700px){.g2,.g3{grid-template-columns:1fr}}
+.hb{border-radius:10px;padding:16px 18px;margin-bottom:12px}
+.hb h4{font-size:.9rem;font-weight:700;margin-bottom:5px}
+.hb.sky{background:#E0F2FE;border-left:4px solid var(--sky)}
+.hb.teal{background:#CCFBF1;border-left:4px solid var(--teal)}
+.hb.gold{background:#FEF3C7;border-left:4px solid var(--gold)}
+.hb.green{background:#DCFCE7;border-left:4px solid var(--green)}
+.hb.purple{background:#EDE9FE;border-left:4px solid var(--purple)}
+.hb.wine{background:#F9E8ED;border-left:4px solid var(--wine)}
+.hb.red{background:#FEE2E2;border-left:4px solid #DC2626}
+ul.cl{list-style:none}
+ul.cl li{padding:5px 0 5px 18px;position:relative;border-bottom:1px solid var(--border);font-size:.88rem}
+ul.cl li:last-child{border-bottom:none}
+ul.cl li::before{content:'▸';position:absolute;left:0;color:var(--teal);font-size:11px;top:7px}
+table.t{width:100%;border-collapse:collapse;font-size:14px}
+table.t th{background:var(--teal);color:#fff;padding:10px 14px;text-align:left;font-weight:600}
+table.t td{padding:9px 14px;border-bottom:1px solid var(--border);font-size:.87rem}
+table.t tr:nth-child(even) td{background:#F0FDFA}
+.ph{border-radius:var(--r);padding:18px 22px;color:#fff;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;background:linear-gradient(135deg,var(--teal),var(--teal2))}
+.ph h2{font-size:1.4rem;font-weight:800}
+.ph .meta{font-size:13px;opacity:.85}
+.pill{display:inline-block;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:600}
+.ps{background:#DBEAFE;color:#1E40AF}
+.pt{background:#CCFBF1;color:#0F766E}
+.pg{background:#DCFCE7;color:#15803D}
+.po{background:#FEF3C7;color:#92600A}
+.pp{background:#EDE9FE;color:#6D28D9}
+.toc-item{display:flex;align-items:center;gap:14px;padding:12px 16px;border-radius:10px;margin-bottom:8px;background:var(--card);border:1px solid var(--border);cursor:pointer;transition:background .15s}
+.toc-item:hover{background:#F0FDFA}
+.tn{width:34px;height:34px;border-radius:50%;background:var(--teal);color:#fff;display:grid;place-items:center;font-weight:800;flex-shrink:0}
+.meta-box{background:linear-gradient(135deg,#FEF3C7,#FFFBEB);border:2px solid var(--gold);border-radius:var(--r);padding:16px 20px;margin-bottom:14px}
+.meta-box .lbl{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.tab-btn{padding:8px 18px;border:2px solid var(--teal);background:#fff;color:var(--teal);border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;margin:4px;transition:all .2s}
+.tab-btn.active{background:var(--teal);color:#fff}
+.pane{display:none}
+.pane.show{display:block}
+.quiz-btn{background:var(--teal);color:#fff;border:none;padding:9px 18px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;margin:4px;transition:background .2s}
+.quiz-btn:hover{background:var(--teal2);color:var(--text)}
+.qfb{margin-top:12px;padding:12px 16px;border-radius:8px;font-weight:600;display:none}
+.qok{background:#DCFCE7;color:var(--green);border-left:4px solid var(--green)}
+.qerr{background:#FEE2E2;color:#DC2626;border-left:4px solid #DC2626}
+.virt-type{border-radius:10px;padding:16px;border:2px solid;margin-bottom:10px;cursor:pointer;transition:all .2s}
+.virt-type:hover{transform:translateX(4px)}
+.virt-detail{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:.85rem;color:var(--muted)}
+.virt-detail.open{display:block}
+.tool-card{border-radius:10px;padding:16px;border:2px solid;text-align:center;transition:transform .2s}
+.tool-card:hover{transform:translateY(-3px)}
+.lab-step{border-radius:8px;padding:12px 16px;display:flex;align-items:flex-start;gap:12px;margin-bottom:8px}
+.lab-num{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff;flex-shrink:0;font-size:13px}
+.eval-star{color:var(--gold);font-size:1.1rem}
+</style>
+</head>
+<body>
+<button class="print-btn" onclick="window.print()">🖨 Imprimir / PDF</button>
+<div class="snum" id="slideNum">1 / 13</div>
+
+<!-- S1 PORTADA -->
+<div class="slide active" id="s1">
+  <div class="banner" style="text-align:center;padding:50px 32px">
+    <div class="inst">Instituto Politécnico Nacional · UPIICSA · Lic. en Ciencias de la Informática · Semestre 7</div>
+    <h1>Cómputo en la Nube</h1>
+    <div class="sub" style="font-size:1.3rem;font-weight:700;margin-top:8px">Parcial 2 — Virtualización</div>
+    <div class="sub" style="margin-top:6px;opacity:.8">Unidad III · Semanas 6–10</div>
+    <div class="badges" style="justify-content:center;margin-top:22px">
+      <span class="badge">🖥️ Hipervisores</span>
+      <span class="badge">🔧 VirtualBox · VMware · Proxmox</span>
+      <span class="badge">☁️ Microsoft Azure</span>
+      <span class="badge">🌐 Virtualización de Red</span>
+      <span class="badge">💾 Almacenamiento Virtual</span>
+      <span class="badge">📊 Evaluación de Entornos</span>
+    </div>
+  </div>
+  <div class="card">
+    <p style="color:var(--muted);font-size:.9rem;margin-bottom:16px;text-align:center">Índice — haz clic para navegar</p>
+    <div class="toc-item" onclick="goTo(3)"><div class="tn">1</div><div><strong>¿Qué es la Virtualización?</strong><br><span style="font-size:.82rem;color:var(--muted)">Conceptos, hipervisores Tipo 1 y Tipo 2, beneficios</span></div></div>
+    <div class="toc-item" onclick="goTo(4)"><div class="tn">2</div><div><strong>Tipos de Virtualización</strong><br><span style="font-size:.82rem;color:var(--muted)">Servidor · Almacenamiento · Red · Escritorio · Aplicaciones · SO Distribuidos</span></div></div>
+    <div class="toc-item" onclick="goTo(5)"><div class="tn">3</div><div><strong>Herramientas: VirtualBox y VMware</strong><br><span style="font-size:.82rem;color:var(--muted)">Características · Instalación · Práctica de laboratorio</span></div></div>
+    <div class="toc-item" onclick="goTo(6)"><div class="tn">4</div><div><strong>Herramientas: Proxmox VE</strong><br><span style="font-size:.82rem;color:var(--muted)">Clúster HA · Gestión web · Contenedores LXC vs VMs</span></div></div>
+    <div class="toc-item" onclick="goTo(7)"><div class="tn">5</div><div><strong>Microsoft Azure — Virtualización en la Nube</strong><br><span style="font-size:.82rem;color:var(--muted)">Azure Virtual Machines · Redes virtuales · Práctica Azure for Students</span></div></div>
+    <div class="toc-item" onclick="goTo(8)"><div class="tn">6</div><div><strong>Escenarios de Gestión</strong><br><span style="font-size:.82rem;color:var(--muted)">Monitoreo · Clonación · Almacenamiento · Snapshots</span></div></div>
+    <div class="toc-item" onclick="goTo(9)"><div class="tn">7</div><div><strong>Evaluación de Entornos Virtualizados</strong><br><span style="font-size:.82rem;color:var(--muted)">Desempeño · Funcionalidad · Adaptabilidad · Seguridad</span></div></div>
+    <div class="toc-item" onclick="goTo(10)"><div class="tn">8</div><div><strong>Comparativa de Herramientas</strong><br><span style="font-size:.82rem;color:var(--muted)">VirtualBox vs VMware vs Proxmox vs Azure — tabla decisión</span></div></div>
+    <div class="toc-item" onclick="goTo(11)"><div class="tn">9</div><div><strong>Contenedores vs Máquinas Virtuales</strong><br><span style="font-size:.82rem;color:var(--muted)">Docker, Kubernetes y su relación con la nube</span></div></div>
+    <div class="toc-item" onclick="goTo(12)"><div class="tn">10</div><div><strong>Caso Práctico: TechMX — Fase 2</strong><br><span style="font-size:.82rem;color:var(--muted)">Entorno virtualizado del proyecto CloudStart MX</span></div></div>
+    <div class="toc-item" onclick="goTo(13)"><div class="tn">11</div><div><strong>Bibliografía</strong></div></div>
+  </div>
+</div>
+
+<!-- S2 OBJETIVOS -->
+<div class="slide" id="s2">
+  <div class="ph"><div><h2>Objetivos del Parcial 2</h2><div class="meta">Unidad III · 23 horas (12T + 7P + 4AA)</div></div><div style="font-size:2.5rem">🎯</div></div>
+  <div class="g2">
+    <div class="card">
+      <h3>Al terminar este parcial, el alumno será capaz de:</h3>
+      <ul class="cl">
+        <li>Explicar el concepto de virtualización y los tipos de hipervisores</li>
+        <li>Distinguir los tipos de virtualización: servidor, almacenamiento, red, escritorio y aplicaciones</li>
+        <li>Instalar y configurar entornos virtualizados con VirtualBox, VMware y Proxmox</li>
+        <li>Desplegar máquinas virtuales en Microsoft Azure</li>
+        <li>Gestionar escenarios de monitoreo, clonación y almacenamiento virtual</li>
+        <li>Evaluar entornos virtualizados en 4 dimensiones: desempeño, funcionalidad, adaptabilidad y seguridad</li>
+        <li>Recomendar la herramienta de virtualización adecuada para el contexto de TechMX</li>
+      </ul>
+    </div>
+    <div>
+      <div class="hb teal"><h4>🏗️ Proyecto CloudStart MX — Fase 2</h4><p style="font-size:.88rem">Construirás el <strong>Informe Técnico de Laboratorio</strong>: diseño de infraestructura virtualizada para TechMX, implementación de al menos 2 escenarios con evidencias, evaluación comparativa y recomendación de plataforma.</p></div>
+      <div class="hb gold"><h4>📊 Evaluación del parcial</h4><p style="font-size:.88rem">Fase 2 del proyecto (35) + Reportes de prácticas (25) + Cuadro sinóptico (10) + Examen escrito (20) + Problemas resueltos (10) = <strong>100 puntos</strong></p></div>
+      <div class="meta-box"><div class="lbl">💡 Metáfora del parcial</div><p style="font-size:.9rem">Si en el Parcial 1 fuiste el <strong>arquitecto</strong> que diseñó el edificio, en el Parcial 2 eres el <strong>constructor</strong> que levanta las paredes. La virtualización es la tecnología que permite construir muchos "edificios virtuales" dentro de un solo edificio físico, maximizando el uso del terreno.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- S3 QUÉ ES VIRTUALIZACIÓN -->
+<div class="slide" id="s3">
+  <div class="ph"><div><h2>¿Qué es la Virtualización?</h2><div class="meta">Unidad III · 3.1 — Fundamentos y tipos de hipervisores</div></div><div style="font-size:2.5rem">🖥️</div></div>
+  <div class="g2">
+    <div>
+      <div class="hb teal">
+        <h4>📖 Definición</h4>
+        <p style="font-size:.88rem">La virtualización es la tecnología que permite crear representaciones virtuales de recursos físicos (servidores, almacenamiento, redes), permitiendo que un solo hardware físico ejecute múltiples sistemas operativos o aplicaciones de forma aislada y simultánea.</p>
+        <p style="font-size:.83rem;margin-top:8px;font-style:italic">Metáfora: como dividir una casa en departamentos: el mismo edificio físico alberga múltiples hogares independientes, cada uno con sus propios servicios.</p>
+      </div>
+      <div class="card">
+        <h3>Hipervisor Tipo 1 vs Tipo 2</h3>
+        <div class="hb sky"><h4>Tipo 1 — Bare Metal (sobre el hardware)</h4><p style="font-size:.85rem">Corre directamente sobre el hardware físico sin OS anfitrión. Mayor rendimiento y seguridad. Usado en producción empresarial.</p><p style="font-size:.83rem;margin-top:4px"><strong>Ejemplos:</strong> VMware ESXi, Microsoft Hyper-V, Proxmox VE, KVM, Xen</p><p style="font-size:.82rem;font-style:italic;color:var(--muted)">Metáfora: el arquitecto que diseña directamente sobre el terreno.</p></div>
+        <div class="hb purple"><h4>Tipo 2 — Hosted (sobre un OS anfitrión)</h4><p style="font-size:.85rem">Se instala sobre un sistema operativo existente (Windows, Linux, macOS). Mayor compatibilidad pero menor rendimiento. Ideal para desarrollo y aprendizaje.</p><p style="font-size:.83rem;margin-top:4px"><strong>Ejemplos:</strong> VirtualBox, VMware Workstation Player, Parallels</p><p style="font-size:.82rem;font-style:italic;color:var(--muted)">Metáfora: construir una maqueta dentro de una habitación ya existente.</p></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Beneficios de la virtualización</h3>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="background:#CCFBF1;border-radius:8px;padding:10px;display:flex;gap:10px;align-items:flex-start"><span style="font-size:1.3rem">💰</span><div><strong>Reducción de costos:</strong> un servidor físico puede ejecutar 10-20 VMs, reduciendo drásticamente el hardware necesario.</div></div>
+          <div style="background:#DCFCE7;border-radius:8px;padding:10px;display:flex;gap:10px;align-items:flex-start"><span style="font-size:1.3rem">⚡</span><div><strong>Mayor eficiencia:</strong> los servidores tradicionales usan ~15% de su capacidad; con virtualización suben al 70-80%.</div></div>
+          <div style="background:#EDE9FE;border-radius:8px;padding:10px;display:flex;gap:10px;align-items:flex-start"><span style="font-size:1.3rem">🔄</span><div><strong>Alta disponibilidad:</strong> si un servidor físico falla, las VMs migran automáticamente a otro (Live Migration).</div></div>
+          <div style="background:#FEF3C7;border-radius:8px;padding:10px;display:flex;gap:10px;align-items:flex-start"><span style="font-size:1.3rem">🔐</span><div><strong>Aislamiento:</strong> cada VM es independiente; un virus en una VM no afecta a las demás.</div></div>
+          <div style="background:#E0F2FE;border-radius:8px;padding:10px;display:flex;gap:10px;align-items:flex-start"><span style="font-size:1.3rem">📸</span><div><strong>Snapshots:</strong> guardar el estado exacto de una VM en un momento dado. Respaldo instantáneo antes de cambios críticos.</div></div>
+          <div style="background:#FEE2E2;border-radius:8px;padding:10px;display:flex;gap:10px;align-items:flex-start"><span style="font-size:1.3rem">🌱</span><div><strong>Sustentabilidad:</strong> menos hardware físico = menor consumo eléctrico y menor huella de carbono (Green IT).</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S4 TIPOS DE VIRTUALIZACIÓN -->
+<div class="slide" id="s4">
+  <div class="ph"><div><h2>Tipos de Virtualización</h2><div class="meta">Unidad III · 3.1 — Infraestructura completa virtualizada</div></div><div style="font-size:2.5rem">🌐</div></div>
+  <div class="card" style="margin-bottom:14px">
+    <h3>Haz clic en cada tipo para ver sus detalles</h3>
+    <div class="virt-type" style="border-color:var(--sky);background:#EFF6FF" onclick="toggleVirt('srv')">
+      <strong style="color:var(--sky)">🖥️ Virtualización de Servidor</strong> — el más común
+      <div id="vt-srv" class="virt-detail">Múltiples VMs corriendo en un solo servidor físico. Cada VM tiene su propio OS, CPU virtual, RAM y almacenamiento asignado. <strong>Ejemplo:</strong> un servidor físico Dell con 64GB RAM corre 8 VMs de 8GB cada una para diferentes departamentos de TechMX. <strong>Herramientas:</strong> VMware ESXi, Proxmox, Hyper-V, KVM.</div>
+    </div>
+    <div class="virt-type" style="border-color:var(--teal);background:#F0FDFA" onclick="toggleVirt('alm')">
+      <strong style="color:var(--teal)">💾 Virtualización de Almacenamiento</strong> — abstrae el hardware de discos
+      <div id="vt-alm" class="virt-detail">Abstrae múltiples discos físicos (SATA, SAS, SSD) en un pool unificado gestionable. Permite crear volúmenes lógicos independientes del hardware. <strong>Ejemplo:</strong> 10 discos de 1TB se presentan al OS como un solo disco virtual de 10TB con redundancia. <strong>Tecnologías:</strong> RAID virtual, SAN, NAS, VMware VSAN, Ceph.</div>
+    </div>
+    <div class="virt-type" style="border-color:var(--purple);background:#F5F3FF" onclick="toggleVirt('red')">
+      <strong style="color:var(--purple)">🌐 Virtualización de Red</strong> — SDN (Software Defined Networking)
+      <div id="vt-red" class="virt-detail">Crea redes lógicas independientes sobre la misma infraestructura física de red. Permite segmentar tráfico, crear VLANs, y gestionar redes desde software. <strong>Ejemplo:</strong> TechMX puede tener red de producción, red de desarrollo y red de gestión completamente aisladas sobre los mismos switches físicos. <strong>Herramientas:</strong> VMware NSX, Open vSwitch, VLANs, Azure VNet.</div>
+    </div>
+    <div class="virt-type" style="border-color:var(--green);background:#F0FDF4" onclick="toggleVirt('esc')">
+      <strong style="color:var(--green)">🖥️ Virtualización de Escritorio (VDI)</strong> — Virtual Desktop Infrastructure
+      <div id="vt-esc" class="virt-detail">Los escritorios de los empleados corren como VMs en el servidor centralizado; el usuario solo necesita un thin client. <strong>Ejemplo:</strong> Los 50 empleados de TechMX acceden a su Windows 11 virtualizado desde cualquier dispositivo. <strong>Ventaja:</strong> gestión centralizada, menor costo de endpoints. <strong>Herramientas:</strong> VMware Horizon, Citrix, Azure Virtual Desktop.</div>
+    </div>
+    <div class="virt-type" style="border-color:var(--gold);background:#FFFBEB" onclick="toggleVirt('app')">
+      <strong style="color:var(--gold)">📦 Virtualización de Aplicaciones</strong> — aislamiento sin instalación
+      <div id="vt-app" class="virt-detail">La aplicación se empaqueta con sus dependencias y corre en un entorno aislado sin instalación tradicional. Evita conflictos de versiones. <strong>Ejemplo:</strong> TechMX corre Office 2019 y Office 365 simultáneamente en el mismo equipo sin conflictos. <strong>Herramientas:</strong> Microsoft App-V, VMware ThinApp, Citrix XenApp, Docker (contenedores).</div>
+    </div>
+    <div class="virt-type" style="border-color:var(--wine);background:#FFF1F2" onclick="toggleVirt('so')">
+      <strong style="color:var(--wine)">🔄 Sistemas Operativos Distribuidos</strong> — múltiples nodos como uno solo
+      <div id="vt-so" class="virt-detail">Múltiples computadoras trabajando como un único sistema coherente. El OS gestiona recursos distribuidos de forma transparente para el usuario. <strong>Ejemplo:</strong> El clúster de servidores de TechMX en la nube aparece como una sola máquina de gran capacidad. <strong>Tecnologías:</strong> Kubernetes, Hadoop, Apache Spark, Proxmox Cluster.</div>
+    </div>
+  </div>
+  <div class="meta-box"><div class="lbl">💡 Metáfora del edificio de apartamentos</div><p style="font-size:.92rem"><strong>Virtualización de servidor</strong> = dividir el edificio en apartamentos. <strong>Almacenamiento</strong> = el estacionamiento compartido donde cada inquilino tiene su cajón asignado. <strong>Red</strong> = los intercomunicadores y pasillos separados por piso. <strong>Escritorio</strong> = el portero que entrega el mismo "apartamento virtual" a cualquier inquilino desde cualquier sucursal. <strong>Aplicaciones</strong> = los electrodomésticos portátiles que el inquilino lleva a cualquier apartamento.</p></div>
+</div>
+
+<!-- S5 VIRTUALBOX Y VMWARE -->
+<div class="slide" id="s5">
+  <div class="ph"><div><h2>VirtualBox y VMware Workstation</h2><div class="meta">Unidad III · 3.1.3 — Herramientas de virtualización Tipo 2</div></div><div style="font-size:2.5rem">🔧</div></div>
+  <div class="g2">
+    <div>
+      <div class="tool-card" style="border-color:var(--sky);background:#EFF6FF;margin-bottom:14px">
+        <div style="font-size:2rem;margin-bottom:8px">📦</div>
+        <h3 style="color:var(--sky)">Oracle VirtualBox</h3>
+        <div class="g2" style="margin-top:10px;gap:8px">
+          <div class="hb sky" style="margin:0"><h4>Características</h4><ul style="font-size:.82rem;padding-left:14px"><li>100% gratuito y open source</li><li>Multiplataforma (Windows, Linux, macOS)</li><li>Soporte para snapshots</li><li>Red: NAT, Bridge, Host-Only, Internal</li><li>Extensión Pack para USB 3.0 y RDP</li></ul></div>
+          <div class="hb green" style="margin:0"><h4>Ideal para...</h4><ul style="font-size:.82rem;padding-left:14px"><li>Aprendizaje y laboratorio educativo</li><li>Desarrollo y pruebas locales</li><li>Presupuesto cero</li><li>Máquinas de estudiantes</li></ul></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Laboratorio 1: Primera VM en VirtualBox</h3>
+        <div class="lab-step" style="background:#E0F2FE"><div class="lab-num" style="background:var(--sky)">1</div><div><strong>Descargar e instalar</strong> VirtualBox desde virtualbox.org/wiki/Downloads. Seleccionar el paquete para tu OS anfitrión.</div></div>
+        <div class="lab-step" style="background:#CCFBF1"><div class="lab-num" style="background:var(--teal)">2</div><div><strong>Crear nueva VM:</strong> Máquina → Nueva → nombre "Ubuntu-TechMX", tipo Linux, versión Ubuntu 64-bit, 2GB RAM, 20GB disco VDI.</div></div>
+        <div class="lab-step" style="background:#DCFCE7"><div class="lab-num" style="background:var(--green)">3</div><div><strong>Montar ISO:</strong> Configuración → Almacenamiento → Controlador IDE → agregar ISO de Ubuntu Server 22.04 descargada previamente.</div></div>
+        <div class="lab-step" style="background:#EDE9FE"><div class="lab-num" style="background:var(--purple)">4</div><div><strong>Configurar red:</strong> Configuración → Red → Adaptador 1: NAT (para internet), Adaptador 2: Red Interna "TechMX-LAN".</div></div>
+        <div class="lab-step" style="background:#FEF3C7"><div class="lab-num" style="background:var(--gold)">5</div><div><strong>Instalar Ubuntu</strong> y tomar snapshot inicial: Máquina → Tomar instantánea "Instalación limpia".</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="tool-card" style="border-color:var(--teal);background:#F0FDFA;margin-bottom:14px">
+        <div style="font-size:2rem;margin-bottom:8px">⚡</div>
+        <h3 style="color:var(--teal)">VMware Workstation Player</h3>
+        <div class="g2" style="margin-top:10px;gap:8px">
+          <div class="hb teal" style="margin:0"><h4>Características</h4><ul style="font-size:.82rem;padding-left:14px"><li>Gratuito para uso personal/educativo</li><li>Mejor rendimiento que VirtualBox</li><li>Soporte 3D/DirectX más robusto</li><li>Easy Install (automatiza instalación OS)</li><li>Compatible con VMs de VMware ESXi</li></ul></div>
+          <div class="hb gold" style="margin:0"><h4>Ideal para...</h4><ul style="font-size:.82rem;padding-left:14px"><li>Simular entornos de producción</li><li>Testing de aplicaciones Windows</li><li>Mayor rendimiento en laboratorio</li><li>Preparar para VMware ESXi</li></ul></div>
+        </div>
+      </div>
+      <div class="hb purple">
+        <h4>🆚 VirtualBox vs VMware Player — ¿Cuál usar?</h4>
+        <table class="t" style="font-size:.82rem;margin-top:8px">
+          <tr><td><strong>Costo</strong></td><td>Ambos gratuitos</td></tr>
+          <tr><td><strong>Rendimiento</strong></td><td>VMware ligeramente superior</td></tr>
+          <tr><td><strong>Compatibilidad</strong></td><td>VirtualBox más plataformas (macOS M1)</td></tr>
+          <tr><td><strong>Snapshots</strong></td><td>VirtualBox más flexible</td></tr>
+          <tr><td><strong>Portabilidad</strong></td><td>VMware formato .vmdk ampliamente soportado</td></tr>
+          <tr><td><strong>Para el curso</strong></td><td>VirtualBox recomendado (más soporte)</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S6 PROXMOX -->
+<div class="slide" id="s6">
+  <div class="ph"><div><h2>Proxmox VE — Virtualización Empresarial</h2><div class="meta">Unidad III · 3.1.3 — Plataforma open source Tipo 1</div></div><div style="font-size:2.5rem">🏗️</div></div>
+  <div class="g2">
+    <div>
+      <div class="hb teal">
+        <h4>🔍 ¿Qué es Proxmox VE?</h4>
+        <p style="font-size:.88rem">Proxmox Virtual Environment es una plataforma de virtualización empresarial <strong>open source</strong> basada en Debian Linux. Combina virtualización con KVM (VMs completas) y contenedores LXC en una sola interfaz web. Ideal para servidores de producción y laboratorios avanzados.</p>
+        <ul style="font-size:.85rem;padding-left:16px;margin-top:8px">
+          <li><strong>100% gratuito</strong> (soporte comercial opcional)</li>
+          <li>Interfaz web potente para gestión completa</li>
+          <li>Clustering nativo: múltiples nodos como una sola plataforma</li>
+          <li>Alta disponibilidad (HA) automática</li>
+          <li>Backup integrado (Proxmox Backup Server)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>KVM vs Contenedores LXC en Proxmox</h3>
+        <table class="t">
+          <thead><tr><th>Aspecto</th><th>VM (KVM)</th><th>Contenedor (LXC)</th></tr></thead>
+          <tbody>
+            <tr><td>Aislamiento</td><td>Completo (propio kernel)</td><td>Parcial (kernel compartido)</td></tr>
+            <tr><td>Overhead</td><td>Mayor (hipervisor + OS)</td><td>Mínimo</td></tr>
+            <tr><td>Arranque</td><td>30-60 segundos</td><td>1-5 segundos</td></tr>
+            <tr><td>OS invitado</td><td>Cualquiera (Windows, Linux)</td><td>Solo Linux</td></tr>
+            <tr><td>Uso típico</td><td>Producción compleja</td><td>Microservicios, web apps</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Alta Disponibilidad (HA) en Proxmox</h3>
+        <div class="hb sky"><h4>¿Qué es un clúster HA?</h4><p style="font-size:.85rem">Múltiples nodos Proxmox trabajando juntos. Si un nodo falla, las VMs migran automáticamente a otro nodo activo sin intervención manual.</p><p style="font-size:.83rem;margin-top:6px;font-style:italic">Metáfora: como un equipo de cirujanos donde si el cirujano principal se desmaya, otro toma el bisturí automáticamente sin que el paciente note la diferencia.</p></div>
+        <div class="hb gold"><h4>Requisitos mínimos para HA</h4><ul style="font-size:.85rem;padding-left:16px;margin-top:6px"><li>Mínimo 3 nodos (para quórum de votación)</li><li>Almacenamiento compartido (Ceph, NFS, iSCSI)</li><li>Red de gestión dedicada (Corosync)</li><li>Fencing: mecanismo para aislar nodo fallido</li></ul></div>
+        <div class="hb green"><h4>Laboratorio 2: Proxmox en VirtualBox (nested virtualization)</h4><ul style="font-size:.85rem;padding-left:16px;margin-top:6px"><li>Crear VM en VirtualBox con 4GB RAM, 40GB disco, habilitar VT-x/AMD-V</li><li>Instalar Proxmox VE desde ISO (proxmox.com/downloads)</li><li>Acceder a la interfaz web: https://IP:8006</li><li>Crear VM Ubuntu dentro de Proxmox (virtualización anidada)</li></ul></div>
+      </div>
+    </div>
+  </div>
+  <div class="meta-box"><div class="lbl">💡 Proxmox para TechMX</div><p style="font-size:.92rem">Si TechMX decide implementar una nube privada antes de migrar completamente a Azure, Proxmox es la opción ideal: costo cero de licencias, interfaz web fácil de usar, y escalable de 1 servidor a un clúster de 10 nodos sin cambio de plataforma. Muchas empresas mexicanas usan Proxmox como nube privada de transición.</p></div>
+</div>
+
+<!-- S7 AZURE -->
+<div class="slide" id="s7">
+  <div class="ph"><div><h2>Microsoft Azure — Virtualización en la Nube</h2><div class="meta">Unidad III · 3.1.3 — Práctica con Azure for Students</div></div><div style="font-size:2.5rem">☁️</div></div>
+  <div class="g2">
+    <div>
+      <div class="hb sky">
+        <h4>🔵 Azure Virtual Machines</h4>
+        <p style="font-size:.88rem">El servicio IaaS más popular de Azure. Permite crear VMs Windows o Linux en minutos, elegir el tamaño (CPU/RAM), configurar redes virtuales y almacenamiento, todo desde el portal web o mediante CLI/API.</p>
+      </div>
+      <div class="card">
+        <h3>Laboratorio 3: Primera VM en Azure for Students</h3>
+        <div class="lab-step" style="background:#DBEAFE"><div class="lab-num" style="background:var(--sky)">1</div><div><strong>Activar Azure for Students:</strong> azure.microsoft.com/es-mx/free/students → usar correo institucional IPN. Obtienes $100 USD de crédito.</div></div>
+        <div class="lab-step" style="background:#CCFBF1"><div class="lab-num" style="background:var(--teal)">2</div><div><strong>Crear grupo de recursos:</strong> Portal → Grupos de recursos → Crear → nombre "RG-TechMX-Dev", región "East US".</div></div>
+        <div class="lab-step" style="background:#DCFCE7"><div class="lab-num" style="background:var(--green)">3</div><div><strong>Crear VM:</strong> Máquinas Virtuales → Crear → Ubuntu Server 22.04, tamaño B1s (1 vCPU, 1GB RAM — costo mínimo), autenticación SSH.</div></div>
+        <div class="lab-step" style="background:#EDE9FE"><div class="lab-num" style="background:var(--purple)">4</div><div><strong>Configurar red:</strong> crear VNet "VNet-TechMX", subred "Subnet-Dev", grupo de seguridad con puerto 22 (SSH) y 80 (HTTP) abiertos.</div></div>
+        <div class="lab-step" style="background:#FEF3C7"><div class="lab-num" style="background:var(--gold)">5</div><div><strong>Conectar y documentar:</strong> SSH a la VM pública, instalar Apache, capturar pantalla de la web funcionando. <strong>⚠️ Apagar la VM cuando no se use</strong> para conservar créditos.</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Componentes clave de infraestructura Azure</h3>
+        <table class="t">
+          <thead><tr><th>Componente</th><th>Descripción</th><th>Equivalente on-premise</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Virtual Machine</strong></td><td>VM completa con OS</td><td>Servidor físico</td></tr>
+            <tr><td><strong>Virtual Network (VNet)</strong></td><td>Red privada en Azure</td><td>Switch/VLAN corporativa</td></tr>
+            <tr><td><strong>Managed Disks</strong></td><td>Almacenamiento para VMs</td><td>Disco duro/SAN</td></tr>
+            <tr><td><strong>Load Balancer</strong></td><td>Distribuye tráfico entre VMs</td><td>Load balancer físico</td></tr>
+            <tr><td><strong>Network Security Group</strong></td><td>Firewall a nivel de VM</td><td>Firewall corporativo</td></tr>
+            <tr><td><strong>Azure Bastion</strong></td><td>Acceso RDP/SSH seguro</td><td>Jump server</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="hb gold">
+        <h4>💡 Ahorro de créditos Azure for Students</h4>
+        <ul style="font-size:.85rem;padding-left:16px;margin-top:6px">
+          <li>Usar siempre el tamaño más pequeño para prácticas (B1s: ~$7/mes)</li>
+          <li>Apagar VMs cuando no se usen (el disco sigue cobrando, no el cómputo)</li>
+          <li>Configurar alertas de presupuesto en $20 USD</li>
+          <li>Usar Azure Cost Management para monitorear gasto en tiempo real</li>
+          <li>Eliminar grupos de recursos completos al terminar prácticas</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S8 ESCENARIOS DE GESTIÓN -->
+<div class="slide" id="s8">
+  <div class="ph"><div><h2>Escenarios de Gestión Virtualizada</h2><div class="meta">Unidad III · 3.2 — Monitoreo · Clonación · Almacenamiento</div></div><div style="font-size:2.5rem">⚙️</div></div>
+  <div class="g3">
+    <div class="card">
+      <h3>📊 Monitoreo de Procesos</h3>
+      <div class="hb teal"><h4>¿Qué monitorear?</h4><ul style="font-size:.85rem;padding-left:14px"><li>CPU: % de uso por VM, tiempo de espera (steal time)</li><li>RAM: uso, swap, ballon driver</li><li>Disco: IOPS, latencia de lectura/escritura</li><li>Red: ancho de banda, paquetes perdidos</li><li>Estado del hipervisor: temperatura, energía</li></ul></div>
+      <div class="hb sky"><h4>Herramientas de monitoreo</h4><ul style="font-size:.85rem;padding-left:14px"><li>Proxmox: panel web integrado, Grafana</li><li>Azure: Azure Monitor, Log Analytics</li><li>VirtualBox: estadísticas de VM integradas</li><li>Linux: htop, iotop, nethogs</li></ul></div>
+      <p style="font-size:.82rem;margin-top:8px;font-style:italic;color:var(--muted)">Metáfora: el tablero de instrumentos del avión — muestra en tiempo real si todos los motores funcionan correctamente.</p>
+    </div>
+    <div class="card">
+      <h3>📋 Clonación de Servicios</h3>
+      <div class="hb purple"><h4>Tipos de clonación</h4><ul style="font-size:.85rem;padding-left:14px"><li><strong>Clon completo:</strong> copia independiente total de la VM. Ocupa el mismo espacio en disco.</li><li><strong>Clon enlazado:</strong> usa el disco base de origen; solo guarda diferencias. Ahorra espacio pero más lento.</li><li><strong>Template/Plantilla:</strong> VM maestra sellada para crear múltiples clones rápidamente.</li></ul></div>
+      <div class="hb gold"><h4>Caso de uso TechMX</h4><p style="font-size:.85rem">Crear una plantilla "Ubuntu-Web-TechMX" con Apache y las dependencias instaladas. Clonarla en 5 minutos para cada nuevo servidor web necesario, en lugar de instalar desde cero (4 horas cada uno).</p></div>
+      <p style="font-size:.82rem;margin-top:8px;font-style:italic;color:var(--muted)">Metáfora: como la impresora 3D que puede producir el mismo objeto n veces a partir de un solo diseño.</p>
+    </div>
+    <div class="card">
+      <h3>💾 Almacenamiento Virtual</h3>
+      <div class="hb green"><h4>Tipos de almacenamiento en VMs</h4><ul style="font-size:.85rem;padding-left:14px"><li><strong>VDI/VMDK/VHD:</strong> formatos de disco virtual (VirtualBox/VMware/Hyper-V)</li><li><strong>Thin provisioning:</strong> el disco crece según se usa (ahorra espacio)</li><li><strong>Thick provisioning:</strong> reserva todo el espacio al crear (mejor rendimiento)</li><li><strong>NFS/iSCSI:</strong> almacenamiento compartido entre VMs en red</li></ul></div>
+      <div class="hb sky"><h4>Snapshots (Instantáneas)</h4><p style="font-size:.85rem">Guardan el estado completo de la VM (RAM + disco + configuración) en un momento dado. Permiten revertir cambios en segundos.</p><p style="font-size:.82rem;margin-top:6px;font-style:italic">Metáfora: el punto de guardado en un videojuego antes de entrar al boss final.</p></div>
+    </div>
+  </div>
+  <div class="meta-box"><div class="lbl">💡 Los 3 escenarios aplicados a TechMX</div><p style="font-size:.92rem"><strong>Monitoreo:</strong> dashboard en Azure Monitor que alerta cuando el CPU del servidor de BD supera 80%. <strong>Clonación:</strong> plantilla "WebServer-TechMX" para desplegar nuevos servidores en 5 minutos cuando haya picos de demanda. <strong>Almacenamiento:</strong> discos Azure Managed con geo-redundancia para que los datos de TechMX sobrevivan un fallo del data center completo.</p></div>
+</div>
+
+<!-- S9 EVALUACIÓN DE ENTORNOS -->
+<div class="slide" id="s9">
+  <div class="ph"><div><h2>Evaluación de Entornos Virtualizados</h2><div class="meta">Unidad III · 3.3 — 4 dimensiones de evaluación</div></div><div style="font-size:2.5rem">📊</div></div>
+  <div class="g2">
+    <div>
+      <div class="card">
+        <h3>Las 4 dimensiones de evaluación (criterios 3.3)</h3>
+        <div class="hb teal"><h4>⚡ Desempeño</h4><p style="font-size:.85rem">¿Qué tan rápido y eficiente es el entorno?</p><ul style="font-size:.83rem;padding-left:14px;margin-top:4px"><li>Latencia de I/O de disco (ms)</li><li>Overhead del hipervisor (% CPU extra)</li><li>Throughput de red (Mbps)</li><li>Tiempo de arranque de la VM</li><li>Rendimiento bajo carga (benchmark)</li></ul></div>
+        <div class="hb sky"><h4>🔧 Funcionalidad</h4><p style="font-size:.85rem">¿Qué características y capacidades ofrece?</p><ul style="font-size:.83rem;padding-left:14px;margin-top:4px"><li>Tipos de virtualización soportados</li><li>Herramientas de gestión disponibles</li><li>Soporte de snapshots y clonación</li><li>Integración con herramientas externas</li><li>Consola de gestión (web/GUI/CLI)</li></ul></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>&nbsp;</h3>
+        <div class="hb purple"><h4>🔄 Adaptabilidad</h4><p style="font-size:.85rem">¿Qué tan flexible y escalable es?</p><ul style="font-size:.83rem;padding-left:14px;margin-top:4px"><li>Escalabilidad horizontal (agregar nodos)</li><li>Compatibilidad con múltiples OS</li><li>Integración con cloud (híbrido)</li><li>Portabilidad de VMs entre plataformas</li><li>Soporte de automatización (APIs, Ansible)</li></ul></div>
+        <div class="hb wine"><h4>🔐 Seguridad</h4><p style="font-size:.85rem">¿Qué tan seguro es el entorno?</p><ul style="font-size:.83rem;padding-left:14px;margin-top:4px"><li>Aislamiento entre VMs</li><li>Control de acceso basado en roles</li><li>Cifrado de datos en reposo y tránsito</li><li>Auditoría y logs de actividad</li><li>Certificaciones de seguridad del proveedor</li></ul></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Quiz — Evaluación aplicada</h3>
+    <p style="font-size:.88rem;margin-bottom:12px">TechMX necesita que si un servidor falla, las VMs migren automáticamente a otro sin interrumpir a los usuarios. ¿Qué dimensión de evaluación es la más crítica para esta decisión?</p>
+    <button class="quiz-btn" onclick="ansQ9('a')">⚡ Desempeño</button>
+    <button class="quiz-btn" onclick="ansQ9('b')">🔧 Funcionalidad</button>
+    <button class="quiz-btn" onclick="ansQ9('c')">🔄 Adaptabilidad</button>
+    <button class="quiz-btn" onclick="ansQ9('d')">🔐 Seguridad</button>
+    <div id="q9ok" class="qfb qok">✅ ¡Correcto! La <strong>Funcionalidad</strong> es la más crítica aquí: necesitas que la plataforma tenga la función de Alta Disponibilidad (HA) y Live Migration. Proxmox y VMware ESXi la tienen; VirtualBox no. Esta función es lo que habilita la migración automática al fallar un nodo.</div>
+    <div id="q9err" class="qfb qerr">❌ Revisa. La migración automática ante fallos es una función específica del hipervisor (Alta Disponibilidad). Esto corresponde a la dimensión de <strong>Funcionalidad</strong>. El desempeño, adaptabilidad y seguridad también importan, pero la HA es una función que la plataforma tiene o no tiene.</div>
+  </div>
+</div>
+
+<!-- S10 COMPARATIVA -->
+<div class="slide" id="s10">
+  <div class="ph"><div><h2>Comparativa de Herramientas de Virtualización</h2><div class="meta">Unidad III · 3.3 — Cuadro sinóptico final</div></div><div style="font-size:2.5rem">📋</div></div>
+  <div class="card" style="margin-bottom:16px">
+    <h3>Tabla comparativa completa — VirtualBox · VMware · Proxmox · Azure</h3>
+    <div style="overflow-x:auto">
+      <table class="t">
+        <thead><tr><th>Criterio</th><th>VirtualBox</th><th>VMware Workstation</th><th>Proxmox VE</th><th>Azure VMs</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Tipo de hipervisor</strong></td><td>Tipo 2</td><td>Tipo 2</td><td>Tipo 1 (KVM)</td><td>Tipo 1 (Hyper-V)</td></tr>
+          <tr><td><strong>Costo</strong></td><td>🟢 Gratuito</td><td>🟢 Gratuito (Player)</td><td>🟢 Open Source</td><td>🔴 Pago por uso</td></tr>
+          <tr><td><strong>OS anfitrión</strong></td><td>Windows/Linux/macOS</td><td>Windows/Linux</td><td>Debian (bare metal)</td><td>N/A (cloud)</td></tr>
+          <tr><td><strong>Rendimiento</strong></td><td>🟡 Medio</td><td>🟡 Medio-Alto</td><td>🟢 Alto</td><td>🟢 Muy Alto</td></tr>
+          <tr><td><strong>Alta disponibilidad</strong></td><td>🔴 No</td><td>🔴 No</td><td>🟢 Sí (clúster)</td><td>🟢 Sí (SLA 99.9%)</td></tr>
+          <tr><td><strong>Gestión web</strong></td><td>🔴 No</td><td>🔴 No</td><td>🟢 Sí (potente)</td><td>🟢 Sí (Azure Portal)</td></tr>
+          <tr><td><strong>Escalabilidad</strong></td><td>🔴 Local</td><td>🔴 Local</td><td>🟡 Clúster</td><td>🟢 Global</td></tr>
+          <tr><td><strong>Seguridad empresarial</strong></td><td>🟡 Básica</td><td>🟡 Básica</td><td>🟢 Buena</td><td>🟢 Excelente (ISO27001)</td></tr>
+          <tr><td><strong>Ideal para</strong></td><td>Laboratorio educativo</td><td>Desarrollo/testing</td><td>Nube privada PyME</td><td>Producción cloud</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="hb teal">
+      <h4>🏆 Recomendación para TechMX</h4>
+      <p style="font-size:.88rem"><strong>Estrategia híbrida de 2 etapas:</strong></p>
+      <ol style="font-size:.85rem;padding-left:16px;margin-top:6px">
+        <li><strong>Corto plazo (0-6 meses):</strong> migrar servidores a <strong>Proxmox</strong> on-premise para reducir hardware y costos de licencias. Inversión inicial baja.</li>
+        <li><strong>Largo plazo (6-18 meses):</strong> migrar cargas a <strong>Azure</strong> progresivamente, empezando por aplicaciones no críticas. El correo y CRM a SaaS (Microsoft 365 + Dynamics).</li>
+      </ol>
+    </div>
+    <div class="hb gold">
+      <h4>📝 Entregable del cuadro sinóptico</h4>
+      <p style="font-size:.88rem">El cuadro sinóptico debe incluir:</p>
+      <ul style="font-size:.85rem;padding-left:16px;margin-top:6px">
+        <li>Todas las herramientas del programa (Azure, VirtualBox, VMware, Proxmox)</li>
+        <li>Clasificación por tipo de hipervisor</li>
+        <li>Las 4 dimensiones de evaluación con puntuación</li>
+        <li>Justificación de la recomendación para TechMX</li>
+        <li>Evidencias de las prácticas (capturas de pantalla)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- S11 CONTENEDORES VS VMs -->
+<div class="slide" id="s11">
+  <div class="ph"><div><h2>Contenedores vs Máquinas Virtuales</h2><div class="meta">Unidad III — Docker, Kubernetes y su relación con la nube</div></div><div style="font-size:2.5rem">📦</div></div>
+  <div class="g2">
+    <div>
+      <div class="hb teal">
+        <h4>🖥️ Máquina Virtual (VM)</h4>
+        <p style="font-size:.88rem">Emula hardware completo: tiene su propio kernel, OS completo, librerías y aplicación. Aislamiento total. Mayor overhead (tamaño: 1-10GB+).</p>
+        <p style="font-size:.83rem;margin-top:8px;font-style:italic">Metáfora: una casa independiente con su propio sistema de agua, luz y gas.</p>
+        <ul style="font-size:.83rem;padding-left:14px;margin-top:8px">
+          <li>✅ Aislamiento completo (Windows + Linux en el mismo host)</li>
+          <li>✅ Más seguro para workloads críticos</li>
+          <li>❌ Arranque lento (minutos)</li>
+          <li>❌ Mayor consumo de recursos (RAM, disco)</li>
+        </ul>
+      </div>
+      <div class="hb purple">
+        <h4>📦 Contenedor (Docker/LXC)</h4>
+        <p style="font-size:.88rem">Comparte el kernel del OS anfitrión pero aísla la aplicación con sus dependencias. Ultra-ligero (tamaño: 10-500MB). Arranque en segundos.</p>
+        <p style="font-size:.83rem;margin-top:8px;font-style:italic">Metáfora: departamentos en un edificio: comparten la estructura pero cada uno es independiente.</p>
+        <ul style="font-size:.83rem;padding-left:14px;margin-top:8px">
+          <li>✅ Ultra-rápido y ligero</li>
+          <li>✅ Portabilidad total: "corre igual en cualquier parte"</li>
+          <li>❌ Solo Linux (o WSL2 en Windows)</li>
+          <li>❌ Menor aislamiento que VMs</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Kubernetes — Orquestación de contenedores</h3>
+        <div class="hb sky"><h4>¿Qué es Kubernetes (K8s)?</h4><p style="font-size:.85rem">Sistema open source de Google para automatizar el despliegue, escalado y gestión de aplicaciones en contenedores. Gestiona clústeres de contenedores Docker/Containerd.</p></div>
+        <div class="hb green"><h4>Casos de uso</h4><ul style="font-size:.85rem;padding-left:14px;margin-top:4px"><li>Escalar automáticamente una app web cuando hay picos de tráfico</li><li>Actualizar una aplicación sin downtime (rolling updates)</li><li>Recuperar automáticamente contenedores que fallan</li></ul></div>
+        <div class="hb gold"><h4>Kubernetes en Azure</h4><p style="font-size:.85rem"><strong>AKS (Azure Kubernetes Service)</strong>: Kubernetes gestionado en Azure. TechMX puede desplegar sus microservicios en contenedores y que Azure gestione automáticamente la infraestructura subyacente.</p></div>
+      </div>
+      <div class="meta-box"><div class="lbl">💡 VM vs Contenedor en TechMX</div><p style="font-size:.88rem"><strong>Usar VMs para:</strong> el servidor de BD Oracle (necesita Windows Server específico) y el servidor de archivos. <strong>Usar contenedores para:</strong> la aplicación web del ERP (Docker en Azure AKS) donde necesitan escalar rápido y hacer deployments frecuentes. Los contenedores son el futuro del cloud moderno.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- S12 CASO PRÁCTICO -->
+<div class="slide" id="s12">
+  <div class="ph"><div><h2>Caso Práctico — TechMX · Fase 2</h2><div class="meta">Proyecto CloudStart MX · Entorno Virtualizado</div></div><div style="font-size:2.5rem">🔧</div></div>
+  <div class="hb teal" style="margin-bottom:18px"><h4>📋 Situación actual de TechMX (continuación)</h4><p style="font-size:.9rem">TechMX aprobó la propuesta de arquitectura de la Fase 1. Ahora necesita implementar el entorno virtualizado antes de la migración completa a Azure. El equipo debe demostrar que la solución funciona en un entorno de laboratorio con al menos 2 herramientas diferentes, documentando evidencias técnicas.</p></div>
+  <div class="g2">
+    <div class="card">
+      <h3>Entregable — Informe Técnico de Laboratorio (Fase 2)</h3>
+      <ul class="cl">
+        <li><strong>Sección 1 — Diseño de infraestructura:</strong> diagrama de la arquitectura virtualizada para TechMX (servidores, red, almacenamiento)</li>
+        <li><strong>Sección 2 — Escenario 1 (VirtualBox o VMware):</strong> configuración documentada con capturas de pantalla paso a paso</li>
+        <li><strong>Sección 3 — Escenario 2 (Proxmox o Azure):</strong> segundo entorno con evidencias técnicas</li>
+        <li><strong>Sección 4 — Evaluación comparativa:</strong> tabla con las 4 dimensiones (desempeño, funcionalidad, adaptabilidad, seguridad) puntuada</li>
+        <li><strong>Sección 5 — Cuadro sinóptico y recomendación:</strong> herramienta seleccionada para producción de TechMX con justificación técnica y económica</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Escenarios mínimos requeridos</h3>
+        <div class="hb sky"><h4>Escenario A — Red interna de TechMX</h4><p style="font-size:.85rem">Crear 2 VMs en VirtualBox/VMware en la misma red interna "TechMX-LAN": VM1 = Web Server (Ubuntu + Apache), VM2 = DB Server (Ubuntu + MySQL). Verificar conectividad entre ellas.</p></div>
+        <div class="hb teal"><h4>Escenario B — Nube híbrida básica</h4><p style="font-size:.85rem">Desplegar VM en Azure for Students (Ubuntu Server), instalar servicio web, configurar NSG para acceso HTTP/SSH. Demostrar acceso desde internet.</p></div>
+        <div class="hb gold"><h4>Escenario C (opcional, puntos extra)</h4><p style="font-size:.85rem">Instalar Proxmox en VM anidada, crear al menos 1 contenedor LXC y 1 VM KVM. Demostrar acceso a la interfaz web de Proxmox desde el OS anfitrión.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S13 BIBLIOGRAFÍA -->
+<div class="slide" id="s13">
+  <div class="ph"><div><h2>Bibliografía del Parcial 2</h2><div class="meta">Fuentes básicas y complementarias</div></div><div style="font-size:2.5rem">📚</div></div>
+  <div class="g2">
+    <div class="card">
+      <h3>📗 Bibliografía básica</h3>
+      <ul class="cl">
+        <li><strong>Lescay, M. (2019).</strong> <em>Clúster de alta disponibilidad HA en Proxmox.</em> Académica Española. ISBN: 6200052905. <span class="pill pt">Caps. 2–5</span></li>
+        <li><strong>Castiglione, F. (2017).</strong> <em>Virtualización en entornos cloud.</em> Académica Española. ISBN: 9783330097124.</li>
+        <li><strong>Fernández, R. &amp; García, P. (2011).</strong> Virtualización. <em>Revista Telemática.</em> ISSN: 17293804.</li>
+        <li><strong>Joyanes, L. (2015).</strong> <em>Computación en la Nube.</em> Alfaomega. <span class="pill pt">Cap. 5 — Virtualización</span></li>
+        <li><strong>Springer, A. (2012).</strong> <em>El gran libro de cloud computing.</em> Axel Springer. <span class="pill pt">Cap. 4</span></li>
+        <li><strong>Kirsch, D. &amp; Hurwitz, J. (2020).</strong> <em>Cloud Computing for Dummies.</em> For Dummies.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>📘 Recursos digitales de laboratorio</h3>
+      <ul class="cl">
+        <li><strong>Oracle VirtualBox Documentation.</strong> virtualbox.org/wiki/Documentation</li>
+        <li><strong>VMware Workstation Player.</strong> vmware.com/products/workstation-player</li>
+        <li><strong>Proxmox VE Documentation.</strong> pve.proxmox.com/wiki/Main_Page</li>
+        <li><strong>Microsoft Azure Documentation.</strong> docs.microsoft.com/azure</li>
+        <li><strong>Azure for Students.</strong> azure.microsoft.com/es-mx/free/students</li>
+        <li><strong>Docker Documentation.</strong> docs.docker.com</li>
+        <li><strong>Kubernetes Documentation.</strong> kubernetes.io/docs</li>
+        <li><strong>Gupta, D. &amp; Kamparia, A. (2020).</strong> <em>Fog, edge, and pervasive computing in intelligent IoT driven applications.</em> Wiley-IEEE Press.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <h3>🌐 Recursos de práctica gratuitos</h3>
+    <div class="g3">
+      <div class="hb teal"><h4>Laboratorios virtuales</h4><ul style="font-size:.82rem;padding-left:14px;margin-top:6px"><li>Microsoft Learn — labs.azure.com</li><li>AWS Academy (educación)</li><li>Google Cloud Skills Boost</li></ul></div>
+      <div class="hb sky"><h4>Tutoriales de virtualización</h4><ul style="font-size:.82rem;padding-left:14px;margin-top:6px"><li>Proxmox VE: Tutorial Español (YouTube)</li><li>VirtualBox Getting Started Guide</li><li>VMware Hands-on Labs (vmware.com/hol)</li></ul></div>
+      <div class="hb gold"><h4>Certificaciones cloud relevantes</h4><ul style="font-size:.82rem;padding-left:14px;margin-top:6px"><li>Azure Administrator AZ-104</li><li>VMware VCP-DCV</li><li>AWS SysOps Administrator</li></ul></div>
+    </div>
+  </div>
+  <div class="banner" style="text-align:center;padding:22px 32px;margin-top:4px">
+    <h2 style="font-size:1.2rem;margin-bottom:8px">🎓 ¡Éxito en el Parcial 2!</h2>
+    <p style="opacity:.9;font-size:.9rem">UPIICSA · IPN · Cómputo en la Nube · Plan 2021</p>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <button onclick="prevSlide()" id="btnPrev">← Anterior</button>
+  <div class="dots" id="navDots"></div>
+  <span class="nav-label" id="navLabel">Portada</span>
+  <button onclick="nextSlide()" id="btnNext">Siguiente →</button>
+</div>
+
+<script>
+const SLIDES=[
+  {id:'s1',label:'Portada'},{id:'s2',label:'Objetivos'},{id:'s3',label:'¿Qué es Virtualización?'},
+  {id:'s4',label:'Tipos de Virtualización'},{id:'s5',label:'VirtualBox y VMware'},{id:'s6',label:'Proxmox VE'},
+  {id:'s7',label:'Microsoft Azure'},{id:'s8',label:'Escenarios de Gestión'},{id:'s9',label:'Evaluación de Entornos'},
+  {id:'s10',label:'Comparativa de Herramientas'},{id:'s11',label:'Contenedores vs VMs'},{id:'s12',label:'Caso TechMX'},
+  {id:'s13',label:'Bibliografía'}
+];
+let cur=0;
+const dotsEl=document.getElementById('navDots');
+SLIDES.forEach((_,i)=>{const d=document.createElement('span');if(i===0)d.classList.add('active');d.onclick=()=>goTo(i+1);dotsEl.appendChild(d);});
+function showSlide(idx){
+  SLIDES.forEach((s,i)=>document.getElementById(s.id).classList.toggle('active',i===idx));
+  dotsEl.querySelectorAll('span').forEach((d,i)=>d.classList.toggle('active',i===idx));
+  document.getElementById('navLabel').textContent=SLIDES[idx].label;
+  document.getElementById('btnPrev').disabled=idx===0;
+  document.getElementById('btnNext').disabled=idx===SLIDES.length-1;
+  document.getElementById('slideNum').textContent=`${idx+1} / ${SLIDES.length}`;
+  window.scrollTo(0,0);cur=idx;
+}
+function nextSlide(){if(cur<SLIDES.length-1)showSlide(cur+1);}
+function prevSlide(){if(cur>0)showSlide(cur-1);}
+function goTo(n){showSlide(n-1);}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowDown')nextSlide();if(e.key==='ArrowLeft'||e.key==='ArrowUp')prevSlide();});
+function toggleVirt(id){document.getElementById('vt-'+id).classList.toggle('open');}
+function ansQ9(a){document.getElementById('q9ok').style.display=a==='b'?'block':'none';document.getElementById('q9err').style.display=a!=='b'?'block':'none';}
+showSlide(0);
+</script>
+</body>
+</html>

@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parcial 3 — Cómputo en la Nube · UPIICSA · IPN</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--sky:#0369A1;--sky2:#0EA5E9;--teal:#0D9488;--teal2:#2DD4BF;--purple:#7C3AED;--green:#16A34A;--gold:#D97706;--red:#DC2626;--navy:#1E3A5F;--bg:#F0F9FF;--card:#fff;--border:#CBD5E1;--text:#0F172A;--muted:#64748B;--r:12px;--sh:0 2px 16px rgba(0,0,0,.08)}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;font-size:15px}
+.slide{display:none;min-height:100vh;padding:24px 20px 90px;max-width:1100px;margin:0 auto;animation:fi .3s ease}
+.slide.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.nav{position:fixed;bottom:0;left:0;right:0;background:var(--navy);display:flex;justify-content:center;align-items:center;gap:12px;padding:10px 16px;z-index:100;box-shadow:0 -2px 12px rgba(0,0,0,.2)}
+.nav button{background:rgba(255,255,255,.18);color:#fff;border:none;padding:8px 22px;border-radius:20px;cursor:pointer;font-size:14px;font-weight:600;transition:background .2s}
+.nav button:hover{background:rgba(255,255,255,.35)}
+.nav button:disabled{opacity:.35;cursor:not-allowed}
+.nav-label{color:rgba(255,255,255,.8);font-size:13px;min-width:160px;text-align:center}
+.dots{display:flex;gap:5px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:320px}
+.dots span{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35);cursor:pointer;transition:background .2s,transform .2s}
+.dots span.active{background:var(--gold);transform:scale(1.4)}
+.print-btn{position:fixed;top:14px;right:16px;background:var(--navy);color:#fff;border:none;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;z-index:200}
+.snum{position:fixed;top:14px;left:16px;background:rgba(30,58,95,.12);color:var(--navy);border-radius:20px;padding:4px 14px;font-size:12px;font-weight:700;z-index:200}
+.banner{background:linear-gradient(135deg,var(--navy) 0%,#2563EB 60%,var(--sky2) 100%);color:#fff;border-radius:var(--r);padding:38px 32px;margin-bottom:22px;position:relative;overflow:hidden}
+.banner::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.07)}
+.banner .inst{font-size:12px;letter-spacing:2px;text-transform:uppercase;opacity:.8;margin-bottom:6px}
+.banner h1{font-size:2.1rem;font-weight:800;margin-bottom:8px}
+.banner .sub{font-size:.95rem;opacity:.85}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.badge{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:4px 14px;font-size:12px;font-weight:600}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--border);padding:22px;margin-bottom:16px}
+.card h3{font-size:1rem;font-weight:700;margin-bottom:12px;color:var(--navy)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:700px){.g2,.g3{grid-template-columns:1fr}}
+.hb{border-radius:10px;padding:16px 18px;margin-bottom:12px}
+.hb h4{font-size:.9rem;font-weight:700;margin-bottom:5px}
+.hb.sky{background:#E0F2FE;border-left:4px solid var(--sky)}
+.hb.teal{background:#CCFBF1;border-left:4px solid var(--teal)}
+.hb.gold{background:#FEF3C7;border-left:4px solid var(--gold)}
+.hb.green{background:#DCFCE7;border-left:4px solid var(--green)}
+.hb.purple{background:#EDE9FE;border-left:4px solid var(--purple)}
+.hb.red{background:#FEE2E2;border-left:4px solid var(--red)}
+.hb.navy{background:#EFF6FF;border-left:4px solid var(--navy)}
+ul.cl{list-style:none}
+ul.cl li{padding:5px 0 5px 18px;position:relative;border-bottom:1px solid var(--border);font-size:.88rem}
+ul.cl li:last-child{border-bottom:none}
+ul.cl li::before{content:'▸';position:absolute;left:0;color:var(--navy);font-size:11px;top:7px}
+table.t{width:100%;border-collapse:collapse;font-size:14px}
+table.t th{background:var(--navy);color:#fff;padding:10px 14px;text-align:left;font-weight:600}
+table.t td{padding:9px 14px;border-bottom:1px solid var(--border);font-size:.87rem}
+table.t tr:nth-child(even) td{background:#F0F9FF}
+.ph{border-radius:var(--r);padding:18px 22px;color:#fff;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;background:linear-gradient(135deg,var(--navy),#2563EB)}
+.ph h2{font-size:1.4rem;font-weight:800}
+.ph .meta{font-size:13px;opacity:.85}
+.toc-item{display:flex;align-items:center;gap:14px;padding:12px 16px;border-radius:10px;margin-bottom:8px;background:var(--card);border:1px solid var(--border);cursor:pointer;transition:background .15s}
+.toc-item:hover{background:#EFF6FF}
+.tn{width:34px;height:34px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:800;flex-shrink:0}
+.meta-box{background:linear-gradient(135deg,#FEF3C7,#FFFBEB);border:2px solid var(--gold);border-radius:var(--r);padding:16px 20px;margin-bottom:14px}
+.meta-box .lbl{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.phase-bar{display:flex;gap:0;margin-bottom:20px;border-radius:var(--r);overflow:hidden}
+.phase-seg{flex:1;padding:14px 10px;text-align:center;cursor:pointer;font-weight:600;font-size:.82rem;transition:opacity .2s}
+.phase-seg:hover{opacity:.85}
+.phase-content{display:none}
+.phase-content.show{display:block}
+.quiz-btn{background:var(--navy);color:#fff;border:none;padding:9px 18px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;margin:4px;transition:background .2s}
+.quiz-btn:hover{background:#2563EB}
+.qfb{margin-top:12px;padding:12px 16px;border-radius:8px;font-weight:600;display:none}
+.qok{background:#DCFCE7;color:var(--green);border-left:4px solid var(--green)}
+.qerr{background:#FEE2E2;color:var(--red);border-left:4px solid var(--red)}
+.law-card{border-radius:10px;padding:14px 16px;margin-bottom:10px;border:2px solid}
+.timeline-step{display:flex;gap:16px;margin-bottom:16px}
+.ts-circle{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff;flex-shrink:0;font-size:15px}
+.risk-row{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-radius:8px;margin-bottom:6px;font-size:.87rem}
+</style>
+</head>
+<body>
+<button class="print-btn" onclick="window.print()">🖨 Imprimir / PDF</button>
+<div class="snum" id="slideNum">1 / 14</div>
+
+<!-- S1 PORTADA -->
+<div class="slide active" id="s1">
+  <div class="banner" style="text-align:center;padding:50px 32px">
+    <div class="inst">Instituto Politécnico Nacional · UPIICSA · Lic. en Ciencias de la Informática · Semestre 7</div>
+    <h1>Cómputo en la Nube</h1>
+    <div class="sub" style="font-size:1.3rem;font-weight:700;margin-top:8px">Parcial 3 — Migración y Seguridad en la Nube</div>
+    <div class="sub" style="margin-top:6px;opacity:.8">Unidad IV · Semanas 11–15</div>
+    <div class="badges" style="justify-content:center;margin-top:22px">
+      <span class="badge">🚀 Migración a la Nube</span>
+      <span class="badge">🔐 Seguridad Cloud</span>
+      <span class="badge">⚖️ LFPDPPP · GDPR</span>
+      <span class="badge">📋 ISO 27018 · NOM-151</span>
+      <span class="badge">🌍 Jurisdicción Digital</span>
+      <span class="badge">📊 Proyecto Final TechMX</span>
+    </div>
+  </div>
+  <div class="card">
+    <p style="color:var(--muted);font-size:.9rem;margin-bottom:16px;text-align:center">Índice — haz clic para navegar</p>
+    <div class="toc-item" onclick="goTo(3)"><div class="tn">1</div><div><strong>Migración a la Nube: ¿Por qué y cuándo?</strong><br><span style="font-size:.82rem;color:var(--muted)">Motivaciones, riesgos y el modelo de responsabilidad compartida</span></div></div>
+    <div class="toc-item" onclick="goTo(4)"><div class="tn">2</div><div><strong>Las 4 Fases de Migración</strong><br><span style="font-size:.82rem;color:var(--muted)">Evaluación → Planeación → Migración → Optimización</span></div></div>
+    <div class="toc-item" onclick="goTo(5)"><div class="tn">3</div><div><strong>Las 6 R's de la Migración</strong><br><span style="font-size:.82rem;color:var(--muted)">Rehost · Replatform · Refactor · Repurchase · Retain · Retire</span></div></div>
+    <div class="toc-item" onclick="goTo(6)"><div class="tn">4</div><div><strong>Seguridad en la Nube</strong><br><span style="font-size:.82rem;color:var(--muted)">Privacidad, conflictos de privacidad, divulgación de datos</span></div></div>
+    <div class="toc-item" onclick="goTo(7)"><div class="tn">5</div><div><strong>Jurisdicción Digital</strong><br><span style="font-size:.82rem;color:var(--muted)">¿Dónde están mis datos? Soberanía, extraterritorialidad, data residency</span></div></div>
+    <div class="toc-item" onclick="goTo(8)"><div class="tn">6</div><div><strong>Legislación: LFPDPPP y NOM-151</strong><br><span style="font-size:.82rem;color:var(--muted)">Marco normativo mexicano para datos personales en la nube</span></div></div>
+    <div class="toc-item" onclick="goTo(9)"><div class="tn">7</div><div><strong>GDPR — Reglamento Europeo</strong><br><span style="font-size:.82rem;color:var(--muted)">RGPD: alcance extraterritorial, derechos ARCO-PL, sanciones</span></div></div>
+    <div class="toc-item" onclick="goTo(10)"><div class="tn">8</div><div><strong>ISO 27018 — Privacidad en la Nube</strong><br><span style="font-size:.82rem;color:var(--muted)">Estándar internacional para protección de PII en servicios cloud</span></div></div>
+    <div class="toc-item" onclick="goTo(11)"><div class="tn">9</div><div><strong>Controles de Seguridad Cloud</strong><br><span style="font-size:.82rem;color:var(--muted)">CSPM, CIEM, cifrado, IAM, Zero Trust</span></div></div>
+    <div class="toc-item" onclick="goTo(12)"><div class="tn">10</div><div><strong>Comparativa de Seguridad entre Proveedores</strong><br><span style="font-size:.82rem;color:var(--muted)">AWS vs Azure vs GCP en dimensiones de seguridad</span></div></div>
+    <div class="toc-item" onclick="goTo(13)"><div class="tn">11</div><div><strong>Caso Final: TechMX — Fase 3 (Proyecto Final)</strong><br><span style="font-size:.82rem;color:var(--muted)">Plan de migración completo y cumplimiento normativo</span></div></div>
+    <div class="toc-item" onclick="goTo(14)"><div class="tn">12</div><div><strong>Bibliografía</strong></div></div>
+  </div>
+</div>
+
+<!-- S2 OBJETIVOS -->
+<div class="slide" id="s2">
+  <div class="ph"><div><h2>Objetivos del Parcial 3</h2><div class="meta">Unidad IV · 26 horas (14T + 8P + 4AA)</div></div><div style="font-size:2.5rem">🎯</div></div>
+  <div class="g2">
+    <div class="card">
+      <h3>Al terminar este parcial, el alumno será capaz de:</h3>
+      <ul class="cl">
+        <li>Identificar las motivaciones y riesgos de una migración a la nube</li>
+        <li>Aplicar las 4 fases del proceso de migración cloud</li>
+        <li>Clasificar sistemas y aplicaciones usando las 6 R's de migración</li>
+        <li>Analizar los conflictos de privacidad inherentes al uso de servicios cloud</li>
+        <li>Aplicar la LFPDPPP, NOM-151 y GDPR en escenarios de datos en la nube</li>
+        <li>Implementar controles de seguridad cloud: cifrado, IAM, Zero Trust</li>
+        <li>Elaborar el plan de migración completo para TechMX (Fase 3 del proyecto)</li>
+        <li>Justificar decisiones de cumplimiento normativo ante auditorías</li>
+      </ul>
+    </div>
+    <div>
+      <div class="hb navy"><h4>🏗️ Proyecto CloudStart MX — Fase 3 (Final)</h4><p style="font-size:.88rem">El entregable final integra todo el proyecto: <strong>Plan de Migración TechMX</strong> completo, con cronograma, presupuesto estimado, análisis de riesgos, controles de seguridad y cumplimiento normativo (LFPDPPP + NOM-151). Exposición oral en semana 15.</p></div>
+      <div class="hb gold"><h4>📊 Evaluación del parcial</h4><p style="font-size:.88rem">Fase 3 del proyecto (40) + Análisis de caso seguridad (20) + Mapa conceptual (10) + Examen escrito (20) + Problemas resueltos (10) = <strong>100 puntos</strong></p></div>
+      <div class="meta-box"><div class="lbl">💡 Metáfora del parcial</div><p style="font-size:.9rem">Si en el Parcial 1 fuiste el <strong>arquitecto</strong> y en el Parcial 2 el <strong>constructor</strong>, en el Parcial 3 eres el <strong>notario y guardia de seguridad</strong>: te aseguras de que la mudanza al nuevo edificio se haga correctamente (migración), que todo quede registrado legalmente (cumplimiento normativo) y que el edificio sea seguro para los inquilinos (seguridad cloud).</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- S3 POR QUÉ MIGRAR -->
+<div class="slide" id="s3">
+  <div class="ph"><div><h2>Migración a la Nube: ¿Por qué y cuándo?</h2><div class="meta">Unidad IV · 4.1 — Fundamentos de migración</div></div><div style="font-size:2.5rem">🚀</div></div>
+  <div class="g2">
+    <div>
+      <div class="card">
+        <h3>Motivaciones para migrar a la nube</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div style="background:#CCFBF1;border-radius:8px;padding:10px"><strong style="color:var(--teal)">💰 Costos</strong><p style="font-size:.82rem;margin-top:4px">De CapEx a OpEx. Sin inversión inicial en hardware. Pago por uso real.</p></div>
+          <div style="background:#DBEAFE;border-radius:8px;padding:10px"><strong style="color:var(--sky)">⚡ Agilidad</strong><p style="font-size:.82rem;margin-top:4px">Desplegar nuevos servicios en minutos, no meses. Time-to-market más rápido.</p></div>
+          <div style="background:#EDE9FE;border-radius:8px;padding:10px"><strong style="color:var(--purple)">🌍 Escala</strong><p style="font-size:.82rem;margin-top:4px">Crecer globalmente sin instalar hardware en cada región. Elasticidad automática.</p></div>
+          <div style="background:#DCFCE7;border-radius:8px;padding:10px"><strong style="color:var(--green)">🔄 Resiliencia</strong><p style="font-size:.82rem;margin-top:4px">SLAs de 99.9%+ que superan lo que una PyME puede garantizar on-premise.</p></div>
+          <div style="background:#FEF3C7;border-radius:8px;padding:10px"><strong style="color:var(--gold)">🔐 Seguridad</strong><p style="font-size:.82rem;margin-top:4px">Certificaciones ISO 27001, SOC 2, PCI-DSS ya incluidas. Parches automáticos.</p></div>
+          <div style="background:#FEE2E2;border-radius:8px;padding:10px"><strong style="color:var(--red)">📱 Movilidad</strong><p style="font-size:.82rem;margin-top:4px">Acceso desde cualquier lugar. Habilitador clave para trabajo remoto e híbrido.</p></div>
+        </div>
+      </div>
+      <div class="hb red">
+        <h4>⚠️ Riesgos de migración a la nube</h4>
+        <ul style="font-size:.85rem;padding-left:16px;margin-top:6px">
+          <li><strong>Vendor lock-in:</strong> dependencia tecnológica del proveedor elegido</li>
+          <li><strong>Costos inesperados:</strong> tráfico de salida (egress), almacenamiento, licencias</li>
+          <li><strong>Latencia:</strong> aplicaciones legacy no toleran la latencia de internet</li>
+          <li><strong>Cumplimiento normativo:</strong> datos en jurisdicción extranjera</li>
+          <li><strong>Brecha de habilidades:</strong> el personal TI actual puede no tener competencias cloud</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Modelo de Responsabilidad Compartida</h3>
+        <p style="font-size:.85rem;margin-bottom:12px">En cloud, la seguridad es <strong>responsabilidad compartida</strong>: el proveedor asegura la infraestructura; el cliente asegura sus datos y aplicaciones.</p>
+        <div style="border-radius:10px;overflow:hidden;border:2px solid var(--border)">
+          <div style="background:var(--navy);color:#fff;padding:8px 14px;font-size:.85rem;font-weight:700;text-align:center">Responsabilidad del PROVEEDOR (siempre)</div>
+          <div style="background:#DBEAFE;padding:8px 14px;font-size:.83rem;text-align:center">Instalaciones físicas · Hardware · Red global · Hipervisor</div>
+          <div style="background:#E0F2FE;padding:8px 14px;font-size:.83rem;text-align:center">⬇️ En IaaS: SO, parches, middleware (TÚ)</div>
+          <div style="background:#CCFBF1;padding:8px 14px;font-size:.83rem;text-align:center">⬇️ En PaaS: Runtime, frameworks (TÚ y proveedor)</div>
+          <div style="background:#DCFCE7;padding:8px 14px;font-size:.83rem;text-align:center">⬇️ En SaaS: Solo los datos y usuarios (TÚ)</div>
+          <div style="background:var(--teal);color:#fff;padding:8px 14px;font-size:.85rem;font-weight:700;text-align:center">Datos, identidades y accesos → SIEMPRE tú (el cliente)</div>
+        </div>
+        <p style="font-size:.82rem;margin-top:10px;font-style:italic;color:var(--muted)">Metáfora: como rentar un departamento. El edificio, plomería y electricidad son del arrendador; la seguridad de tu puerta, tus muebles y tus objetos de valor son TU responsabilidad.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S4 FASES DE MIGRACIÓN -->
+<div class="slide" id="s4">
+  <div class="ph"><div><h2>Las 4 Fases de la Migración a la Nube</h2><div class="meta">Unidad IV · 4.1 — Metodología de migración</div></div><div style="font-size:2.5rem">📋</div></div>
+  <div class="phase-bar">
+    <div class="phase-seg" style="background:#1E3A5F;color:#fff" onclick="showPhase('eval')">1. Evaluación</div>
+    <div class="phase-seg" style="background:#1D4ED8;color:#fff" onclick="showPhase('plan')">2. Planeación</div>
+    <div class="phase-seg" style="background:#0D9488;color:#fff" onclick="showPhase('mig')">3. Migración</div>
+    <div class="phase-seg" style="background:#16A34A;color:#fff" onclick="showPhase('opt')">4. Optimización</div>
+  </div>
+  <div id="ph-eval" class="phase-content show">
+    <div class="g2">
+      <div><div class="hb navy"><h4>🔍 Fase 1 — Evaluación (Discovery)</h4><p style="font-size:.88rem">Inventariar y analizar el estado actual de la infraestructura, aplicaciones, datos y dependencias. Determinar qué puede migrarse, qué debe refactorizarse y qué debe quedarse on-premise.</p></div><div class="hb sky"><h4>Actividades clave</h4><ul style="font-size:.85rem;padding-left:14px;margin-top:4px"><li>Inventario de aplicaciones y servidores</li><li>Análisis de dependencias entre sistemas</li><li>Assessment de costos actuales (TCO)</li><li>Evaluación de riesgos y cumplimiento normativo</li><li>Identificación de datos regulados (datos personales, financieros)</li></ul></div></div>
+      <div><div class="hb gold"><h4>Herramientas de assessment</h4><ul style="font-size:.85rem;padding-left:14px;margin-top:4px"><li>Azure Migrate: descubrimiento automático de servidores</li><li>AWS Migration Evaluator</li><li>Google Cloud Migrate</li><li>Entrevistas con dueños de sistemas</li><li>CMDB (Configuration Management Database)</li></ul></div><div class="meta-box"><div class="lbl">💡 TechMX en evaluación</div><p style="font-size:.88rem">TechMX tiene 8 servidores: ERP legacy (Windows 2008), servidor de archivos, correo Exchange, web corporativa, BD Oracle, app de RH, CCTV, y servidor de impresión. El assessment determinó que CCTV y el servidor de impresión deben quedarse on-premise; los demás son candidatos a migrar.</p></div></div>
+    </div>
+  </div>
+  <div id="ph-plan" class="phase-content">
+    <div class="g2">
+      <div><div class="hb navy" style="background:#EFF6FF"><h4>📐 Fase 2 — Planeación</h4><p style="font-size:.88rem">Diseñar la arquitectura target en la nube, seleccionar el proveedor, definir el orden de migración (olas), presupuesto y plan de gestión del cambio para el equipo de TI.</p></div><div class="hb teal"><h4>Entregables de planeación</h4><ul style="font-size:.85rem;padding-left:14px;margin-top:4px"><li>Diagrama de arquitectura cloud target</li><li>Plan de migración por olas (Wave Plan)</li><li>Presupuesto detallado: costos de migración + operación</li><li>Plan de rollback (vuelta atrás si falla)</li><li>Plan de capacitación del equipo TI</li></ul></div></div>
+      <div><div class="hb gold"><h4>Wave Plan — Orden de migración</h4><p style="font-size:.85rem;margin-bottom:8px">Se migra de menor a mayor riesgo:</p><div class="risk-row" style="background:#DCFCE7"><span>🌊 Ola 1</span><span>Web corporativa, entorno de desarrollo</span><span style="color:var(--green);font-weight:700">Bajo riesgo</span></div><div class="risk-row" style="background:#FEF3C7"><span>🌊 Ola 2</span><span>Correo (Microsoft 365), app RH</span><span style="color:var(--gold);font-weight:700">Medio</span></div><div class="risk-row" style="background:#FEE2E2"><span>🌊 Ola 3</span><span>ERP legacy, BD Oracle</span><span style="color:var(--red);font-weight:700">Alto riesgo</span></div></div></div>
+    </div>
+  </div>
+  <div id="ph-mig" class="phase-content">
+    <div class="g2">
+      <div><div class="hb teal"><h4>⚙️ Fase 3 — Migración</h4><p style="font-size:.88rem">Ejecución del plan: mover datos, sistemas y usuarios a la nube según las olas definidas. Incluye pruebas de aceptación y período de operación paralela (datos en ambos sistemas).</p></div><div class="hb sky"><h4>Actividades durante migración</h4><ul style="font-size:.85rem;padding-left:14px;margin-top:4px"><li>Migración de datos (Database Migration Service)</li><li>Configuración de redes y seguridad cloud</li><li>Período de operación paralela: 2-4 semanas</li><li>Pruebas de carga y usuario (UAT)</li><li>Cutover: migración definitiva del tráfico</li><li>Monitoreo intensivo post-migración</li></ul></div></div>
+      <div><div class="hb red"><h4>⚠️ Riesgos durante la migración</h4><ul style="font-size:.85rem;padding-left:14px;margin-top:4px"><li><strong>Downtime no planeado:</strong> siempre tener ventana de mantenimiento acordada</li><li><strong>Pérdida de datos:</strong> validar checksums antes y después</li><li><strong>Problemas de rendimiento:</strong> latencia inesperada en aplicaciones legacy</li><li><strong>Resistencia del personal:</strong> comunicación y training anticipado</li></ul></div><div class="hb gold"><h4>💡 La operación paralela</h4><p style="font-size:.85rem">Mantener ambos sistemas corriendo simultáneamente durante 2-4 semanas permite detectar problemas antes del cutover definitivo. Es costoso pero necesario para sistemas críticos como el ERP de TechMX.</p></div></div>
+    </div>
+  </div>
+  <div id="ph-opt" class="phase-content">
+    <div class="g2">
+      <div><div class="hb green"><h4>📈 Fase 4 — Optimización</h4><p style="font-size:.88rem">Una vez en la nube, continuamente optimizar costos, rendimiento y seguridad. La nube es viva: hay que ajustar el tamaño de las VMs, reservar instancias, revisar las reglas de seguridad y automatizar.</p></div><div class="hb teal"><h4>Acciones de optimización</h4><ul style="font-size:.85rem;padding-left:14px;margin-top:4px"><li>Right-sizing: ajustar tamaño de VMs al uso real</li><li>Reserved Instances: ahorro del 40-70% vs pago por hora</li><li>Auto-scaling: escalar automáticamente según demanda</li><li>Automatización: IaC (Terraform, ARM Templates)</li><li>Revisión continua de seguridad (Azure Security Center)</li></ul></div></div>
+      <div><div class="meta-box"><div class="lbl">💡 La migración nunca termina</div><p style="font-size:.88rem">La Fase 4 es permanente. Los proveedores cloud lanzan nuevos servicios constantemente. TechMX debe revisar trimestralmente si hay servicios más eficientes o económicos. La optimización continua puede reducir los costos cloud un 30-50% en el primer año.</p></div><div class="hb gold"><h4>Métricas de éxito de la migración</h4><ul style="font-size:.85rem;padding-left:14px;margin-top:4px"><li>Reducción de costos TI vs on-premise</li><li>Uptime alcanzado vs SLA contratado</li><li>Tiempo de despliegue de nuevas aplicaciones</li><li>Satisfacción del usuario final (encuestas)</li><li>Número de incidentes de seguridad</li></ul></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- S5 6 Rs -->
+<div class="slide" id="s5">
+  <div class="ph"><div><h2>Las 6 R's de la Migración</h2><div class="meta">Unidad IV · 4.1 — Estrategias de migración por sistema</div></div><div style="font-size:2.5rem">🔄</div></div>
+  <div class="g2">
+    <div>
+      <div class="hb navy"><h4>Rehost — "Lift and Shift"</h4><p style="font-size:.85rem">Mover la VM tal cual está al cloud, sin cambios. El más rápido y menos costoso de implementar. Pérdida de beneficios cloud nativos.</p><p style="font-size:.82rem;margin-top:5px;font-style:italic">TechMX: servidor de archivos → Azure VM (migración rápida, bajo riesgo)</p></div>
+      <div class="hb sky"><h4>Replatform — "Lift, Tinker, and Shift"</h4><p style="font-size:.85rem">Pequeñas optimizaciones durante la migración sin cambiar la arquitectura core. Ej: cambiar el motor de BD por un servicio gestionado.</p><p style="font-size:.82rem;margin-top:5px;font-style:italic">TechMX: BD Oracle → Azure Database for Oracle (servicio gestionado, sin refactorizar app)</p></div>
+      <div class="hb teal"><h4>Refactor / Re-architect</h4><p style="font-size:.85rem">Rediseñar la aplicación para aprovechar las capacidades cloud nativas (microservicios, serverless, contenedores). Mayor costo y tiempo, mayor beneficio a largo plazo.</p><p style="font-size:.82rem;margin-top:5px;font-style:italic">TechMX: app web → Azure App Service con contenedores Docker (mayor escalabilidad)</p></div>
+    </div>
+    <div>
+      <div class="hb purple"><h4>Repurchase — "Drop and Shop"</h4><p style="font-size:.85rem">Reemplazar el sistema actual por una solución SaaS equivalente. Se abandona el software legacy.</p><p style="font-size:.82rem;margin-top:5px;font-style:italic">TechMX: Exchange on-premise → Microsoft 365 (Exchange Online). Correo como SaaS.</p></div>
+      <div class="hb gold"><h4>Retain</h4><p style="font-size:.85rem">Mantener el sistema on-premise por ahora. Puede ser por regulación, latencia, dependencias o que la aplicación será retirada pronto.</p><p style="font-size:.82rem;margin-top:5px;font-style:italic">TechMX: CCTV y sistema de impresión → quedan on-premise por requisitos físicos</p></div>
+      <div class="hb red"><h4>Retire</h4><p style="font-size:.85rem">Identificar y apagar sistemas que ya no se usan. Simplifica la migración y reduce costos de inmediato.</p><p style="font-size:.82rem;margin-top:5px;font-style:italic">TechMX: servidor de FTP antiguo y licencias de software sin usuarios activos → dado de baja</p></div>
+    </div>
+  </div>
+  <div class="meta-box"><div class="lbl">💡 Cómo elegir la R correcta</div><p style="font-size:.92rem"><strong>Rehost:</strong> aplicación estable que no cambiará. <strong>Replatform:</strong> quieres beneficios gestionados sin reescribir. <strong>Refactor:</strong> aplicación core de negocio que necesita escala. <strong>Repurchase:</strong> hay SaaS equivalente de calidad. <strong>Retain:</strong> no migrará por el momento. <strong>Retire:</strong> nadie lo usa, desconéctalo ya. La mayoría de las migraciones usan las 6 R's en combinación — no existe una sola estrategia para todos los sistemas.</p></div>
+</div>
+
+<!-- S6 SEGURIDAD EN LA NUBE -->
+<div class="slide" id="s6">
+  <div class="ph"><div><h2>Seguridad en la Nube</h2><div class="meta">Unidad IV · 4.2 — Privacidad, conflictos y divulgación de datos</div></div><div style="font-size:2.5rem">🔐</div></div>
+  <div class="g2">
+    <div>
+      <div class="card">
+        <h3>Conflictos de privacidad en la nube</h3>
+        <div class="hb red"><h4>⚠️ Acceso del proveedor a los datos</h4><p style="font-size:.85rem">Los datos del cliente residen en infraestructura del proveedor. Técnicamente, los administradores del proveedor <em>podrían</em> acceder a ellos. Las cláusulas contractuales y certificaciones (ISO 27018) son la garantía principal. <strong>Solución:</strong> cifrar los datos antes de enviarlos a la nube (Client-Side Encryption).</p></div>
+        <div class="hb gold"><h4>⚠️ Multi-tenancy (inquilinos múltiples)</h4><p style="font-size:.85rem">Múltiples clientes comparten la misma infraestructura física. ¿Cómo garantizar que los datos de TechMX no sean accesibles por otro cliente del mismo servidor? Los hipervisores y mecanismos de aislamiento son la clave, pero los side-channel attacks son un riesgo teórico.</p></div>
+        <div class="hb purple"><h4>⚠️ Divulgación de datos ante autoridades</h4><p style="font-size:.85rem">Los gobiernos (especialmente EUA con CLOUD Act y PATRIOT Act) pueden ordenar a proveedores cloud (Microsoft, Google, AWS) que entreguen datos de clientes sin notificarlos, incluso si los datos están físicamente en México.</p></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>CLOUD Act vs GDPR — El conflicto normativo</h3>
+        <div class="hb sky"><h4>🇺🇸 CLOUD Act (EUA, 2018)</h4><p style="font-size:.85rem">Clarifying Lawful Overseas Use of Data Act. Permite a autoridades de EUA solicitar datos almacenados en cualquier parte del mundo si el proveedor es una empresa estadounidense (AWS, Azure, Google, etc.).</p></div>
+        <div class="hb teal"><h4>🇪🇺 GDPR (UE, 2018)</h4><p style="font-size:.85rem">Prohíbe transferir datos personales a terceros (incluyendo gobiernos) sin consentimiento o base legal. Directo conflicto con CLOUD Act para empresas europeas o que manejan datos de ciudadanos europeos.</p></div>
+        <div class="hb navy"><h4>💡 Solución práctica para TechMX</h4><ul style="font-size:.85rem;padding-left:14px;margin-top:4px"><li>Usar regiones Azure en México o Latinoamérica</li><li>Activar Customer Lockbox (requiere aprobación explícita de TechMX para cualquier acceso de Microsoft)</li><li>Cifrar datos con llaves propias (Customer Managed Keys)</li><li>Datos ultra-sensibles: mantener on-premise o en nube soberana</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S7 JURISDICCIÓN -->
+<div class="slide" id="s7">
+  <div class="ph"><div><h2>Jurisdicción Digital</h2><div class="meta">Unidad IV · 4.2 — Soberanía de datos, data residency, extraterritorialidad</div></div><div style="font-size:2.5rem">🌍</div></div>
+  <div class="g2">
+    <div>
+      <div class="hb navy">
+        <h4>📌 ¿Qué es la jurisdicción digital?</h4>
+        <p style="font-size:.88rem">Se refiere a qué leyes y qué país tiene autoridad sobre los datos digitales. En la nube, los datos pueden estar físicamente en un país pero ser accesibles desde otro, generando ambigüedades legales sobre qué normativa aplica.</p>
+      </div>
+      <div class="card">
+        <h3>Conceptos clave</h3>
+        <table class="t">
+          <thead><tr><th>Concepto</th><th>Definición</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Data Residency</strong></td><td>Restricción contractual de que los datos permanezcan en un país o región específica</td></tr>
+            <tr><td><strong>Data Sovereignty</strong></td><td>Los datos están sujetos a las leyes del país donde residen físicamente</td></tr>
+            <tr><td><strong>Extraterritorialidad</strong></td><td>Leyes de un país que aplican fuera de sus fronteras (ej. CLOUD Act, GDPR)</td></tr>
+            <tr><td><strong>Data Localization</strong></td><td>Ley que obliga a almacenar ciertos datos en el territorio nacional</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Regiones cloud en México y América Latina</h3>
+        <div class="hb sky"><h4>Microsoft Azure</h4><p style="font-size:.85rem">Región <strong>Mexico Central</strong> (Querétaro) — disponible desde 2021. Permite data residency en México para datos de TechMX.</p></div>
+        <div class="hb gold"><h4>AWS</h4><p style="font-size:.85rem">Región <strong>us-east-1</strong> y <strong>sa-east-1</strong> (São Paulo). Actualmente no existe región AWS en México, lo que complica data residency estricta.</p></div>
+        <div class="hb teal"><h4>Google Cloud</h4><p style="font-size:.85rem">Región <strong>northamerica-northeast1</strong> (Montreal). Planea región en México en próximos años.</p></div>
+        <div class="hb purple"><h4>Oracle Cloud</h4><p style="font-size:.85rem">Región <strong>mx-queretaro-1</strong> (Querétaro) — primera en México. Estratégica para empresas gubernamentales y reguladas mexicanas.</p></div>
+      </div>
+      <div class="meta-box"><div class="lbl">💡 Recomendación para TechMX</div><p style="font-size:.88rem">Usar la región <strong>Mexico Central de Azure</strong> (Querétaro) garantiza que los datos de TechMX permanezcan en territorio mexicano, cumpliendo con la LFPDPPP y siendo soberanos bajo la jurisdicción de la INAI. Esto es especialmente importante si TechMX procesa datos personales de clientes.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- S8 LFPDPPP Y NOM-151 -->
+<div class="slide" id="s8">
+  <div class="ph"><div><h2>LFPDPPP y NOM-151</h2><div class="meta">Unidad IV · 4.2 — Marco normativo mexicano</div></div><div style="font-size:2.5rem">⚖️</div></div>
+  <div class="g2">
+    <div>
+      <div class="law-card" style="border-color:var(--navy)">
+        <div style="background:var(--navy);color:#fff;border-radius:6px;padding:6px 12px;display:inline-block;font-size:.8rem;font-weight:700;margin-bottom:10px">🇲🇽 LFPDPPP</div>
+        <h3 style="margin-bottom:8px;color:var(--navy)">Ley Federal de Protección de Datos Personales en Posesión de los Particulares</h3>
+        <p style="font-size:.87rem;margin-bottom:10px">Publicada en el DOF el <strong>5 de julio de 2010</strong>. Es la principal ley mexicana que regula el tratamiento de datos personales por entidades privadas. Autoridad: <strong>INAI</strong> (Instituto Nacional de Transparencia, Acceso a la Información y Protección de Datos Personales).</p>
+        <div class="hb sky" style="margin:0"><h4>Principios LFPDPPP (Art. 6)</h4><ul style="font-size:.83rem;padding-left:14px;margin-top:4px"><li><strong>Licitud:</strong> tratar datos solo con fundamento legal</li><li><strong>Consentimiento:</strong> el titular debe autorizar el tratamiento</li><li><strong>Información:</strong> notificar al titular mediante Aviso de Privacidad</li><li><strong>Calidad:</strong> datos exactos, completos y actualizados</li><li><strong>Finalidad:</strong> solo para los fines declarados en el Aviso</li><li><strong>Lealtad:</strong> sin engaño ni fraude</li><li><strong>Proporcionalidad:</strong> solo los datos necesarios</li><li><strong>Responsabilidad:</strong> el responsable garantiza el cumplimiento</li></ul></div>
+      </div>
+    </div>
+    <div>
+      <div class="law-card" style="border-color:var(--teal)">
+        <div style="background:var(--teal);color:#fff;border-radius:6px;padding:6px 12px;display:inline-block;font-size:.8rem;font-weight:700;margin-bottom:10px">🇲🇽 NOM-151</div>
+        <h3 style="margin-bottom:8px;color:var(--teal)">NOM-151-SCFI-2016: Conservación de mensajes de datos y digitalización de documentos</h3>
+        <p style="font-size:.85rem;margin-bottom:10px">Norma Oficial Mexicana que establece los requisitos para la conservación de mensajes de datos (correos, documentos digitales, contratos electrónicos) y su valor probatorio legal en México.</p>
+        <div class="hb teal" style="margin:0"><h4>Relevancia para la nube</h4><ul style="font-size:.83rem;padding-left:14px;margin-top:4px"><li>Los correos y documentos almacenados en la nube deben cumplir NOM-151 para tener validez legal</li><li>Requiere constancias de conservación (NOM-151) emitidas por prestadores acreditados</li><li>Si TechMX migra su correo a Microsoft 365, debe verificar que Azure cumple NOM-151</li><li>Los logs de auditoría también deben conservarse conforme a NOM-151</li></ul></div>
+      </div>
+      <div class="hb gold" style="margin-top:12px"><h4>💡 Aviso de Privacidad de TechMX</h4><p style="font-size:.85rem">Si TechMX usa servicios cloud para procesar datos personales de sus clientes, debe actualizar su <strong>Aviso de Privacidad</strong> para mencionar que los datos pueden ser transferidos a servidores cloud (Microsoft Azure Mexico Central) como encargado de tratamiento, conforme al Art. 37 de la LFPDPPP.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- S9 GDPR -->
+<div class="slide" id="s9">
+  <div class="ph"><div><h2>GDPR — Reglamento General de Protección de Datos</h2><div class="meta">Unidad IV · 4.2 — Reglamento (UE) 2016/679</div></div><div style="font-size:2.5rem">🇪🇺</div></div>
+  <div class="g2">
+    <div>
+      <div class="hb navy">
+        <h4>🌍 ¿Por qué importa GDPR a empresas mexicanas?</h4>
+        <p style="font-size:.88rem">El GDPR aplica a cualquier empresa en el mundo que procese datos personales de ciudadanos o residentes de la Unión Europea, independientemente de dónde esté ubicada la empresa. TechMX podría tener clientes europeos o usar servicios que manejan datos de europeos.</p>
+        <p style="font-size:.82rem;margin-top:8px;font-style:italic">Metáfora: como las normas de tránsito de la autovía alemana — si tus camiones circulan por Alemania, debes cumplirlas, aunque tu empresa sea mexicana.</p>
+      </div>
+      <div class="card">
+        <h3>Derechos ARCO ampliados en GDPR (ARCO-PL)</h3>
+        <table class="t">
+          <thead><tr><th>Derecho</th><th>¿Qué significa?</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Acceso</strong></td><td>Conocer qué datos se tienen, para qué y con quién se comparten</td></tr>
+            <tr><td><strong>Rectificación</strong></td><td>Corregir datos inexactos o incompletos</td></tr>
+            <tr><td><strong>Cancelación/Supresión</strong></td><td>"Derecho al olvido": que borren todos mis datos</td></tr>
+            <tr><td><strong>Oposición</strong></td><td>Oponerse a ciertos tratamientos (marketing, perfilado)</td></tr>
+            <tr><td><strong>Portabilidad</strong></td><td>Recibir mis datos en formato estructurado y transferirlos a otro proveedor</td></tr>
+            <tr><td><strong>Limitación</strong></td><td>Restringir el tratamiento mientras se resuelve una disputa</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Obligaciones clave del GDPR para servicios cloud</h3>
+        <div class="hb red"><h4>🚨 Sanciones GDPR</h4><p style="font-size:.85rem">Las multas pueden llegar hasta <strong>€20 millones o el 4% de la facturación global anual</strong>, la cifra que sea mayor. Ejemplos reales: Amazon multada con €746M (2021), Meta con €1.2B (2023).</p></div>
+        <div class="hb teal"><h4>Data Processing Agreement (DPA)</h4><p style="font-size:.85rem">Todo contrato entre un responsable y un encargado (como Azure) que procese datos de europeos debe tener un <strong>DPA</strong> que cumpla con los requisitos del Art. 28 GDPR. Microsoft Azure ya tiene DPA estandarizado.</p></div>
+        <div class="hb gold"><h4>Privacy by Design</h4><p style="font-size:.85rem">Los sistemas deben diseñarse con privacidad desde el inicio, no como un añadido. En la nube: cifrado por defecto, acceso mínimo necesario (principio de mínimo privilegio), logs de auditoría automáticos.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Quiz — Legislación aplicada</h3>
+    <p style="font-size:.88rem;margin-bottom:10px">TechMX almacena en Azure (México Central) los datos de sus empleados: nombre, CURP, RFC, salario. ¿Cuál es la ley mexicana que principalmente regula este tratamiento y cuál es la autoridad responsable?</p>
+    <button class="quiz-btn" onclick="ansQ9('a')">GDPR / Supervisory Authority europea</button>
+    <button class="quiz-btn" onclick="ansQ9('b')">LFPDPPP / INAI</button>
+    <button class="quiz-btn" onclick="ansQ9('c')">NOM-151 / SE</button>
+    <button class="quiz-btn" onclick="ansQ9('d')">ISO 27018 / ISO</button>
+    <div id="q9tok" class="qfb qok">✅ ¡Correcto! La <strong>LFPDPPP</strong> regula el tratamiento de datos personales en México por entidades privadas, y el <strong>INAI</strong> es la autoridad de aplicación. NOM-151 aplica para conservación de mensajes de datos. GDPR aplicaría si fueran datos de ciudadanos europeos. ISO 27018 es un estándar técnico, no una ley.</div>
+    <div id="q9terr" class="qfb qerr">❌ Revisa. TechMX es una empresa privada mexicana tratando datos personales en México. La ley aplicable es la <strong>LFPDPPP</strong> (Ley Federal de Protección de Datos Personales en Posesión de los Particulares), y la autoridad es el <strong>INAI</strong>. GDPR solo aplicaría si hubiera datos de ciudadanos europeos involucrados.</div>
+  </div>
+</div>
+
+<!-- S10 ISO 27018 -->
+<div class="slide" id="s10">
+  <div class="ph"><div><h2>ISO 27018 — Privacidad en la Nube</h2><div class="meta">Unidad IV · 4.2 — Estándar internacional para PII en servicios cloud</div></div><div style="font-size:2.5rem">📋</div></div>
+  <div class="g2">
+    <div>
+      <div class="hb navy">
+        <h4>🔍 ¿Qué es ISO 27018?</h4>
+        <p style="font-size:.88rem">Publicada en 2014 (revisada 2019). Extensión de ISO 27001/27002 específica para la protección de <strong>PII (Personally Identifiable Information — Información Personalmente Identificable)</strong> en servicios de nube pública. Es el primer estándar internacional de privacidad para la nube.</p>
+        <p style="font-size:.82rem;margin-top:8px;font-style:italic">Metáfora: Si ISO 27001 es la norma de seguridad del edificio, ISO 27018 es el reglamento especial para el manejo de la bóveda de documentos confidenciales de los inquilinos.</p>
+      </div>
+      <div class="card">
+        <h3>Principios clave de ISO 27018</h3>
+        <ul class="cl">
+          <li><strong>Consentimiento:</strong> los CSPs (Cloud Service Providers) no usarán los datos de los clientes para publicidad u otros fines no autorizados</li>
+          <li><strong>Control del cliente:</strong> el cliente controla sus datos; el proveedor actúa solo como encargado</li>
+          <li><strong>Transparencia:</strong> el CSP debe informar al cliente sobre sus subcontratistas</li>
+          <li><strong>Notificación de brechas:</strong> el CSP notifica al cliente sin demora injustificada si hay una brecha</li>
+          <li><strong>Comunicación segura de PII:</strong> cifrado en tránsito y en reposo</li>
+          <li><strong>Eliminación segura:</strong> cuando el contrato termina, el CSP elimina los datos de forma segura y verificable</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>¿Qué proveedores tienen ISO 27018?</h3>
+        <table class="t">
+          <thead><tr><th>Proveedor</th><th>ISO 27018</th><th>Auditor</th></tr></thead>
+          <tbody>
+            <tr><td>Microsoft Azure</td><td style="color:var(--green)">✅ Certificado</td><td>BSI Group</td></tr>
+            <tr><td>Amazon AWS</td><td style="color:var(--green)">✅ Certificado</td><td>Ernst &amp; Young</td></tr>
+            <tr><td>Google Cloud</td><td style="color:var(--green)">✅ Certificado</td><td>PricewaterhouseCoopers</td></tr>
+            <tr><td>Oracle Cloud</td><td style="color:var(--green)">✅ Certificado</td><td>Deloitte</td></tr>
+            <tr><td>Proveedor local sin cert.</td><td style="color:var(--red)">❌ Sin cert.</td><td>N/A</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="hb gold"><h4>💡 ISO 27018 vs GDPR vs LFPDPPP</h4><p style="font-size:.85rem">ISO 27018 <strong>no es una ley</strong>, es un estándar técnico voluntario. Pero cumplirla facilita mucho la demostración de cumplimiento con GDPR y LFPDPPP porque ambas leyes requieren medidas técnicas adecuadas. La certificación del proveedor en ISO 27018 es evidencia de dichas medidas.</p></div>
+      <div class="hb teal"><h4>💡 Para el informe final de TechMX</h4><p style="font-size:.85rem">Al justificar la elección de Azure para TechMX, mencionar que Azure tiene certificación ISO 27018 activa (renovada anualmente), lo que garantiza la protección de los datos personales de los clientes y empleados de TechMX conforme a estándares internacionales reconocidos.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- S11 CONTROLES DE SEGURIDAD -->
+<div class="slide" id="s11">
+  <div class="ph"><div><h2>Controles de Seguridad Cloud</h2><div class="meta">Unidad IV · 4.2 — CSPM, IAM, cifrado, Zero Trust</div></div><div style="font-size:2.5rem">🛡️</div></div>
+  <div class="g3">
+    <div class="card">
+      <h3>🔑 IAM — Identity and Access Management</h3>
+      <div class="hb navy"><h4>Principio de Mínimo Privilegio</h4><p style="font-size:.83rem">Cada usuario, servicio o VM tiene exactamente los permisos que necesita para su función, nada más. Un desarrollador no necesita acceso a producción; una función serverless no necesita leer la BD de RH.</p></div>
+      <div class="hb sky"><h4>Componentes IAM en Azure</h4><ul style="font-size:.83rem;padding-left:14px;margin-top:4px"><li>Azure Active Directory (identidades)</li><li>RBAC: roles predefinidos y personalizados</li><li>MFA: autenticación multifactor obligatoria</li><li>Privileged Identity Management (acceso just-in-time)</li><li>Conditional Access (acceso desde IPs/dispositivos seguros)</li></ul></div>
+    </div>
+    <div class="card">
+      <h3>🔒 Cifrado en la Nube</h3>
+      <div class="hb teal"><h4>En reposo (at rest)</h4><p style="font-size:.83rem">Todos los discos y almacenamiento cifrados por defecto (AES-256). TechMX puede usar Customer Managed Keys (CMK) para controlar sus propias llaves de cifrado, sin que Microsoft tenga acceso.</p></div>
+      <div class="hb gold"><h4>En tránsito (in transit)</h4><p style="font-size:.83rem">TLS 1.2/1.3 para todo tráfico entre internet y Azure. VPN IPSec o ExpressRoute para conectar on-premise de TechMX con Azure de forma cifrada y privada.</p></div>
+      <div class="hb purple"><h4>En uso (in use)</h4><p style="font-size:.83rem">Confidential Computing: cifrar datos mientras están siendo procesados en memoria. Tecnología emergente para datos ultra-sensibles.</p></div>
+    </div>
+    <div class="card">
+      <h3>🎯 Zero Trust y CSPM</h3>
+      <div class="hb navy"><h4>Zero Trust</h4><p style="font-size:.83rem">"Nunca confíes, siempre verifica." Cada petición de acceso se valida completamente, incluso si viene de dentro de la red corporativa. Modelo ideal para cloud.</p><p style="font-size:.81rem;margin-top:6px;font-style:italic">Metáfora: como el aeropuerto donde cada pasajero pasa por seguridad aunque ya esté dentro del terminal.</p></div>
+      <div class="hb teal"><h4>CSPM — Cloud Security Posture Management</h4><p style="font-size:.83rem">Herramientas que escanean continuamente la configuración cloud en busca de malas prácticas: buckets de S3 públicos, puertos abiertos innecesarios, MFA deshabilitado. En Azure: Microsoft Defender for Cloud.</p></div>
+      <div class="hb gold"><h4>CIEM — Cloud Infrastructure Entitlement Management</h4><p style="font-size:.83rem">Gestión de permisos excesivos en la nube. Detecta cuando una identidad tiene más acceso del necesario (problema de "permission creep").</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- S12 COMPARATIVA SEGURIDAD PROVEEDORES -->
+<div class="slide" id="s12">
+  <div class="ph"><div><h2>Seguridad Comparada entre Proveedores Cloud</h2><div class="meta">Unidad IV · 4.2 — AWS · Azure · Google Cloud</div></div><div style="font-size:2.5rem">📊</div></div>
+  <div class="card" style="margin-bottom:14px">
+    <h3>Tabla comparativa de seguridad</h3>
+    <div style="overflow-x:auto">
+      <table class="t">
+        <thead><tr><th>Dimensión de seguridad</th><th>Microsoft Azure</th><th>Amazon AWS</th><th>Google Cloud</th></tr></thead>
+        <tbody>
+          <tr><td><strong>ISO 27001</strong></td><td>✅ Certificado</td><td>✅ Certificado</td><td>✅ Certificado</td></tr>
+          <tr><td><strong>ISO 27018 (PII cloud)</strong></td><td>✅ Certificado</td><td>✅ Certificado</td><td>✅ Certificado</td></tr>
+          <tr><td><strong>SOC 2 Type II</strong></td><td>✅</td><td>✅</td><td>✅</td></tr>
+          <tr><td><strong>GDPR (DPA)</strong></td><td>✅ DPA estándar</td><td>✅ DPA estándar</td><td>✅ DPA estándar</td></tr>
+          <tr><td><strong>Cifrado por defecto</strong></td><td>✅ AES-256</td><td>✅ AES-256</td><td>✅ AES-256</td></tr>
+          <tr><td><strong>Customer Managed Keys</strong></td><td>✅ Azure Key Vault</td><td>✅ AWS KMS</td><td>✅ Cloud KMS</td></tr>
+          <tr><td><strong>Zero Trust nativo</strong></td><td>✅ Microsoft Entra ID</td><td>🟡 IAM avanzado</td><td>🟡 BeyondCorp</td></tr>
+          <tr><td><strong>CSPM integrado</strong></td><td>✅ Defender for Cloud</td><td>✅ Security Hub</td><td>✅ Security Command Center</td></tr>
+          <tr><td><strong>Región en México</strong></td><td>✅ Mexico Central</td><td>❌ No disponible</td><td>❌ No disponible</td></tr>
+          <tr><td><strong>Integración con AD corporativo</strong></td><td>⭐ Nativa (Azure AD)</td><td>🟡 AD Connector</td><td>🟡 Cloud Identity</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="hb navy"><h4>🏆 Azure como recomendación para TechMX</h4><p style="font-size:.88rem">Azure gana para TechMX principalmente por: (1) región en México para data residency y cumplimiento LFPDPPP, (2) integración nativa con Active Directory que TechMX ya usa, (3) Microsoft 365 como suite de productividad (mismo proveedor, un solo contrato), (4) soporte en español con partners certificados en México.</p></div>
+    <div class="hb gold"><h4>⚠️ Consideraciones de vendor lock-in</h4><p style="font-size:.88rem">Al elegir Azure, TechMX debe documentar un plan de salida (exit plan): cómo exportar sus datos y migrarlo a otro proveedor si es necesario. Usar formatos abiertos (VHD estándar, SQL estándar) reduce el lock-in. Las certificaciones cloud del equipo TI también reducen la dependencia.</p></div>
+  </div>
+</div>
+
+<!-- S13 CASO FINAL TECHMX -->
+<div class="slide" id="s13">
+  <div class="ph"><div><h2>Caso Final — TechMX · Fase 3 · Proyecto CloudStart MX</h2><div class="meta">Entregable final · Semana 15 · Exposición oral</div></div><div style="font-size:2.5rem">🏆</div></div>
+  <div class="hb navy" style="margin-bottom:18px"><h4>📋 Contexto final del proyecto</h4><p style="font-size:.9rem">TechMX ha completado la evaluación (Fase 1) y el laboratorio de virtualización (Fase 2). Ahora el equipo debe presentar el <strong>Plan de Migración Completo</strong> ante la Dirección General de TechMX, justificando técnica, económica y legalmente la migración a Azure.</p></div>
+  <div class="g2">
+    <div class="card">
+      <h3>Estructura del entregable final</h3>
+      <div class="timeline-step">
+        <div class="ts-circle" style="background:var(--navy)">1</div>
+        <div><strong>Resumen ejecutivo</strong> (1 página)<br><span style="font-size:.83rem;color:var(--muted)">Costos actuales vs proyectados, beneficios principales, tiempo de implementación</span></div>
+      </div>
+      <div class="timeline-step">
+        <div class="ts-circle" style="background:#1D4ED8">2</div>
+        <div><strong>Inventario y evaluación (Fase 1)</strong><br><span style="font-size:.83rem;color:var(--muted)">8 sistemas: clasificación con las 6 R's, dependencias, datos regulados identificados</span></div>
+      </div>
+      <div class="timeline-step">
+        <div class="ts-circle" style="background:var(--teal)">3</div>
+        <div><strong>Laboratorio virtualizado (Fase 2)</strong><br><span style="font-size:.83rem;color:var(--muted)">Evidencias de práctica con VirtualBox, VMware o Azure. Evaluación comparativa.</span></div>
+      </div>
+      <div class="timeline-step">
+        <div class="ts-circle" style="background:var(--green)">4</div>
+        <div><strong>Plan de migración detallado</strong><br><span style="font-size:.83rem;color:var(--muted)">Wave Plan, cronograma 12 meses, presupuesto estimado (usar Azure Pricing Calculator)</span></div>
+      </div>
+      <div class="timeline-step">
+        <div class="ts-circle" style="background:var(--purple)">5</div>
+        <div><strong>Seguridad y cumplimiento normativo</strong><br><span style="font-size:.83rem;color:var(--muted)">LFPDPPP, NOM-151, ISO 27018: controles implementados, aviso de privacidad actualizado</span></div>
+      </div>
+      <div class="timeline-step">
+        <div class="ts-circle" style="background:var(--gold)">6</div>
+        <div><strong>Análisis de riesgos y plan de contingencia</strong><br><span style="font-size:.83rem;color:var(--muted)">Top 5 riesgos con probabilidad/impacto y plan de rollback para cada ola de migración</span></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Criterios de evaluación del proyecto final</h3>
+        <table class="t">
+          <thead><tr><th>Criterio</th><th>Puntos</th></tr></thead>
+          <tbody>
+            <tr><td>Completitud de las 3 fases</td><td>20</td></tr>
+            <tr><td>Justificación técnica de decisiones</td><td>15</td></tr>
+            <tr><td>Análisis de cumplimiento normativo</td><td>10</td></tr>
+            <tr><td>Evidencias de laboratorio (Fase 2)</td><td>15</td></tr>
+            <tr><td>Análisis de costos (Azure Calculator)</td><td>10</td></tr>
+            <tr><td>Calidad de la presentación oral</td><td>15</td></tr>
+            <tr><td>Manejo de preguntas del jurado</td><td>15</td></tr>
+            <tr><td><strong>Total</strong></td><td><strong>100</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="meta-box"><div class="lbl">💡 Consejo final</div><p style="font-size:.88rem">El mejor proyecto no es el más técnico sino el más <strong>convincente para un directivo no técnico</strong>. Habla de ROI, reducción de riesgo y tiempo de implementación realista. Los directores toman decisiones con base en confianza y claridad, no en términos técnicos complejos. Usa metáforas y números concretos.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- S14 BIBLIOGRAFÍA -->
+<div class="slide" id="s14">
+  <div class="ph"><div><h2>Bibliografía del Parcial 3</h2><div class="meta">Fuentes básicas y normativas</div></div><div style="font-size:2.5rem">📚</div></div>
+  <div class="g2">
+    <div class="card">
+      <h3>📗 Bibliografía básica</h3>
+      <ul class="cl">
+        <li><strong>Joyanes, L. (2015).</strong> <em>Computación en la Nube.</em> Alfaomega. <span style="background:#CCFBF1;border-radius:4px;padding:2px 8px;font-size:.8rem">Caps. 6–8 Migración y Seguridad</span></li>
+        <li><strong>Kirsch, D. &amp; Hurwitz, J. (2020).</strong> <em>Cloud Computing for Dummies.</em> For Dummies. <span style="background:#DBEAFE;border-radius:4px;padding:2px 8px;font-size:.8rem">Caps. 10–12</span></li>
+        <li><strong>Springer, A. (2012).</strong> <em>El gran libro de cloud computing.</em> Axel Springer. <span style="background:#CCFBF1;border-radius:4px;padding:2px 8px;font-size:.8rem">Caps. 5–7 Seguridad</span></li>
+        <li><strong>Gupta, D. &amp; Kamparia, A. (2020).</strong> <em>Fog, edge, and pervasive computing in intelligent IoT driven applications.</em> Wiley-IEEE Press.</li>
+        <li><strong>Arias, P. (2015).</strong> <em>Cloud Computing: Historia y aplicaciones.</em> IT Campus Academy.</li>
+      </ul>
+      <h3 style="margin-top:18px">⚖️ Fuentes normativas</h3>
+      <ul class="cl">
+        <li><strong>DOF (2010).</strong> Ley Federal de Protección de Datos Personales en Posesión de los Particulares. Diario Oficial de la Federación, 5 de julio de 2010.</li>
+        <li><strong>SE (2016).</strong> NOM-151-SCFI-2016. Conservación de mensajes de datos y digitalización de documentos. DOF.</li>
+        <li><strong>Parlamento Europeo (2016).</strong> Reglamento (UE) 2016/679 — GDPR. Diario Oficial de la Unión Europea.</li>
+        <li><strong>ISO/IEC 27018:2019.</strong> Information technology — Security techniques — Code of practice for PII processors in public clouds.</li>
+        <li><strong>NIST SP 800-145 (2011).</strong> The NIST Definition of Cloud Computing.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>🌐 Recursos digitales</h3>
+      <ul class="cl">
+        <li><strong>INAI.</strong> Guías para el cumplimiento de la LFPDPPP. inai.org.mx</li>
+        <li><strong>Microsoft Azure.</strong> Trust Center. microsoft.com/es-mx/trust-center</li>
+        <li><strong>Microsoft Azure Pricing Calculator.</strong> azure.microsoft.com/es-mx/pricing/calculator</li>
+        <li><strong>AWS Migration Hub.</strong> Guía de migración con las 6 R's.</li>
+        <li><strong>Google Cloud.</strong> Migration to Google Cloud: Getting started. cloud.google.com/architecture/migration</li>
+        <li><strong>GDPR.eu.</strong> Guía oficial del GDPR en español. gdpr.eu/es</li>
+        <li><strong>Microsoft Defender for Cloud.</strong> Documentación CSPM.</li>
+        <li><strong>Azure Architecture Center.</strong> Patrones de arquitectura cloud.</li>
+      </ul>
+      <div class="hb teal" style="margin-top:16px"><h4>🎓 Certificaciones relevantes para el perfil del egresado</h4><ul style="font-size:.82rem;padding-left:14px;margin-top:6px"><li>AZ-900: Microsoft Azure Fundamentals (gratuito con Azure for Students)</li><li>AZ-104: Azure Administrator</li><li>SC-900: Microsoft Security, Compliance &amp; Identity</li><li>AWS Cloud Practitioner (gratuito con AWS Academy)</li><li>CCSP: Certified Cloud Security Professional (ISC²)</li></ul></div>
+    </div>
+  </div>
+  <div class="banner" style="text-align:center;padding:22px 32px;margin-top:4px">
+    <h2 style="font-size:1.3rem;margin-bottom:8px">🎓 ¡Felicidades — Cómputo en la Nube completado!</h2>
+    <p style="opacity:.9">UPIICSA · IPN · Lic. en Ciencias de la Informática · Plan 2021 · Semestre 7</p>
+    <p style="opacity:.75;font-size:.85rem;margin-top:6px">Parcial 1: Fundamentos · Parcial 2: Virtualización · Parcial 3: Migración y Seguridad</p>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <button onclick="prevSlide()" id="btnPrev">← Anterior</button>
+  <div class="dots" id="navDots"></div>
+  <span class="nav-label" id="navLabel">Portada</span>
+  <button onclick="nextSlide()" id="btnNext">Siguiente →</button>
+</div>
+
+<script>
+const SLIDES=[
+  {id:'s1',label:'Portada'},{id:'s2',label:'Objetivos'},{id:'s3',label:'¿Por qué migrar?'},
+  {id:'s4',label:'4 Fases de Migración'},{id:'s5',label:'Las 6 R\'s'},{id:'s6',label:'Seguridad Cloud'},
+  {id:'s7',label:'Jurisdicción Digital'},{id:'s8',label:'LFPDPPP y NOM-151'},{id:'s9',label:'GDPR'},
+  {id:'s10',label:'ISO 27018'},{id:'s11',label:'Controles de Seguridad'},{id:'s12',label:'Comparativa Proveedores'},
+  {id:'s13',label:'Proyecto Final TechMX'},{id:'s14',label:'Bibliografía'}
+];
+let cur=0;
+const dotsEl=document.getElementById('navDots');
+SLIDES.forEach((_,i)=>{const d=document.createElement('span');if(i===0)d.classList.add('active');d.onclick=()=>goTo(i+1);dotsEl.appendChild(d);});
+function showSlide(idx){
+  SLIDES.forEach((s,i)=>document.getElementById(s.id).classList.toggle('active',i===idx));
+  dotsEl.querySelectorAll('span').forEach((d,i)=>d.classList.toggle('active',i===idx));
+  document.getElementById('navLabel').textContent=SLIDES[idx].label;
+  document.getElementById('btnPrev').disabled=idx===0;
+  document.getElementById('btnNext').disabled=idx===SLIDES.length-1;
+  document.getElementById('slideNum').textContent=`${idx+1} / ${SLIDES.length}`;
+  window.scrollTo(0,0);cur=idx;
+}
+function nextSlide(){if(cur<SLIDES.length-1)showSlide(cur+1);}
+function prevSlide(){if(cur>0)showSlide(cur-1);}
+function goTo(n){showSlide(n-1);}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowDown')nextSlide();if(e.key==='ArrowLeft'||e.key==='ArrowUp')prevSlide();});
+function showPhase(id){['eval','plan','mig','opt'].forEach(p=>{document.getElementById('ph-'+p).classList.toggle('show',p===id);});}
+function ansQ9(a){document.getElementById('q9tok').style.display=a==='b'?'block':'none';document.getElementById('q9terr').style.display=a!=='b'?'block':'none';}
+showSlide(0);
+</script>
+</body>
+</html>

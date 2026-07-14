@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parcial 1 — Seguridad Informática · UPIICSA · IPN</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --wine: #6B1A33; --wine-light: #9B2244;
+  --gold: #C8922A; --gold-light: #E8A83A;
+  --green: #2E7D32; --blue: #1565C0; --upiicsa: #1B5E75;
+  --bg: #F5F7FA; --card: #fff; --border: #DDE3EA;
+  --text: #1A1A2E; --muted: #6B7280; --radius: 12px;
+  --shadow: 0 2px 16px rgba(0,0,0,.08);
+}
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; font-size: 15px; }
+.slide { display: none; min-height: 100vh; padding: 24px 20px 90px; max-width: 1100px; margin: 0 auto; animation: fi .35s ease; }
+.slide.active { display: block; }
+@keyframes fi { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+.nav { position:fixed; bottom:0; left:0; right:0; background:var(--wine); display:flex; justify-content:center; align-items:center; gap:12px; padding:10px 16px; z-index:100; box-shadow:0 -2px 12px rgba(0,0,0,.2); }
+.nav button { background:rgba(255,255,255,.18); color:#fff; border:none; padding:8px 22px; border-radius:20px; cursor:pointer; font-size:14px; font-weight:600; transition:background .2s; }
+.nav button:hover { background:rgba(255,255,255,.35); }
+.nav button:disabled { opacity:.35; cursor:not-allowed; }
+.nav-label { color:rgba(255,255,255,.75); font-size:13px; min-width:160px; text-align:center; }
+.dots { display:flex; gap:6px; align-items:center; flex-wrap:wrap; justify-content:center; max-width:300px; }
+.dots span { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.35); cursor:pointer; transition:background .2s,transform .2s; }
+.dots span.active { background:var(--gold); transform:scale(1.4); }
+.print-btn { position:fixed; top:14px; right:16px; background:var(--wine); color:#fff; border:none; border-radius:8px; padding:8px 16px; cursor:pointer; font-size:13px; font-weight:600; z-index:200; }
+.slide-num { position:fixed; top:14px; left:16px; background:rgba(107,26,51,.12); color:var(--wine); border-radius:20px; padding:4px 14px; font-size:12px; font-weight:700; z-index:200; }
+.banner { background:linear-gradient(135deg, var(--wine) 0%, var(--wine-light) 50%, var(--gold) 100%); color:#fff; border-radius:var(--radius); padding:40px 32px; margin-bottom:24px; position:relative; overflow:hidden; }
+.banner::before { content:''; position:absolute; top:-40px; right:-40px; width:200px; height:200px; border-radius:50%; background:rgba(255,255,255,.06); }
+.banner .inst { font-size:12px; letter-spacing:2px; text-transform:uppercase; opacity:.8; margin-bottom:6px; }
+.banner h1 { font-size:2.2rem; font-weight:800; margin-bottom:8px; }
+.banner .sub { font-size:1rem; opacity:.85; }
+.badges { display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+.badge { background:rgba(255,255,255,.2); border:1px solid rgba(255,255,255,.3); border-radius:20px; padding:4px 14px; font-size:12px; font-weight:600; }
+.card { background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); border:1px solid var(--border); padding:24px; margin-bottom:18px; }
+.card h3 { font-size:1rem; font-weight:700; margin-bottom:12px; color:var(--wine); }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+@media(max-width:700px) { .grid-2,.grid-3 { grid-template-columns:1fr; } }
+.hbox { border-radius:var(--radius); padding:18px 20px; margin-bottom:14px; }
+.hbox.wine { background:#F9E8ED; border-left:4px solid var(--wine); }
+.hbox.gold { background:#FEF3DC; border-left:4px solid var(--gold); }
+.hbox.blue { background:#E3EEF9; border-left:4px solid var(--blue); }
+.hbox.green { background:#E8F5E9; border-left:4px solid var(--green); }
+.hbox.teal { background:#E0F2F1; border-left:4px solid #00796B; }
+.hbox h4 { font-size:.9rem; font-weight:700; margin-bottom:6px; }
+ul.clean { list-style:none; }
+ul.clean li { padding:5px 0 5px 18px; position:relative; border-bottom:1px solid var(--border); font-size:.9rem; }
+ul.clean li:last-child { border-bottom:none; }
+ul.clean li::before { content:'▸'; position:absolute; left:0; color:var(--wine); font-size:11px; top:8px; }
+.parcial-h { border-radius:var(--radius); padding:20px 24px; color:#fff; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; background:linear-gradient(135deg,var(--wine),var(--gold)); }
+.parcial-h h2 { font-size:1.5rem; font-weight:800; }
+.parcial-h .meta { font-size:13px; opacity:.85; }
+.pill { display:inline-block; border-radius:20px; padding:3px 12px; font-size:12px; font-weight:600; }
+.pw { background:#F9E8ED; color:var(--wine); }
+.pb { background:#E3EEF9; color:var(--blue); }
+.pg { background:#E8F5E9; color:var(--green); }
+.po { background:#FEF3DC; color:#92620A; }
+.cia-box { border-radius:var(--radius); padding:20px; text-align:center; border:2px solid; }
+.cia-c { border-color:#1565C0; background:#EEF4FB; }
+.cia-i { border-color:#2E7D32; background:#E8F5E9; }
+.cia-d { border-color:#C8922A; background:#FEF3DC; }
+.cia-box .icon { font-size:2.5rem; margin-bottom:10px; }
+.cia-box h3 { font-size:1.1rem; font-weight:800; margin-bottom:6px; }
+.cia-box p { font-size:.85rem; color:var(--muted); }
+.divider { height:3px; border-radius:2px; background:linear-gradient(90deg,var(--wine),var(--gold)); margin:20px 0; }
+.meta-box { background:linear-gradient(135deg,#FEF3DC,#FFF8EC); border:2px solid var(--gold); border-radius:var(--radius); padding:16px 20px; margin-bottom:14px; }
+.meta-box .label { font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:6px; }
+.quiz-btn { background:var(--wine); color:#fff; border:none; padding:10px 20px; border-radius:8px; cursor:pointer; font-size:14px; font-weight:600; margin:6px 4px; transition:background .2s; }
+.quiz-btn:hover { background:var(--wine-light); }
+.quiz-feedback { margin-top:12px; padding:12px 16px; border-radius:8px; font-weight:600; display:none; }
+.quiz-ok { background:#E8F5E9; color:var(--green); border-left:4px solid var(--green); }
+.quiz-err { background:#FDECEA; color:#B71C1C; border-left:4px solid #B71C1C; }
+.std-card { border-radius:var(--radius); padding:20px; border:2px solid; margin-bottom:12px; }
+.std-iso { border-color:#1565C0; background:#EEF4FB; }
+.std-nist { border-color:#2E7D32; background:#E8F5E9; }
+.std-cis { border-color:#C8922A; background:#FEF3DC; }
+.std-card h3 { font-size:1rem; font-weight:800; margin-bottom:6px; }
+table.t { width:100%; border-collapse:collapse; font-size:14px; }
+table.t th { background:var(--wine); color:#fff; padding:10px 14px; text-align:left; }
+table.t td { padding:10px 14px; border-bottom:1px solid var(--border); }
+table.t tr:nth-child(even) td { background:#FAFBFC; }
+.toc-item { display:flex; align-items:center; gap:14px; padding:12px 16px; border-radius:10px; margin-bottom:8px; background:var(--card); border:1px solid var(--border); cursor:pointer; transition:background .15s; }
+.toc-item:hover { background:#EEF2FF; }
+.toc-num { width:34px; height:34px; border-radius:50%; background:var(--wine); color:#fff; display:grid; place-items:center; font-weight:800; flex-shrink:0; }
+.role-card { border-radius:var(--radius); padding:20px; border:2px solid; text-align:center; }
+.role-owner { border-color:var(--wine); background:#F9E8ED; }
+.role-custodian { border-color:var(--blue); background:#E3EEF9; }
+.role-user { border-color:var(--green); background:#E8F5E9; }
+.role-card .icon { font-size:2.5rem; margin-bottom:10px; }
+.role-card h3 { font-size:1rem; font-weight:800; margin-bottom:4px; }
+.norm-level { display:flex; align-items:center; gap:12px; padding:12px 16px; border-radius:8px; margin-bottom:8px; cursor:pointer; transition:all .2s; }
+.norm-level:hover { transform:translateX(4px); }
+.norm-level .lnum { width:32px; height:32px; border-radius:50%; display:grid; place-items:center; font-weight:800; color:#fff; flex-shrink:0; font-size:14px; }
+.awareness-step { border-radius:10px; padding:16px; border:1px solid var(--border); background:var(--card); text-align:center; }
+.awareness-step .step-num { width:40px; height:40px; border-radius:50%; background:var(--wine); color:#fff; display:grid; place-items:center; font-weight:800; font-size:18px; margin:0 auto 10px; }
+</style>
+</head>
+<body>
+<button class="print-btn" onclick="window.print()">🖨 Imprimir / PDF</button>
+<div class="slide-num" id="slideNum">1 / 13</div>
+
+<!-- ══ S1 PORTADA ══ -->
+<div class="slide active" id="s1">
+  <div class="banner" style="text-align:center; padding:52px 36px;">
+    <div class="inst">Instituto Politécnico Nacional · UPIICSA · Ingeniería en Informática · Semestre 4</div>
+    <h1>Seguridad Informática</h1>
+    <div class="sub" style="font-size:1.3rem; font-weight:700; margin-top:8px;">Parcial 1 — Contexto y Programa de Seguridad</div>
+    <div class="sub" style="margin-top:6px; opacity:.8;">Unidades I y II · Semanas 1–5</div>
+    <div class="badges" style="justify-content:center; margin-top:24px;">
+      <span class="badge">🔐 Triángulo CIA</span>
+      <span class="badge">⚠️ Activos y Amenazas</span>
+      <span class="badge">📋 ISO 27001 · NIST · CIS</span>
+      <span class="badge">👥 Roles de Seguridad</span>
+      <span class="badge">📢 Programa de Awareness</span>
+    </div>
+  </div>
+  <div class="card">
+    <p style="color:var(--muted); font-size:.9rem; margin-bottom:16px; text-align:center;">Índice — haz clic para navegar a cualquier tema</p>
+    <div class="toc-item" onclick="goTo(3)"><div class="toc-num">1</div><div><strong>Triángulo CIA — Fundamentos</strong><br><span style="font-size:.82rem;color:var(--muted);">SI vs Ciberseguridad · Confidencialidad, Integridad, Disponibilidad</span></div></div>
+    <div class="toc-item" onclick="goTo(4)"><div class="toc-num">2</div><div><strong>Activos, Amenazas, Vulnerabilidades</strong><br><span style="font-size:.82rem;color:var(--muted);">Contexto de la seguridad · Relaciones entre conceptos</span></div></div>
+    <div class="toc-item" onclick="goTo(5)"><div class="toc-num">3</div><div><strong>Riesgo e Impacto</strong><br><span style="font-size:.82rem;color:var(--muted);">Fórmula del riesgo · Matriz de riesgo</span></div></div>
+    <div class="toc-item" onclick="goTo(6)"><div class="toc-num">4</div><div><strong>Estándares: ISO 27001, NIST CSF, CIS Controls</strong><br><span style="font-size:.82rem;color:var(--muted);">Qué son · Para qué sirven · Comparativa</span></div></div>
+    <div class="toc-item" onclick="goTo(7)"><div class="toc-num">5</div><div><strong>Clasificación de Datos</strong><br><span style="font-size:.82rem;color:var(--muted);">Modelo comercial vs militar · Ejemplos</span></div></div>
+    <div class="toc-item" onclick="goTo(8)"><div class="toc-num">6</div><div><strong>Seguridad en RRHH</strong><br><span style="font-size:.82rem;color:var(--muted);">Contratación segura · NDA · Offboarding</span></div></div>
+    <div class="toc-item" onclick="goTo(9)"><div class="toc-num">7</div><div><strong>Roles: Dueño, Custodio, Usuario</strong><br><span style="font-size:.82rem;color:var(--muted);">Responsabilidades y diferencias clave</span></div></div>
+    <div class="toc-item" onclick="goTo(10)"><div class="toc-num">8</div><div><strong>Jerarquía Normativa</strong><br><span style="font-size:.82rem;color:var(--muted);">Política → Estándar → Guía → Procedimiento → Baseline</span></div></div>
+    <div class="toc-item" onclick="goTo(11)"><div class="toc-num">9</div><div><strong>Metodología de Awareness</strong><br><span style="font-size:.82rem;color:var(--muted);">Triángulo del conocimiento · Campaña de concientización</span></div></div>
+    <div class="toc-item" onclick="goTo(12)"><div class="toc-num">10</div><div><strong>Caso Práctico: SECURITAS Corp</strong><br><span style="font-size:.82rem;color:var(--muted);">Actividad integradora del parcial</span></div></div>
+    <div class="toc-item" onclick="goTo(13)"><div class="toc-num">11</div><div><strong>Bibliografía</strong><br><span style="font-size:.82rem;color:var(--muted);">Fuentes básicas y complementarias del parcial</span></div></div>
+  </div>
+</div>
+
+<!-- ══ S2 OBJETIVOS ══ -->
+<div class="slide" id="s2">
+  <div class="parcial-h">
+    <div><h2>Objetivos del Parcial 1</h2><div class="meta">Unidades I y II · 24 horas (12T + 12P)</div></div>
+    <div style="font-size:2.5rem;">🎯</div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Al terminar este parcial, el alumno será capaz de:</h3>
+      <ul class="clean">
+        <li>Distinguir seguridad informática, seguridad de la información y ciberseguridad</li>
+        <li>Identificar activos, amenazas, vulnerabilidades, riesgos e impactos en un sistema real</li>
+        <li>Aplicar los estándares ISO 27001, NIST CSF y CIS Controls a un caso organizacional</li>
+        <li>Clasificar datos según el modelo comercial y el modelo militar</li>
+        <li>Diseñar una política de seguridad básica y un programa de Awareness</li>
+        <li>Distinguir los roles Dueño, Custodio y Usuario de la información</li>
+        <li>Construir la jerarquía normativa de una organización</li>
+      </ul>
+    </div>
+    <div>
+      <div class="hbox blue">
+        <h4>🏗️ Competencia del programa</h4>
+        <p style="font-size:.88rem;">Aplicar los fundamentos de seguridad informática para identificar y gestionar riesgos, diseñar programas de seguridad y promover una cultura de protección de la información en las organizaciones.</p>
+      </div>
+      <div class="hbox gold">
+        <h4>🏢 Proyecto SECURITAS Corp — Fase 1</h4>
+        <p style="font-size:.88rem;">A lo largo del parcial construirás el <strong>Informe de Diagnóstico</strong> de una PyME ficticia: activos, amenazas, política corporativa y plan de Awareness para 80 empleados.</p>
+      </div>
+      <div class="hbox wine">
+        <h4>📊 Evaluación del parcial</h4>
+        <p style="font-size:.88rem;">Fase 1 del proyecto (30) + Awareness (15) + Exposición (15) + Glosario (10) + Examen escrito (20) + Co-evaluación (10) = <strong>100 puntos</strong></p>
+      </div>
+    </div>
+  </div>
+  <div class="meta-box">
+    <div class="label">💡 Metáfora del parcial</div>
+    <p style="font-size:.95rem;">Imagina que eres el <strong>médico de guardia</strong> de una empresa. Antes de operar (aplicar controles), necesitas hacer el diagnóstico: conocer al paciente (activos), identificar los síntomas (vulnerabilidades), entender las enfermedades posibles (amenazas) y calcular el riesgo de complicaciones (impacto). Sin diagnóstico correcto, el tratamiento puede ser peor que la enfermedad.</p>
+  </div>
+</div>
+
+<!-- ══ S3 TRIÁNGULO CIA ══ -->
+<div class="slide" id="s3">
+  <div class="parcial-h">
+    <div><h2>Triángulo CIA</h2><div class="meta">Unidad I · 1.1 — Fundamentos de la Seguridad Informática</div></div>
+    <div style="font-size:2.5rem;">🔐</div>
+  </div>
+  <div class="grid-3" style="margin-bottom:20px;">
+    <div class="cia-box cia-c">
+      <div class="icon">🔒</div>
+      <h3 style="color:#1565C0;">Confidencialidad</h3>
+      <p>La información solo es accesible a quienes están autorizados.</p>
+      <div style="margin-top:10px; font-size:.82rem; color:var(--muted); font-style:italic;">"Solo el destinatario puede leer la carta."</div>
+    </div>
+    <div class="cia-box cia-i">
+      <div class="icon">✅</div>
+      <h3 style="color:#2E7D32;">Integridad</h3>
+      <p>La información es exacta y no ha sido modificada sin autorización.</p>
+      <div style="margin-top:10px; font-size:.82rem; color:var(--muted); font-style:italic;">"La carta llega sin alteraciones."</div>
+    </div>
+    <div class="cia-box cia-d">
+      <div class="icon">⚡</div>
+      <h3 style="color:#C8922A;">Disponibilidad</h3>
+      <p>Los sistemas e información están accesibles cuando se necesitan.</p>
+      <div style="margin-top:10px; font-size:.82rem; color:var(--muted); font-style:italic;">"El servicio postal entrega a tiempo."</div>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>¿Qué diferencia estos tres conceptos?</h3>
+      <div style="overflow-x:auto;">
+        <table class="t">
+          <thead><tr><th>Término</th><th>Enfoque</th><th>Ejemplo de amenaza</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Seguridad Informática</strong></td><td>Protección de sistemas IT (hardware, software, redes)</td><td>Virus que daña el OS</td></tr>
+            <tr><td><strong>Seguridad de la Información</strong></td><td>Protección de la información en cualquier formato (papel, digital, oral)</td><td>Robo de documentos físicos</td></tr>
+            <tr><td><strong>Ciberseguridad</strong></td><td>Protección en el ciberespacio (redes, internet, infraestructura crítica)</td><td>Ataque a infraestructura nacional</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Extensiones del triángulo CIA</h3>
+      <div class="hbox wine">
+        <h4>🔏 No Repudio</h4>
+        <p style="font-size:.85rem;">Una acción no puede ser negada por quien la realizó. Ejemplo: firma digital en un contrato electrónico.</p>
+      </div>
+      <div class="hbox blue">
+        <h4>✔️ Autenticidad</h4>
+        <p style="font-size:.85rem;">Garantía de que la identidad del usuario o del mensaje es legítima. Ejemplo: doble factor de autenticación (2FA).</p>
+      </div>
+      <div class="hbox green">
+        <h4>🕐 Accountability (Auditoría)</h4>
+        <p style="font-size:.85rem;">Capacidad de rastrear quién hizo qué y cuándo. Ejemplo: logs de acceso a base de datos.</p>
+      </div>
+    </div>
+  </div>
+  <div class="meta-box">
+    <div class="label">💡 Metáfora de la caja fuerte bancaria</div>
+    <p style="font-size:.92rem;"><strong>Confidencialidad</strong> = Solo el dueño de la caja y el banco tienen llave. <strong>Integridad</strong> = El contenido no cambia de forma inexplicable dentro de la caja. <strong>Disponibilidad</strong> = El banco está abierto cuando necesitas tu dinero. Si el banco cierra sin avisar (ransomware), perdiste disponibilidad aunque la caja esté intacta.</p>
+  </div>
+</div>
+
+<!-- ══ S4 ACTIVOS, AMENAZAS, VULNERABILIDADES ══ -->
+<div class="slide" id="s4">
+  <div class="parcial-h">
+    <div><h2>Activos · Amenazas · Vulnerabilidades</h2><div class="meta">Unidad I · 1.2 — Contexto de la Seguridad</div></div>
+    <div style="font-size:2.5rem;">⚠️</div>
+  </div>
+  <div class="grid-2">
+    <div>
+      <div class="hbox blue">
+        <h4>🏆 Activo (Asset)</h4>
+        <p style="font-size:.88rem;">Todo recurso de valor para la organización que requiere protección: datos, hardware, software, personas, procesos, reputación.</p>
+        <p style="font-size:.82rem; margin-top:6px; font-style:italic;">Metáfora: el activo es la <strong>joya</strong> que queremos proteger en la caja fuerte.</p>
+      </div>
+      <div class="hbox wine">
+        <h4>😈 Amenaza (Threat)</h4>
+        <p style="font-size:.88rem;">Circunstancia o evento con potencial de causar daño a un activo. Puede ser humana (intencional o accidental), técnica o ambiental.</p>
+        <p style="font-size:.82rem; margin-top:6px; font-style:italic;">Metáfora: el ladrón que rodea el banco buscando cómo entrar.</p>
+      </div>
+      <div class="hbox gold">
+        <h4>🕳️ Vulnerabilidad (Vulnerability)</h4>
+        <p style="font-size:.88rem;">Debilidad en un sistema, proceso o control que puede ser explotada por una amenaza. Sin vulnerabilidad, la amenaza no puede causar daño.</p>
+        <p style="font-size:.82rem; margin-top:6px; font-style:italic;">Metáfora: la <strong>ventana rota</strong> del banco que el ladrón puede usar.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Tipos de amenazas</h3>
+        <table class="t" style="font-size:.85rem;">
+          <thead><tr><th>Tipo</th><th>Ejemplo</th></tr></thead>
+          <tbody>
+            <tr><td>🧑‍💻 Humana interna</td><td>Empleado descontento que filtra datos</td></tr>
+            <tr><td>👤 Humana externa</td><td>Hacker que intenta acceder remotamente</td></tr>
+            <tr><td>🤦 Accidental</td><td>Empleado que borra archivos por error</td></tr>
+            <tr><td>⚙️ Técnica</td><td>Fallo de hardware, bug de software</td></tr>
+            <tr><td>🌪️ Ambiental</td><td>Incendio, inundación, terremoto</td></tr>
+            <tr><td>🏭 Física</td><td>Robo de equipo, acceso no autorizado</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="hbox green">
+        <h4>🔗 Relación fundamental</h4>
+        <p style="font-size:.88rem; font-weight:700; text-align:center; font-size:1rem;">Amenaza + Vulnerabilidad = Riesgo<br>Riesgo × Impacto = Exposición al daño</p>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Ejemplo aplicado: SECURITAS Corp (PyME de TI)</h3>
+    <table class="t" style="font-size:.85rem;">
+      <thead><tr><th>Activo</th><th>Amenaza</th><th>Vulnerabilidad</th><th>Impacto potencial</th></tr></thead>
+      <tbody>
+        <tr><td>Base de datos de clientes</td><td>SQL Injection por atacante externo</td><td>Falta de validación de entradas en la web</td><td>Robo de datos, multas LFPDPPP</td></tr>
+        <tr><td>Servidor de correo</td><td>Phishing dirigido (spear phishing)</td><td>Empleados sin capacitación de awareness</td><td>Robo de credenciales, acceso interno</td></tr>
+        <tr><td>Código fuente del producto</td><td>Insider threat (exemployado)</td><td>Sin revocar accesos al salir</td><td>Robo de propiedad intelectual</td></tr>
+        <tr><td>Infraestructura en la nube</td><td>Ransomware</td><td>Backups sin verificar, sin segmentación</td><td>Paralización total del negocio</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ S5 RIESGO E IMPACTO ══ -->
+<div class="slide" id="s5">
+  <div class="parcial-h">
+    <div><h2>Riesgo e Impacto</h2><div class="meta">Unidad I · 1.2 — Gestión del Riesgo</div></div>
+    <div style="font-size:2.5rem;">📊</div>
+  </div>
+  <div class="grid-2">
+    <div>
+      <div class="hbox blue">
+        <h4>📐 Fórmula del Riesgo</h4>
+        <div style="text-align:center; font-size:1.3rem; font-weight:800; padding:12px 0; color:var(--blue);">Riesgo = Probabilidad × Impacto</div>
+        <p style="font-size:.85rem;">Donde: <strong>Probabilidad</strong> = Amenaza × Vulnerabilidad. Si la vulnerabilidad es cero (control perfecto), el riesgo es cero aunque exista la amenaza.</p>
+      </div>
+      <div class="hbox wine">
+        <h4>💥 Tipos de Impacto</h4>
+        <ul style="font-size:.85rem; padding-left:16px; margin-top:6px;">
+          <li><strong>Financiero:</strong> pérdida directa de dinero, multas regulatorias</li>
+          <li><strong>Reputacional:</strong> pérdida de clientes, daño a la marca</li>
+          <li><strong>Operacional:</strong> paralización de procesos de negocio</li>
+          <li><strong>Legal:</strong> sanciones, demandas, responsabilidades</li>
+          <li><strong>Humano:</strong> daño a personas (casos de infraestructura crítica)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🎯 Matriz de Riesgo — Ejemplo interactivo</h3>
+      <p style="font-size:.85rem; color:var(--muted); margin-bottom:12px;">Escala: 1=Bajo, 2=Medio, 3=Alto, 4=Crítico</p>
+      <div style="overflow-x:auto;">
+        <table class="t" style="font-size:.82rem;">
+          <thead>
+            <tr>
+              <th>Probabilidad \ Impacto</th>
+              <th>1-Bajo</th><th>2-Medio</th><th>3-Alto</th><th>4-Crítico</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>4-Casi Seguro</strong></td>
+              <td style="background:#FFF9C4;">Medio</td>
+              <td style="background:#FFCC02; color:#333;">Alto</td>
+              <td style="background:#FF5722; color:#fff;">Crítico</td>
+              <td style="background:#B71C1C; color:#fff;">Crítico</td>
+            </tr>
+            <tr>
+              <td><strong>3-Probable</strong></td>
+              <td style="background:#E8F5E9;">Bajo</td>
+              <td style="background:#FFF9C4;">Medio</td>
+              <td style="background:#FFCC02; color:#333;">Alto</td>
+              <td style="background:#FF5722; color:#fff;">Crítico</td>
+            </tr>
+            <tr>
+              <td><strong>2-Posible</strong></td>
+              <td style="background:#E8F5E9;">Bajo</td>
+              <td style="background:#E8F5E9;">Bajo</td>
+              <td style="background:#FFF9C4;">Medio</td>
+              <td style="background:#FFCC02; color:#333;">Alto</td>
+            </tr>
+            <tr>
+              <td><strong>1-Improbable</strong></td>
+              <td style="background:#E8F5E9;">Bajo</td>
+              <td style="background:#E8F5E9;">Bajo</td>
+              <td style="background:#E8F5E9;">Bajo</td>
+              <td style="background:#FFF9C4;">Medio</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="hbox gold" style="margin-top:12px;">
+        <h4>Opciones de tratamiento del riesgo</h4>
+        <p style="font-size:.85rem;"><strong>Evitar:</strong> eliminar la actividad que genera el riesgo · <strong>Reducir:</strong> aplicar controles · <strong>Transferir:</strong> contratar seguro · <strong>Aceptar:</strong> documentar y monitorear</p>
+      </div>
+    </div>
+  </div>
+  <div class="meta-box">
+    <div class="label">💡 Metáfora del cruce de calle</div>
+    <p style="font-size:.92rem;">Cruzar la calle tiene riesgo. La amenaza es el tráfico. La vulnerabilidad es cruzar sin mirar. El impacto es ser atropellado. Si instalas un semáforo (control), reduces la probabilidad. Si caminas por un puente peatonal (control más robusto), eliminas la vulnerabilidad. No puedes eliminar la amenaza (los coches seguirán pasando), pero puedes hacer el riesgo aceptablemente bajo.</p>
+  </div>
+</div>
+
+<!-- ══ S6 ESTÁNDARES ══ -->
+<div class="slide" id="s6">
+  <div class="parcial-h">
+    <div><h2>Estándares de Seguridad</h2><div class="meta">Unidad I · 1.3 — ISO 27001 · NIST CSF · CIS Controls</div></div>
+    <div style="font-size:2.5rem;">📋</div>
+  </div>
+  <div class="std-card std-iso">
+    <h3 style="color:#1565C0;">🌐 ISO/IEC 27001:2022 — Sistema de Gestión de Seguridad de la Información (SGSI)</h3>
+    <div class="grid-2" style="margin-top:8px;">
+      <div>
+        <ul style="font-size:.85rem; padding-left:16px;">
+          <li>Estándar internacional certificable (auditoría externa)</li>
+          <li>Enfoque en gestión de riesgos basado en contexto organizacional</li>
+          <li>Ciclo PHVA: Planear → Hacer → Verificar → Actuar</li>
+          <li>114 controles en 14 dominios (Anexo A)</li>
+        </ul>
+      </div>
+      <div style="font-size:.85rem;">
+        <strong>Dominios clave:</strong> Políticas, Organización, Recursos Humanos, Activos, Criptografía, Física, Comunicaciones, Adquisición, Proveedores, Incidentes, BCP, Cumplimiento.<br>
+        <strong>Para qué sirve:</strong> Demostrar a clientes, socios y reguladores que la empresa gestiona la seguridad de forma sistemática.
+      </div>
+    </div>
+  </div>
+  <div class="std-card std-nist">
+    <h3 style="color:#2E7D32;">🇺🇸 NIST Cybersecurity Framework (CSF 2.0)</h3>
+    <div class="grid-2" style="margin-top:8px;">
+      <div>
+        <ul style="font-size:.85rem; padding-left:16px;">
+          <li>Marco voluntario del Instituto Nacional de Estándares EE.UU.</li>
+          <li>6 funciones: <strong>Gobernar · Identificar · Proteger · Detectar · Responder · Recuperar</strong></li>
+          <li>No es certificable, pero es ampliamente adoptado</li>
+          <li>Ideal para comunicar riesgo a la alta dirección</li>
+        </ul>
+      </div>
+      <div style="font-size:.85rem;">
+        <strong>Metáfora:</strong> Es como el manual del propietario de un automóvil: describe qué funciones debe tener el vehículo (motor, frenos, alarma), pero no te dice cuál marca comprar. ISO 27001 es el inspector técnico que certifica que tu coche funciona correctamente.
+      </div>
+    </div>
+  </div>
+  <div class="std-card std-cis">
+    <h3 style="color:#C8922A;">🛡️ CIS Controls (v8) — 18 Controles Críticos de Seguridad</h3>
+    <div class="grid-2" style="margin-top:8px;">
+      <div>
+        <ul style="font-size:.85rem; padding-left:16px;">
+          <li>Lista priorizada de acciones técnicas concretas</li>
+          <li>3 grupos de implementación según tamaño de la empresa (IG1, IG2, IG3)</li>
+          <li>Controles 1-6: higiene básica (Grupo 1, aplica a TODAS las orgs)</li>
+          <li>Más orientado a la práctica que ISO 27001</li>
+        </ul>
+      </div>
+      <div style="font-size:.85rem;">
+        <strong>Top 6 controles:</strong> 1-Inventario de activos hardware · 2-Inventario software · 3-Protección de datos · 4-Gestión de cuentas · 5-Gestión de accesos · 6-Gestión de vulnerabilidades.<br>
+        <strong>Metáfora:</strong> Si ISO 27001 es el "qué hacer", CIS Controls es el "checklist del mecánico".
+      </div>
+    </div>
+  </div>
+  <div class="hbox teal">
+    <h4>🤔 ¿Cuándo usar cada uno?</h4>
+    <p style="font-size:.88rem;"><strong>ISO 27001:</strong> cuando necesitas certificación formal para ganar clientes o cumplir regulaciones. <strong>NIST CSF:</strong> cuando quieres un marco para gestionar y comunicar riesgo internamente. <strong>CIS Controls:</strong> cuando quieres mejorar la postura técnica de seguridad con acciones concretas y priorizadas. Las tres son complementarias, no excluyentes.</p>
+  </div>
+</div>
+
+<!-- ══ S7 CLASIFICACIÓN DE DATOS ══ -->
+<div class="slide" id="s7">
+  <div class="parcial-h">
+    <div><h2>Clasificación de Datos</h2><div class="meta">Unidad I · 1.4 — Modelos de Clasificación de la Información</div></div>
+    <div style="font-size:2.5rem;">🗂️</div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Modelo Comercial (Sector Privado)</h3>
+      <table class="t">
+        <thead><tr><th>Nivel</th><th>Descripción</th><th>Ejemplo</th></tr></thead>
+        <tbody>
+          <tr><td><span class="pill" style="background:#E8F5E9;color:#2E7D32;">🟢 Público</span></td><td>Puede divulgarse sin restricciones</td><td>Catálogo de productos, web corporativa</td></tr>
+          <tr><td><span class="pill" style="background:#E3EEF9;color:#1565C0;">🔵 Interno</span></td><td>Solo empleados de la empresa</td><td>Directorio de empleados, políticas internas</td></tr>
+          <tr><td><span class="pill" style="background:#FFF9C4;color:#7B5E00;">🟡 Confidencial</span></td><td>Solo personal autorizado</td><td>Contratos con clientes, estrategias comerciales</td></tr>
+          <tr><td><span class="pill" style="background:#FDECEA;color:#B71C1C;">🔴 Secreto/Restringido</span></td><td>Muy pocos autorizados, máximo daño si se filtra</td><td>Código fuente core, datos personales sensibles</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Modelo Militar/Gubernamental</h3>
+      <table class="t">
+        <thead><tr><th>Nivel</th><th>Ejemplo de uso</th></tr></thead>
+        <tbody>
+          <tr><td><span class="pill pg">Sin Clasificar (Unclassified)</span></td><td>Boletines públicos, comunicados de prensa</td></tr>
+          <tr><td><span class="pill pb">Sensible No Clasificado (SBU)</span></td><td>Procedimientos internos no clasificados</td></tr>
+          <tr><td><span class="pill po">Confidencial</span></td><td>Información cuya divulgación causa daño</td></tr>
+          <tr><td><span class="pill" style="background:#FDECEA;color:#B71C1C;">Secreto (Secret)</span></td><td>Planes operativos, inteligencia limitada</td></tr>
+          <tr><td><span class="pill pw">Ultrasecreto (Top Secret)</span></td><td>Información cuya divulgación puede comprometer seguridad nacional</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Proceso de clasificación en 4 pasos</h3>
+    <div class="grid-3">
+      <div class="hbox blue">
+        <h4>1️⃣ Identificar</h4>
+        <p style="font-size:.85rem;">¿Qué información existe en la organización? Inventario de activos de información.</p>
+      </div>
+      <div class="hbox gold">
+        <h4>2️⃣ Clasificar</h4>
+        <p style="font-size:.85rem;">Asignar el nivel de clasificación basándose en el impacto de divulgación no autorizada.</p>
+      </div>
+      <div class="hbox wine">
+        <h4>3️⃣ Etiquetar</h4>
+        <p style="font-size:.85rem;">Marcar físicamente o digitalmente el documento con su clasificación (encabezados, sellos).</p>
+      </div>
+    </div>
+    <div class="grid-2" style="margin-top:12px;">
+      <div class="hbox green">
+        <h4>4️⃣ Manejar según clasificación</h4>
+        <p style="font-size:.85rem;">Aplicar controles proporcionales: cifrado, acceso restringido, destrucción segura al final del ciclo de vida.</p>
+      </div>
+      <div class="hbox teal">
+        <h4>🏢 Caso SECURITAS Corp</h4>
+        <p style="font-size:.85rem;">Los datos de clientes (nombre, RFC, tarjeta) se clasifican como <strong>Confidencial</strong>. El código fuente del ERP como <strong>Secreto/Restringido</strong>. Los catálogos de productos como <strong>Público</strong>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S8 RRHH ══ -->
+<div class="slide" id="s8">
+  <div class="parcial-h">
+    <div><h2>Seguridad en Recursos Humanos</h2><div class="meta">Unidad I · 1.5 — El factor humano en la seguridad</div></div>
+    <div style="font-size:2.5rem;">👤</div>
+  </div>
+  <div class="grid-2">
+    <div>
+      <div class="hbox blue">
+        <h4>📝 Antes de contratar</h4>
+        <ul style="font-size:.85rem; padding-left:16px; margin-top:6px;">
+          <li>Verificación de antecedentes (penales, laborales)</li>
+          <li>Validación de títulos y referencias profesionales</li>
+          <li>Firma de NDA (Non-Disclosure Agreement) antes del acceso a información sensible</li>
+          <li>Definir el perfil de seguridad requerido para el puesto</li>
+        </ul>
+      </div>
+      <div class="hbox gold">
+        <h4>🏢 Durante el empleo</h4>
+        <ul style="font-size:.85rem; padding-left:16px; margin-top:6px;">
+          <li>Capacitación inicial en políticas de seguridad</li>
+          <li>Capacitaciones periódicas (awareness)</li>
+          <li>Principio de mínimo privilegio: solo acceso a lo estrictamente necesario</li>
+          <li>Monitoreo de actividades en sistemas críticos</li>
+          <li>Procedimiento de manejo de incidentes</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="hbox wine">
+        <h4>🚪 Al terminar la relación laboral (Offboarding)</h4>
+        <ul style="font-size:.85rem; padding-left:16px; margin-top:6px;">
+          <li>Revocación inmediata de credenciales (día del último día laboral)</li>
+          <li>Recuperación de equipos y dispositivos corporativos</li>
+          <li>Devolución de tarjetas de acceso físico</li>
+          <li>Remoción de accesos a sistemas cloud y VPN</li>
+          <li>Entrevista de salida (para detectar riesgos internos)</li>
+          <li>Recordatorio de NDA vigente</li>
+        </ul>
+      </div>
+      <div class="meta-box">
+        <div class="label">💡 Estadística clave</div>
+        <p style="font-size:.85rem;">Según el informe DBIR de Verizon, el <strong>82%</strong> de las brechas de seguridad involucra el factor humano (phishing, credenciales robadas, errores). La amenaza interna (insider threat) representa el <strong>20-25%</strong> de los incidentes más costosos.</p>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>El caso del insider threat — SECURITAS Corp</h3>
+    <div class="grid-3">
+      <div class="hbox wine"><h4>Escenario</h4><p style="font-size:.85rem;">Un desarrollador con acceso a la BD de producción es despedido sin revocar sus accesos. Una semana después, datos de 5,000 clientes aparecen en un foro de cibercrimen.</p></div>
+      <div class="hbox blue"><h4>Falla de seguridad</h4><p style="font-size:.85rem;">No existía un procedimiento formal de offboarding. Los accesos no se revocaron el día del despido. No había monitoreo de accesos fuera de horario laboral.</p></div>
+      <div class="hbox green"><h4>Control propuesto</h4><p style="font-size:.85rem;">Checklist de offboarding con revocación inmediata en Active Directory. SIEM con alertas de acceso fuera de horario. Cifrado de datos de producción con claves rotadas periódicamente.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S9 ROLES ══ -->
+<div class="slide" id="s9">
+  <div class="parcial-h">
+    <div><h2>Roles de Seguridad</h2><div class="meta">Unidad II · 2.1 — Dueño, Custodio y Usuario de la Información</div></div>
+    <div style="font-size:2.5rem;">👥</div>
+  </div>
+  <div class="grid-3" style="margin-bottom:20px;">
+    <div class="role-card role-owner">
+      <div class="icon">👑</div>
+      <h3 style="color:var(--wine);">Dueño (Owner)</h3>
+      <div style="font-size:.85rem; margin-top:8px; text-align:left;">
+        <strong>¿Quién es?</strong> El responsable de negocio del activo de información (generalmente un directivo o gerente).
+        <div style="margin-top:8px;"><strong>Responsabilidades:</strong></div>
+        <ul style="padding-left:16px; font-size:.83rem;">
+          <li>Clasificar la información</li>
+          <li>Definir quién puede acceder a ella</li>
+          <li>Aprobar los controles de seguridad</li>
+          <li>Responsable final ante la dirección</li>
+        </ul>
+        <div style="margin-top:8px; font-style:italic; color:var(--muted);">Metáfora: el dueño del departamento que decide quién tiene llave.</div>
+      </div>
+    </div>
+    <div class="role-card role-custodian">
+      <div class="icon">🔧</div>
+      <h3 style="color:var(--blue);">Custodio (Custodian)</h3>
+      <div style="font-size:.85rem; margin-top:8px; text-align:left;">
+        <strong>¿Quién es?</strong> El responsable técnico de implementar y mantener los controles definidos por el Dueño (generalmente el área de TI o seguridad).
+        <div style="margin-top:8px;"><strong>Responsabilidades:</strong></div>
+        <ul style="padding-left:16px; font-size:.83rem;">
+          <li>Implementar backups y controles técnicos</li>
+          <li>Administrar los accesos según lo que indica el Dueño</li>
+          <li>Monitorear el uso del activo</li>
+          <li>Reportar incidentes al Dueño</li>
+        </ul>
+        <div style="margin-top:8px; font-style:italic; color:var(--muted);">Metáfora: el administrador del edificio que mantiene las cerraduras.</div>
+      </div>
+    </div>
+    <div class="role-card role-user">
+      <div class="icon">💻</div>
+      <h3 style="color:var(--green);">Usuario (User)</h3>
+      <div style="font-size:.85rem; margin-top:8px; text-align:left;">
+        <strong>¿Quién es?</strong> Quien utiliza la información para realizar su trabajo. Puede ser empleado interno, proveedor o cliente autorizado.
+        <div style="margin-top:8px;"><strong>Responsabilidades:</strong></div>
+        <ul style="padding-left:16px; font-size:.83rem;">
+          <li>Usar la información solo para los fines autorizados</li>
+          <li>Reportar incidentes o sospechas</li>
+          <li>Cumplir las políticas de seguridad</li>
+          <li>Proteger sus credenciales de acceso</li>
+        </ul>
+        <div style="margin-top:8px; font-style:italic; color:var(--muted);">Metáfora: el inquilino que vive en el departamento.</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Quiz rápido — ¿Quién es responsable?</h3>
+    <p style="font-size:.88rem; margin-bottom:12px;" id="q9text">Escenario: La base de datos de clientes de SECURITAS Corp fue accedida sin autorización. ¿Quién es responsable de haber definido quién podía acceder a ella?</p>
+    <div>
+      <button class="quiz-btn" onclick="answerQ9('owner')">👑 El Dueño (Gerente de Ventas)</button>
+      <button class="quiz-btn" onclick="answerQ9('custodian')">🔧 El Custodio (Área de TI)</button>
+      <button class="quiz-btn" onclick="answerQ9('user')">💻 El Usuario (vendedor)</button>
+    </div>
+    <div id="q9ok" class="quiz-feedback quiz-ok">✅ ¡Correcto! El <strong>Dueño</strong> es el responsable de clasificar los datos y definir la política de acceso. El Custodio implementa esa política técnicamente. El Usuario la cumple.</div>
+    <div id="q9err" class="quiz-feedback quiz-err">❌ No es correcto. El <strong>Custodio</strong> implementa los controles técnicos, pero quien <em>define</em> quién puede acceder a la información es el <strong>Dueño</strong> (el responsable de negocio).</div>
+  </div>
+</div>
+
+<!-- ══ S10 JERARQUÍA NORMATIVA ══ -->
+<div class="slide" id="s10">
+  <div class="parcial-h">
+    <div><h2>Jerarquía Normativa</h2><div class="meta">Unidad II · 2.2 — Políticas, Estándares, Guías, Procedimientos y Baselines</div></div>
+    <div style="font-size:2.5rem;">📜</div>
+  </div>
+  <div class="grid-2">
+    <div>
+      <div class="norm-level" style="background:linear-gradient(90deg,var(--wine),#9B2244); color:#fff; border-left:none;">
+        <div class="lnum" style="background:rgba(255,255,255,.25);">1</div>
+        <div>
+          <strong style="font-size:1rem;">Política</strong>
+          <div style="font-size:.82rem; opacity:.9;">Declaración de alto nivel del "qué" y "por qué". Firmada por la dirección. Obligatoria para todos.</div>
+          <div style="font-size:.8rem; margin-top:4px; font-style:italic; opacity:.8;">Ejemplo: "La información confidencial de clientes debe protegerse en todo momento."</div>
+        </div>
+      </div>
+      <div class="norm-level" style="background:#EEF4FB; border-left:4px solid var(--blue);">
+        <div class="lnum" style="background:var(--blue);">2</div>
+        <div>
+          <strong>Estándar</strong>
+          <div style="font-size:.82rem; color:var(--muted);">Requisito específico y medible. Obligatorio. Define "cuánto" y "con qué".</div>
+          <div style="font-size:.8rem; margin-top:4px; font-style:italic; color:var(--muted);">Ejemplo: "Las contraseñas deben tener mínimo 12 caracteres con mayúsculas, números y símbolos."</div>
+        </div>
+      </div>
+      <div class="norm-level" style="background:#E8F5E9; border-left:4px solid var(--green);">
+        <div class="lnum" style="background:var(--green);">3</div>
+        <div>
+          <strong>Guía / Directriz</strong>
+          <div style="font-size:.82rem; color:var(--muted);">Recomendación no obligatoria. Orientación flexible de "cómo hacerlo mejor".</div>
+          <div style="font-size:.8rem; margin-top:4px; font-style:italic; color:var(--muted);">Ejemplo: "Se recomienda usar un gestor de contraseñas para facilitar el cumplimiento del estándar."</div>
+        </div>
+      </div>
+      <div class="norm-level" style="background:#FEF3DC; border-left:4px solid var(--gold);">
+        <div class="lnum" style="background:var(--gold);">4</div>
+        <div>
+          <strong>Procedimiento</strong>
+          <div style="font-size:.82rem; color:var(--muted);">Instrucciones paso a paso. Obligatorio. El "cómo" detallado.</div>
+          <div style="font-size:.8rem; margin-top:4px; font-style:italic; color:var(--muted);">Ejemplo: "1. Abre el sistema. 2. Ve a Seguridad. 3. Selecciona Cambiar Contraseña. 4. Ingresa la nueva contraseña..."</div>
+        </div>
+      </div>
+      <div class="norm-level" style="background:#F3E8FF; border-left:4px solid #6B21A8;">
+        <div class="lnum" style="background:#6B21A8;">5</div>
+        <div>
+          <strong>Baseline (Línea Base)</strong>
+          <div style="font-size:.82rem; color:var(--muted);">Configuración mínima segura de un sistema o tecnología específica. Técnica y detallada.</div>
+          <div style="font-size:.8rem; margin-top:4px; font-style:italic; color:var(--muted);">Ejemplo: "Configuración mínima de Windows Server: deshabilitar SMBv1, habilitar BitLocker, configurar auditoría de eventos..."</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Pirámide normativa — relación entre niveles</h3>
+      <div style="text-align:center; padding:10px 0;">
+        <div style="background:var(--wine); color:#fff; padding:10px; border-radius:8px 8px 0 0; font-weight:700;">POLÍTICA<br><small style="font-weight:400;">¿Por qué? · Alta dirección · Toda la org.</small></div>
+        <div style="background:#1565C0; color:#fff; padding:10px; font-weight:600;">ESTÁNDAR<br><small style="font-weight:400;">¿Cuánto/Con qué? · Obligatorio · Técnico/Operativo</small></div>
+        <div style="background:#2E7D32; color:#fff; padding:10px; font-weight:600;">GUÍA<br><small style="font-weight:400;">¿Cómo hacerlo? · Recomendado · Flexible</small></div>
+        <div style="background:#C8922A; color:#fff; padding:10px; font-weight:600;">PROCEDIMIENTO<br><small style="font-weight:400;">¿Paso a paso? · Obligatorio · Muy detallado</small></div>
+        <div style="background:#6B21A8; color:#fff; padding:10px; border-radius:0 0 8px 8px; font-weight:600;">BASELINE<br><small style="font-weight:400;">Configuración mínima segura · Sistema específico</small></div>
+      </div>
+      <div class="meta-box" style="margin-top:12px;">
+        <div class="label">💡 Metáfora de la empresa constructora</div>
+        <p style="font-size:.85rem;">La <strong>Política</strong> es el Código de Construcción (ley). El <strong>Estándar</strong> es la especificación del concreto (f'c=250 kg/cm²). La <strong>Guía</strong> es la recomendación del arquitecto. El <strong>Procedimiento</strong> es el manual del maestro de obra. La <strong>Baseline</strong> es la mezcla exacta aprobada para esta obra específica.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S11 AWARENESS ══ -->
+<div class="slide" id="s11">
+  <div class="parcial-h">
+    <div><h2>Metodología de Awareness</h2><div class="meta">Unidad II · 2.3 — Programa de Concientización en Seguridad</div></div>
+    <div style="font-size:2.5rem;">📢</div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Triángulo del Conocimiento Organizacional</h3>
+      <div style="text-align:center; padding:16px 0;">
+        <div style="background:#FEF3DC; border:2px solid var(--gold); border-radius:8px; padding:12px; margin-bottom:10px;">
+          <strong style="font-size:1.1rem; color:#92620A;">🧠 CONOCIMIENTO</strong>
+          <p style="font-size:.85rem; margin-top:4px;">¿QUÉ debo saber? Formación teórica, conceptos, políticas</p>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div style="background:#E3EEF9; border:2px solid var(--blue); border-radius:8px; padding:12px;">
+            <strong style="color:var(--blue);">🎭 ACTITUD</strong>
+            <p style="font-size:.82rem; margin-top:4px;">¿Por qué importa? Motivación, cultura, valores de seguridad</p>
+          </div>
+          <div style="background:#E8F5E9; border:2px solid var(--green); border-radius:8px; padding:12px;">
+            <strong style="color:var(--green);">⚡ COMPORTAMIENTO</strong>
+            <p style="font-size:.82rem; margin-top:4px;">¿Cómo actúo? Hábitos seguros en el día a día</p>
+          </div>
+        </div>
+      </div>
+      <p style="font-size:.82rem; color:var(--muted); margin-top:8px;">El programa de Awareness falla cuando se enfoca solo en el conocimiento (cursos) sin trabajar la actitud y el comportamiento.</p>
+    </div>
+    <div>
+      <div class="hbox wine">
+        <h4>🚧 Obstáculos del Awareness</h4>
+        <ul style="font-size:.85rem; padding-left:16px; margin-top:6px;">
+          <li>Falta de apoyo de la alta dirección ("la seguridad es solo cosa de TI")</li>
+          <li>Capacitaciones anuales que nadie recuerda</li>
+          <li>Mensajes muy técnicos que no conectan con el usuario final</li>
+          <li>No medir el impacto del programa</li>
+          <li>Cultura organizacional que premia la velocidad sobre la seguridad</li>
+        </ul>
+      </div>
+      <div class="hbox green">
+        <h4>✅ Beneficios de un buen programa</h4>
+        <ul style="font-size:.85rem; padding-left:16px; margin-top:6px;">
+          <li>Reducción del 70-90% en incidentes por phishing (según SANS)</li>
+          <li>Empleados como "firewall humano" activo</li>
+          <li>Cumplimiento regulatorio (LFPDPPP, ISO 27001)</li>
+          <li>Menor costo por incidentes evitados</li>
+          <li>Cultura de seguridad sostenible</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Diseño de campaña de Awareness para SECURITAS Corp (80 empleados)</h3>
+    <div class="grid-3">
+      <div class="awareness-step">
+        <div class="step-num">1</div>
+        <strong>Diagnóstico</strong>
+        <p style="font-size:.82rem; color:var(--muted); margin-top:6px;">Encuesta de conocimiento inicial (cultura de seguridad). Simulacro de phishing para medir vulnerabilidad.</p>
+      </div>
+      <div class="awareness-step">
+        <div class="step-num">2</div>
+        <strong>Diseño por audiencia</strong>
+        <p style="font-size:.82rem; color:var(--muted); margin-top:6px;">Mensajes diferenciados: directivos (riesgo de negocio), técnicos (vulnerabilidades), operativos (acciones diarias).</p>
+      </div>
+      <div class="awareness-step">
+        <div class="step-num">3</div>
+        <strong>Ejecución multicanal</strong>
+        <p style="font-size:.82rem; color:var(--muted); margin-top:6px;">Videos cortos, infografías, talleres interactivos, gamificación, notificaciones push, pósters en pasillos.</p>
+      </div>
+    </div>
+    <div class="grid-2" style="margin-top:12px;">
+      <div class="awareness-step">
+        <div class="step-num">4</div>
+        <strong>Refuerzo continuo</strong>
+        <p style="font-size:.82rem; color:var(--muted); margin-top:6px;">Simulacros de phishing trimestrales, boletín mensual de amenazas recientes, reconocimientos a comportamientos seguros.</p>
+      </div>
+      <div class="awareness-step">
+        <div class="step-num">5</div>
+        <strong>Medición y mejora</strong>
+        <p style="font-size:.82rem; color:var(--muted); margin-top:6px;">KPIs: tasa de clic en phishing simulado, reportes de incidentes, resultado de evaluaciones. Iterar según resultados.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S12 CASO PRÁCTICO ══ -->
+<div class="slide" id="s12">
+  <div class="parcial-h">
+    <div><h2>Actividad Práctica — SECURITAS Corp</h2><div class="meta">Proyecto Integrador · Fase 1 · Diagnóstico de Seguridad</div></div>
+    <div style="font-size:2.5rem;">🏢</div>
+  </div>
+  <div class="hbox blue" style="margin-bottom:20px;">
+    <h4>📋 Contexto del caso</h4>
+    <p style="font-size:.9rem;">SECURITAS Corp es una PyME de tecnología con 80 empleados que desarrolla software ERP para el sector retail. Tiene una base de datos con información de 500 clientes, servidores en la nube (AWS), un equipo de desarrollo de 30 personas y ventas remotas. Ha sufrido 2 incidentes en el último año: un ransomware que paralizó sus sistemas 48 horas, y el robo de credenciales de un empleado vía phishing.</p>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Entregable de la Fase 1 — Informe de Diagnóstico</h3>
+      <ul class="clean">
+        <li><strong>Sección 1:</strong> Inventario de activos de información clasificados (min. 10 activos, con nivel de clasificación)</li>
+        <li><strong>Sección 2:</strong> Identificación de amenazas (min. 5) y vulnerabilidades (min. 5) por activo</li>
+        <li><strong>Sección 3:</strong> Matriz de riesgo con al menos 5 escenarios evaluados (probabilidad × impacto)</li>
+        <li><strong>Sección 4:</strong> Política corporativa de seguridad (borrador con los 5 niveles normativos)</li>
+        <li><strong>Sección 5:</strong> Plan de Awareness para los 80 empleados (triángulo del conocimiento aplicado)</li>
+      </ul>
+    </div>
+    <div>
+      <div class="hbox wine">
+        <h4>👥 Distribución de roles en el equipo</h4>
+        <table class="t" style="font-size:.82rem; margin-top:6px;">
+          <thead><tr><th>Rol</th><th>Secciones del informe</th></tr></thead>
+          <tbody>
+            <tr><td>Líder de Seguridad</td><td>Coordinación + introducción + presentación</td></tr>
+            <tr><td>Analista de Riesgos</td><td>Secciones 1, 2 y 3</td></tr>
+            <tr><td>Técnico de Controles</td><td>Sección 4 (política normativa)</td></tr>
+            <tr><td>Especialista en Datos</td><td>Clasificación de datos en sección 1</td></tr>
+            <tr><td>Gestor de Continuidad</td><td>Sección 5 (Awareness)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="hbox gold">
+        <h4>📅 Fechas clave del Parcial 1</h4>
+        <ul style="font-size:.85rem; padding-left:16px; margin-top:6px;">
+          <li>Semana 3: Borrador de secciones 1-2</li>
+          <li>Semana 4: Borrador de secciones 3-4-5</li>
+          <li>Semana 5: Exposición (10 min) + Entrega final + Evaluación escrita</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="meta-box">
+    <div class="label">💡 Consejo del docente</div>
+    <p style="font-size:.92rem;">No inventen los riesgos: investiga incidentes reales en PyMEs mexicanas del sector TI (fuente: AMITI, CISO MAG, Welivesecurity en español). Un diagnóstico basado en amenazas reales tiene mucho más valor académico y profesional que uno inventado. Citar fuentes es obligatorio en el informe.</p>
+  </div>
+</div>
+
+<!-- ══ S13 BIBLIOGRAFÍA ══ -->
+<div class="slide" id="s13">
+  <div class="parcial-h">
+    <div><h2>Bibliografía del Parcial 1</h2><div class="meta">Fuentes básicas y complementarias</div></div>
+    <div style="font-size:2.5rem;">📚</div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>📗 Bibliografía básica (programa oficial)</h3>
+      <ul class="clean">
+        <li><strong>Baca, G. (2016).</strong> <em>Introducción a la seguridad informática.</em> Grupo Editorial Patria. ISBN: 978-6077443445. <span class="pill pb">Caps. 1–3</span></li>
+        <li><strong>Vieites, G.A. (2006).</strong> <em>Enciclopedia de la seguridad informática.</em> Ra-Ma. <span class="pill pb">Partes I y II</span></li>
+        <li><strong>Albert, J. (2021).</strong> <em>Ciberseguridad para PC.</em> Babelcube Inc. ISBN: 9781071594131.</li>
+        <li><strong>Kamberg, M.L. (2017).</strong> <em>Ciberseguridad: protege tu identidad y tus datos.</em> Rosen Central.</li>
+        <li><strong>Users Staff (2013).</strong> <em>Gestión de la seguridad informática: Manuales USERS.</em> Creative Andina Corp.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>📘 Bibliografía complementaria recomendada</h3>
+      <ul class="clean">
+        <li><strong>Harris, S. & Maymi, F. (2022).</strong> <em>CISSP All-in-One Exam Guide</em> (9ª ed.). McGraw-Hill. <span class="pill pg">Caps. 1, 2, 4</span></li>
+        <li><strong>Almanza, A.R. (2018).</strong> XVIII Encuesta Nacional de Seguridad Informática. <em>Revista SISTEMAS,</em> ACIS Colombia.</li>
+        <li><strong>Fikri, M. et al. (2019).</strong> Risk assessment based on NIST SP 800-30 and ISO 27005. <em>Procedia Computer Science.</em></li>
+        <li><strong>ISO/IEC 27001:2022.</strong> Information security management systems — Requirements. ISO Genève.</li>
+        <li><strong>NIST (2024).</strong> Cybersecurity Framework 2.0. National Institute of Standards and Technology.</li>
+        <li><strong>CIS Controls v8 (2021).</strong> Center for Internet Security. cisecurity.org</li>
+        <li><strong>INCIBE (España).</strong> Materiales de Awareness para PYMEs. incibe.es</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <h3>🌐 Recursos digitales para el aula invertida</h3>
+    <div class="grid-3">
+      <div class="hbox blue">
+        <h4>Portales de referencia</h4>
+        <ul style="font-size:.82rem; padding-left:16px; margin-top:6px;">
+          <li>ISACA — isaca.org</li>
+          <li>NIST — csrc.nist.gov</li>
+          <li>INCIBE — incibe.es</li>
+          <li>OWASP — owasp.org</li>
+        </ul>
+      </div>
+      <div class="hbox gold">
+        <h4>Noticias de incidentes</h4>
+        <ul style="font-size:.82rem; padding-left:16px; margin-top:6px;">
+          <li>Welivesecurity (en español)</li>
+          <li>The Hacker News</li>
+          <li>CISO MAG</li>
+          <li>Hikvision / Fortinet Blog</li>
+        </ul>
+      </div>
+      <div class="hbox green">
+        <h4>Capacitación gratuita</h4>
+        <ul style="font-size:.82rem; padding-left:16px; margin-top:6px;">
+          <li>SANS Cyber Aces (sans.org)</li>
+          <li>Google Cybersecurity Certificate (Coursera)</li>
+          <li>Cisco Networking Academy</li>
+          <li>IBM SkillsBuild Security</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="banner" style="text-align:center; padding:24px 32px; margin-top:4px;">
+    <h2 style="font-size:1.2rem; margin-bottom:8px;">🎓 ¡Éxito en el Parcial 1!</h2>
+    <p style="opacity:.9; font-size:.9rem;">UPIICSA · IPN · Seguridad Informática · Plan 2021</p>
+  </div>
+</div>
+
+<!-- NAVIGATION -->
+<div class="nav">
+  <button onclick="prevSlide()" id="btnPrev">← Anterior</button>
+  <div class="dots" id="navDots"></div>
+  <span class="nav-label" id="navLabel">Portada</span>
+  <button onclick="nextSlide()" id="btnNext">Siguiente →</button>
+</div>
+
+<script>
+const SLIDES = [
+  {id:'s1',label:'Portada'},{id:'s2',label:'Objetivos'},{id:'s3',label:'Triángulo CIA'},
+  {id:'s4',label:'Activos y Amenazas'},{id:'s5',label:'Riesgo e Impacto'},{id:'s6',label:'Estándares'},
+  {id:'s7',label:'Clasificación de Datos'},{id:'s8',label:'Seguridad RRHH'},{id:'s9',label:'Roles'},
+  {id:'s10',label:'Jerarquía Normativa'},{id:'s11',label:'Awareness'},{id:'s12',label:'Caso Práctico'},
+  {id:'s13',label:'Bibliografía'}
+];
+let cur = 0;
+const dotsEl = document.getElementById('navDots');
+SLIDES.forEach((_,i)=>{ const d=document.createElement('span'); if(i===0)d.classList.add('active'); d.onclick=()=>goTo(i+1); dotsEl.appendChild(d); });
+function showSlide(idx){
+  SLIDES.forEach((s,i)=>document.getElementById(s.id).classList.toggle('active',i===idx));
+  dotsEl.querySelectorAll('span').forEach((d,i)=>d.classList.toggle('active',i===idx));
+  document.getElementById('navLabel').textContent=SLIDES[idx].label;
+  document.getElementById('btnPrev').disabled=idx===0;
+  document.getElementById('btnNext').disabled=idx===SLIDES.length-1;
+  document.getElementById('slideNum').textContent=`${idx+1} / ${SLIDES.length}`;
+  window.scrollTo(0,0); cur=idx;
+}
+function nextSlide(){ if(cur<SLIDES.length-1)showSlide(cur+1); }
+function prevSlide(){ if(cur>0)showSlide(cur-1); }
+function goTo(n){ showSlide(n-1); }
+document.addEventListener('keydown',e=>{ if(e.key==='ArrowRight'||e.key==='ArrowDown')nextSlide(); if(e.key==='ArrowLeft'||e.key==='ArrowUp')prevSlide(); });
+function answerQ9(ans){
+  document.getElementById('q9ok').style.display = ans==='owner'?'block':'none';
+  document.getElementById('q9err').style.display = ans!=='owner'?'block':'none';
+}
+showSlide(0);
+</script>
+</body>
+</html>

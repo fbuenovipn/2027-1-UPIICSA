@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Parcial 3 — Construcción de Software · UPIICSA · IPN</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--green:#2A6E4A;--green2:#1A4A30;--grana:#8B1A1A;--gold:#C8A951;--dark:#1A1A2E;--accent:#2C5F8A;--orange:#B85C00;--purple:#5A2D82;--teal:#0D7A6E;--red:#C0392B;--bg:#F0FDF4;--card:#fff;--border:#B0D8B0;--text:#1A1A2E;--muted:#4A6A5A;--r:12px;--sh:0 2px 16px rgba(0,0,0,.09)}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;font-size:15px}
+.slide{display:none;min-height:100vh;padding:24px 20px 90px;max-width:1100px;margin:0 auto;animation:fi .3s ease}
+.slide.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.nav{position:fixed;bottom:0;left:0;right:0;background:var(--green);display:flex;justify-content:center;align-items:center;gap:12px;padding:10px 16px;z-index:100;box-shadow:0 -2px 12px rgba(0,0,0,.2)}
+.nav button{background:rgba(255,255,255,.18);color:#fff;border:none;padding:8px 22px;border-radius:20px;cursor:pointer;font-size:14px;font-weight:600;transition:background .2s}
+.nav button:hover{background:rgba(255,255,255,.35)}
+.nav button:disabled{opacity:.35;cursor:not-allowed}
+.nav-label{color:rgba(255,255,255,.8);font-size:13px;min-width:160px;text-align:center}
+.dots{display:flex;gap:5px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:300px}
+.dots span{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35);cursor:pointer;transition:background .2s,transform .2s}
+.dots span.active{background:var(--gold);transform:scale(1.4)}
+.print-btn{position:fixed;top:14px;right:16px;background:var(--green);color:#fff;border:none;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;z-index:200}
+.snum{position:fixed;top:14px;left:16px;background:rgba(42,110,74,.12);color:var(--green);border-radius:20px;padding:4px 14px;font-size:12px;font-weight:700;z-index:200}
+.banner{background:linear-gradient(135deg,var(--green) 0%,var(--dark) 100%);color:#fff;border-radius:var(--r);padding:40px 32px;margin-bottom:22px;position:relative;overflow:hidden}
+.banner::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.05)}
+.banner .inst{font-size:12px;letter-spacing:2px;text-transform:uppercase;opacity:.75;margin-bottom:6px}
+.banner h1{font-size:2rem;font-weight:800;margin-bottom:6px}
+.banner .sub{font-size:.95rem;opacity:.85}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.badge{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);border-radius:20px;padding:4px 14px;font-size:12px;font-weight:600}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--border);padding:22px;margin-bottom:16px}
+.card h3{font-size:1rem;font-weight:700;margin-bottom:12px;color:var(--green)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:700px){.g2,.g3{grid-template-columns:1fr}}
+.hb{border-radius:10px;padding:14px 16px;margin-bottom:10px}
+.hb h4{font-size:.88rem;font-weight:700;margin-bottom:5px}
+.hb.green{background:#EDFBF0;border-left:4px solid var(--green)}
+.hb.gold{background:#FFF8E1;border-left:4px solid var(--gold)}
+.hb.blue{background:#EFF4FF;border-left:4px solid var(--accent)}
+.hb.purple{background:#F5F0FF;border-left:4px solid var(--purple)}
+.hb.orange{background:#FFF5EB;border-left:4px solid var(--orange)}
+.hb.red{background:#FEE8E8;border-left:4px solid var(--red)}
+.hb.teal{background:#E8FAF8;border-left:4px solid var(--teal)}
+ul.cl{list-style:none}
+ul.cl li{padding:5px 0 5px 18px;position:relative;border-bottom:1px solid var(--border);font-size:.87rem}
+ul.cl li:last-child{border-bottom:none}
+ul.cl li::before{content:'▸';position:absolute;left:0;color:var(--green);font-size:11px;top:7px}
+table.t{width:100%;border-collapse:collapse;font-size:13px}
+table.t th{background:var(--green);color:#fff;padding:9px 12px;text-align:left;font-weight:600}
+table.t td{padding:8px 12px;border-bottom:1px solid var(--border);font-size:.85rem}
+table.t tr:nth-child(even) td{background:#F0FDF4}
+.ph{border-radius:var(--r);padding:16px 22px;color:#fff;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;background:linear-gradient(135deg,var(--green),var(--green2))}
+.ph h2{font-size:1.3rem;font-weight:800}
+.ph .meta{font-size:13px;opacity:.85}
+.toc-item{display:flex;align-items:center;gap:14px;padding:12px 16px;border-radius:10px;margin-bottom:8px;background:var(--card);border:1px solid var(--border);cursor:pointer;transition:background .15s}
+.toc-item:hover{background:#EDFBF0}
+.tn{width:34px;height:34px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-weight:800;flex-shrink:0}
+.meta-box{background:linear-gradient(135deg,#FFF8E1,#FFFBF0);border:2px solid var(--gold);border-radius:var(--r);padding:14px 18px;margin-bottom:14px}
+.meta-box .lbl{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--orange);margin-bottom:5px}
+.quiz-btn{background:var(--green);color:#fff;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;margin:3px;transition:background .2s}
+.quiz-btn:hover{background:var(--green2)}
+.qfb{margin-top:10px;padding:10px 14px;border-radius:8px;font-weight:600;display:none}
+.qok{background:#DCFCE7;color:var(--green);border-left:4px solid var(--green)}
+.qerr{background:#FEE2E2;color:var(--red);border-left:4px solid var(--red)}
+.nielsen-card{border-radius:10px;padding:12px 14px;border:2px solid;margin-bottom:8px;cursor:pointer;transition:transform .2s}
+.nielsen-card:hover{transform:translateX(4px)}
+.nielsen-detail{display:none;margin-top:8px;padding-top:8px;border-top:1px dashed;font-size:.83rem;color:var(--muted)}
+.nielsen-detail.open{display:block}
+.metric-bar{background:#E8F5E9;border-radius:8px;height:24px;display:flex;align-items:center;overflow:hidden;margin:4px 0}
+.metric-fill{height:100%;border-radius:8px;display:flex;align-items:center;padding-left:8px;font-size:.78rem;font-weight:700;color:white;transition:width .5s ease}
+.gui-example{background:#F0FDF4;border-radius:10px;padding:16px;font-size:.82rem}
+code{background:#E8F5E9;border-radius:4px;padding:2px 6px;font-family:'Courier New',monospace;font-size:.84rem;color:var(--green2)}
+.portf-item{background:#F9FFF9;border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:6px;display:flex;align-items:center;gap:10px;font-size:.87rem}
+</style>
+</head>
+<body>
+<button class="print-btn" onclick="window.print()">🖨 Imprimir / PDF</button>
+<div class="snum" id="slideNum">1 / 13</div>
+
+<!-- S1 PORTADA -->
+<div class="slide active" id="s1">
+  <div class="banner" style="text-align:center;padding:50px 32px">
+    <div class="inst">Instituto Politécnico Nacional · UPIICSA · Lic. en Ciencias de la Informática · 4.° Semestre · Plan 2021</div>
+    <h1>Construcción de Software</h1>
+    <div class="sub" style="font-size:1.25rem;font-weight:700;margin-top:8px">Parcial 3 — Interfaz del Software</div>
+    <div class="sub" style="margin-top:6px;opacity:.75">Unidad III · Semanas 11–15</div>
+    <div class="badges" style="justify-content:center;margin-top:20px">
+      <span class="badge">🖥️ UI/UX — Requerimientos y Estándares</span>
+      <span class="badge">📊 Diseño de Información</span>
+      <span class="badge">🎨 GUI — Componentes y Diseño Gráfico</span>
+      <span class="badge">📐 Heurísticas de Nielsen</span>
+      <span class="badge">📏 Métricas de Calidad</span>
+      <span class="badge">🏆 Demo Final + Portafolio</span>
+    </div>
+  </div>
+  <div class="card">
+    <p style="color:var(--muted);font-size:.88rem;margin-bottom:14px;text-align:center">Índice — haz clic para navegar</p>
+    <div class="toc-item" onclick="goTo(3)"><div class="tn">1</div><div><strong>Interfaz de Usuario — Requerimientos y Estándares</strong><br><span style="font-size:.82rem;color:var(--muted)">¿Qué necesita el usuario? ISO 9241, accesibilidad WCAG</span></div></div>
+    <div class="toc-item" onclick="goTo(4)"><div class="tn">2</div><div><strong>Las 10 Heurísticas de Nielsen</strong><br><span style="font-size:.82rem;color:var(--muted)">El estándar gold de evaluación de usabilidad</span></div></div>
+    <div class="toc-item" onclick="goTo(5)"><div class="tn">3</div><div><strong>Diseño de Información</strong><br><span style="font-size:.82rem;color:var(--muted)">Arquitectura de información, flujo de navegación, user flow</span></div></div>
+    <div class="toc-item" onclick="goTo(6)"><div class="tn">4</div><div><strong>Principios de Diseño de Interfaces</strong><br><span style="font-size:.82rem;color:var(--muted)">Gestalt, jerarquía visual, contraste, consistencia</span></div></div>
+    <div class="toc-item" onclick="goTo(7)"><div class="tn">5</div><div><strong>Componentes de la GUI</strong><br><span style="font-size:.82rem;color:var(--muted)">Controles, formularios, tablas, menús, diálogos</span></div></div>
+    <div class="toc-item" onclick="goTo(8)"><div class="tn">6</div><div><strong>Diseño Gráfico aplicado a Interfaces</strong><br><span style="font-size:.82rem;color:var(--muted)">Color, tipografía, iconografía, grid systems</span></div></div>
+    <div class="toc-item" onclick="goTo(9)"><div class="tn">7</div><div><strong>Calidad del Software — Métricas de Diseño</strong><br><span style="font-size:.82rem;color:var(--muted)">Métricas de Chidamber-Kemerer, complejidad ciclomática, SQI</span></div></div>
+    <div class="toc-item" onclick="goTo(10)"><div class="tn">8</div><div><strong>Proceso de Calidad del Software</strong><br><span style="font-size:.82rem;color:var(--muted)">ISO 25010, revisiones técnicas, inspecciones de código</span></div></div>
+    <div class="toc-item" onclick="goTo(11)"><div class="tn">9</div><div><strong>Evaluación de Usabilidad</strong><br><span style="font-size:.82rem;color:var(--muted)">Test con usuarios, cognitive walkthrough, eye-tracking</span></div></div>
+    <div class="toc-item" onclick="goTo(12)"><div class="tn">10</div><div><strong>Demo Final y Portafolio de Evidencias</strong><br><span style="font-size:.82rem;color:var(--muted)">Cómo preparar y presentar el proyecto final</span></div></div>
+    <div class="toc-item" onclick="goTo(13)"><div class="tn">11</div><div><strong>Bibliografía</strong></div></div>
+  </div>
+</div>
+
+<!-- S2 OBJETIVOS -->
+<div class="slide" id="s2">
+  <div class="ph"><div><h2>Objetivos del Parcial 3</h2><div class="meta">Unidad III · Interfaz del Software · 23 h (15T + 8P)</div></div><div style="font-size:2.5rem">🎯</div></div>
+  <div class="g2">
+    <div class="card">
+      <h3>Al terminar este parcial, el alumno será capaz de:</h3>
+      <ul class="cl">
+        <li>Identificar los requerimientos de la interfaz de usuario y los estándares aplicables</li>
+        <li>Aplicar las 10 heurísticas de Nielsen para evaluar y mejorar interfaces</li>
+        <li>Diseñar la arquitectura de información y el flujo de navegación del sistema</li>
+        <li>Construir la interfaz gráfica (GUI) completa, integrada al prototipo funcional del Parcial 2</li>
+        <li>Aplicar principios de diseño gráfico: color, tipografía, jerarquía visual</li>
+        <li>Calcular métricas de calidad de diseño del software</li>
+        <li>Elaborar y presentar el portafolio de evidencias del proyecto completo</li>
+        <li>Realizar una demo en vivo del sistema ante el "cliente" (el grupo)</li>
+      </ul>
+    </div>
+    <div>
+      <div class="hb green"><h4>🏗️ Proyecto Integrador — Fase 3 (Final)</h4><p style="font-size:.87rem">El equipo conecta la GUI al prototipo funcional del Parcial 2, aplica heurísticas de Nielsen, calcula métricas de calidad y presenta el <strong>sistema completo</strong> en la Demo Final de la Semana 15. También entrega el portafolio de evidencias de las 3 fases.</p></div>
+      <div class="hb gold"><h4>📊 Evaluación del Parcial 3</h4><p style="font-size:.87rem">Diagrama de UI (20%) · GUI implementada (25%) · Reporte de calidad (15%) · Portafolio de evidencias (15%) · Demo final (20%) · Examen escrito (5%)</p></div>
+      <div class="meta-box"><div class="lbl">💡 Metáfora del parcial</div><p style="font-size:.88rem">Si en el Parcial 1 dibujaste los planos y en el Parcial 2 construiste las habitaciones, en el Parcial 3 <strong>pones los acabados finales</strong>: la pintura, los muebles, la iluminación y la señalización. La casa ahora es habitable y presentable al dueño. El inspector (métricas de calidad) certifica que todo cumple estándares.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- S3 REQUERIMIENTOS Y ESTÁNDARES UI -->
+<div class="slide" id="s3">
+  <div class="ph"><div><h2>Interfaz de Usuario — Requerimientos y Estándares</h2><div class="meta">Unidad III · 3.1 — ¿Qué necesita el usuario?</div></div><div style="font-size:2.5rem">🖥️</div></div>
+  <div class="g2">
+    <div>
+      <div class="hb green"><h4>📌 Requerimientos de interfaz de usuario</h4><p style="font-size:.87rem">Los requerimientos de interfaz van más allá de "que se vea bonito". Deben capturar las <strong>necesidades reales del usuario</strong>: qué tareas realiza, con qué frecuencia, con qué nivel de experiencia tecnológica y en qué condiciones de uso (luz, ruido, prisa).</p></div>
+      <div class="card">
+        <h3>Tipos de requerimientos de UI</h3>
+        <div class="hb blue"><h4>Funcionales de UI</h4><p style="font-size:.84rem">El sistema debe permitir registrar un pedido en máximo 3 clics. La pantalla principal debe mostrar los pedidos del día sin desplazamiento.</p></div>
+        <div class="hb orange"><h4>No funcionales de UI</h4><p style="font-size:.84rem">Usabilidad: un cajero sin experiencia debe aprender a usar el sistema en menos de 30 minutos. Accesibilidad: el texto debe tener contraste mínimo 4.5:1.</p></div>
+        <div class="hb green"><h4>De entorno / restricciones</h4><p style="font-size:.84rem">La pantalla es táctil de 10 pulgadas. El local está iluminado con luz neón (afecta el contraste). El cajero usa guantes de látex (afecta interacción táctil).</p></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Estándares internacionales de interfaz</h3>
+        <table class="t">
+          <thead><tr><th>Estándar</th><th>¿Qué regula?</th></tr></thead>
+          <tbody>
+            <tr><td><strong>ISO 9241-210</strong></td><td>Diseño centrado en el humano (Human-Centred Design). El proceso de diseño debe involucrar al usuario en todas las etapas.</td></tr>
+            <tr><td><strong>WCAG 2.1</strong></td><td>Web Content Accessibility Guidelines. Regula accesibilidad web: contraste, texto alternativo, navegación por teclado.</td></tr>
+            <tr><td><strong>Material Design (Google)</strong></td><td>Sistema de diseño visual para apps Android y web. Guías de color, tipografía, componentes y movimiento.</td></tr>
+            <tr><td><strong>Human Interface Guidelines (Apple)</strong></td><td>Guías de diseño para iOS/macOS. Coherencia, claridad, profundidad.</td></tr>
+            <tr><td><strong>Fluent Design (Microsoft)</strong></td><td>Sistema de diseño para Windows. Profundidad, luz, movimiento, material y escala.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="meta-box"><div class="lbl">💡 Para el proyecto MiPyME</div><p style="font-size:.87rem">Antes de diseñar la GUI, el equipo debe responder: ¿Quién usa el sistema? ¿Qué tareas hace todos los días? ¿Cuántos años tiene / qué tan hábil es con tecnología? Las respuestas guiarán las decisiones de diseño: tamaño de fuente, número de clics para cada tarea, colores y contraste.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- S4 HEURÍSTICAS DE NIELSEN -->
+<div class="slide" id="s4">
+  <div class="ph"><div><h2>Las 10 Heurísticas de Nielsen</h2><div class="meta">Unidad III · 3.1 — El estándar gold de evaluación de usabilidad</div></div><div style="font-size:2.5rem">📏</div></div>
+  <div class="card" style="margin-bottom:14px">
+    <h3>Haz clic en cada heurística para ver ejemplos y cómo aplicarla</h3>
+    <div class="nielsen-card" style="border-color:var(--green);background:#EDFBF0" onclick="toggleN('n1')">
+      <strong style="color:var(--green)">1. Visibilidad del estado del sistema</strong>
+      <div id="n-n1" class="nielsen-detail">El sistema siempre debe informar al usuario qué está pasando mediante retroalimentación apropiada en tiempo razonable. <strong>Ejemplo bueno:</strong> barra de progreso al guardar un pedido grande. <strong>Ejemplo malo:</strong> botón "Guardar" que no da ninguna respuesta visual — ¿se guardó o no? <strong>En tu proyecto:</strong> spinner de carga, mensajes "Pedido guardado exitosamente ✓", estado visible del pedido (abierto/cobrado).</div>
+    </div>
+    <div class="nielsen-card" style="border-color:var(--accent);background:#EFF4FF" onclick="toggleN('n2')">
+      <strong style="color:var(--accent)">2. Coincidencia entre sistema y mundo real</strong>
+      <div id="n-n2" class="nielsen-detail">El sistema debe hablar el lenguaje del usuario, con palabras y conceptos familiares, no jerga técnica. <strong>Ejemplo bueno:</strong> "Imprimir nota" en lugar de "Exportar documento a formato PDF". <strong>En tu proyecto:</strong> usar el vocabulario que usa el dueño del negocio: "nota", "cuenta", "taco al pastor" — no "transacción", "registro", "SKU".</div>
+    </div>
+    <div class="nielsen-card" style="border-color:var(--purple);background:#F5F0FF" onclick="toggleN('n3')">
+      <strong style="color:var(--purple)">3. Control y libertad del usuario</strong>
+      <div id="n-n3" class="nielsen-detail">Los usuarios cometen errores y necesitan una "salida de emergencia" claramente marcada. <strong>Ejemplo:</strong> botón "Cancelar pedido", "Deshacer" y confirmación antes de borrar. <strong>En tu proyecto:</strong> nunca borrar sin confirmar ("¿Estás seguro de cancelar este pedido?"), botón "Volver" en todos los formularios.</div>
+    </div>
+    <div class="nielsen-card" style="border-color:var(--orange);background:#FFF5EB" onclick="toggleN('n4')">
+      <strong style="color:var(--orange)">4. Consistencia y estándares</strong>
+      <div id="n-n4" class="nielsen-detail">Los usuarios no deberían preguntarse si diferentes palabras, situaciones o acciones significan lo mismo. <strong>Ejemplo malo:</strong> a veces dice "Guardar" y a veces "Registrar" para la misma acción. <strong>En tu proyecto:</strong> el botón principal siempre en la misma posición, mismo color para "confirmar", mismo icono para "buscar".</div>
+    </div>
+    <div class="nielsen-card" style="border-color:var(--red);background:#FEE8E8" onclick="toggleN('n5')">
+      <strong style="color:var(--red)">5. Prevención de errores</strong>
+      <div id="n-n5" class="nielsen-detail">Mejor que un buen mensaje de error es un diseño que previene que el error ocurra. <strong>Ejemplo:</strong> el campo "cantidad" solo acepta números positivos (no letras, no negativos). <strong>En tu proyecto:</strong> validaciones en tiempo real, fechas con date-picker (no texto libre), menús desplegables para opciones fijas.</div>
+    </div>
+    <div class="nielsen-card" style="border-color:var(--teal);background:#E8FAF8" onclick="toggleN('n6')">
+      <strong style="color:var(--teal)">6. Reconocimiento en lugar de recuerdo</strong>
+      <div id="n-n6" class="nielsen-detail">Minimizar la carga de memoria del usuario mostrando objetos, acciones y opciones visibles. <strong>Ejemplo:</strong> mostrar el menú de tacos con imagen y precio, no obligar al cajero a memorizar códigos. <strong>En tu proyecto:</strong> lista de productos visible, historial de pedidos recientes, autocompletado en búsqueda de clientes.</div>
+    </div>
+    <div class="nielsen-card" style="border-color:var(--gold);background:#FFF8E1" onclick="toggleN('n7')">
+      <strong style="color:var(--orange)">7. Flexibilidad y eficiencia de uso</strong>
+      <div id="n-n7" class="nielsen-detail">Los aceleradores permiten a usuarios expertos trabajar más rápido. <strong>Ejemplo:</strong> atajos de teclado para usuarios avanzados (F5 = nuevo pedido). <strong>En tu proyecto:</strong> teclas rápidas para las acciones más frecuentes, tabla de productos con click para agregar (sin formulario largo).</div>
+    </div>
+    <div class="nielsen-card" style="border-color:var(--green);background:#EDFBF0" onclick="toggleN('n8')">
+      <strong style="color:var(--green)">8. Diseño estético y minimalista</strong>
+      <div id="n-n8" class="nielsen-detail">Los diálogos no deben contener información irrelevante o raramente necesaria. <strong>Ejemplo malo:</strong> pantalla llena de 20 campos opcionales cuando solo se usan 4 siempre. <strong>En tu proyecto:</strong> solo mostrar los campos que el cajero usa siempre. Progresivo: mostrar más opciones solo cuando se necesiten.</div>
+    </div>
+    <div class="nielsen-card" style="border-color:var(--accent);background:#EFF4FF" onclick="toggleN('n9')">
+      <strong style="color:var(--accent)">9. Ayuda al reconocer y recuperarse de errores</strong>
+      <div id="n-n9" class="nielsen-detail">Los mensajes de error deben expresarse en lenguaje plano, indicar el problema y sugerir una solución. <strong>Ejemplo malo:</strong> "Error 403 — Forbidden". <strong>Ejemplo bueno:</strong> "No tienes permiso para ver este pedido. Pide al administrador que te asigne el rol de Cajero." <strong>En tu proyecto:</strong> mensajes de error en español, amigables y con instrucción de qué hacer.</div>
+    </div>
+    <div class="nielsen-card" style="border-color:var(--purple);background:#F5F0FF" onclick="toggleN('n10')">
+      <strong style="color:var(--purple)">10. Ayuda y documentación</strong>
+      <div id="n-n10" class="nielsen-detail">Aunque es mejor que el sistema se use sin documentación, puede ser necesario proveer ayuda. <strong>Ejemplo:</strong> tooltip al pasar el cursor sobre un botón, pantalla de "¿Cómo usar el sistema?" accessible con F1. <strong>En tu proyecto:</strong> al menos una guía de inicio rápido (una página) que el dueño del negocio pueda consultar.</div>
+    </div>
+  </div>
+  <div class="meta-box"><div class="lbl">💡 Evaluación heurística</div><p style="font-size:.88rem">Para el reporte de calidad: aplica el checklist de las 10 heurísticas a tu propio sistema. Para cada heurística, califica de 0 (no cumple) a 4 (cumple excelentemente) y justifica. Suma el puntaje total → eso es tu <strong>Índice de Usabilidad Heurística</strong>. Documenta los problemas encontrados y cómo los resolviste.</p></div>
+</div>
+
+<!-- S5 DISEÑO DE INFORMACIÓN -->
+<div class="slide" id="s5">
+  <div class="ph"><div><h2>Diseño de Información</h2><div class="meta">Unidad III · 3.2 — Arquitectura de información y flujo de navegación</div></div><div style="font-size:2.5rem">🗺️</div></div>
+  <div class="g2">
+    <div>
+      <div class="hb green"><h4>📌 ¿Qué es el diseño de información?</h4><p style="font-size:.87rem">Es la disciplina que organiza y estructura la información de manera que los usuarios puedan <strong>encontrar lo que necesitan fácilmente</strong> y entender cómo navegar por el sistema. Combina psicología cognitiva, arquitectura y diseño visual.</p><p style="font-size:.83rem;margin-top:6px;font-style:italic">Metáfora: la señalética de un hospital. Los carteles de colores y flechas son diseño de información — te llevan al área que necesitas sin que nadie te guíe.</p></div>
+      <div class="card">
+        <h3>Arquitectura de Información (AI)</h3>
+        <p style="font-size:.85rem;margin-bottom:10px">Define la estructura de contenido del sistema: qué secciones existen, cómo se llaman y cómo se relacionan.</p>
+        <div style="background:#F0FDF4;border-radius:10px;padding:14px;font-size:.82rem">
+          <div style="text-align:center;margin-bottom:8px"><div style="background:var(--green);color:#fff;padding:6px 20px;border-radius:8px;display:inline-block;font-weight:700">🏠 Pantalla Principal</div></div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center">
+            <div style="background:#fff;border:2px solid var(--green);border-radius:6px;padding:8px;font-size:.78rem"><strong>📋 Ventas</strong><br><small>Nuevo pedido<br>Pedidos del día<br>Cobrar</small></div>
+            <div style="background:#fff;border:2px solid var(--accent);border-radius:6px;padding:8px;font-size:.78rem"><strong>📦 Inventario</strong><br><small>Ingredientes<br>Proveedor<br>Alertas</small></div>
+            <div style="background:#fff;border:2px solid var(--purple);border-radius:6px;padding:8px;font-size:.78rem"><strong>👥 Clientes</strong><br><small>Lista<br>Historial<br>Buscar</small></div>
+            <div style="background:#fff;border:2px solid var(--orange);border-radius:6px;padding:8px;font-size:.78rem"><strong>📊 Reportes</strong><br><small>Ventas/día<br>Más vendidos<br>Exportar</small></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>User Flow — Flujo de navegación del usuario</h3>
+        <p style="font-size:.85rem;margin-bottom:10px">El user flow mapea todos los caminos que el usuario puede seguir en el sistema para completar una tarea.</p>
+        <div style="background:#F0FDF4;border-radius:10px;padding:12px;font-size:.8rem;line-height:1.9;font-family:'Courier New',monospace">
+          <div style="color:var(--green);font-weight:700">Flujo: Registrar y cobrar un pedido</div>
+          <div>🏠 Inicio → [Ventas] → [Nuevo Pedido]</div>
+          <div>→ Seleccionar productos (clic en lista)</div>
+          <div>→ Ajustar cantidades → [Ver subtotal en tiempo real]</div>
+          <div style="color:var(--accent)">→ [¿Cliente registrado?]</div>
+          <div>&nbsp;&nbsp;Sí → Buscar cliente → Asignar al pedido</div>
+          <div>&nbsp;&nbsp;No → Continuar como "cliente general"</div>
+          <div>→ [Confirmar Pedido] → Pedido registrado ✓</div>
+          <div>→ [Cobrar] → Ingresar pago → Calcular cambio</div>
+          <div>→ [Imprimir nota] → Pedido cerrado ✓</div>
+        </div>
+      </div>
+      <div class="hb gold"><h4>💡 Card Sorting para validar la AI</h4><p style="font-size:.85rem">Técnica: escribe las funcionalidades del sistema en tarjetas. Pide a 3-5 usuarios reales que las agrupen como les parezca lógico. Los grupos que forman los usuarios → eso es tu arquitectura de información correcta. No la que el desarrollador cree que es lógica, sino la que el usuario realmente entiende.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- S6 PRINCIPIOS DE DISEÑO -->
+<div class="slide" id="s6">
+  <div class="ph"><div><h2>Principios de Diseño de Interfaces</h2><div class="meta">Unidad III · 3.3 — Gestalt, jerarquía visual, contraste y consistencia</div></div><div style="font-size:2.5rem">🎨</div></div>
+  <div class="g2">
+    <div>
+      <div class="card">
+        <h3>Leyes de la Gestalt aplicadas a UI</h3>
+        <div class="hb green"><h4>Proximidad</h4><p style="font-size:.84rem">Los elementos cercanos se perciben como relacionados. Agrupa los campos de un formulario que son del mismo tema. Separa secciones distintas con espacio en blanco.</p></div>
+        <div class="hb blue"><h4>Similitud</h4><p style="font-size:.84rem">Elementos con el mismo color, forma o tamaño se perciben como del mismo tipo. Todos los botones de "confirmar" deben verse igual (verde, mismo estilo).</p></div>
+        <div class="hb purple"><h4>Continuidad</h4><p style="font-size:.84rem">El ojo sigue líneas y rutas. Un wizard de pasos (1 → 2 → 3) guía al usuario de forma natural si hay una línea que los conecta visualmente.</p></div>
+        <div class="hb orange"><h4>Figura y fondo</h4><p style="font-size:.84rem">El elemento principal debe destacar sobre el fondo. Un modal de confirmación necesita un overlay oscuro detrás para que el usuario entienda que debe actuar en el modal primero.</p></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Jerarquía visual</h3>
+        <p style="font-size:.85rem;margin-bottom:10px">Guía el ojo del usuario en el orden de importancia. Se logra con tamaño, color, peso de fuente y posición.</p>
+        <div style="background:#F9FFF9;border-radius:10px;padding:14px;border:2px solid var(--border)">
+          <div style="font-size:1.4rem;font-weight:900;color:var(--dark);margin-bottom:4px">Pedidos del Día</div>
+          <div style="font-size:1rem;font-weight:700;color:var(--green);margin-bottom:4px">Total vendido: $2,840</div>
+          <div style="font-size:.82rem;color:var(--muted)">Actualizado hace 2 minutos · 47 pedidos cerrados</div>
+          <div style="height:1px;background:var(--border);margin:10px 0"></div>
+          <div style="display:flex;gap:8px">
+            <div style="background:var(--green);color:#fff;border-radius:8px;padding:6px 14px;font-size:.82rem;font-weight:700">Nuevo Pedido</div>
+            <div style="background:#E8F5E9;color:var(--green);border:2px solid var(--green);border-radius:8px;padding:6px 14px;font-size:.82rem;font-weight:700">Ver Historial</div>
+          </div>
+        </div>
+        <p style="font-size:.8rem;color:var(--muted);margin-top:8px">El título más grande → lo más importante primero. El CTA (llamado a la acción) en verde primario es el más prominente.</p>
+      </div>
+      <div class="hb gold"><h4>🎨 Contraste y accesibilidad</h4><p style="font-size:.84rem">WCAG 2.1 exige ratio de contraste mínimo <strong>4.5:1</strong> para texto normal y <strong>3:1</strong> para texto grande. Herramienta gratuita: <strong>Colour Contrast Checker</strong> (webaim.org/resources/contrastchecker). <br><br>Regla práctica: texto oscuro sobre fondo claro o viceversa. Nunca gris claro sobre blanco, nunca amarillo sobre blanco.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- S7 COMPONENTES GUI -->
+<div class="slide" id="s7">
+  <div class="ph"><div><h2>Componentes de la GUI</h2><div class="meta">Unidad III · 3.3 — Controles, formularios, tablas, menús y diálogos</div></div><div style="font-size:2.5rem">🔲</div></div>
+  <div class="g2">
+    <div>
+      <div class="card">
+        <h3>Componentes fundamentales</h3>
+        <div class="gui-example">
+          <div style="margin-bottom:14px">
+            <p style="font-size:.8rem;font-weight:700;color:var(--green);margin-bottom:6px">CONTROLES DE ENTRADA</p>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;gap:8px;font-size:.83rem"><span>Texto:</span><input style="border:1px solid #ccc;border-radius:4px;padding:4px 8px;font-size:.82rem;flex:1" placeholder="Nombre del cliente" readonly></div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:.83rem"><span>Select:</span><select style="border:1px solid #ccc;border-radius:4px;padding:4px 8px;font-size:.82rem;flex:1"><option>Taco al Pastor</option><option>Taco de Suadero</option></select></div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:.83rem"><span>Número:</span><input type="number" style="border:1px solid #ccc;border-radius:4px;padding:4px 8px;font-size:.82rem;width:80px" value="3" readonly></div>
+            </div>
+          </div>
+          <div style="margin-bottom:14px">
+            <p style="font-size:.8rem;font-weight:700;color:var(--green);margin-bottom:6px">TABLA DE DATOS</p>
+            <table style="width:100%;border-collapse:collapse;font-size:.78rem">
+              <thead><tr style="background:var(--green);color:white"><th style="padding:5px">Producto</th><th>Cant.</th><th>Precio</th><th>Subtotal</th></tr></thead>
+              <tbody>
+                <tr style="background:#E8F5E9"><td style="padding:4px 6px">Taco Pastor</td><td style="padding:4px 6px;text-align:center">3</td><td style="padding:4px 6px;text-align:right">$15</td><td style="padding:4px 6px;text-align:right">$45</td></tr>
+                <tr><td style="padding:4px 6px">Agua Fresca</td><td style="padding:4px 6px;text-align:center">1</td><td style="padding:4px 6px;text-align:right">$20</td><td style="padding:4px 6px;text-align:right">$20</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button style="background:var(--green);color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:.8rem;cursor:pointer">✓ Cobrar $65</button>
+            <button style="background:#FEE8E8;color:var(--red);border:1px solid var(--red);padding:6px 14px;border-radius:6px;font-size:.8rem;cursor:pointer">✕ Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Mejores prácticas de componentes</h3>
+        <table class="t">
+          <thead><tr><th>Componente</th><th>Buena práctica</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Botones</strong></td><td>CTA principal: color sólido. Secundario: borde. Destructivo (borrar): rojo. Solo 1 botón primario por sección.</td></tr>
+            <tr><td><strong>Formularios</strong></td><td>Etiqueta arriba del campo (no al lado en móvil). Validación en tiempo real. Placeholder como ejemplo, no como etiqueta.</td></tr>
+            <tr><td><strong>Tablas</strong></td><td>Columnas numéricas alineadas a la derecha. Filas alternadas para legibilidad. Ordenable por columna.</td></tr>
+            <tr><td><strong>Menú</strong></td><td>Máximo 7 ítems en el menú principal. Agrupa en submenús si hay más. Indicar la sección activa visualmente.</td></tr>
+            <tr><td><strong>Diálogos / Modales</strong></td><td>Solo para decisiones importantes. Siempre con botón de cerrar. Máximo 1 modal a la vez.</td></tr>
+            <tr><td><strong>Mensajes de estado</strong></td><td>Verde = éxito, Amarillo = advertencia, Rojo = error, Azul = información. Siempre con ícono además de color.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="meta-box"><div class="lbl">💡 Consistencia interna</div><p style="font-size:.87rem">El error más común en proyectos de equipo es que cada integrante diseña su módulo de forma diferente. Antes de programar la GUI, el equipo debe definir una <strong>guía de componentes</strong> mínima: qué colores, qué fuentes, qué botones, qué iconos. Una página en el documento es suficiente.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- S8 DISEÑO GRÁFICO -->
+<div class="slide" id="s8">
+  <div class="ph"><div><h2>Diseño Gráfico aplicado a Interfaces</h2><div class="meta">Unidad III · 3.3 — Color, tipografía, iconografía y grid</div></div><div style="font-size:2.5rem">🎨</div></div>
+  <div class="g2">
+    <div>
+      <div class="card">
+        <h3>Color — Paleta para el proyecto</h3>
+        <p style="font-size:.84rem;margin-bottom:10px">Una paleta profesional tiene: 1 color primario, 1 secundario, 1 acento y colores neutros (gris, blanco, negro).</p>
+        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+          <div style="flex:1;min-width:80px"><div style="background:#2A6E4A;height:40px;border-radius:8px"></div><p style="font-size:.75rem;text-align:center;margin-top:4px">Primario<br>#2A6E4A</p></div>
+          <div style="flex:1;min-width:80px"><div style="background:#1A4A30;height:40px;border-radius:8px"></div><p style="font-size:.75rem;text-align:center;margin-top:4px">Primario dark<br>#1A4A30</p></div>
+          <div style="flex:1;min-width:80px"><div style="background:#C8A951;height:40px;border-radius:8px"></div><p style="font-size:.75rem;text-align:center;margin-top:4px">Acento/Oro<br>#C8A951</p></div>
+          <div style="flex:1;min-width:80px"><div style="background:#F0FDF4;height:40px;border-radius:8px;border:1px solid #ccc"></div><p style="font-size:.75rem;text-align:center;margin-top:4px">Fondo<br>#F0FDF4</p></div>
+          <div style="flex:1;min-width:80px"><div style="background:#C0392B;height:40px;border-radius:8px"></div><p style="font-size:.75rem;text-align:center;margin-top:4px">Error/Danger<br>#C0392B</p></div>
+        </div>
+        <div class="hb gold"><h4>Regla 60-30-10</h4><p style="font-size:.83rem">60% color neutro (fondo), 30% color primario (elementos de UI, headers), 10% color acento (CTAs, highlights, alertas importantes).</p></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Tipografía</h3>
+        <div class="hb green"><h4>Recomendaciones para aplicaciones de escritorio</h4><ul style="font-size:.84rem;padding-left:14px;margin-top:4px"><li><strong>Fuente principal:</strong> Sans-serif para UI (Segoe UI, Inter, Roboto, Open Sans)</li><li><strong>Tamaños:</strong> Título H1: 24px · H2: 18px · Texto: 14-15px · Caption: 12px</li><li><strong>Nunca más de 2 fuentes</strong> diferentes en la misma app</li><li><strong>Interlineado:</strong> 1.4–1.6 para texto de lectura</li><li><strong>Peso:</strong> Regular para texto, Bold para títulos, Medium para labels</li></ul></div>
+        <div class="hb blue"><h4>Grid System</h4><p style="font-size:.84rem">Usa una cuadrícula de 8px o 12 columnas para alinear los elementos. Todo debe estar alineado al grid: botones, textos, imágenes. El resultado es una interfaz que se siente ordenada y profesional aunque el usuario no sepa por qué.</p></div>
+      </div>
+      <div class="card" style="margin-top:0">
+        <h3>Quiz — Diseño de interfaz</h3>
+        <p style="font-size:.86rem;margin-bottom:10px">Un cajero de 55 años usa tu sistema para una taquería. Le cuesta leer texto pequeño. ¿Qué tamaño mínimo de fuente para el texto principal recomiendas?</p>
+        <button class="quiz-btn" onclick="ans8('a')">10px</button>
+        <button class="quiz-btn" onclick="ans8('b')">14-16px</button>
+        <button class="quiz-btn" onclick="ans8('c')">24px todo</button>
+        <div id="q8ok" class="qfb qok">✅ ¡Correcto! <strong>14-16px</strong> es el rango recomendado para usuarios adultos en aplicaciones de escritorio. 10px es ilegible para cualquier usuario. 24px para todo crea jerarquía nula y desperdicia espacio en pantalla.</div>
+        <div id="q8err" class="qfb qerr">❌ El tamaño correcto es <strong>14-16px</strong> para texto de cuerpo, especialmente para usuarios adultos. Es el estándar de la industria para aplicaciones de escritorio.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S9 MÉTRICAS DE CALIDAD -->
+<div class="slide" id="s9">
+  <div class="ph"><div><h2>Calidad del Software — Métricas de Diseño</h2><div class="meta">Unidad III · 3.4 — Medir la calidad del código y el diseño</div></div><div style="font-size:2.5rem">📏</div></div>
+  <div class="g2">
+    <div>
+      <div class="hb green"><h4>📌 ¿Por qué medir la calidad?</h4><p style="font-size:.87rem">Sin métricas, la calidad es opinión. Con métricas, es evidencia. Las métricas permiten identificar partes del código que son difíciles de mantener, probar o entender, antes de que se conviertan en problemas costosos.</p><p style="font-size:.83rem;margin-top:6px;font-style:italic">Metáfora: el velocímetro del carro. Sin él, no sabes si estás yendo muy rápido o muy lento. Con él, tienes un número que te permite tomar decisiones.</p></div>
+      <div class="card">
+        <h3>Métricas de Chidamber-Kemerer (CK)</h3>
+        <p style="font-size:.84rem;margin-bottom:10px">Suite de métricas específica para software orientado a objetos, la más referenciada en la literatura académica.</p>
+        <table class="t">
+          <thead><tr><th>Métrica</th><th>¿Qué mide?</th><th>Umbral</th></tr></thead>
+          <tbody>
+            <tr><td><strong>WMC</strong> — Weighted Methods per Class</td><td>Complejidad total de la clase (suma de complejidades de sus métodos)</td><td>≤ 20</td></tr>
+            <tr><td><strong>DIT</strong> — Depth of Inheritance Tree</td><td>Profundidad de la jerarquía de herencia</td><td>≤ 5</td></tr>
+            <tr><td><strong>NOC</strong> — Number of Children</td><td>Subclases directas de una clase</td><td>≤ 10</td></tr>
+            <tr><td><strong>CBO</strong> — Coupling Between Objects</td><td>Cuántas otras clases depende esta clase</td><td>≤ 14</td></tr>
+            <tr><td><strong>RFC</strong> — Response for a Class</td><td>Métodos que pueden ejecutarse al recibir un mensaje</td><td>≤ 50</td></tr>
+            <tr><td><strong>LCOM</strong> — Lack of Cohesion of Methods</td><td>Qué tan poco cohesivos son los métodos de una clase</td><td>≤ 0.5</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Complejidad Ciclomática (McCabe)</h3>
+        <div class="hb blue"><h4>¿Qué mide?</h4><p style="font-size:.84rem">El número de caminos independientes a través del código de un método. Cada <code>if</code>, <code>for</code>, <code>while</code>, <code>case</code> aumenta la complejidad ciclomática en 1.</p></div>
+        <div style="background:#1A1A2E;color:#A8D8EA;border-radius:8px;padding:12px;font-family:'Courier New',monospace;font-size:.78rem;line-height:1.7">
+          <span style="color:#FFD700">def</span> calcular_descuento(total, cliente):<br>
+          &nbsp;&nbsp;<span style="color:#6B8E6B">M = 1 (entrada)</span><br>
+          &nbsp;&nbsp;<span style="color:#FFD700">if</span> total &gt; 500:&nbsp;&nbsp;<span style="color:#6B8E6B">+1 = 2</span><br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#FFD700">if</span> cliente.vip:&nbsp;<span style="color:#6B8E6B">+1 = 3</span><br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#FFD700">return</span> 0.20<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#FFD700">return</span> 0.10<br>
+          &nbsp;&nbsp;<span style="color:#FFD700">return</span> 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#6B8E6B">CC = 3</span>
+        </div>
+        <p style="font-size:.8rem;color:var(--muted);margin-top:6px"><strong>Interpretación:</strong> CC ≤ 5 excelente · 6–10 moderada · 11–20 alta (refactorizar) · > 20 inaceptable</p>
+      </div>
+      <div class="card">
+        <h3>Métricas de calidad de UI (visuales)</h3>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div><p style="font-size:.8rem;font-weight:700;color:var(--muted);margin-bottom:4px">Ratio de contraste del texto principal</p><div class="metric-bar"><div class="metric-fill" style="width:88%;background:var(--green)">4.7:1 ✓ WCAG AA</div></div></div>
+          <div><p style="font-size:.8rem;font-weight:700;color:var(--muted);margin-bottom:4px">Pasos para completar tarea principal (registrar pedido)</p><div class="metric-bar"><div class="metric-fill" style="width:60%;background:var(--accent)">3 clics de 5 máx</div></div></div>
+          <div><p style="font-size:.8rem;font-weight:700;color:var(--muted);margin-bottom:4px">Tiempo de aprendizaje del sistema (usuarios nuevos)</p><div class="metric-bar"><div class="metric-fill" style="width:75%;background:var(--orange)">~25 min de 30 min meta</div></div></div>
+          <div><p style="font-size:.8rem;font-weight:700;color:var(--muted);margin-bottom:4px">Cobertura de pruebas unitarias</p><div class="metric-bar"><div class="metric-fill" style="width:70%;background:var(--purple)">70% (meta: ≥80%)</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S10 PROCESO DE CALIDAD / ISO 25010 -->
+<div class="slide" id="s10">
+  <div class="ph"><div><h2>Proceso de Calidad del Software</h2><div class="meta">Unidad III · 3.4 — ISO 25010, revisiones técnicas e inspecciones</div></div><div style="font-size:2.5rem">🔬</div></div>
+  <div class="g2">
+    <div>
+      <div class="hb green"><h4>📌 ISO 25010 — Modelo de calidad del producto</h4><p style="font-size:.87rem">Define las características que debe tener un software de calidad. Sustituye a la ISO 9126. Las organizaciones usan este modelo para definir sus criterios de aceptación de software.</p></div>
+      <div class="card">
+        <h3>Características de calidad ISO 25010</h3>
+        <table class="t">
+          <thead><tr><th>Característica</th><th>¿Qué significa?</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Adecuación funcional</strong></td><td>¿Hace lo que el usuario necesita?</td></tr>
+            <tr><td><strong>Eficiencia de desempeño</strong></td><td>¿Responde rápido con los recursos disponibles?</td></tr>
+            <tr><td><strong>Compatibilidad</strong></td><td>¿Funciona con otros sistemas y en otros entornos?</td></tr>
+            <tr><td><strong>Usabilidad</strong></td><td>¿Es fácil de usar, aprender y satisfactorio?</td></tr>
+            <tr><td><strong>Fiabilidad</strong></td><td>¿Funciona sin fallos durante el tiempo esperado?</td></tr>
+            <tr><td><strong>Seguridad</strong></td><td>¿Protege los datos de accesos no autorizados?</td></tr>
+            <tr><td><strong>Mantenibilidad</strong></td><td>¿Es fácil de modificar, analizar y probar?</td></tr>
+            <tr><td><strong>Portabilidad</strong></td><td>¿Puede transferirse a otros entornos?</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Revisiones técnicas e inspecciones de código</h3>
+        <div class="hb green"><h4>Revisión técnica formal</h4><p style="font-size:.84rem">El equipo lee el código del compañero siguiendo un checklist predefinido. Buscan: violaciones de estándares, bugs potenciales, código no mantenible, ausencia de pruebas.</p><p style="font-size:.82rem;font-style:italic">Metáfora: el revisor de estilo que lee el manuscrito antes de publicar — encuentra errores que el autor ya no ve por haberlos escrito él mismo.</p></div>
+        <div class="hb blue"><h4>Code Review (revisión de código)</h4><p style="font-size:.84rem">En el contexto del proyecto: antes de integrar el componente de cada integrante, otro miembro del equipo lo revisa. Herramienta: Pull Request en GitHub.</p></div>
+        <div class="hb gold"><h4>Checklist de calidad para el proyecto</h4><ul style="font-size:.83rem;padding-left:14px;margin-top:4px"><li>☐ Todos los métodos públicos tienen prueba unitaria</li><li>☐ Ninguna clase tiene WMC > 20</li><li>☐ Complejidad ciclomática de métodos ≤ 10</li><li>☐ Los nombres son descriptivos y en español/inglés consistente</li><li>☐ No hay código duplicado (DRY)</li><li>☐ Todas las entradas del usuario son validadas</li><li>☐ Los errores se manejan correctamente (no falla silenciosamente)</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S11 EVALUACIÓN DE USABILIDAD -->
+<div class="slide" id="s11">
+  <div class="ph"><div><h2>Evaluación de Usabilidad</h2><div class="meta">Unidad III · 3.1 — Test con usuarios, walkthrough y métricas</div></div><div style="font-size:2.5rem">🧪</div></div>
+  <div class="g2">
+    <div>
+      <div class="card">
+        <h3>Métodos de evaluación de usabilidad</h3>
+        <div class="hb green"><h4>🧑‍💻 Test de usabilidad con usuarios</h4><p style="font-size:.84rem">El método más poderoso. Un usuario real realiza tareas específicas mientras el equipo observa. <strong>Regla de Nielsen: 5 usuarios</strong> son suficientes para encontrar el 85% de los problemas de usabilidad.</p><p style="font-size:.82rem;margin-top:4px;font-style:italic">Metáfora: darle el volante al pasajero y ver a dónde va naturalmente, sin explicarle nada.</p></div>
+        <div class="hb blue"><h4>🚶 Cognitive Walkthrough</h4><p style="font-size:.84rem">El evaluador simula ser un usuario nuevo y recorre la interfaz paso a paso haciendo preguntas: ¿Sabe el usuario qué hacer aquí? ¿Hay retroalimentación de que lo hizo bien? ¿Se recupera fácilmente de un error?</p></div>
+        <div class="hb purple"><h4>📋 Evaluación Heurística</h4><p style="font-size:.84rem">3-5 evaluadores revisan la interfaz independientemente usando las 10 heurísticas de Nielsen. Después comparan hallazgos. Sin usuarios reales necesarios.</p></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Cómo hacer el test de usabilidad para el proyecto</h3>
+        <ol style="padding-left:18px;font-size:.85rem;line-height:2">
+          <li><strong>Define 3 tareas clave</strong> que el usuario debe completar (registrar pedido, cobrar, buscar cliente)</li>
+          <li><strong>Recluta 2-3 usuarios</strong> del negocio real que serán los usuarios del sistema</li>
+          <li><strong>Prepara el ambiente:</strong> PC con el sistema instalado, grabación de pantalla (con permiso)</li>
+          <li><strong>Da solo la instrucción de la tarea</strong> — no expliques cómo hacerla. Observa sin intervenir.</li>
+          <li><strong>Registra:</strong> tareas completadas, tiempo por tarea, errores cometidos, comentarios en voz alta</li>
+          <li><strong>Analiza y prioriza</strong> los problemas encontrados por severidad (1–4)</li>
+          <li><strong>Documenta en el reporte de calidad</strong> los problemas y las correcciones aplicadas</li>
+        </ol>
+      </div>
+      <div class="meta-box"><div class="lbl">💡 La frase de Nielsen</div><p style="font-size:.88rem">"Si un usuario tiene problemas con tu sistema, el problema es del sistema, no del usuario." Esta mentalidad transforma cómo el equipo recibe los resultados del test: no es "el usuario no sabe usarlo", sino "nosotros diseñamos algo que confunde". Esa es la actitud correcta del diseñador de software.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- S12 DEMO FINAL Y PORTAFOLIO -->
+<div class="slide" id="s12">
+  <div class="ph"><div><h2>Demo Final y Portafolio de Evidencias</h2><div class="meta">Unidad III · Semana 15 · Entregable final del proyecto</div></div><div style="font-size:2.5rem">🏆</div></div>
+  <div class="g2">
+    <div class="card">
+      <h3>Estructura de la Demo Final (20 min por equipo)</h3>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="background:#E8F5E9;border-left:4px solid var(--green);border-radius:8px;padding:10px;display:flex;gap:10px"><span style="background:var(--green);color:#fff;border-radius:50%;width:24px;height:24px;display:grid;place-items:center;flex-shrink:0;font-size:.8rem;font-weight:700">1</span><div><strong>Introducción del negocio (2 min)</strong><br><span style="font-size:.83rem;color:var(--muted)">Nombre del negocio, problema que resolvieron, equipo y roles</span></div></div>
+        <div style="background:#EFF4FF;border-left:4px solid var(--accent);border-radius:8px;padding:10px;display:flex;gap:10px"><span style="background:var(--accent);color:#fff;border-radius:50%;width:24px;height:24px;display:grid;place-items:center;flex-shrink:0;font-size:.8rem;font-weight:700">2</span><div><strong>Arquitectura del sistema (3 min)</strong><br><span style="font-size:.83rem;color:var(--muted)">Diagrama de arquitectura, tecnologías usadas, decisiones clave</span></div></div>
+        <div style="background:#EDFBF0;border-left:4px solid var(--teal);border-radius:8px;padding:10px;display:flex;gap:10px"><span style="background:var(--teal);color:#fff;border-radius:50%;width:24px;height:24px;display:grid;place-items:center;flex-shrink:0;font-size:.8rem;font-weight:700">3</span><div><strong>Demo en vivo del sistema (10 min)</strong><br><span style="font-size:.83rem;color:var(--muted)">Ejecutar los 3 flujos principales con datos reales del negocio</span></div></div>
+        <div style="background:#F5F0FF;border-left:4px solid var(--purple);border-radius:8px;padding:10px;display:flex;gap:10px"><span style="background:var(--purple);color:#fff;border-radius:50%;width:24px;height:24px;display:grid;place-items:center;flex-shrink:0;font-size:.8rem;font-weight:700">4</span><div><strong>Métricas de calidad (2 min)</strong><br><span style="font-size:.83rem;color:var(--muted)">2-3 métricas clave con sus valores y comparación con umbral</span></div></div>
+        <div style="background:#FFF8E1;border-left:4px solid var(--gold);border-radius:8px;padding:10px;display:flex;gap:10px"><span style="background:var(--gold);color:var(--dark);border-radius:50%;width:24px;height:24px;display:grid;place-items:center;flex-shrink:0;font-size:.8rem;font-weight:700">5</span><div><strong>Reflexión del equipo + preguntas (3 min)</strong><br><span style="font-size:.83rem;color:var(--muted)">¿Qué aprendieron? ¿Qué harían diferente? Responder preguntas del docente</span></div></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Portafolio de Evidencias — Contenido mínimo</h3>
+        <div class="portf-item"><span style="font-size:1.2rem">📁</span><div><strong>Fase 1 — Diseño:</strong> Reporte de indagación, CRC cards, wireframes, mockup Hi-Fi, diagrama de arquitectura</div></div>
+        <div class="portf-item"><span style="font-size:1.2rem">⚙️</span><div><strong>Fase 2 — Desarrollo:</strong> Diagramas UML completos (clases, secuencia, componentes, despliegue), prototipo funcional documentado, reporte de integración</div></div>
+        <div class="portf-item"><span style="font-size:1.2rem">🎨</span><div><strong>Fase 3 — Interfaz:</strong> Diagrama de flujo de navegación, guía de estilo del sistema, capturas de la GUI final</div></div>
+        <div class="portf-item"><span style="font-size:1.2rem">📊</span><div><strong>Calidad:</strong> Checklist de heurísticas de Nielsen aplicado, tabla de métricas CK calculadas, reporte del test de usabilidad</div></div>
+        <div class="portf-item"><span style="font-size:1.2rem">💿</span><div><strong>Código fuente:</strong> Repositorio Git con historia de commits de todo el semestre, instrucciones de instalación</div></div>
+        <div class="portf-item"><span style="font-size:1.2rem">📝</span><div><strong>Reflexión individual:</strong> 1 página por integrante — qué aprendí, qué aportué, qué mejoraría</div></div>
+      </div>
+      <div class="meta-box"><div class="lbl">💡 Consejo final</div><p style="font-size:.87rem">El portafolio no es solo el producto final — es la <strong>historia de cómo lo construyeron</strong>. Un portafolio con evidencias de los 3 parciales, que muestre evolución y aprendizaje, vale más que un producto perfecto sin contexto. Este portafolio puede ser parte de tu <em>portafolio profesional</em> al egresar.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- S13 BIBLIOGRAFÍA -->
+<div class="slide" id="s13">
+  <div class="ph"><div><h2>Bibliografía del Parcial 3</h2><div class="meta">Fuentes básicas y recursos digitales</div></div><div style="font-size:2.5rem">📚</div></div>
+  <div class="g2">
+    <div class="card">
+      <h3>📗 Bibliografía básica</h3>
+      <ul class="cl">
+        <li><strong>Nielsen, J. &amp; Loranger, H. (2006).</strong> <em>Prioritizing Web Usability.</em> New Riders. [Las 10 heurísticas originales en contexto web]</li>
+        <li><strong>Cooper, A., Reimann, R. &amp; Cronin, D. (2007).</strong> <em>About Face 3: The Essentials of Interaction Design.</em> Wiley. <span style="background:#EDFBF0;border-radius:4px;padding:2px 8px;font-size:.78rem;color:var(--green)">Diseño de interacción</span></li>
+        <li><strong>Pressman, R. &amp; Maxim, B. (2015).</strong> <em>Software Engineering: A Practitioner's Approach.</em> 8.ª ed. McGraw-Hill. <span style="background:#EFF4FF;border-radius:4px;padding:2px 8px;font-size:.78rem;color:var(--accent)">Cap. 14-18 UI + Calidad</span></li>
+        <li><strong>Chidamber, S. &amp; Kemerer, C. (1994).</strong> "A Metrics Suite for Object Oriented Design." <em>IEEE Transactions on Software Engineering.</em> 20(6): 476–493.</li>
+        <li><strong>Bruegge, B. &amp; Dutoit, A. (2010).</strong> <em>Object-Oriented Software Engineering.</em> 3.ª ed. Prentice Hall. <span style="background:#EDFBF0;border-radius:4px;padding:2px 8px;font-size:.78rem;color:var(--green)">Cap. 7-8 UI y Calidad</span></li>
+        <li><strong>ISO/IEC 25010:2011.</strong> Systems and software engineering — Systems and software Quality Requirements and Evaluation (SQuaRE).</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>🌐 Recursos digitales y herramientas</h3>
+      <ul class="cl">
+        <li><strong>Nielsen Norman Group.</strong> nngroup.com — artículos de investigación de usabilidad (los más citados del mundo)</li>
+        <li><strong>Figma.</strong> figma.com — diseño de UI y prototipos (gratuito estudiantes)</li>
+        <li><strong>Material Design.</strong> m3.material.io — sistema de diseño de Google</li>
+        <li><strong>WCAG 2.1.</strong> w3.org/TR/WCAG21 — estándar de accesibilidad</li>
+        <li><strong>Colour Contrast Checker.</strong> webaim.org/resources/contrastchecker — verificar contraste WCAG</li>
+        <li><strong>Refactoring.Guru.</strong> refactoring.guru/es — code smells y métricas de código</li>
+        <li><strong>Excalidraw.</strong> excalidraw.com — user flows y diagramas colaborativos</li>
+        <li><strong>Canva Design School.</strong> canva.com/learn/design — fundamentos de diseño visual gratuitos</li>
+      </ul>
+      <div class="hb green" style="margin-top:14px"><h4>🏆 Cierre del semestre</h4><p style="font-size:.84rem">Al terminar el Parcial 3, cada equipo tiene en su portafolio: análisis de negocio real, mockup profesional en Figma, diagramas UML completos, código funcionando, GUI implementada y métricas de calidad. Es un <strong>proyecto real listo para mostrar en una entrevista de trabajo</strong>. ¡Ese es el verdadero entregable del semestre.</p></div>
+    </div>
+  </div>
+  <div class="banner" style="text-align:center;padding:22px 32px;margin-top:4px">
+    <h2 style="font-size:1.2rem;margin-bottom:6px">🎓 ¡Felicidades — Construcción de Software completado!</h2>
+    <p style="opacity:.85;font-size:.88rem">UPIICSA · IPN · Lic. en Ciencias de la Informática · 4.° Semestre · Plan 2021</p>
+    <p style="opacity:.7;font-size:.82rem;margin-top:4px">Parcial 1: Diseño · Parcial 2: Desarrollo · Parcial 3: Interfaz y Calidad</p>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <button onclick="prevSlide()" id="btnPrev">← Anterior</button>
+  <div class="dots" id="navDots"></div>
+  <span class="nav-label" id="navLabel">Portada</span>
+  <button onclick="nextSlide()" id="btnNext">Siguiente →</button>
+</div>
+
+<script>
+const SLIDES=[
+  {id:'s1',label:'Portada'},{id:'s2',label:'Objetivos'},{id:'s3',label:'Requerimientos UI'},
+  {id:'s4',label:'Heurísticas de Nielsen'},{id:'s5',label:'Diseño de Información'},{id:'s6',label:'Principios de Diseño'},
+  {id:'s7',label:'Componentes GUI'},{id:'s8',label:'Diseño Gráfico'},{id:'s9',label:'Métricas de Calidad'},
+  {id:'s10',label:'Proceso de Calidad'},{id:'s11',label:'Evaluación de Usabilidad'},{id:'s12',label:'Demo y Portafolio'},
+  {id:'s13',label:'Bibliografía'}
+];
+let cur=0;
+const dotsEl=document.getElementById('navDots');
+SLIDES.forEach((_,i)=>{const d=document.createElement('span');if(i===0)d.classList.add('active');d.onclick=()=>goTo(i+1);dotsEl.appendChild(d);});
+function showSlide(idx){
+  SLIDES.forEach((s,i)=>document.getElementById(s.id).classList.toggle('active',i===idx));
+  dotsEl.querySelectorAll('span').forEach((d,i)=>d.classList.toggle('active',i===idx));
+  document.getElementById('navLabel').textContent=SLIDES[idx].label;
+  document.getElementById('btnPrev').disabled=idx===0;
+  document.getElementById('btnNext').disabled=idx===SLIDES.length-1;
+  document.getElementById('slideNum').textContent=`${idx+1} / ${SLIDES.length}`;
+  window.scrollTo(0,0);cur=idx;
+}
+function nextSlide(){if(cur<SLIDES.length-1)showSlide(cur+1);}
+function prevSlide(){if(cur>0)showSlide(cur-1);}
+function goTo(n){showSlide(n-1);}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowDown')nextSlide();if(e.key==='ArrowLeft'||e.key==='ArrowUp')prevSlide();});
+function toggleN(id){const el=document.getElementById('n-'+id);el.classList.toggle('open');}
+function ans8(a){document.getElementById('q8ok').style.display=a==='b'?'block':'none';document.getElementById('q8err').style.display=a!=='b'?'block':'none';}
+showSlide(0);
+</script>
+</body>
+</html>

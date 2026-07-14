@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Parcial 2 — Construcción de Software · UPIICSA · IPN</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--accent:#2C5F8A;--accent2:#1A3F6F;--grana:#8B1A1A;--gold:#C8A951;--dark:#1A1A2E;--green:#2A6E4A;--orange:#B85C00;--purple:#5A2D82;--teal:#0D7A6E;--bg:#F0F5FF;--card:#fff;--border:#C5D3E0;--text:#1A1A2E;--muted:#5A6B7A;--r:12px;--sh:0 2px 16px rgba(0,0,0,.09)}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;font-size:15px}
+.slide{display:none;min-height:100vh;padding:24px 20px 90px;max-width:1100px;margin:0 auto;animation:fi .3s ease}
+.slide.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.nav{position:fixed;bottom:0;left:0;right:0;background:var(--accent);display:flex;justify-content:center;align-items:center;gap:12px;padding:10px 16px;z-index:100;box-shadow:0 -2px 12px rgba(0,0,0,.2)}
+.nav button{background:rgba(255,255,255,.18);color:#fff;border:none;padding:8px 22px;border-radius:20px;cursor:pointer;font-size:14px;font-weight:600;transition:background .2s}
+.nav button:hover{background:rgba(255,255,255,.35)}
+.nav button:disabled{opacity:.35;cursor:not-allowed}
+.nav-label{color:rgba(255,255,255,.8);font-size:13px;min-width:160px;text-align:center}
+.dots{display:flex;gap:5px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:300px}
+.dots span{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35);cursor:pointer;transition:background .2s,transform .2s}
+.dots span.active{background:var(--gold);transform:scale(1.4)}
+.print-btn{position:fixed;top:14px;right:16px;background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;z-index:200}
+.snum{position:fixed;top:14px;left:16px;background:rgba(44,95,138,.1);color:var(--accent);border-radius:20px;padding:4px 14px;font-size:12px;font-weight:700;z-index:200}
+.banner{background:linear-gradient(135deg,var(--accent) 0%,var(--dark) 100%);color:#fff;border-radius:var(--r);padding:40px 32px;margin-bottom:22px;position:relative;overflow:hidden}
+.banner::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.05)}
+.banner .inst{font-size:12px;letter-spacing:2px;text-transform:uppercase;opacity:.75;margin-bottom:6px}
+.banner h1{font-size:2rem;font-weight:800;margin-bottom:6px}
+.banner .sub{font-size:.95rem;opacity:.85}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.badge{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);border-radius:20px;padding:4px 14px;font-size:12px;font-weight:600}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--border);padding:22px;margin-bottom:16px}
+.card h3{font-size:1rem;font-weight:700;margin-bottom:12px;color:var(--accent)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:700px){.g2,.g3{grid-template-columns:1fr}}
+.hb{border-radius:10px;padding:14px 16px;margin-bottom:10px}
+.hb h4{font-size:.88rem;font-weight:700;margin-bottom:5px}
+.hb.blue{background:#EFF4FF;border-left:4px solid var(--accent)}
+.hb.gold{background:#FFF8E1;border-left:4px solid var(--gold)}
+.hb.green{background:#EDFBF0;border-left:4px solid var(--green)}
+.hb.purple{background:#F5F0FF;border-left:4px solid var(--purple)}
+.hb.orange{background:#FFF5EB;border-left:4px solid var(--orange)}
+.hb.red{background:#FFF0F0;border-left:4px solid var(--grana)}
+.hb.teal{background:#E8FAF8;border-left:4px solid var(--teal)}
+ul.cl{list-style:none}
+ul.cl li{padding:5px 0 5px 18px;position:relative;border-bottom:1px solid var(--border);font-size:.87rem}
+ul.cl li:last-child{border-bottom:none}
+ul.cl li::before{content:'▸';position:absolute;left:0;color:var(--accent);font-size:11px;top:7px}
+table.t{width:100%;border-collapse:collapse;font-size:13px}
+table.t th{background:var(--accent);color:#fff;padding:9px 12px;text-align:left;font-weight:600}
+table.t td{padding:8px 12px;border-bottom:1px solid var(--border);font-size:.85rem}
+table.t tr:nth-child(even) td{background:#F0F5FF}
+.ph{border-radius:var(--r);padding:16px 22px;color:#fff;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;background:linear-gradient(135deg,var(--accent),var(--accent2))}
+.ph h2{font-size:1.3rem;font-weight:800}
+.ph .meta{font-size:13px;opacity:.85}
+.toc-item{display:flex;align-items:center;gap:14px;padding:12px 16px;border-radius:10px;margin-bottom:8px;background:var(--card);border:1px solid var(--border);cursor:pointer;transition:background .15s}
+.toc-item:hover{background:#EFF4FF}
+.tn{width:34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800;flex-shrink:0}
+.meta-box{background:linear-gradient(135deg,#FFF8E1,#FFFBF0);border:2px solid var(--gold);border-radius:var(--r);padding:14px 18px;margin-bottom:14px}
+.meta-box .lbl{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--orange);margin-bottom:5px}
+.tab-btn{padding:7px 16px;border:2px solid var(--accent);background:#fff;color:var(--accent);border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;margin:3px;transition:all .2s}
+.tab-btn.active{background:var(--accent);color:#fff}
+.pane{display:none}
+.pane.show{display:block}
+.quiz-btn{background:var(--accent);color:#fff;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;margin:3px;transition:background .2s}
+.quiz-btn:hover{background:var(--accent2)}
+.qfb{margin-top:10px;padding:10px 14px;border-radius:8px;font-weight:600;display:none}
+.qok{background:#DCFCE7;color:var(--green);border-left:4px solid var(--green)}
+.qerr{background:#FEE2E2;color:var(--grana);border-left:4px solid var(--grana)}
+.uml-tab{padding:7px 14px;border:2px solid var(--accent);background:#fff;color:var(--accent);border-radius:8px;cursor:pointer;font-weight:600;font-size:12px;margin:3px;transition:all .2s}
+.uml-tab.active{background:var(--accent);color:#fff}
+code{background:#F0F4FF;border-radius:4px;padding:2px 6px;font-family:'Courier New',monospace;font-size:.85rem;color:var(--accent2)}
+.code-block{background:#1A1A2E;color:#A8D8EA;border-radius:10px;padding:14px 16px;font-family:'Courier New',monospace;font-size:.82rem;line-height:1.7;margin-top:8px;overflow-x:auto}
+.code-block .kw{color:#FFD700}
+.code-block .cls{color:#7EC8E3}
+.code-block .cm{color:#6B8E6B;font-style:italic}
+.comp-box{border-radius:10px;padding:14px;border:2px solid;margin-bottom:8px;font-size:.85rem}
+</style>
+</head>
+<body>
+<button class="print-btn" onclick="window.print()">🖨 Imprimir / PDF</button>
+<div class="snum" id="slideNum">1 / 13</div>
+
+<!-- S1 PORTADA -->
+<div class="slide active" id="s1">
+  <div class="banner" style="text-align:center;padding:50px 32px">
+    <div class="inst">Instituto Politécnico Nacional · UPIICSA · Lic. en Ciencias de la Informática · 4.° Semestre · Plan 2021</div>
+    <h1>Construcción de Software</h1>
+    <div class="sub" style="font-size:1.25rem;font-weight:700;margin-top:8px">Parcial 2 — Desarrollo del Software</div>
+    <div class="sub" style="margin-top:6px;opacity:.75">Unidad II · Semanas 6–10</div>
+    <div class="badges" style="justify-content:center;margin-top:20px">
+      <span class="badge">🔧 Prototipo Funcional</span>
+      <span class="badge">📐 UML — Clases · Secuencia · Componentes · Despliegue</span>
+      <span class="badge">⚙️ Desarrollo de Componentes</span>
+      <span class="badge">🔗 Integración</span>
+      <span class="badge">✅ Verificación de Calidad</span>
+    </div>
+  </div>
+  <div class="card">
+    <p style="color:var(--muted);font-size:.88rem;margin-bottom:14px;text-align:center">Índice — haz clic para navegar</p>
+    <div class="toc-item" onclick="goTo(3)"><div class="tn">1</div><div><strong>Prototipo Funcional</strong><br><span style="font-size:.82rem;color:var(--muted)">Tipos, propósito y diferencia con mockup</span></div></div>
+    <div class="toc-item" onclick="goTo(4)"><div class="tn">2</div><div><strong>Diagrama de Clases UML</strong><br><span style="font-size:.82rem;color:var(--muted)">Clases, atributos, métodos, relaciones y multiplicidad</span></div></div>
+    <div class="toc-item" onclick="goTo(5)"><div class="tn">3</div><div><strong>Diagrama de Secuencia</strong><br><span style="font-size:.82rem;color:var(--muted)">Interacción entre objetos, mensajes y flujos de tiempo</span></div></div>
+    <div class="toc-item" onclick="goTo(6)"><div class="tn">4</div><div><strong>Diagramas de Componentes y Despliegue</strong><br><span style="font-size:.82rem;color:var(--muted)">Estructura física y lógica del sistema</span></div></div>
+    <div class="toc-item" onclick="goTo(7)"><div class="tn">5</div><div><strong>Análisis de Componentes</strong><br><span style="font-size:.82rem;color:var(--muted)">Identificar, dividir y asignar componentes del sistema</span></div></div>
+    <div class="toc-item" onclick="goTo(8)"><div class="tn">6</div><div><strong>Desarrollo de Componentes</strong><br><span style="font-size:.82rem;color:var(--muted)">Buenas prácticas, cohesión, acoplamiento, principios SOLID</span></div></div>
+    <div class="toc-item" onclick="goTo(9)"><div class="tn">7</div><div><strong>Integración de Componentes</strong><br><span style="font-size:.82rem;color:var(--muted)">Estrategias de integración, APIs internas, Integration Day</span></div></div>
+    <div class="toc-item" onclick="goTo(10)"><div class="tn">8</div><div><strong>Verificación de Calidad del Software</strong><br><span style="font-size:.82rem;color:var(--muted)">Tipos de pruebas, criterios de verificación, defect tracking</span></div></div>
+    <div class="toc-item" onclick="goTo(11)"><div class="tn">9</div><div><strong>Herramientas CASE para UML</strong><br><span style="font-size:.82rem;color:var(--muted)">StarUML, draw.io, PlantUML — comparativa y uso práctico</span></div></div>
+    <div class="toc-item" onclick="goTo(12)"><div class="tn">10</div><div><strong>Caso Práctico: Taquería TechMiPyME</strong><br><span style="font-size:.82rem;color:var(--muted)">Diagramas UML completos del sistema del proyecto</span></div></div>
+    <div class="toc-item" onclick="goTo(13)"><div class="tn">11</div><div><strong>Bibliografía</strong></div></div>
+  </div>
+</div>
+
+<!-- S2 OBJETIVOS -->
+<div class="slide" id="s2">
+  <div class="ph"><div><h2>Objetivos del Parcial 2</h2><div class="meta">Unidad II · Desarrollo del Software · 23 h (15T + 8P)</div></div><div style="font-size:2.5rem">🎯</div></div>
+  <div class="g2">
+    <div class="card">
+      <h3>Al terminar este parcial, el alumno será capaz de:</h3>
+      <ul class="cl">
+        <li>Distinguir un prototipo funcional de un mockup y construirlo</li>
+        <li>Elaborar diagramas de clases UML con relaciones, multiplicidad y visibilidad</li>
+        <li>Construir diagramas de secuencia que modelan los flujos principales del sistema</li>
+        <li>Elaborar diagramas de componentes y de despliegue</li>
+        <li>Analizar y dividir el sistema en componentes cohesivos y poco acoplados</li>
+        <li>Desarrollar componentes de software aplicando principios SOLID</li>
+        <li>Integrar componentes usando contratos de APIs internas</li>
+        <li>Aplicar técnicas de verificación de calidad: pruebas unitarias, integración y funcionales</li>
+      </ul>
+    </div>
+    <div>
+      <div class="hb blue"><h4>🏗️ Proyecto Integrador — Fase 2</h4><p style="font-size:.87rem">Sobre la arquitectura aprobada en la Fase 1, ahora el equipo construye el <strong>prototipo funcional</strong> del sistema MiPyME: lógica de negocio funcionando, diagramas UML completos (clases, secuencia, componentes, despliegue), integración de todos los componentes y reporte de verificación.</p></div>
+      <div class="hb gold"><h4>📊 Evaluación del Parcial 2</h4><p style="font-size:.87rem">Reporte de indagación (10%) · Cuadro sinóptico UML (25%) · Prototipo funcional (25%) · Reporte de práctica / integración (15%) · Exposición (15%) · Examen escrito (10%)</p></div>
+      <div class="meta-box"><div class="lbl">💡 Metáfora del parcial</div><p style="font-size:.88rem">Si en el Parcial 1 dibujaste los planos, en el Parcial 2 <strong>construyes las habitaciones</strong>. Primero modelas en UML (planos detallados), luego cada integrante construye su parte (componente) y al final los juntan todos para que el edificio sea uno solo (integración).</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- S3 PROTOTIPO FUNCIONAL -->
+<div class="slide" id="s3">
+  <div class="ph"><div><h2>Prototipo Funcional</h2><div class="meta">Unidad II · 2.1 — De la interfaz al código</div></div><div style="font-size:2.5rem">⚙️</div></div>
+  <div class="g2">
+    <div>
+      <div class="hb blue"><h4>📌 ¿Qué es un prototipo funcional?</h4><p style="font-size:.87rem">Un prototipo funcional es software que <strong>ejecuta la lógica del negocio real</strong>, aunque aún no tenga la interfaz gráfica completa. El objetivo es validar que las reglas de negocio, cálculos y flujos de datos funcionan correctamente antes de invertir en la UI definitiva.</p><p style="font-size:.83rem;margin-top:6px;font-style:italic">Metáfora: el motor del carro terminado y funcionando, aunque aún no tenga la carrocería pintada ni los asientos tapizados.</p></div>
+      <div class="card">
+        <h3>Mockup vs Prototipo Funcional</h3>
+        <table class="t">
+          <thead><tr><th>Aspecto</th><th>Mockup (Parcial 1)</th><th>Prototipo Funcional</th></tr></thead>
+          <tbody>
+            <tr><td>¿Tiene código real?</td><td>No (solo diseño)</td><td>Sí (lógica funcionando)</td></tr>
+            <tr><td>¿Hace cálculos?</td><td>No</td><td>Sí</td></tr>
+            <tr><td>¿Guarda datos?</td><td>No</td><td>Sí (BD o archivo)</td></tr>
+            <tr><td>¿Tiene UI completa?</td><td>Visual pero estática</td><td>Básica o de consola</td></tr>
+            <tr><td>¿Se puede probar?</td><td>Solo visualmente</td><td>Sí, con datos reales</td></tr>
+            <tr><td>Objetivo</td><td>Validar diseño con cliente</td><td>Validar lógica con equipo</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Tipos de prototipos funcionales</h3>
+        <div class="hb green"><h4>🔄 Desechable (Throwaway)</h4><p style="font-size:.85rem">Se construye rápido para validar una duda específica y luego se descarta. No es código de producción.</p><p style="font-size:.82rem;font-style:italic">Ej: probar si el algoritmo de descuento funciona correctamente antes de integrarlo al sistema real.</p></div>
+        <div class="hb blue"><h4>🌱 Evolutivo (Evolutionary)</h4><p style="font-size:.85rem">Se construye con calidad desde el inicio; irá creciendo hasta convertirse en el sistema final. El más usado en proyectos académicos.</p><p style="font-size:.82rem;font-style:italic">Ej: el prototipo del Parcial 2 se convierte en el núcleo del sistema final del Parcial 3.</p></div>
+        <div class="hb purple"><h4>🎭 Horizontal vs Vertical</h4><p style="font-size:.85rem"><strong>Horizontal:</strong> implementa todas las pantallas pero con funcionalidad mínima. <strong>Vertical:</strong> implementa un solo flujo completo de principio a fin con toda la funcionalidad.</p><p style="font-size:.82rem;font-style:italic">Para el proyecto: prototipo <em>vertical</em> — el flujo de "registrar un pedido" completo.</p></div>
+      </div>
+      <div class="meta-box"><div class="lbl">💡 Sprint de desarrollo</div><p style="font-size:.87rem">En la Semana 6 (S6), el equipo codifica la lógica del negocio sin preocuparse por la UI. Una interfaz de consola o un menú de texto es suficiente para el prototipo funcional. La UI vendrá en el Parcial 3.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- S4 DIAGRAMA DE CLASES -->
+<div class="slide" id="s4">
+  <div class="ph"><div><h2>Diagrama de Clases UML</h2><div class="meta">Unidad II · 2.2 — Estructura estática del sistema</div></div><div style="font-size:2.5rem">📐</div></div>
+  <div class="g2">
+    <div>
+      <div class="hb blue"><h4>📌 ¿Qué modela el diagrama de clases?</h4><p style="font-size:.87rem">Muestra la <strong>estructura estática</strong> del sistema: las clases que existen, sus atributos, sus métodos y las relaciones entre ellas. Es el diagrama UML más usado y el punto de partida para programar.</p></div>
+      <div class="card">
+        <h3>Sintaxis de una clase en UML</h3>
+        <div style="border:2px solid var(--accent);border-radius:8px;overflow:hidden;font-family:'Courier New',monospace;font-size:.82rem">
+          <div style="background:var(--accent);color:#fff;padding:8px;text-align:center;font-weight:700">Pedido</div>
+          <div style="padding:10px;border-bottom:1px solid var(--border)">
+            <div style="color:var(--orange);font-size:.75rem;font-weight:700;margin-bottom:4px">ATRIBUTOS</div>
+            <div>- id: int</div>
+            <div>- fecha: Date</div>
+            <div>- total: double</div>
+            <div>- estado: String</div>
+          </div>
+          <div style="padding:10px">
+            <div style="color:var(--green);font-size:.75rem;font-weight:700;margin-bottom:4px">MÉTODOS</div>
+            <div>+ calcularTotal(): double</div>
+            <div>+ cambiarEstado(e:String): void</div>
+            <div>+ aplicarDescuento(p:int): void</div>
+            <div># validarItems(): boolean</div>
+          </div>
+        </div>
+        <p style="font-size:.8rem;margin-top:8px;color:var(--muted)">Visibilidad: <code>+</code> público · <code>-</code> privado · <code>#</code> protegido · <code>~</code> paquete</p>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Tipos de relaciones en UML</h3>
+        <table class="t">
+          <thead><tr><th>Relación</th><th>Significado</th><th>Ejemplo</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Asociación</strong> ——</td><td>"usa / conoce"</td><td>Cliente usa Pedido</td></tr>
+            <tr><td><strong>Agregación</strong> ◇——</td><td>"tiene, puede existir sin"</td><td>Carrito tiene Productos</td></tr>
+            <tr><td><strong>Composición</strong> ◆——</td><td>"parte de, no existe sin"</td><td>Pedido tiene Líneas (si se borra el pedido, se borran las líneas)</td></tr>
+            <tr><td><strong>Herencia</strong> △——</td><td>"es un tipo de"</td><td>Administrador es un tipo de Usuario</td></tr>
+            <tr><td><strong>Realización</strong> △- -</td><td>"implementa interfaz"</td><td>PedidoDAO implementa IRepositorio</td></tr>
+            <tr><td><strong>Dependencia</strong> - -→</td><td>"depende temporalmente"</td><td>Reporte usa PedidoService (parámetro)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card" style="margin-top:0">
+        <h3>Quiz — Relaciones UML</h3>
+        <p style="font-size:.86rem;margin-bottom:10px">En el sistema de la taquería, una <code>Orden</code> contiene <code>ItemsOrden</code>. Si se cancela la Orden, los Items también desaparecen. ¿Qué tipo de relación es?</p>
+        <button class="quiz-btn" onclick="ans4('a')">Asociación</button>
+        <button class="quiz-btn" onclick="ans4('b')">Agregación</button>
+        <button class="quiz-btn" onclick="ans4('c')">Composición</button>
+        <div id="q4ok" class="qfb qok">✅ ¡Correcto! Es <strong>Composición</strong>: los ItemsOrden son parte constitutiva de la Orden. Si la Orden se elimina, los Items no tienen razón de existir por sí solos. El diamante relleno (◆) indica esta dependencia existencial.</div>
+        <div id="q4err" class="qfb qerr">❌ La relación correcta es <strong>Composición</strong> (◆). La Agregación (◇) se usa cuando la parte puede existir sin el todo. En este caso, los Items no tienen sentido sin su Orden.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S5 DIAGRAMA DE SECUENCIA -->
+<div class="slide" id="s5">
+  <div class="ph"><div><h2>Diagrama de Secuencia</h2><div class="meta">Unidad II · 2.3 — Interacción entre objetos en el tiempo</div></div><div style="font-size:2.5rem">↔️</div></div>
+  <div class="g2">
+    <div>
+      <div class="hb blue"><h4>📌 ¿Qué modela el diagrama de secuencia?</h4><p style="font-size:.87rem">Muestra cómo interactúan los objetos del sistema a lo largo del tiempo para ejecutar un <strong>caso de uso específico</strong>. Complementa el diagrama de clases: las clases dicen QUÉ existe; la secuencia dice CÓMO colaboran.</p><p style="font-size:.83rem;margin-top:6px;font-style:italic">Metáfora: la partitura de una orquesta — muestra qué instrumento (objeto) toca en qué momento y cómo se pasan la melodía entre sí.</p></div>
+      <div class="card">
+        <h3>Elementos del diagrama de secuencia</h3>
+        <table class="t">
+          <thead><tr><th>Elemento</th><th>Representación</th><th>Significado</th></tr></thead>
+          <tbody>
+            <tr><td>Actor / Objeto</td><td>Rectángulo + línea vertical</td><td>Participante en la interacción</td></tr>
+            <tr><td>Lifeline</td><td>Línea punteada vertical</td><td>Existencia del objeto en el tiempo</td></tr>
+            <tr><td>Activación</td><td>Rectángulo delgado sobre lifeline</td><td>Período en que el objeto está activo</td></tr>
+            <tr><td>Mensaje síncrono</td><td>→ flecha sólida</td><td>Llamada que espera respuesta</td></tr>
+            <tr><td>Mensaje asíncrono</td><td>→ flecha abierta</td><td>Envío sin esperar respuesta</td></tr>
+            <tr><td>Respuesta</td><td>- - → flecha punteada</td><td>Valor de retorno</td></tr>
+            <tr><td>Fragmento alt</td><td>Rectángulo con [condición]</td><td>Condicional (if/else)</td></tr>
+            <tr><td>Fragmento loop</td><td>Rectángulo con [condición]</td><td>Iteración</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Caso de uso: "Registrar Pedido" (taquería)</h3>
+        <div style="background:#1A1A2E;color:#A8D8EA;border-radius:10px;padding:14px;font-family:'Courier New',monospace;font-size:.78rem;line-height:2;overflow-x:auto">
+          <div style="color:#FFD700">Cajero &nbsp;&nbsp;&nbsp; UI &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; PedidoService &nbsp; ClienteRepo &nbsp; PedidoRepo</div>
+          <div>│ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │</div>
+          <div>│──nuevoP()──▶│ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │</div>
+          <div>│ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │──crearPedido()─▶│ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │</div>
+          <div>│ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │──buscarCliente()─▶│ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │</div>
+          <div>│ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │◀──────cliente──────│ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │</div>
+          <div>│ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │──guardarPedido()─────────────▶│</div>
+          <div>│ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │◀────────ok────────────────────│</div>
+          <div>│ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │◀───pedidoID────│ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │</div>
+          <div>│◀──mostrarConf─│ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │</div>
+        </div>
+        <p style="font-size:.78rem;margin-top:6px;color:var(--muted);text-align:center">Representación simplificada del flujo "Registrar Pedido"</p>
+      </div>
+      <div class="meta-box"><div class="lbl">💡 Tip para elaborar diagramas de secuencia</div><p style="font-size:.87rem">Empieza con los 3 flujos principales de tu sistema (los más importantes), no con todos. Usa la herramienta CASE (StarUML, draw.io) para dibujar el diagrama con los elementos correctos. Cada caso de uso → un diagrama de secuencia.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- S6 COMPONENTES Y DESPLIEGUE -->
+<div class="slide" id="s6">
+  <div class="ph"><div><h2>Diagramas de Componentes y Despliegue</h2><div class="meta">Unidad II · 2.2 — Estructura física y lógica del sistema</div></div><div style="font-size:2.5rem">🖧</div></div>
+  <div class="g2">
+    <div>
+      <div class="hb blue"><h4>📦 Diagrama de Componentes</h4><p style="font-size:.87rem">Muestra los <strong>módulos o componentes de software</strong> del sistema y sus dependencias. Representa la arquitectura a nivel de "piezas de software": ejecutables, librerías, paquetes, servicios web, bases de datos.</p></div>
+      <div class="card">
+        <h3>Ejemplo: Sistema de Taquería (Componentes)</h3>
+        <div style="background:#EFF4FF;border-radius:10px;padding:14px;font-size:.82rem;font-family:'Courier New',monospace;line-height:1.9">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div style="background:white;border:2px solid var(--accent);border-radius:8px;padding:10px;text-align:center">
+              <strong>📦 Capa Presentación</strong><br>
+              <small>[Component] UI_Ventas</small><br>
+              <small>[Component] UI_Inventario</small><br>
+              <small>[Component] UI_Reportes</small>
+            </div>
+            <div style="background:white;border:2px solid var(--green);border-radius:8px;padding:10px;text-align:center">
+              <strong>📦 Capa Negocio</strong><br>
+              <small>[Component] PedidoService</small><br>
+              <small>[Component] InventarioService</small><br>
+              <small>[Component] ReporteService</small>
+            </div>
+          </div>
+          <div style="text-align:center;padding:6px;font-size:.75rem;color:var(--muted)">↕ Interfaces (puertos)</div>
+          <div style="background:white;border:2px solid var(--purple);border-radius:8px;padding:10px;text-align:center">
+            <strong>📦 Capa Datos</strong><br>
+            <small>[Component] PedidoRepository &nbsp; | &nbsp; [Component] InventarioRepository</small>
+          </div>
+          <div style="text-align:center;padding:6px;font-size:.75rem;color:var(--muted)">↕</div>
+          <div style="background:white;border:2px solid var(--orange);border-radius:8px;padding:10px;text-align:center">
+            <strong>🗃️ [Database] MySQL — taqueriaDB</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="hb teal"><h4>🖥️ Diagrama de Despliegue</h4><p style="font-size:.87rem">Muestra la <strong>distribución física</strong> del software: en qué servidores o dispositivos se despliegan los componentes. Modela la infraestructura real donde correrá el sistema.</p></div>
+      <div class="card">
+        <h3>Ejemplo: Despliegue de la Taquería</h3>
+        <div style="background:#E8FAF8;border-radius:10px;padding:14px;font-size:.82rem;line-height:1.8">
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="background:white;border:2px solid var(--teal);border-radius:8px;padding:10px">
+              <strong>💻 Nodo: PC Cajero (Windows 10)</strong><br>
+              <small style="color:var(--muted)">Artefacto: app_taqueria.exe<br>Ejecuta: UI_Ventas + lógica local</small>
+            </div>
+            <div style="text-align:center;font-size:.75rem;color:var(--muted)">↕ TCP/IP (Red local WiFi)</div>
+            <div style="background:white;border:2px solid var(--accent);border-radius:8px;padding:10px">
+              <strong>🖥️ Nodo: Servidor Local (Ubuntu Server)</strong><br>
+              <small style="color:var(--muted)">Artefacto: taqueria_server.jar<br>MySQL 8.0 · Puerto 3306</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hb gold"><h4>💡 Componentes vs Despliegue</h4><p style="font-size:.85rem"><strong>Componentes:</strong> estructura lógica del software (qué módulos existen). <strong>Despliegue:</strong> estructura física (en qué máquinas corren). Para una MiPyME pequeña, el despliegue puede ser tan simple como "una sola PC con todo instalado".</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- S7 ANÁLISIS DE COMPONENTES -->
+<div class="slide" id="s7">
+  <div class="ph"><div><h2>Análisis de Componentes de la Arquitectura</h2><div class="meta">Unidad II · 2.4 — Identificar, dividir y asignar</div></div><div style="font-size:2.5rem">🔍</div></div>
+  <div class="g2">
+    <div>
+      <div class="hb blue"><h4>📌 ¿Qué es un componente en el desarrollo?</h4><p style="font-size:.87rem">Un componente es una <strong>unidad de software cohesiva</strong> con responsabilidad bien definida, que puede desarrollarse, probarse y desplegarse de forma relativamente independiente. Es la unidad de trabajo de un miembro del equipo.</p></div>
+      <div class="card">
+        <h3>Criterios para identificar componentes</h3>
+        <ul class="cl">
+          <li><strong>Alta cohesión:</strong> todo lo que está dentro del componente está relacionado con su responsabilidad central. Un componente de "Pedidos" no debe gestionar empleados.</li>
+          <li><strong>Bajo acoplamiento:</strong> el componente depende lo menos posible de otros. Si cambio el componente de BD, no debería afectar la lógica de negocio.</li>
+          <li><strong>Interfaz clara:</strong> el componente expone solo lo necesario al exterior (API interna), ocultando sus detalles internos.</li>
+          <li><strong>Tamaño manejable:</strong> un componente que puede ser desarrollado por una persona en 1–2 semanas es el tamaño correcto para el proyecto.</li>
+        </ul>
+      </div>
+      <div class="meta-box"><div class="lbl">💡 Asignación de componentes al equipo</div><p style="font-size:.87rem">En el Parcial 2, cada integrante del equipo es <strong>dueño</strong> de un componente: lo diseña, lo programa y lo prueba. La integración final (S9) une todos los componentes. Esto simula exactamente el trabajo en equipos reales de desarrollo de software.</p></div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Cohesión vs Acoplamiento</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+          <div style="background:#EDFBF0;border:2px solid var(--green);border-radius:10px;padding:12px;text-align:center">
+            <div style="font-size:1.8rem">💪</div>
+            <strong style="color:var(--green)">Alta Cohesión</strong>
+            <p style="font-size:.82rem;margin-top:6px">Todo dentro del componente tiene que ver con lo mismo. El componente hace UNA cosa y la hace bien.</p>
+            <p style="font-size:.8rem;color:var(--green);font-weight:700;margin-top:4px">✅ Meta siempre</p>
+          </div>
+          <div style="background:#EDFBF0;border:2px solid var(--green);border-radius:10px;padding:12px;text-align:center">
+            <div style="font-size:1.8rem">🔗</div>
+            <strong style="color:var(--accent)">Bajo Acoplamiento</strong>
+            <p style="font-size:.82rem;margin-top:6px">Los componentes se conocen lo menos posible entre sí. Cambiar uno no rompe a los demás.</p>
+            <p style="font-size:.8rem;color:var(--green);font-weight:700;margin-top:4px">✅ Meta siempre</p>
+          </div>
+        </div>
+        <p style="font-size:.83rem;font-style:italic;color:var(--muted)">Metáfora: los departamentos de una empresa. Marketing y Contabilidad tienen alta cohesión (cada uno hace su cosa). Su bajo acoplamiento permite que Contabilidad cambie su sistema sin que Marketing deje de funcionar.</p>
+      </div>
+      <div class="card">
+        <h3>Componentes típicos para el proyecto MiPyME</h3>
+        <div class="comp-box" style="border-color:var(--grana);background:#FFF0F0"><strong style="color:var(--grana)">PM:</strong> coordinación + documento de integración</div>
+        <div class="comp-box" style="border-color:var(--accent);background:#EFF4FF"><strong style="color:var(--accent)">Analista:</strong> diagramas UML (clases + secuencia)</div>
+        <div class="comp-box" style="border-color:var(--purple);background:#F5F0FF"><strong style="color:var(--purple)">Arquitecto:</strong> integración de componentes + componentes y despliegue</div>
+        <div class="comp-box" style="border-color:var(--green);background:#EDFBF0"><strong style="color:var(--green)">Desarrollador:</strong> lógica de negocio central (PedidoService, InventarioService)</div>
+        <div class="comp-box" style="border-color:var(--orange);background:#FFF5EB"><strong style="color:var(--orange)">QA/UI:</strong> pruebas de verificación + prototipo funcional de UI básica</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S8 DESARROLLO DE COMPONENTES -->
+<div class="slide" id="s8">
+  <div class="ph"><div><h2>Desarrollo de Componentes</h2><div class="meta">Unidad II · 2.5 — Buenas prácticas y principios SOLID</div></div><div style="font-size:2.5rem">💻</div></div>
+  <div class="g2">
+    <div>
+      <div class="card">
+        <h3>Principios SOLID — El ABC del buen código</h3>
+        <div class="hb blue"><h4>S — Single Responsibility Principle</h4><p style="font-size:.84rem">Una clase tiene UNA sola razón para cambiar. <code>PedidoService</code> gestiona pedidos; no también envía emails.</p><p style="font-size:.82rem;font-style:italic">Metáfora: el chef cocina, el mesero sirve. No el mismo.</p></div>
+        <div class="hb green"><h4>O — Open/Closed Principle</h4><p style="font-size:.84rem">Abierto para extender, cerrado para modificar. Agrega funcionalidad con nuevas clases, no editando las existentes.</p></div>
+        <div class="hb purple"><h4>L — Liskov Substitution Principle</h4><p style="font-size:.84rem">Si <code>B</code> hereda de <code>A</code>, puedo usar <code>B</code> donde se espera <code>A</code> sin que el programa falle.</p></div>
+        <div class="hb orange"><h4>I — Interface Segregation Principle</h4><p style="font-size:.84rem">Las interfaces deben ser específicas, no genéricas enormes. Mejor 3 interfaces pequeñas que 1 enorme.</p></div>
+        <div class="hb teal"><h4>D — Dependency Inversion Principle</h4><p style="font-size:.84rem">Depende de abstracciones (interfaces), no de implementaciones concretas. Permite cambiar la BD sin tocar la lógica.</p></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Ejemplo: Principio S y D en código</h3>
+        <div style="margin-bottom:10px">
+          <p style="font-size:.82rem;color:var(--grana);font-weight:700">❌ Violación del Single Responsibility</p>
+          <div class="code-block"><span class="kw">class</span> <span class="cls">PedidoService</span> {<br>&nbsp;&nbsp;crearPedido() { ... }<br>&nbsp;&nbsp;<span class="cm">// ❌ No debería estar aquí:</span><br>&nbsp;&nbsp;enviarEmailCliente() { ... }<br>&nbsp;&nbsp;generarPDF() { ... }<br>}</div>
+        </div>
+        <div>
+          <p style="font-size:.82rem;color:var(--green);font-weight:700">✅ Con Single Responsibility</p>
+          <div class="code-block"><span class="kw">class</span> <span class="cls">PedidoService</span> {<br>&nbsp;&nbsp;crearPedido() { ... }<br>}<br><span class="kw">class</span> <span class="cls">EmailService</span> {<br>&nbsp;&nbsp;enviarConfirmacion() { ... }<br>}<br><span class="kw">class</span> <span class="cls">PDFService</span> {<br>&nbsp;&nbsp;generarComprobante() { ... }<br>}</div>
+        </div>
+      </div>
+      <div class="hb gold"><h4>💡 Buenas prácticas de codificación</h4><ul style="font-size:.84rem;padding-left:14px;margin-top:4px"><li>Nombres claros y descriptivos: <code>calcularTotal()</code> no <code>calc()</code></li><li>Funciones cortas: máximo 20–30 líneas por método</li><li>No repetir código (DRY: Don't Repeat Yourself)</li><li>Comentar el "por qué", no el "qué"</li><li>Usar control de versiones (Git) desde el primer día</li></ul></div>
+    </div>
+  </div>
+</div>
+
+<!-- S9 INTEGRACIÓN -->
+<div class="slide" id="s9">
+  <div class="ph"><div><h2>Integración de Componentes</h2><div class="meta">Unidad II · 2.6 — Integration Day: unir las piezas</div></div><div style="font-size:2.5rem">🔗</div></div>
+  <div class="g2">
+    <div>
+      <div class="hb blue"><h4>📌 ¿Qué es la integración?</h4><p style="font-size:.87rem">Es el proceso de <strong>unir todos los componentes</strong> desarrollados de forma separada para que trabajen juntos como un sistema cohesivo. La integración revela problemas de interfaces, contratos mal definidos y suposiciones incorrectas.</p><p style="font-size:.83rem;margin-top:6px;font-style:italic">Metáfora: ensamblar el carro. Cada equipo fabricó su parte (motor, carrocería, ruedas) siguiendo especificaciones. La integración verifica que todas las piezas encajen correctamente.</p></div>
+      <div class="card">
+        <h3>Estrategias de integración</h3>
+        <div class="hb green"><h4>Big Bang</h4><p style="font-size:.84rem">Todos los componentes se integran de una sola vez al final. Simple pero riesgoso: si falla, es difícil encontrar la causa.</p><p style="font-size:.82rem;color:var(--grana)">⚠️ No recomendado para proyectos medianos/grandes.</p></div>
+        <div class="hb blue"><h4>Integración Incremental (Top-Down / Bottom-Up)</h4><p style="font-size:.84rem"><strong>Top-Down:</strong> empieza desde la UI, simula las capas inferiores con stubs. <strong>Bottom-Up:</strong> empieza desde la capa de datos hacia arriba usando drivers de prueba. Se integra un componente a la vez y se prueba.</p><p style="font-size:.82rem;color:var(--green)">✅ Recomendado para el proyecto.</p></div>
+        <div class="hb gold"><h4>Integración Continua (CI)</h4><p style="font-size:.84rem">Cada vez que un integrante hace commit, se ejecutan pruebas automáticas. Herramientas: GitHub Actions, Jenkins. Detecta problemas en minutos.</p></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>APIs Internas — El contrato entre componentes</h3>
+        <p style="font-size:.85rem;margin-bottom:10px">Antes de que cada integrante desarrolle su componente, el equipo debe definir los <strong>contratos de las APIs internas</strong>: qué métodos ofrece cada componente, qué recibe y qué devuelve.</p>
+        <div class="code-block"><span class="cm">// Contrato del PedidoService (acordado antes de codificar)</span><br><span class="kw">interface</span> <span class="cls">IPedidoService</span> {<br>&nbsp;&nbsp;crearPedido(clienteId: int, items: Item[]): Pedido<br>&nbsp;&nbsp;obtenerPedido(id: int): Pedido<br>&nbsp;&nbsp;cancelarPedido(id: int): boolean<br>&nbsp;&nbsp;calcularTotal(pedidoId: int): double<br>}</div>
+        <p style="font-size:.8rem;margin-top:8px;color:var(--muted)">Con este contrato, el desarrollador de UI puede programar la interfaz aunque el PedidoService aún no esté terminado (usa un mock/stub).</p>
+      </div>
+      <div class="card">
+        <h3>Integration Day (S9) — Agenda sugerida</h3>
+        <ul class="cl">
+          <li><strong>0:00–0:30:</strong> Cada integrante presenta su componente terminado con pruebas unitarias pasando</li>
+          <li><strong>0:30–1:00:</strong> El Arquitecto integra los componentes siguiendo el orden definido (Bottom-Up)</li>
+          <li><strong>1:00–1:30:</strong> Pruebas de integración: ejecutar los flujos principales end-to-end</li>
+          <li><strong>1:30–2:00:</strong> Documentar bugs encontrados y asignar responsables. Comprometer fecha de fixes.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S10 VERIFICACIÓN DE CALIDAD -->
+<div class="slide" id="s10">
+  <div class="ph"><div><h2>Verificación de Calidad del Software</h2><div class="meta">Unidad II · 2.7 — Tipos de pruebas y defect tracking</div></div><div style="font-size:2.5rem">✅</div></div>
+  <div class="g2">
+    <div>
+      <div class="hb blue"><h4>📌 Verificación vs Validación</h4><p style="font-size:.87rem"><strong>Verificación:</strong> "¿Construimos el sistema correctamente?" — las pruebas técnicas comprueban que el código hace lo que el diseño especificó.<br><strong>Validación:</strong> "¿Construimos el sistema correcto?" — el cliente confirma que el sistema resuelve su problema real.</p><p style="font-size:.83rem;margin-top:6px;font-style:italic">Metáfora: verificación = el electricista revisa que los cables estén bien conectados según el plano. Validación = el dueño confirma que los enchufes están donde los necesita.</p></div>
+      <div class="card">
+        <h3>Pirámide de pruebas</h3>
+        <div style="text-align:center;padding:10px">
+          <div style="background:var(--grana);color:#fff;padding:8px;border-radius:8px 8px 0 0;margin:0 60px;font-size:.82rem"><strong>E2E Tests</strong><br>Pruebas de extremo a extremo<br><small>Pocas, lentas, costosas</small></div>
+          <div style="background:var(--accent);color:#fff;padding:8px;margin:0 30px;font-size:.82rem"><strong>Integration Tests</strong><br>Pruebas de integración entre componentes<br><small>Medianas en cantidad</small></div>
+          <div style="background:var(--green);color:#fff;padding:8px;border-radius:0 0 8px 8px;font-size:.82rem"><strong>Unit Tests</strong><br>Pruebas unitarias (método/clase)<br><small>Muchas, rápidas, baratas ← BASE</small></div>
+        </div>
+        <p style="font-size:.8rem;color:var(--muted);text-align:center;margin-top:8px">Regla: más pruebas unitarias, menos E2E. La base de la pirámide debe ser siempre la más grande.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Tipos de prueba explicados</h3>
+        <div class="hb green"><h4>🔬 Pruebas Unitarias</h4><p style="font-size:.84rem">Prueban una sola función o método de forma aislada. Herramientas: JUnit (Java), pytest (Python), NUnit (.NET).</p><div class="code-block" style="font-size:.76rem;margin-top:6px"><span class="kw">def</span> test_calcular_total():<br>&nbsp;&nbsp;pedido = Pedido()<br>&nbsp;&nbsp;pedido.agregar_item("Taco", 15, 3)<br>&nbsp;&nbsp;<span class="kw">assert</span> pedido.calcular_total() == 45</div></div>
+        <div class="hb blue"><h4>🔗 Pruebas de Integración</h4><p style="font-size:.84rem">Prueban la interacción entre dos o más componentes reales (sin mocks). Verifican que los contratos de las APIs internas se cumplen correctamente.</p></div>
+        <div class="hb orange"><h4>🧪 Pruebas Funcionales</h4><p style="font-size:.84rem">Prueban que el sistema cumple los requerimientos del negocio: "cuando registro un pedido de 3 tacos a $15 c/u, el total debe ser $45". Se derivan de los casos de uso.</p></div>
+      </div>
+      <div class="hb gold"><h4>🐛 Defect Tracking</h4><p style="font-size:.84rem">Registrar todos los bugs encontrados en una tabla o herramienta: ID del bug, descripción, severidad (crítico/mayor/menor), responsable de arreglo, estado (abierto/cerrado). Herramientas: GitHub Issues, Jira, o una simple hoja de cálculo.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- S11 HERRAMIENTAS CASE -->
+<div class="slide" id="s11">
+  <div class="ph"><div><h2>Herramientas CASE para UML</h2><div class="meta">StarUML · draw.io · PlantUML — práctica en clase</div></div><div style="font-size:2.5rem">🛠️</div></div>
+  <div class="g3">
+    <div class="card">
+      <h3 style="color:var(--purple)">⭐ StarUML</h3>
+      <div class="hb purple"><h4>Características</h4><ul style="font-size:.83rem;padding-left:14px;margin-top:4px"><li>Aplicación de escritorio (Win/Mac/Linux)</li><li>Soporta todos los diagramas UML</li><li>Genera código esqueleto desde el diagrama</li><li>Interfaz drag-and-drop intuitiva</li><li>Versión gratuita funcional para estudiantes</li></ul></div>
+      <div class="hb gold"><h4>Ideal para el proyecto</h4><p style="font-size:.83rem">Diagrama de clases completo con atributos, métodos y relaciones. El "estándar" de la industria para modelado UML profesional.</p></div>
+      <p style="font-size:.82rem;color:var(--muted)"><strong>Descarga:</strong> staruml.io</p>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--teal)">🔷 draw.io (diagrams.net)</h3>
+      <div class="hb teal"><h4>Características</h4><ul style="font-size:.83rem;padding-left:14px;margin-top:4px"><li>100% gratuito y en línea</li><li>Sin instalación (navegador web)</li><li>Formas UML predefinidas</li><li>Colaboración en tiempo real</li><li>Integración con Google Drive y GitHub</li></ul></div>
+      <div class="hb gold"><h4>Ideal para</h4><p style="font-size:.83rem">Diagramas de componentes y despliegue. Colaboración de equipo en tiempo real (todos editan a la vez).</p></div>
+      <p style="font-size:.82rem;color:var(--muted)"><strong>Acceso:</strong> app.diagrams.net</p>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--green)">🌿 PlantUML</h3>
+      <div class="hb green"><h4>Características</h4><ul style="font-size:.83rem;padding-left:14px;margin-top:4px"><li>Diagramas desde texto (código)</li><li>Control de versiones con Git (el diagrama ES código)</li><li>Integración con IDEs (VS Code, IntelliJ)</li><li>Gratuito y open source</li><li>Diagramas consistentes y reproducibles</li></ul></div>
+      <div class="hb blue"><h4>Ejemplo de diagrama de clases en PlantUML</h4>
+        <div class="code-block" style="font-size:.75rem">@startuml<br><span class="kw">class</span> Pedido {<br>&nbsp;&nbsp;- id: int<br>&nbsp;&nbsp;- total: double<br>&nbsp;&nbsp;+ calcularTotal(): double<br>}<br>Pedido "1" *-- "many" Item<br>@enduml</div>
+      </div>
+      <p style="font-size:.82rem;color:var(--muted)"><strong>Online:</strong> plantuml.com</p>
+    </div>
+  </div>
+  <div class="meta-box" style="margin-top:4px"><div class="lbl">💡 Recomendación del docente</div><p style="font-size:.9rem">Para el proyecto: usa <strong>StarUML</strong> para el diagrama de clases (es el más visual y profesional), <strong>draw.io</strong> para componentes y despliegue (colaborativo en tiempo real), y <strong>PlantUML</strong> si el equipo ya tiene experiencia con herramientas de texto. Lo importante es que el diagrama esté correcto, no qué herramienta usaron.</p></div>
+</div>
+
+<!-- S12 CASO PRÁCTICO -->
+<div class="slide" id="s12">
+  <div class="ph"><div><h2>Caso Práctico — Taquería TechMiPyME</h2><div class="meta">Proyecto Integrador — Fase 2 completa</div></div><div style="font-size:2.5rem">🌮</div></div>
+  <div class="hb blue" style="margin-bottom:18px"><h4>📋 Contexto del proyecto (continuación)</h4><p style="font-size:.9rem">El equipo eligió una taquería local. En la Fase 1, definieron la arquitectura en 3 capas y los wireframes. En la Fase 2, deben construir el prototipo funcional con los diagramas UML completos. Los flujos principales son: registrar pedido, cobrar pedido y gestionar inventario de ingredientes.</p></div>
+  <div class="g2">
+    <div class="card">
+      <h3>Diagrama de Clases resumido (Taquería)</h3>
+      <div style="background:#EFF4FF;border-radius:10px;padding:14px;font-family:'Courier New',monospace;font-size:.78rem;line-height:1.8">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div style="background:white;border:2px solid var(--accent);border-radius:6px;padding:8px">
+            <strong>Cliente</strong><hr style="margin:4px 0">- id, nombre, tel<br>+ registrar()<br>+ buscar()
+          </div>
+          <div style="background:white;border:2px solid var(--grana);border-radius:6px;padding:8px">
+            <strong>Pedido</strong><hr style="margin:4px 0">- id, fecha, total, estado<br>+ crear()<br>+ calcularTotal()<br>+ cobrar()
+          </div>
+          <div style="background:white;border:2px solid var(--green);border-radius:6px;padding:8px">
+            <strong>ItemPedido</strong><hr style="margin:4px 0">- producto, cantidad, precio<br>+ getSubtotal()
+          </div>
+          <div style="background:white;border:2px solid var(--orange);border-radius:6px;padding:8px">
+            <strong>Producto</strong><hr style="margin:4px 0">- id, nombre, precio<br>+ actualizarPrecio()
+          </div>
+        </div>
+        <div style="margin-top:8px;font-size:.74rem;color:var(--muted)">Relaciones: Pedido ◆——"1..*" ItemPedido · ItemPedido ——▶ Producto · Cliente "1"——"*" Pedido</div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Entregable Fase 2 — Lista de verificación</h3>
+        <ul class="cl">
+          <li>☐ <strong>Reporte de indagación:</strong> análisis de los componentes de la arquitectura elegida</li>
+          <li>☐ <strong>Diagrama de clases:</strong> todas las clases con atributos, métodos y relaciones correctas</li>
+          <li>☐ <strong>Diagrama de secuencia:</strong> mínimo 3 flujos principales (registrar pedido, cobrar, consultar inventario)</li>
+          <li>☐ <strong>Diagrama de componentes:</strong> los módulos del sistema y sus dependencias</li>
+          <li>☐ <strong>Diagrama de despliegue:</strong> en qué hardware correrá el sistema</li>
+          <li>☐ <strong>Prototipo funcional:</strong> los 3 flujos corriendo (puede ser consola/interfaz básica)</li>
+          <li>☐ <strong>Reporte de integración:</strong> bugs encontrados, decisiones técnicas, APIs internas</li>
+          <li>☐ <strong>Demo técnica 10 min:</strong> diagramas + código funcionando en vivo</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S13 BIBLIOGRAFÍA -->
+<div class="slide" id="s13">
+  <div class="ph"><div><h2>Bibliografía del Parcial 2</h2><div class="meta">Fuentes básicas y recursos digitales</div></div><div style="font-size:2.5rem">📚</div></div>
+  <div class="g2">
+    <div class="card">
+      <h3>📗 Bibliografía básica</h3>
+      <ul class="cl">
+        <li><strong>Bruegge, B. &amp; Dutoit, A. (2010).</strong> <em>Object-Oriented Software Engineering Using UML, Patterns, and Java.</em> 3.ª ed. Prentice Hall. <span style="background:#EFF4FF;border-radius:4px;padding:2px 8px;font-size:.78rem;color:var(--accent)">Caps. 2–5 UML</span></li>
+        <li><strong>Rumbaugh, J., Jacobson, I. &amp; Booch, G. (2004).</strong> <em>The Unified Modeling Language Reference Manual.</em> 2.ª ed. Addison-Wesley.</li>
+        <li><strong>Martin, R. C. (2008).</strong> <em>Clean Code: A Handbook of Agile Software Craftsmanship.</em> Prentice Hall. <span style="background:#EDFBF0;border-radius:4px;padding:2px 8px;font-size:.78rem;color:var(--green)">SOLID y buenas prácticas</span></li>
+        <li><strong>Blancarte, O. (2019).</strong> <em>Introducción a la Arquitectura de Software.</em> 2.ª ed. Independiente. <span style="background:#FFF0F0;border-radius:4px;padding:2px 8px;font-size:.78rem;color:var(--grana)">Caps. 6–10</span></li>
+        <li><strong>Pressman, R. &amp; Maxim, B. (2015).</strong> <em>Software Engineering: A Practitioner's Approach.</em> 8.ª ed. McGraw-Hill. <span style="background:#EFF4FF;border-radius:4px;padding:2px 8px;font-size:.78rem;color:var(--accent)">Pruebas y calidad</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>🌐 Recursos digitales y herramientas</h3>
+      <ul class="cl">
+        <li><strong>StarUML.</strong> staruml.io — herramienta CASE profesional</li>
+        <li><strong>draw.io / diagrams.net.</strong> app.diagrams.net — gratuito en línea</li>
+        <li><strong>PlantUML.</strong> plantuml.com — UML desde texto</li>
+        <li><strong>UML Distilled (Fowler, M.).</strong> martinfowler.com — referencia rápida de UML</li>
+        <li><strong>Refactoring.Guru.</strong> refactoring.guru/es — patrones y SOLID con ejemplos visuales en español</li>
+        <li><strong>JUnit 5.</strong> junit.org — pruebas unitarias Java</li>
+        <li><strong>pytest.</strong> pytest.org — pruebas unitarias Python</li>
+        <li><strong>Git + GitHub.</strong> github.com — control de versiones para el proyecto de equipo</li>
+      </ul>
+      <div class="hb blue" style="margin-top:14px"><h4>🎯 Canal YouTube recomendado</h4><p style="font-size:.84rem"><strong>BettaTech</strong> — "Diagramas UML con StarUML" (serie completa en español, muy bien explicada). Buscar también "Principios SOLID en 10 minutos" del mismo canal.</p></div>
+    </div>
+  </div>
+  <div class="banner" style="text-align:center;padding:20px 32px;margin-top:4px">
+    <h2 style="font-size:1.1rem;margin-bottom:6px">🎓 ¡Éxito en el Parcial 2!</h2>
+    <p style="opacity:.85;font-size:.88rem">UPIICSA · IPN · Construcción de Software · 4.° Semestre · Plan 2021</p>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <button onclick="prevSlide()" id="btnPrev">← Anterior</button>
+  <div class="dots" id="navDots"></div>
+  <span class="nav-label" id="navLabel">Portada</span>
+  <button onclick="nextSlide()" id="btnNext">Siguiente →</button>
+</div>
+
+<script>
+const SLIDES=[
+  {id:'s1',label:'Portada'},{id:'s2',label:'Objetivos'},{id:'s3',label:'Prototipo Funcional'},
+  {id:'s4',label:'Diagrama de Clases'},{id:'s5',label:'Diagrama de Secuencia'},{id:'s6',label:'Componentes y Despliegue'},
+  {id:'s7',label:'Análisis de Componentes'},{id:'s8',label:'Desarrollo de Componentes'},{id:'s9',label:'Integración'},
+  {id:'s10',label:'Verificación de Calidad'},{id:'s11',label:'Herramientas CASE'},{id:'s12',label:'Caso Práctico'},
+  {id:'s13',label:'Bibliografía'}
+];
+let cur=0;
+const dotsEl=document.getElementById('navDots');
+SLIDES.forEach((_,i)=>{const d=document.createElement('span');if(i===0)d.classList.add('active');d.onclick=()=>goTo(i+1);dotsEl.appendChild(d);});
+function showSlide(idx){
+  SLIDES.forEach((s,i)=>document.getElementById(s.id).classList.toggle('active',i===idx));
+  dotsEl.querySelectorAll('span').forEach((d,i)=>d.classList.toggle('active',i===idx));
+  document.getElementById('navLabel').textContent=SLIDES[idx].label;
+  document.getElementById('btnPrev').disabled=idx===0;
+  document.getElementById('btnNext').disabled=idx===SLIDES.length-1;
+  document.getElementById('slideNum').textContent=`${idx+1} / ${SLIDES.length}`;
+  window.scrollTo(0,0);cur=idx;
+}
+function nextSlide(){if(cur<SLIDES.length-1)showSlide(cur+1);}
+function prevSlide(){if(cur>0)showSlide(cur-1);}
+function goTo(n){showSlide(n-1);}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowDown')nextSlide();if(e.key==='ArrowLeft'||e.key==='ArrowUp')prevSlide();});
+function ans4(a){document.getElementById('q4ok').style.display=a==='c'?'block':'none';document.getElementById('q4err').style.display=a!=='c'?'block':'none';}
+showSlide(0);
+</script>
+</body>
+</html>

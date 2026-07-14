@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Parcial 1 — Construcción de Software · UPIICSA · IPN</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--grana:#8B1A1A;--grana2:#C02828;--gold:#C8A951;--dark:#1A1A2E;--accent:#2C5F8A;--green:#2A6E4A;--orange:#B85C00;--purple:#5A2D82;--bg:#FDF8F5;--card:#fff;--border:#E5D5C5;--text:#1A1A2E;--muted:#6B6B7A;--r:12px;--sh:0 2px 16px rgba(0,0,0,.09)}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;font-size:15px}
+.slide{display:none;min-height:100vh;padding:24px 20px 90px;max-width:1100px;margin:0 auto;animation:fi .3s ease}
+.slide.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.nav{position:fixed;bottom:0;left:0;right:0;background:var(--grana);display:flex;justify-content:center;align-items:center;gap:12px;padding:10px 16px;z-index:100;box-shadow:0 -2px 12px rgba(0,0,0,.2)}
+.nav button{background:rgba(255,255,255,.18);color:#fff;border:none;padding:8px 22px;border-radius:20px;cursor:pointer;font-size:14px;font-weight:600;transition:background .2s}
+.nav button:hover{background:rgba(255,255,255,.35)}
+.nav button:disabled{opacity:.35;cursor:not-allowed}
+.nav-label{color:rgba(255,255,255,.8);font-size:13px;min-width:160px;text-align:center}
+.dots{display:flex;gap:5px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:300px}
+.dots span{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35);cursor:pointer;transition:background .2s,transform .2s}
+.dots span.active{background:var(--gold);transform:scale(1.4)}
+.print-btn{position:fixed;top:14px;right:16px;background:var(--grana);color:#fff;border:none;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;z-index:200}
+.snum{position:fixed;top:14px;left:16px;background:rgba(139,26,26,.1);color:var(--grana);border-radius:20px;padding:4px 14px;font-size:12px;font-weight:700;z-index:200}
+.banner{background:linear-gradient(135deg,var(--grana) 0%,var(--dark) 100%);color:#fff;border-radius:var(--r);padding:40px 32px;margin-bottom:22px;position:relative;overflow:hidden}
+.banner::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.05)}
+.banner .inst{font-size:12px;letter-spacing:2px;text-transform:uppercase;opacity:.75;margin-bottom:6px}
+.banner h1{font-size:2rem;font-weight:800;margin-bottom:6px}
+.banner .sub{font-size:.95rem;opacity:.85}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.badge{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);border-radius:20px;padding:4px 14px;font-size:12px;font-weight:600}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--border);padding:22px;margin-bottom:16px}
+.card h3{font-size:1rem;font-weight:700;margin-bottom:12px;color:var(--grana)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:700px){.g2,.g3{grid-template-columns:1fr}}
+.hb{border-radius:10px;padding:14px 16px;margin-bottom:10px}
+.hb h4{font-size:.88rem;font-weight:700;margin-bottom:5px}
+.hb.red{background:#FFF0F0;border-left:4px solid var(--grana)}
+.hb.gold{background:#FFF8E1;border-left:4px solid var(--gold)}
+.hb.blue{background:#EFF4FF;border-left:4px solid var(--accent)}
+.hb.green{background:#EDFBF0;border-left:4px solid var(--green)}
+.hb.purple{background:#F5F0FF;border-left:4px solid var(--purple)}
+.hb.orange{background:#FFF5EB;border-left:4px solid var(--orange)}
+ul.cl{list-style:none}
+ul.cl li{padding:5px 0 5px 18px;position:relative;border-bottom:1px solid var(--border);font-size:.87rem}
+ul.cl li:last-child{border-bottom:none}
+ul.cl li::before{content:'▸';position:absolute;left:0;color:var(--grana);font-size:11px;top:7px}
+table.t{width:100%;border-collapse:collapse;font-size:13px}
+table.t th{background:var(--grana);color:#fff;padding:9px 12px;text-align:left;font-weight:600}
+table.t td{padding:8px 12px;border-bottom:1px solid var(--border);font-size:.85rem}
+table.t tr:nth-child(even) td{background:#FDF8F5}
+.ph{border-radius:var(--r);padding:16px 22px;color:#fff;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;background:linear-gradient(135deg,var(--grana),var(--grana2))}
+.ph h2{font-size:1.3rem;font-weight:800}
+.ph .meta{font-size:13px;opacity:.85}
+.toc-item{display:flex;align-items:center;gap:14px;padding:12px 16px;border-radius:10px;margin-bottom:8px;background:var(--card);border:1px solid var(--border);cursor:pointer;transition:background .15s}
+.toc-item:hover{background:#FDF0F0}
+.tn{width:34px;height:34px;border-radius:50%;background:var(--grana);color:#fff;display:grid;place-items:center;font-weight:800;flex-shrink:0}
+.meta-box{background:linear-gradient(135deg,#FFF8E1,#FFFBF0);border:2px solid var(--gold);border-radius:var(--r);padding:14px 18px;margin-bottom:14px}
+.meta-box .lbl{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--orange);margin-bottom:5px}
+.tab-btn{padding:7px 16px;border:2px solid var(--grana);background:#fff;color:var(--grana);border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;margin:3px;transition:all .2s}
+.tab-btn.active{background:var(--grana);color:#fff}
+.pane{display:none}
+.pane.show{display:block}
+.quiz-btn{background:var(--grana);color:#fff;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;margin:3px;transition:background .2s}
+.quiz-btn:hover{background:var(--grana2)}
+.qfb{margin-top:10px;padding:10px 14px;border-radius:8px;font-weight:600;display:none}
+.qok{background:#DCFCE7;color:var(--green);border-left:4px solid var(--green)}
+.qerr{background:#FEE2E2;color:var(--grana);border-left:4px solid var(--grana)}
+.arch-card{border-radius:10px;padding:16px;border:3px solid;margin-bottom:10px;cursor:pointer;transition:transform .2s}
+.arch-card:hover{transform:translateX(4px)}
+.arch-detail{display:none;margin-top:10px;padding-top:10px;border-top:1px dashed;font-size:.84rem;color:var(--muted)}
+.arch-detail.open{display:block}
+.crc-card{background:linear-gradient(135deg,#FFFDE7,#FFF9C4);border:2px solid var(--gold);border-radius:10px;padding:16px;font-family:'Courier New',monospace;font-size:.85rem}
+.crc-card .crc-name{font-size:1rem;font-weight:800;color:var(--dark);border-bottom:2px solid var(--gold);padding-bottom:8px;margin-bottom:10px;text-align:center}
+.crc-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.crc-col h5{font-size:.78rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--orange);margin-bottom:6px}
+.crc-col ul{list-style:none;padding:0}
+.crc-col ul li{font-size:.82rem;padding:2px 0;border-bottom:1px solid rgba(0,0,0,.06)}
+</style>
+</head>
+<body>
+<button class="print-btn" onclick="window.print()">🖨 Imprimir / PDF</button>
+<div class="snum" id="slideNum">1 / 12</div>
+
+<!-- S1 PORTADA -->
+<div class="slide active" id="s1">
+  <div class="banner" style="text-align:center;padding:50px 32px">
+    <div class="inst">Instituto Politécnico Nacional · UPIICSA · Lic. en Ciencias de la Informática · 4.° Semestre · Plan 2021</div>
+    <h1>Construcción de Software</h1>
+    <div class="sub" style="font-size:1.25rem;font-weight:700;margin-top:8px">Parcial 1 — Diseño del Software</div>
+    <div class="sub" style="margin-top:6px;opacity:.75">Unidad I · Semanas 1–5</div>
+    <div class="badges" style="justify-content:center;margin-top:20px">
+      <span class="badge">🏢 Estudio del Negocio</span>
+      <span class="badge">📋 Modelo de Objetos · CRC</span>
+      <span class="badge">🎨 Prototipado Lo-Fi / Hi-Fi</span>
+      <span class="badge">🏗️ Arquitectura de Software</span>
+      <span class="badge">⚙️ Microkernel · Microservicios · Capas</span>
+    </div>
+  </div>
+  <div class="card">
+    <p style="color:var(--muted);font-size:.88rem;margin-bottom:14px;text-align:center">Índice — haz clic para navegar a cualquier tema</p>
+    <div class="toc-item" onclick="goTo(3)"><div class="tn">1</div><div><strong>Estudio del Negocio y Modelo de Objetos</strong><br><span style="font-size:.82rem;color:var(--muted)">Análisis del dominio, CRC cards, modelo de negocio</span></div></div>
+    <div class="toc-item" onclick="goTo(4)"><div class="tn">2</div><div><strong>Prototipado de Baja Fidelidad</strong><br><span style="font-size:.82rem;color:var(--muted)">Wireframes, sketches, validación temprana</span></div></div>
+    <div class="toc-item" onclick="goTo(5)"><div class="tn">3</div><div><strong>Prototipado de Alta Fidelidad</strong><br><span style="font-size:.82rem;color:var(--muted)">Mockups interactivos, Figma, flujo de pantallas</span></div></div>
+    <div class="toc-item" onclick="goTo(6)"><div class="tn">4</div><div><strong>Arquitectura de Software — Fundamentos</strong><br><span style="font-size:.82rem;color:var(--muted)">¿Qué es arquitectura? Estilos y decisiones</span></div></div>
+    <div class="toc-item" onclick="goTo(7)"><div class="tn">5</div><div><strong>Patrón Microkernel</strong><br><span style="font-size:.82rem;color:var(--muted)">Core system + plugins, extensibilidad</span></div></div>
+    <div class="toc-item" onclick="goTo(8)"><div class="tn">6</div><div><strong>Patrón Microservicios</strong><br><span style="font-size:.82rem;color:var(--muted)">Servicios independientes, APIs, escalabilidad</span></div></div>
+    <div class="toc-item" onclick="goTo(9)"><div class="tn">7</div><div><strong>Arquitectura en Capas</strong><br><span style="font-size:.82rem;color:var(--muted)">Presentación · Negocio · Datos · Separación de responsabilidades</span></div></div>
+    <div class="toc-item" onclick="goTo(10)"><div class="tn">8</div><div><strong>Otros Patrones de Arquitectura</strong><br><span style="font-size:.82rem;color:var(--muted)">MVC, Event-Driven, Pipe & Filter, Hexagonal</span></div></div>
+    <div class="toc-item" onclick="goTo(11)"><div class="tn">9</div><div><strong>¿Cómo elegir una arquitectura?</strong><br><span style="font-size:.82rem;color:var(--muted)">Criterios de selección, cuadro comparativo, caso MiPyME</span></div></div>
+    <div class="toc-item" onclick="goTo(12)"><div class="tn">10</div><div><strong>Bibliografía</strong></div></div>
+  </div>
+</div>
+
+<!-- S2 OBJETIVOS -->
+<div class="slide" id="s2">
+  <div class="ph"><div><h2>Objetivos del Parcial 1</h2><div class="meta">Unidad I · Diseño del Software · 8 h (6T + 2P)</div></div><div style="font-size:2.5rem">🎯</div></div>
+  <div class="g2">
+    <div class="card">
+      <h3>Al terminar este parcial, el alumno será capaz de:</h3>
+      <ul class="cl">
+        <li>Analizar un negocio real e identificar sus objetos, relaciones y procesos clave</li>
+        <li>Construir un modelo de objetos del negocio usando CRC cards</li>
+        <li>Elaborar prototipos de baja fidelidad (wireframes) con herramientas digitales o en papel</li>
+        <li>Construir prototipos de alta fidelidad (mockups) en Figma o herramienta equivalente</li>
+        <li>Explicar los principales patrones de arquitectura de software</li>
+        <li>Justificar técnicamente la arquitectura elegida para su proyecto</li>
+        <li>Elaborar un diagrama de arquitectura completo</li>
+      </ul>
+    </div>
+    <div>
+      <div class="hb red"><h4>🏗️ Proyecto Integrador — Fase 1</h4><p style="font-size:.87rem">Cada equipo selecciona una <strong>MiPyME real</strong> (taquería, papelería, consultorio, salón de belleza…) y construye el <strong>documento de diseño</strong>: análisis del negocio + CRC cards + wireframes + mockup funcional + diagrama de arquitectura justificado.</p></div>
+      <div class="hb gold"><h4>📊 Evaluación del Parcial 1</h4><p style="font-size:.87rem">Reporte de indagación (15%) · Modelo de negocio (20%) · Prototipo baja + alta fidelidad (20%) · Propuesta de arquitectura (20%) · Exposición (15%) · Examen escrito (10%)</p></div>
+      <div class="meta-box"><div class="lbl">💡 Metáfora del parcial</div><p style="font-size:.88rem">Antes de construir un edificio, el arquitecto no empieza clavando ladrillos: <strong>primero estudia el terreno, dibuja los planos y elige el estilo estructural</strong>. El Parcial 1 es exactamente eso: conocer el negocio, dibujar la interfaz en papel y decidir cómo se organizará el software internamente.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- S3 ESTUDIO DEL NEGOCIO / MODELO DE OBJETOS -->
+<div class="slide" id="s3">
+  <div class="ph"><div><h2>Estudio del Negocio y Modelo de Objetos</h2><div class="meta">Unidad I · 1.1 — Análisis del dominio y CRC cards</div></div><div style="font-size:2.5rem">🏢</div></div>
+  <div class="g2">
+    <div>
+      <div class="hb red"><h4>📌 ¿Por qué estudiar el negocio primero?</h4><p style="font-size:.87rem">El error #1 de los desarrolladores novatos es <em>empezar a programar antes de entender el problema</em>. Estudiar el negocio significa comprender quiénes son los actores, qué hacen, qué datos manejan y qué problemas tienen. Sin eso, construimos el software equivocado.</p><p style="font-size:.83rem;margin-top:6px;font-style:italic">Metáfora: un médico no opera sin antes diagnosticar. El análisis del negocio es el diagnóstico del software.</p></div>
+      <div class="card">
+        <h3>Pasos del estudio del negocio</h3>
+        <ul class="cl">
+          <li><strong>Observación:</strong> visitar el negocio, ver cómo trabajan actualmente</li>
+          <li><strong>Entrevista al usuario:</strong> preguntar qué hace, qué le toma más tiempo, qué errores comete</li>
+          <li><strong>Levantamiento de requerimientos:</strong> documentar funciones que el software debe cumplir</li>
+          <li><strong>Identificar entidades:</strong> los "sustantivos" del negocio (Cliente, Pedido, Producto, Empleado…)</li>
+          <li><strong>Identificar relaciones:</strong> cómo se vinculan las entidades (un Cliente tiene muchos Pedidos)</li>
+          <li><strong>Mapa de procesos:</strong> flujo de las operaciones clave (desde que llega el cliente hasta que paga)</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>CRC Cards — Class-Responsibility-Collaborator</h3>
+        <p style="font-size:.85rem;margin-bottom:12px">Las CRC cards son tarjetas físicas (o digitales) donde cada clase del sistema tiene: su <strong>nombre</strong>, sus <strong>responsabilidades</strong> (qué hace) y sus <strong>colaboradores</strong> (con quién interactúa). Son la forma más ágil de modelar objetos del negocio sin código.</p>
+        <div class="crc-card">
+          <div class="crc-name">Clase: Pedido</div>
+          <div class="crc-cols">
+            <div class="crc-col"><h5>Responsabilidades</h5><ul><li>Registrar ítems del pedido</li><li>Calcular total a pagar</li><li>Cambiar estado (abierto/cerrado)</li><li>Aplicar descuentos</li></ul></div>
+            <div class="crc-col"><h5>Colaboradores</h5><ul><li>Cliente</li><li>Producto</li><li>Cajero</li><li>Factura</li></ul></div>
+          </div>
+        </div>
+        <p style="font-size:.82rem;margin-top:10px;color:var(--muted);font-style:italic">Ejemplo para una taquería: las clases serían Pedido, Tacos (producto), Cliente, Cocinero, Mesa, Caja, Nota (factura).</p>
+      </div>
+      <div class="meta-box"><div class="lbl">💡 Tip de análisis</div><p style="font-size:.87rem">Para identificar clases rápidamente: subraya todos los <strong>sustantivos</strong> en la descripción del negocio → cada sustantivo importante es una clase candidata. Subraya los <strong>verbos</strong> → cada verbo es una responsabilidad.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- S4 PROTOTIPADO BAJA FIDELIDAD -->
+<div class="slide" id="s4">
+  <div class="ph"><div><h2>Prototipado de Baja Fidelidad</h2><div class="meta">Unidad I · 1.2 — Wireframes y sketches</div></div><div style="font-size:2.5rem">✏️</div></div>
+  <div class="g2">
+    <div>
+      <div class="hb red"><h4>📌 ¿Qué es un prototipo de baja fidelidad?</h4><p style="font-size:.87rem">Es una representación esquemática y rápida de las pantallas del sistema, sin colores reales, sin imágenes ni tipografía final. Su objetivo es validar la <strong>estructura y el flujo de la interfaz</strong> con el usuario, antes de invertir tiempo en diseño.</p><p style="font-size:.83rem;margin-top:6px;font-style:italic">Metáfora: los planos arquitectónicos en borrador — te dicen dónde van las habitaciones sin elegir el color de las paredes.</p></div>
+      <div class="card">
+        <h3>Características del prototipo Lo-Fi</h3>
+        <ul class="cl">
+          <li>Se dibuja en papel, pizarrón o herramientas sencillas</li>
+          <li>Usa cajas, líneas y texto genérico ("Lorem ipsum" o "Logo aquí")</li>
+          <li>Tarda minutos, no días — ideal para iterar rápido</li>
+          <li>Enfoca la discusión en la <em>estructura</em>, no en el aspecto visual</li>
+          <li>Detecta problemas de navegación y flujo antes de programar</li>
+          <li>El cliente puede modificarlo con un lápiz durante la revisión</li>
+        </ul>
+      </div>
+      <div class="hb gold"><h4>🛠️ Herramientas para wireframes</h4><ul style="font-size:.85rem;padding-left:14px;margin-top:4px"><li><strong>Papel y lápiz:</strong> el más rápido, ideal para primeras ideas</li><li><strong>Balsamiq Mockups:</strong> estética de sketch digital</li><li><strong>Figma (modo wireframe):</strong> gratuito para estudiantes</li><li><strong>draw.io:</strong> gratuito, en línea</li><li><strong>Excalidraw:</strong> estilo de boceto colaborativo</li></ul></div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Elementos esenciales de un wireframe</h3>
+        <div style="background:#F5F5F5;border-radius:8px;padding:16px;font-family:'Courier New',monospace;font-size:.82rem;line-height:1.8">
+          <div style="background:#ccc;height:30px;border-radius:4px;margin-bottom:8px;display:flex;align-items:center;padding:0 10px;font-weight:700;font-size:.75rem">BARRA DE NAVEGACIÓN — [Inicio] [Pedidos] [Clientes] [Config]</div>
+          <div style="display:grid;grid-template-columns:1fr 2fr;gap:8px">
+            <div style="background:#DDD;border-radius:4px;padding:10px;font-size:.75rem"><strong>MENÚ LATERAL</strong><br>▸ Nuevo pedido<br>▸ Ver pedidos<br>▸ Reportes<br>▸ Salir</div>
+            <div>
+              <div style="background:#EEE;border-radius:4px;padding:10px;margin-bottom:8px;font-size:.75rem"><strong>ÁREA PRINCIPAL</strong><br>[📋 Lista de pedidos del día]<br>[Tabla: ID | Cliente | Total | Estado]</div>
+              <div style="background:#DDD;border-radius:4px;padding:8px;font-size:.75rem;text-align:center">[BOTÓN: + Nuevo Pedido]</div>
+            </div>
+          </div>
+          <div style="background:#ccc;height:20px;border-radius:4px;margin-top:8px;text-align:center;line-height:20px;font-size:.7rem">PIE DE PÁGINA — v1.0 · TechMiPyME</div>
+        </div>
+        <p style="font-size:.8rem;margin-top:8px;color:var(--muted);text-align:center">Ejemplo de wireframe para sistema de pedidos (representación ASCII simplificada)</p>
+      </div>
+      <div class="hb green"><h4>✅ Cuándo el wireframe está listo</h4><ul style="font-size:.85rem;padding-left:14px;margin-top:4px"><li>El usuario puede seguir el flujo completo de la tarea principal sin explicación</li><li>Todas las pantallas tienen nombre claro</li><li>Los elementos de navegación son consistentes</li><li>El cliente aprobó la estructura (firma o visto bueno)</li></ul></div>
+    </div>
+  </div>
+</div>
+
+<!-- S5 PROTOTIPADO ALTA FIDELIDAD -->
+<div class="slide" id="s5">
+  <div class="ph"><div><h2>Prototipado de Alta Fidelidad</h2><div class="meta">Unidad I · 1.2 — Mockups interactivos y flujo de pantallas</div></div><div style="font-size:2.5rem">🎨</div></div>
+  <div class="g2">
+    <div>
+      <div class="hb red"><h4>📌 ¿Qué es un prototipo de alta fidelidad?</h4><p style="font-size:.87rem">Es una representación visual <strong>muy cercana al producto final</strong>: colores reales, tipografía definitiva, íconos, imágenes y transiciones entre pantallas. Simula la experiencia del usuario sin tener código funcional.</p><p style="font-size:.83rem;margin-top:6px;font-style:italic">Metáfora: el prototipo de un auto en arcilla a escala real — parece el carro terminado, pero el motor no funciona aún.</p></div>
+      <div class="card">
+        <h3>Del wireframe al mockup — proceso</h3>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="background:#FFF0F0;border-radius:8px;padding:10px;display:flex;gap:10px;align-items:center"><span style="font-size:1.2rem">1️⃣</span><div><strong>Validar wireframes</strong> — el cliente aprobó la estructura</div></div>
+          <div style="background:#FFF8E1;border-radius:8px;padding:10px;display:flex;gap:10px;align-items:center"><span style="font-size:1.2rem">2️⃣</span><div><strong>Definir guía de estilo</strong> — paleta de colores, tipografía, espaciado</div></div>
+          <div style="background:#EFF4FF;border-radius:8px;padding:10px;display:flex;gap:10px;align-items:center"><span style="font-size:1.2rem">3️⃣</span><div><strong>Diseñar en Figma</strong> — aplicar guía de estilo al wireframe aprobado</div></div>
+          <div style="background:#EDFBF0;border-radius:8px;padding:10px;display:flex;gap:10px;align-items:center"><span style="font-size:1.2rem">4️⃣</span><div><strong>Agregar interactividad</strong> — enlaces entre pantallas, simulación de flujo</div></div>
+          <div style="background:#F5F0FF;border-radius:8px;padding:10px;display:flex;gap:10px;align-items:center"><span style="font-size:1.2rem">5️⃣</span><div><strong>Prueba con el usuario</strong> — el usuario navega sin guía, el equipo observa</div></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Lo-Fi vs Hi-Fi — comparativa</h3>
+        <table class="t">
+          <thead><tr><th>Aspecto</th><th>Baja fidelidad</th><th>Alta fidelidad</th></tr></thead>
+          <tbody>
+            <tr><td>Tiempo</td><td>Minutos/horas</td><td>Días</td></tr>
+            <tr><td>Herramienta</td><td>Papel, Balsamiq</td><td>Figma, Adobe XD</td></tr>
+            <tr><td>Colores</td><td>Grises/blancos</td><td>Colores reales</td></tr>
+            <tr><td>Interactividad</td><td>Estático</td><td>Clickeable</td></tr>
+            <tr><td>Feedback enfocado en</td><td>Estructura y flujo</td><td>Diseño visual y UX</td></tr>
+            <tr><td>Costo de cambios</td><td>Muy bajo</td><td>Medio</td></tr>
+            <tr><td>Uso</td><td>Primera iteración</td><td>Antes del código</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card" style="margin-top:0">
+        <h3>Quiz rápido</h3>
+        <p style="font-size:.87rem;margin-bottom:10px">El cliente de tu equipo dice "quiero ver cómo quedará el sistema antes de que empiecen a programar, con los colores y el logo". ¿Qué prototipo le entregas?</p>
+        <button class="quiz-btn" onclick="ans5('a')">Wireframe en papel</button>
+        <button class="quiz-btn" onclick="ans5('b')">Mockup Hi-Fi en Figma</button>
+        <button class="quiz-btn" onclick="ans5('c')">Código funcional</button>
+        <div id="q5ok" class="qfb qok">✅ ¡Correcto! El mockup de alta fidelidad en Figma muestra los colores, logo y flujo real sin necesidad de código. Es exactamente lo que el cliente necesita ver para aprobar el diseño.</div>
+        <div id="q5err" class="qfb qerr">❌ El wireframe muestra solo la estructura (sin colores ni logo). El código funcional tarda mucho más tiempo. La respuesta es el <strong>mockup Hi-Fi en Figma</strong>.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S6 ARQUITECTURA FUNDAMENTOS -->
+<div class="slide" id="s6">
+  <div class="ph"><div><h2>Arquitectura de Software — Fundamentos</h2><div class="meta">Unidad I · 1.3 — ¿Qué es y por qué importa?</div></div><div style="font-size:2.5rem">🏗️</div></div>
+  <div class="g2">
+    <div>
+      <div class="hb red"><h4>📌 Definición</h4><p style="font-size:.87rem">La arquitectura de software es la <strong>estructura de alto nivel del sistema</strong>: cómo se divide en partes, cómo se comunican esas partes y qué principios guían esas decisiones. Es el conjunto de decisiones estructurales más importantes y costosas de cambiar una vez tomadas.</p><p style="font-size:.83rem;margin-top:6px;font-style:italic">Metáfora: la arquitectura es el "esqueleto" del software. Cambiar el esqueleto de un edificio una vez construido es carísimo. Lo mismo ocurre con el software.</p></div>
+      <div class="card">
+        <h3>¿Por qué es crucial la arquitectura?</h3>
+        <ul class="cl">
+          <li><strong>Mantenibilidad:</strong> una buena arquitectura hace que los cambios sean locales y seguros</li>
+          <li><strong>Escalabilidad:</strong> permite crecer el sistema sin reescribirlo</li>
+          <li><strong>Rendimiento:</strong> determina cómo fluye la información y dónde hay cuellos de botella</li>
+          <li><strong>Seguridad:</strong> define los límites de confianza entre componentes</li>
+          <li><strong>Trabajo en equipo:</strong> divide el sistema en partes que distintos equipos pueden desarrollar en paralelo</li>
+          <li><strong>Deuda técnica:</strong> una mala arquitectura acumula deuda que frena el desarrollo futuro</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Conceptos fundamentales</h3>
+        <div class="hb blue"><h4>Componente</h4><p style="font-size:.85rem">Unidad funcional cohesiva del sistema con interfaz bien definida. Ej: módulo de autenticación, módulo de pagos, módulo de reportes.</p></div>
+        <div class="hb gold"><h4>Conector</h4><p style="font-size:.85rem">Mecanismo de interacción entre componentes: llamadas a funciones, APIs REST, mensajes, eventos, base de datos compartida.</p></div>
+        <div class="hb green"><h4>Configuración</h4><p style="font-size:.85rem">La forma específica en que los componentes y conectores se organizan. Dos sistemas pueden usar los mismos componentes pero tener diferente arquitectura según cómo los conectan.</p></div>
+      </div>
+      <div class="meta-box"><div class="lbl">💡 Cita clave</div><p style="font-size:.87rem">"La arquitectura de software es el conjunto de decisiones de diseño que son difíciles de cambiar." — <strong>Martin Fowler</strong><br><br>Esto implica: <em>tomémonos el tiempo de decidir bien desde el principio</em>, porque cambiar la arquitectura después cuesta 10 veces más.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- S7 MICROKERNEL -->
+<div class="slide" id="s7">
+  <div class="ph"><div><h2>Patrón Microkernel</h2><div class="meta">Unidad I · 1.3.1 — Core system + plugins</div></div><div style="font-size:2.5rem">🔌</div></div>
+  <div class="g2">
+    <div>
+      <div class="hb red"><h4>📌 ¿Qué es Microkernel?</h4><p style="font-size:.87rem">Separa el sistema en dos partes: un <strong>Core System</strong> (núcleo mínimo e invariable) y <strong>Plug-in modules</strong> (funcionalidades adicionales que se conectan al núcleo). El núcleo funciona sin los plugins; los plugins amplían las capacidades sin modificar el núcleo.</p><p style="font-size:.83rem;margin-top:6px;font-style:italic">Metáfora: el smartphone. El sistema operativo (iOS/Android) es el núcleo. Las apps son los plugins: las instalas, las desinstadas, pero el teléfono sigue funcionando sin ellas.</p></div>
+      <div class="card">
+        <h3>Estructura del patrón Microkernel</h3>
+        <div style="text-align:center;padding:16px;background:#FFF0F0;border-radius:10px;border:2px dashed var(--grana)">
+          <div style="background:var(--grana);color:#fff;padding:10px 20px;border-radius:8px;display:inline-block;font-weight:700;margin-bottom:14px">🧠 CORE SYSTEM (Núcleo)<br><span style="font-size:.8rem;font-weight:400">Lógica esencial · Registro de plugins · Interfaz de comunicación</span></div>
+          <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+            <div style="background:#FFF8E1;border:2px solid var(--gold);border-radius:8px;padding:8px 14px;font-size:.82rem;font-weight:700">🔌 Plugin A<br><span style="font-weight:400">Facturación</span></div>
+            <div style="background:#FFF8E1;border:2px solid var(--gold);border-radius:8px;padding:8px 14px;font-size:.82rem;font-weight:700">🔌 Plugin B<br><span style="font-weight:400">Reportes</span></div>
+            <div style="background:#FFF8E1;border:2px solid var(--gold);border-radius:8px;padding:8px 14px;font-size:.82rem;font-weight:700">🔌 Plugin C<br><span style="font-weight:400">Inventario</span></div>
+            <div style="background:#EEE;border:2px dashed #CCC;border-radius:8px;padding:8px 14px;font-size:.82rem;color:#999">+ Nuevo plugin<br>en el futuro</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Cuándo usar Microkernel</h3>
+        <div class="hb green"><h4>✅ Úsalo cuando…</h4><ul style="font-size:.85rem;padding-left:14px;margin-top:4px"><li>El sistema necesita ser extensible sin modificar el core</li><li>Distintos clientes necesitan distintas funcionalidades del mismo sistema</li><li>Quieres que terceros puedan agregar funcionalidades (marketplace de plugins)</li><li>El sistema evoluciona con el tiempo (ej: ERP que crece)</li></ul></div>
+        <div class="hb orange"><h4>⚠️ Cuidado cuando…</h4><ul style="font-size:.85rem;padding-left:14px;margin-top:4px"><li>Diseñar el contrato del API del plugin es complejo</li><li>Los plugins no están bien aislados y generan conflictos</li><li>El rendimiento es crítico (la indirección añade overhead)</li></ul></div>
+        <div class="hb gold"><h4>💼 Ejemplos reales</h4><ul style="font-size:.85rem;padding-left:14px;margin-top:4px"><li>Eclipse IDE (núcleo + plugins de lenguajes)</li><li>WordPress (WordPress core + plugins)</li><li>Jenkins CI/CD (core + plugins de integración)</li><li>Para TechMiPyME: sistema base con módulos opcionales por negocio</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S8 MICROSERVICIOS -->
+<div class="slide" id="s8">
+  <div class="ph"><div><h2>Patrón Microservicios</h2><div class="meta">Unidad I · 1.3.2 — Servicios independientes y APIs</div></div><div style="font-size:2.5rem">🐙</div></div>
+  <div class="g2">
+    <div>
+      <div class="hb red"><h4>📌 ¿Qué son los Microservicios?</h4><p style="font-size:.87rem">El sistema se divide en <strong>servicios pequeños, independientes y autónomos</strong>, cada uno responsable de una sola capacidad del negocio. Cada microservicio tiene su propia base de datos, se despliega de forma independiente y se comunica mediante APIs (generalmente REST o mensajería).</p><p style="font-size:.83rem;margin-top:6px;font-style:italic">Metáfora: un restaurante de comida rápida. La cocina de hamburguesas, la de papas fritas y la de bebidas son equipos separados que operan de forma independiente pero coordinan el pedido completo del cliente.</p></div>
+      <div class="card">
+        <h3>Arquitectura de Microservicios</h3>
+        <div style="background:#F8F0FF;border-radius:10px;padding:14px;border:2px dashed var(--purple)">
+          <div style="text-align:center;margin-bottom:10px"><div style="background:var(--purple);color:#fff;padding:6px 16px;border-radius:6px;display:inline-block;font-size:.85rem;font-weight:700">🌐 API GATEWAY (punto de entrada único)</div></div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px">
+            <div style="background:#fff;border:2px solid var(--purple);border-radius:8px;padding:8px;text-align:center;font-size:.8rem"><strong>👤 Servicio Usuarios</strong><br>BD: Users_DB<br>Puerto: 3001</div>
+            <div style="background:#fff;border:2px solid var(--accent);border-radius:8px;padding:8px;text-align:center;font-size:.8rem"><strong>📦 Servicio Pedidos</strong><br>BD: Orders_DB<br>Puerto: 3002</div>
+            <div style="background:#fff;border:2px solid var(--green);border-radius:8px;padding:8px;text-align:center;font-size:.8rem"><strong>🏷️ Servicio Inventario</strong><br>BD: Stock_DB<br>Puerto: 3003</div>
+          </div>
+          <div style="text-align:center;font-size:.78rem;color:var(--muted)">Cada servicio: desplegado y escalado de forma INDEPENDIENTE</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Monolito vs Microservicios</h3>
+        <table class="t">
+          <thead><tr><th>Aspecto</th><th>Monolito</th><th>Microservicios</th></tr></thead>
+          <tbody>
+            <tr><td>Despliegue</td><td>Todo junto</td><td>Servicio por servicio</td></tr>
+            <tr><td>Escalado</td><td>Escala todo</td><td>Escala solo lo necesario</td></tr>
+            <tr><td>Fallo</td><td>Cae todo</td><td>Falla un servicio</td></tr>
+            <tr><td>Desarrollo</td><td>1 equipo, más simple</td><td>Equipos paralelos</td></tr>
+            <tr><td>Complejidad</td><td>Baja al inicio</td><td>Alta (red, datos)</td></tr>
+            <tr><td>Para startups</td><td>✅ Mejor al inicio</td><td>⚠️ Solo si escala</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="hb blue"><h4>💼 Ejemplos reales</h4><ul style="font-size:.85rem;padding-left:14px;margin-top:4px"><li>Netflix: cada función (búsqueda, reproducción, pagos) es un microservicio</li><li>Amazon: "two-pizza team rule" — cada servicio lo gestiona un equipo que alimenta 2 pizzas</li><li>Uber, Spotify, Airbnb</li></ul></div>
+      <div class="hb orange"><h4>⚠️ Para MiPyME: ¿conviene microservicios?</h4><p style="font-size:.85rem">Probablemente no al inicio. Un monolito o arquitectura en capas es más sencillo de construir. Microservicios se justifica cuando hay equipos grandes, alta carga y necesidad de escala independiente.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- S9 ARQUITECTURA EN CAPAS -->
+<div class="slide" id="s9">
+  <div class="ph"><div><h2>Arquitectura en Capas</h2><div class="meta">Unidad I · 1.3.3 — Separación de responsabilidades</div></div><div style="font-size:2.5rem">🗂️</div></div>
+  <div class="g2">
+    <div>
+      <div class="hb red"><h4>📌 ¿Qué es la Arquitectura en Capas?</h4><p style="font-size:.87rem">Organiza el sistema en capas horizontales donde cada capa tiene una responsabilidad específica y <strong>solo se comunica con la capa inmediatamente adyacente</strong>. Es el patrón más usado en aplicaciones empresariales y el más natural para aprender arquitectura.</p><p style="font-size:.83rem;margin-top:6px;font-style:italic">Metáfora: la lasaña — cada capa tiene su sabor propio y función específica, y solo interactúa con la capa de arriba y la de abajo.</p></div>
+      <div class="card">
+        <h3>Las 3 capas clásicas (3-Tier)</h3>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="background:linear-gradient(135deg,var(--grana),var(--grana2));color:#fff;border-radius:10px 10px 0 0;padding:14px 18px">
+            <strong>🖥️ Capa de Presentación (UI)</strong><p style="font-size:.82rem;opacity:.9;margin-top:4px">Interfaz gráfica, formularios, reportes. Solo muestra datos y captura entradas del usuario. No contiene lógica de negocio. Tecnologías: HTML/CSS/JS, JavaFX, Tkinter.</p>
+          </div>
+          <div style="background:linear-gradient(135deg,var(--accent),#1A3F6F);color:#fff;padding:14px 18px">
+            <strong>⚙️ Capa de Lógica de Negocio (Business Logic)</strong><p style="font-size:.82rem;opacity:.9;margin-top:4px">Reglas del negocio, cálculos, validaciones, flujos de trabajo. El "cerebro" del sistema. No sabe nada de cómo se muestra ni cómo se almacena. Tecnologías: Java, Python, C#.</p>
+          </div>
+          <div style="background:linear-gradient(135deg,var(--dark),#2A2A4A);color:#fff;border-radius:0 0 10px 10px;padding:14px 18px">
+            <strong>🗃️ Capa de Datos (Persistence)</strong><p style="font-size:.82rem;opacity:.9;margin-top:4px">Acceso a la base de datos, consultas, almacenamiento. Solo gestiona datos, no sabe nada de la lógica. Tecnologías: SQL, MySQL, SQLite, ORM (Hibernate, SQLAlchemy).</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Regla de oro de las capas</h3>
+        <div style="background:#FFF0F0;border:2px solid var(--grana);border-radius:10px;padding:14px;text-align:center;margin-bottom:12px">
+          <p style="font-weight:700;font-size:1rem;color:var(--grana)">Presentación → Negocio → Datos</p>
+          <p style="font-size:.85rem;margin-top:6px">La comunicación fluye <strong>hacia abajo</strong>. La capa de Datos nunca llama a la de Presentación. La UI nunca toca directamente la BD.</p>
+        </div>
+        <div class="hb green"><h4>✅ Ventajas</h4><ul style="font-size:.84rem;padding-left:14px;margin-top:4px"><li>Fácil de entender y mantener</li><li>Cambiar la BD no afecta la UI</li><li>Cambiar la UI no afecta la lógica</li><li>Pruebas unitarias sencillas por capa</li><li>Ideal para proyectos educativos y MiPyME</li></ul></div>
+        <div class="hb orange"><h4>⚠️ Limitaciones</h4><ul style="font-size:.84rem;padding-left:14px;margin-top:4px"><li>Cambios que atraviesan capas requieren modificar todas</li><li>Puede ser lento si hay muchas capas intermedias</li><li>No es ideal para sistemas con alta carga distribuida</li></ul></div>
+      </div>
+      <div class="meta-box"><div class="lbl">💡 Para tu proyecto MiPyME</div><p style="font-size:.87rem">La arquitectura en 3 capas es la <strong>recomendación por defecto</strong> para el proyecto del semestre: es la más fácil de implementar en equipo (cada persona puede trabajar en una capa diferente), la más usada en aplicaciones de escritorio y web pequeñas, y la que mejor representa la separación de responsabilidades que pide el plan de estudios.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- S10 OTROS PATRONES -->
+<div class="slide" id="s10">
+  <div class="ph"><div><h2>Otros Patrones de Arquitectura</h2><div class="meta">Unidad I · 1.3.4 — MVC, Event-Driven, Pipe & Filter, Hexagonal</div></div><div style="font-size:2.5rem">🧩</div></div>
+  <div class="card" style="margin-bottom:14px">
+    <h3>Haz clic en cada patrón para ver sus detalles</h3>
+    <div class="arch-card" style="border-color:var(--accent);background:#EFF4FF" onclick="toggleArch('mvc')">
+      <strong style="color:var(--accent)">🔷 MVC — Model-View-Controller</strong> · El más usado en web
+      <div id="at-mvc" class="arch-detail" style="border-color:var(--accent)">
+        <div class="g2" style="margin-top:8px">
+          <div><strong>¿Cómo funciona?</strong><br>Divide en 3 responsabilidades: <strong>Model</strong> (datos y lógica), <strong>View</strong> (interfaz de usuario), <strong>Controller</strong> (coordinador entre Model y View). El usuario interactúa con la View, el Controller procesa la acción, el Model actualiza datos, la View se refresca.<br><br><strong>Metáfora:</strong> restaurante. El <em>mesero</em> (Controller) toma tu pedido, se lo pasa a la <em>cocina</em> (Model), que prepara el plato y se lo devuelve al mesero para servirte (View).</div>
+          <div><strong>Cuándo usarlo:</strong> frameworks web (Django, Laravel, Rails, Spring MVC). Casi todo framework web moderno lo implementa.<br><br><strong>Ventaja:</strong> separación clara UI / lógica. Muy familiar para la industria.<br><br><strong>Para MiPyME:</strong> si usan Django/Flask (Python) o Spring (Java), ya están usando MVC sin saberlo.</div>
+        </div>
+      </div>
+    </div>
+    <div class="arch-card" style="border-color:var(--green);background:#EDFBF0" onclick="toggleArch('ed')">
+      <strong style="color:var(--green)">🟢 Event-Driven (Orientada a Eventos)</strong> · Para sistemas reactivos
+      <div id="at-ed" class="arch-detail" style="border-color:var(--green)">Los componentes se comunican mediante <strong>eventos</strong> (mensajes): un componente publica un evento ("PedidoCreado") y otros componentes que estén suscritos a ese evento reaccionan. Nadie llama a nadie directamente; el sistema reacciona a lo que ocurre.<br><br><strong>Metáfora:</strong> el sistema de alertas de un hospital: cuando se detecta una emergencia (evento), simultáneamente se notifica al médico, la enfermera, el transporte y la farmacia, sin que nadie llame a nadie manualmente.<br><br><strong>Usos:</strong> IoT, sistemas financieros en tiempo real, chat apps, notificaciones. <strong>Herramientas:</strong> Kafka, RabbitMQ, AWS SNS/SQS.</div>
+    </div>
+    <div class="arch-card" style="border-color:var(--orange);background:#FFF5EB" onclick="toggleArch('pf')">
+      <strong style="color:var(--orange)">🟠 Pipe &amp; Filter</strong> · Para procesamiento secuencial de datos
+      <div id="at-pf" class="arch-detail" style="border-color:var(--orange)">Los datos fluyen a través de una secuencia de <strong>filtros</strong> (transformaciones) conectados por <strong>tuberías</strong> (pipes). Cada filtro recibe datos, los transforma y los pasa al siguiente.<br><br><strong>Metáfora:</strong> una línea de ensamblaje en una fábrica: cada estación recibe el producto a medio hacer, hace su operación y lo pasa a la siguiente.<br><br><strong>Usos:</strong> compiladores (lexer → parser → optimizer → codegen), procesamiento de imágenes/video, ETL (Extract-Transform-Load) en bases de datos. <strong>Ejemplo Unix:</strong> <code>cat archivo | grep "error" | sort | uniq -c</code></div>
+    </div>
+    <div class="arch-card" style="border-color:var(--purple);background:#F5F0FF" onclick="toggleArch('hex')">
+      <strong style="color:var(--purple)">🟣 Arquitectura Hexagonal (Ports &amp; Adapters)</strong> · Para alta testabilidad
+      <div id="at-hex" class="arch-detail" style="border-color:var(--purple)">El núcleo de la aplicación (lógica de negocio) está completamente aislado del mundo exterior mediante <strong>puertos</strong> (interfaces) y <strong>adaptadores</strong> (implementaciones concretas). La lógica no sabe si está interactuando con una BD real, una BD en memoria o un mock.<br><br><strong>Metáfora:</strong> un enchufe universal con adaptadores. El dispositivo (lógica de negocio) siempre tiene el mismo conector (puerto), y el adaptador cambia según el país/tecnología.<br><br><strong>Ventaja principal:</strong> puedes probar toda la lógica de negocio sin ninguna infraestructura real (sin BD, sin red). <strong>Ideal para</strong> TDD (Test-Driven Development).</div>
+    </div>
+  </div>
+  <div class="meta-box"><div class="lbl">💡 Consejo</div><p style="font-size:.9rem">No existe el patrón "mejor". Cada arquitectura resuelve un problema específico. La pregunta clave siempre es: <strong>¿cuál es la característica más importante de MI sistema?</strong> ¿Extensibilidad? → Microkernel. ¿Escala independiente? → Microservicios. ¿Simplicidad y mantenimiento? → Capas o MVC. ¿Reactividad? → Event-Driven.</p></div>
+</div>
+
+<!-- S11 CÓMO ELEGIR ARQUITECTURA -->
+<div class="slide" id="s11">
+  <div class="ph"><div><h2>¿Cómo elegir la Arquitectura Correcta?</h2><div class="meta">Unidad I · 1.3 — Criterios de selección y caso MiPyME</div></div><div style="font-size:2.5rem">🧭</div></div>
+  <div class="g2">
+    <div class="card">
+      <h3>Preguntas clave para decidir</h3>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="background:#FFF0F0;border-radius:8px;padding:10px"><strong style="color:var(--grana)">1. ¿Qué tan grande es el equipo?</strong><p style="font-size:.84rem;margin-top:4px">Equipo pequeño (1-5 personas) → Capas o MVC. Equipo grande → Microservicios (cada equipo dueño de un servicio).</p></div>
+        <div style="background:#FFF8E1;border-radius:8px;padding:10px"><strong style="color:var(--orange)">2. ¿Qué tan extensible debe ser?</strong><p style="font-size:.84rem;margin-top:4px">Si habrá muchas funcionalidades opcionales o clientes con distintas necesidades → Microkernel.</p></div>
+        <div style="background:#EFF4FF;border-radius:8px;padding:10px"><strong style="color:var(--accent)">3. ¿Qué tan predecible es la carga?</strong><p style="font-size:.84rem;margin-top:4px">Carga variable, picos inesperados → Microservicios (escalar partes). Carga estable y predecible → Monolito/Capas.</p></div>
+        <div style="background:#EDFBF0;border-radius:8px;padding:10px"><strong style="color:var(--green)">4. ¿Cuánto tiempo hay para desarrollar?</strong><p style="font-size:.84rem;margin-top:4px">Poco tiempo → Capas (setup rápido). Más tiempo e inversión → Microservicios con toda la infraestructura necesaria.</p></div>
+        <div style="background:#F5F0FF;border-radius:8px;padding:10px"><strong style="color:var(--purple)">5. ¿Cuál es la naturaleza del dominio?</strong><p style="font-size:.84rem;margin-top:4px">Datos fluyen en pipeline → Pipe & Filter. Sistema reacciona a eventos externos → Event-Driven. CRUD tradicional → Capas/MVC.</p></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Tabla de decisión rápida para el proyecto</h3>
+        <table class="t">
+          <thead><tr><th>Contexto MiPyME</th><th>Arquitectura recomendada</th></tr></thead>
+          <tbody>
+            <tr><td>Taquería pequeña, 1 sucursal</td><td>🗂️ 3 Capas (Presentación + Negocio + Datos)</td></tr>
+            <tr><td>Cadena con múltiples sucursales</td><td>🔷 MVC + API REST central</td></tr>
+            <tr><td>Software que venderán a distintos negocios con módulos opcionales</td><td>🔌 Microkernel</td></tr>
+            <tr><td>Sistema de notificaciones y alertas en tiempo real</td><td>🟢 Event-Driven</td></tr>
+            <tr><td>Procesamiento de inventario masivo por lotes</td><td>🟠 Pipe & Filter</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h3>Quiz — Decisión de arquitectura</h3>
+        <p style="font-size:.87rem;margin-bottom:10px">Tu equipo desarrolla un sistema para una <strong>papelería familiar con 1 empleado</strong>. El sistema gestiona ventas, inventario y clientes. ¿Cuál arquitectura recomiendas?</p>
+        <button class="quiz-btn" onclick="ans11('a')">Microservicios</button>
+        <button class="quiz-btn" onclick="ans11('b')">Arquitectura en 3 Capas</button>
+        <button class="quiz-btn" onclick="ans11('c')">Event-Driven</button>
+        <div id="q11ok" class="qfb qok">✅ ¡Correcto! La <strong>Arquitectura en 3 Capas</strong> es ideal: equipo pequeño, negocio simple, poco tiempo, funcionalidades predecibles. Microservicios sería sobrediseño ("over-engineering") para este contexto.</div>
+        <div id="q11err" class="qfb qerr">❌ Microservicios y Event-Driven son para sistemas distribuidos, equipos grandes y alta carga. Para una papelería familiar, la <strong>Arquitectura en 3 Capas</strong> es perfecta: simple, rápida de implementar y más que suficiente.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S12 BIBLIOGRAFÍA -->
+<div class="slide" id="s12">
+  <div class="ph"><div><h2>Bibliografía del Parcial 1</h2><div class="meta">Fuentes básicas y complementarias</div></div><div style="font-size:2.5rem">📚</div></div>
+  <div class="g2">
+    <div class="card">
+      <h3>📗 Bibliografía básica</h3>
+      <ul class="cl">
+        <li><strong>Blancarte, O. (2019).</strong> <em>Introducción a la Arquitectura de Software.</em> 2.ª ed. Independiente. <span style="background:#FFF0F0;border-radius:4px;padding:2px 8px;font-size:.78rem;color:var(--grana)">Caps. 1–5</span></li>
+        <li><strong>Bruegge, B. &amp; Dutoit, A. (2010).</strong> <em>Object-Oriented Software Engineering Using UML, Patterns, and Java.</em> 3.ª ed. Prentice Hall. <span style="background:#EFF4FF;border-radius:4px;padding:2px 8px;font-size:.78rem;color:var(--accent)">Caps. 2–4</span></li>
+        <li><strong>Bass, L., Clements, P. &amp; Kazman, R. (2012).</strong> <em>Software Architecture in Practice.</em> 3.ª ed. Addison-Wesley.</li>
+        <li><strong>Fowler, M. (2018).</strong> <em>Patterns of Enterprise Application Architecture.</em> Addison-Wesley. Disponible en: martinfowler.com/eaaCatalog</li>
+        <li><strong>Ford, N., Richards, M., Sadalage, P. &amp; Dehghani, Z. (2021).</strong> <em>Software Architecture: The Hard Parts.</em> O'Reilly Media.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>🌐 Recursos digitales y herramientas</h3>
+      <ul class="cl">
+        <li><strong>Figma (prototipado).</strong> figma.com — gratuito para equipos de estudiantes</li>
+        <li><strong>Balsamiq.</strong> balsamiq.com — wireframes estilo boceto</li>
+        <li><strong>draw.io / diagrams.net.</strong> app.diagrams.net — diagramas de arquitectura gratuitos</li>
+        <li><strong>BettaTech (YouTube).</strong> "Patrones de Arquitectura de Software" — canal en español</li>
+        <li><strong>Richards, M. (2015).</strong> <em>Software Architecture Patterns.</em> O'Reilly (descarga gratuita en oreilly.com)</li>
+        <li><strong>Martin, R. C. (2017).</strong> <em>Clean Architecture.</em> Prentice Hall.</li>
+      </ul>
+      <div class="hb red" style="margin-top:14px"><h4>📝 Entregable Fase 1 del proyecto</h4><ul style="font-size:.84rem;padding-left:14px;margin-top:4px"><li>Reporte de indagación del negocio (entrevista + mapa de procesos)</li><li>CRC cards de las clases del sistema</li><li>Wireframes (≥ 5 pantallas) + Mockup Hi-Fi en Figma (clickeable)</li><li>Diagrama de arquitectura justificado (formato libre: draw.io, etc.)</li><li>Presentación 10 min + preguntas del docente</li></ul></div>
+    </div>
+  </div>
+  <div class="banner" style="text-align:center;padding:20px 32px;margin-top:4px">
+    <h2 style="font-size:1.1rem;margin-bottom:6px">🎓 ¡Éxito en el Parcial 1!</h2>
+    <p style="opacity:.85;font-size:.88rem">UPIICSA · IPN · Construcción de Software · 4.° Semestre · Plan 2021</p>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <button onclick="prevSlide()" id="btnPrev">← Anterior</button>
+  <div class="dots" id="navDots"></div>
+  <span class="nav-label" id="navLabel">Portada</span>
+  <button onclick="nextSlide()" id="btnNext">Siguiente →</button>
+</div>
+
+<script>
+const SLIDES=[
+  {id:'s1',label:'Portada'},{id:'s2',label:'Objetivos'},{id:'s3',label:'Estudio del Negocio'},
+  {id:'s4',label:'Prototipado Lo-Fi'},{id:'s5',label:'Prototipado Hi-Fi'},{id:'s6',label:'Arquitectura — Fundamentos'},
+  {id:'s7',label:'Microkernel'},{id:'s8',label:'Microservicios'},{id:'s9',label:'Arquitectura en Capas'},
+  {id:'s10',label:'Otros Patrones'},{id:'s11',label:'¿Cómo elegir?'},{id:'s12',label:'Bibliografía'}
+];
+let cur=0;
+const dotsEl=document.getElementById('navDots');
+SLIDES.forEach((_,i)=>{const d=document.createElement('span');if(i===0)d.classList.add('active');d.onclick=()=>goTo(i+1);dotsEl.appendChild(d);});
+function showSlide(idx){
+  SLIDES.forEach((s,i)=>document.getElementById(s.id).classList.toggle('active',i===idx));
+  dotsEl.querySelectorAll('span').forEach((d,i)=>d.classList.toggle('active',i===idx));
+  document.getElementById('navLabel').textContent=SLIDES[idx].label;
+  document.getElementById('btnPrev').disabled=idx===0;
+  document.getElementById('btnNext').disabled=idx===SLIDES.length-1;
+  document.getElementById('slideNum').textContent=`${idx+1} / ${SLIDES.length}`;
+  window.scrollTo(0,0);cur=idx;
+}
+function nextSlide(){if(cur<SLIDES.length-1)showSlide(cur+1);}
+function prevSlide(){if(cur>0)showSlide(cur-1);}
+function goTo(n){showSlide(n-1);}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowDown')nextSlide();if(e.key==='ArrowLeft'||e.key==='ArrowUp')prevSlide();});
+function toggleArch(id){const el=document.getElementById('at-'+id);el.classList.toggle('open');}
+function ans5(a){document.getElementById('q5ok').style.display=a==='b'?'block':'none';document.getElementById('q5err').style.display=a!=='b'?'block':'none';}
+function ans11(a){document.getElementById('q11ok').style.display=a==='b'?'block':'none';document.getElementById('q11err').style.display=a!=='b'?'block':'none';}
+showSlide(0);
+</script>
+</body>
+</html>

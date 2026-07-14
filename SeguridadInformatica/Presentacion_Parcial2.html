@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parcial 2 — Seguridad Informática · UPIICSA · IPN</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--wine:#6B1A33;--wine-l:#9B2244;--gold:#C8922A;--green:#2E7D32;--green-l:#388E3C;--blue:#1565C0;--teal:#00796B;--bg:#F5F7FA;--card:#fff;--border:#DDE3EA;--text:#1A1A2E;--muted:#6B7280;--r:12px;--sh:0 2px 16px rgba(0,0,0,.08)}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;font-size:15px}
+.slide{display:none;min-height:100vh;padding:24px 20px 90px;max-width:1100px;margin:0 auto;animation:fi .35s ease}
+.slide.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.nav{position:fixed;bottom:0;left:0;right:0;background:var(--green);display:flex;justify-content:center;align-items:center;gap:12px;padding:10px 16px;z-index:100;box-shadow:0 -2px 12px rgba(0,0,0,.2)}
+.nav button{background:rgba(255,255,255,.18);color:#fff;border:none;padding:8px 22px;border-radius:20px;cursor:pointer;font-size:14px;font-weight:600;transition:background .2s}
+.nav button:hover{background:rgba(255,255,255,.35)}
+.nav button:disabled{opacity:.35;cursor:not-allowed}
+.nav-label{color:rgba(255,255,255,.8);font-size:13px;min-width:180px;text-align:center}
+.dots{display:flex;gap:5px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:320px}
+.dots span{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35);cursor:pointer;transition:background .2s,transform .2s}
+.dots span.active{background:var(--gold);transform:scale(1.4)}
+.print-btn{position:fixed;top:14px;right:16px;background:var(--green);color:#fff;border:none;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;z-index:200}
+.snum{position:fixed;top:14px;left:16px;background:rgba(46,125,50,.12);color:var(--green);border-radius:20px;padding:4px 14px;font-size:12px;font-weight:700;z-index:200}
+.banner{background:linear-gradient(135deg,var(--green) 0%,var(--green-l) 50%,#81C784 100%);color:#fff;border-radius:var(--r);padding:40px 32px;margin-bottom:24px;position:relative;overflow:hidden}
+.banner::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.06)}
+.banner .inst{font-size:12px;letter-spacing:2px;text-transform:uppercase;opacity:.8;margin-bottom:6px}
+.banner h1{font-size:2.2rem;font-weight:800;margin-bottom:8px}
+.banner .sub{font-size:1rem;opacity:.85}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.badge{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:4px 14px;font-size:12px;font-weight:600}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--border);padding:24px;margin-bottom:18px}
+.card h3{font-size:1rem;font-weight:700;margin-bottom:12px;color:var(--green)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:700px){.g2,.g3{grid-template-columns:1fr}}
+.hb{border-radius:var(--r);padding:16px 20px;margin-bottom:12px}
+.hb.wine{background:#F9E8ED;border-left:4px solid var(--wine)}
+.hb.gold{background:#FEF3DC;border-left:4px solid var(--gold)}
+.hb.blue{background:#E3EEF9;border-left:4px solid var(--blue)}
+.hb.green{background:#E8F5E9;border-left:4px solid var(--green)}
+.hb.teal{background:#E0F2F1;border-left:4px solid var(--teal)}
+.hb.red{background:#FDECEA;border-left:4px solid #B71C1C}
+.hb h4{font-size:.9rem;font-weight:700;margin-bottom:6px}
+ul.cl{list-style:none}
+ul.cl li{padding:5px 0 5px 18px;position:relative;border-bottom:1px solid var(--border);font-size:.88rem}
+ul.cl li:last-child{border-bottom:none}
+ul.cl li::before{content:'▸';position:absolute;left:0;color:var(--green);font-size:11px;top:8px}
+.ph{border-radius:var(--r);padding:20px 24px;color:#fff;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;background:linear-gradient(135deg,var(--green),#66BB6A)}
+.ph h2{font-size:1.5rem;font-weight:800}
+.ph .meta{font-size:13px;opacity:.85}
+table.t{width:100%;border-collapse:collapse;font-size:14px}
+table.t th{background:var(--green);color:#fff;padding:10px 14px;text-align:left;font-size:13px}
+table.t td{padding:9px 14px;border-bottom:1px solid var(--border);font-size:.88rem}
+table.t tr:nth-child(even) td{background:#FAFBFC}
+.pill{display:inline-block;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:600}
+.pw{background:#F9E8ED;color:var(--wine)}
+.pb{background:#E3EEF9;color:var(--blue)}
+.pg{background:#E8F5E9;color:var(--green)}
+.po{background:#FEF3DC;color:#7B5E00}
+.ctrl-card{border-radius:10px;padding:16px;border:2px solid;text-align:center;transition:transform .2s}
+.ctrl-card:hover{transform:translateY(-3px)}
+.ctrl-prev{border-color:var(--green);background:#E8F5E9}
+.ctrl-det{border-color:var(--blue);background:#E3EEF9}
+.ctrl-cor{border-color:var(--gold);background:#FEF3DC}
+.ctrl-dis{border-color:var(--wine);background:#F9E8ED}
+.ctrl-card .icon{font-size:2rem;margin-bottom:8px}
+.ctrl-card h3{font-size:.95rem;font-weight:700}
+.access-tab{display:none}
+.access-tab.show{display:block}
+.tab-btn{padding:8px 18px;border:2px solid var(--green);background:#fff;color:var(--green);border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;margin:4px;transition:all .2s}
+.tab-btn.active{background:var(--green);color:#fff}
+.attack-card{border-radius:10px;padding:16px;border:2px solid var(--border);background:var(--card);cursor:pointer;transition:all .2s}
+.attack-card:hover{border-color:var(--wine);box-shadow:0 4px 12px rgba(107,26,51,.12)}
+.attack-card .icon{font-size:2rem;margin-bottom:8px}
+.attack-detail{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:.83rem;color:var(--muted)}
+.attack-detail.open{display:block}
+.meta-box{background:linear-gradient(135deg,#FEF3DC,#FFF8EC);border:2px solid var(--gold);border-radius:var(--r);padding:16px 20px;margin-bottom:14px}
+.meta-box .label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.quiz-btn{background:var(--green);color:#fff;border:none;padding:9px 18px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;margin:4px;transition:background .2s}
+.quiz-btn:hover{background:var(--green-l)}
+.qfb{margin-top:12px;padding:12px 16px;border-radius:8px;font-weight:600;display:none}
+.qok{background:#E8F5E9;color:var(--green);border-left:4px solid var(--green)}
+.qerr{background:#FDECEA;color:#B71C1C;border-left:4px solid #B71C1C}
+.toc-item{display:flex;align-items:center;gap:14px;padding:12px 16px;border-radius:10px;margin-bottom:8px;background:var(--card);border:1px solid var(--border);cursor:pointer;transition:background .15s}
+.toc-item:hover{background:#E8F5E9}
+.toc-num{width:34px;height:34px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-weight:800;flex-shrink:0}
+.owasp-item{border-radius:8px;padding:12px;border-left:4px solid;margin-bottom:8px;font-size:.88rem}
+</style>
+</head>
+<body>
+<button class="print-btn" onclick="window.print()">🖨 Imprimir / PDF</button>
+<div class="snum" id="slideNum">1 / 15</div>
+
+<!-- S1 PORTADA -->
+<div class="slide active" id="s1">
+  <div class="banner" style="text-align:center;padding:50px 32px">
+    <div class="inst">Instituto Politécnico Nacional · UPIICSA · Ingeniería en Informática · Semestre 4</div>
+    <h1>Seguridad Informática</h1>
+    <div class="sub" style="font-size:1.3rem;font-weight:700;margin-top:8px">Parcial 2 — Controles y Seguridad de Datos</div>
+    <div class="sub" style="margin-top:6px;opacity:.8">Unidades III y IV · Semanas 6–10</div>
+    <div class="badges" style="justify-content:center;margin-top:24px">
+      <span class="badge">🛡️ Controles de Seguridad</span>
+      <span class="badge">🔑 Control de Acceso</span>
+      <span class="badge">🌐 TACACS · RADIUS · SSO</span>
+      <span class="badge">💾 Seguridad en BD</span>
+      <span class="badge">🕵️ Ataques y CERT/CSIRT</span>
+      <span class="badge">🧪 OWASP Top 10</span>
+    </div>
+  </div>
+  <div class="card">
+    <p style="color:var(--muted);font-size:.9rem;margin-bottom:16px;text-align:center">Índice — haz clic para navegar</p>
+    <div class="toc-item" onclick="goTo(3)"><div class="toc-num">1</div><div><strong>Clases de Controles de Seguridad</strong><br><span style="font-size:.82rem;color:var(--muted)">Preventivos, detectivos, correctivos, disuasivos, recuperación</span></div></div>
+    <div class="toc-item" onclick="goTo(4)"><div class="toc-num">2</div><div><strong>Control de Acceso: DAC · MAC · RBAC · TBAC</strong><br><span style="font-size:.82rem;color:var(--muted)">Modelos de control, comparativa interactiva</span></div></div>
+    <div class="toc-item" onclick="goTo(5)"><div class="toc-num">3</div><div><strong>Administración de Cuentas y Mínimo Privilegio</strong><br><span style="font-size:.82rem;color:var(--muted)">Ciclo de vida de cuentas, bitácoras, monitoreo</span></div></div>
+    <div class="toc-item" onclick="goTo(6)"><div class="toc-num">4</div><div><strong>Controles Remotos: TACACS · RADIUS · SSO · ACLs</strong><br><span style="font-size:.82rem;color:var(--muted)">Autenticación centralizada, comparativa técnica</span></div></div>
+    <div class="toc-item" onclick="goTo(7)"><div class="toc-num">5</div><div><strong>Métodos de Ataque</strong><br><span style="font-size:.82rem;color:var(--muted)">Fuerza bruta, diccionario, ingeniería social, phishing</span></div></div>
+    <div class="toc-item" onclick="goTo(8)"><div class="toc-num">6</div><div><strong>Respuesta a Incidentes: CERT / CSIRT</strong><br><span style="font-size:.82rem;color:var(--muted)">Fases de respuesta, cómputo forense básico</span></div></div>
+    <div class="toc-item" onclick="goTo(9)"><div class="toc-num">7</div><div><strong>Seguridad en Bases de Datos</strong><br><span style="font-size:.82rem;color:var(--muted)">Fundamentos, protección y amenazas específicas</span></div></div>
+    <div class="toc-item" onclick="goTo(10)"><div class="toc-num">8</div><div><strong>Amenazas a BD: Agregación, Inferencia, Covert Channels</strong><br><span style="font-size:.82rem;color:var(--muted)">DAC en BD, Multilevel Security</span></div></div>
+    <div class="toc-item" onclick="goTo(11)"><div class="toc-num">9</div><div><strong>OWASP Top 10 y Seguridad en Aplicaciones</strong><br><span style="font-size:.82rem;color:var(--muted)">SDL, entornos dev/prod, rol del oficial de seguridad</span></div></div>
+    <div class="toc-item" onclick="goTo(12)"><div class="toc-num">10</div><div><strong>Caso Práctico: SECURITAS Corp — Simulacro</strong><br><span style="font-size:.82rem;color:var(--muted)">Actividad integradora del parcial</span></div></div>
+    <div class="toc-item" onclick="goTo(13)"><div class="toc-num">11</div><div><strong>Bibliografía</strong></div></div>
+  </div>
+</div>
+
+<!-- S2 OBJETIVOS -->
+<div class="slide" id="s2">
+  <div class="ph"><div><h2>Objetivos del Parcial 2</h2><div class="meta">Unidades III y IV · 30 horas (15T + 15P)</div></div><div style="font-size:2.5rem">🎯</div></div>
+  <div class="g2">
+    <div class="card">
+      <h3>Al terminar este parcial, el alumno será capaz de:</h3>
+      <ul class="cl">
+        <li>Clasificar controles de seguridad por tipo y función</li>
+        <li>Diseñar esquemas de control de acceso (DAC/MAC/RBAC/TBAC)</li>
+        <li>Administrar cuentas aplicando el principio de mínimo privilegio</li>
+        <li>Comparar TACACS y RADIUS para autenticación centralizada</li>
+        <li>Identificar y responder a ataques comunes (phishing, fuerza bruta)</li>
+        <li>Aplicar protecciones específicas a bases de datos</li>
+        <li>Identificar amenazas de agregación, inferencia y canales encubiertos</li>
+        <li>Revisar aplicaciones con los criterios del OWASP Top 10</li>
+      </ul>
+    </div>
+    <div>
+      <div class="hb green"><h4>🏢 Proyecto SECURITAS Corp — Fase 2</h4><p style="font-size:.88rem">Entregarás el <strong>Manual de Controles e Informe de Hardening</strong>: esquema de acceso, controles en BD, checklist de aplicaciones y simulacro de respuesta a incidente.</p></div>
+      <div class="hb gold"><h4>📊 Evaluación</h4><p style="font-size:.88rem">Fase 2 del proyecto (35) + Simulacro incidente (20) + Organizadores gráficos (15) + Examen escrito (20) + Reporte de práctica (10) = <strong>100 puntos</strong></p></div>
+      <div class="meta-box"><div class="label">💡 Metáfora del parcial</div><p style="font-size:.9rem">Si el Parcial 1 fue el diagnóstico médico, el Parcial 2 es el tratamiento: instalar los controles (medicamentos), configurar accesos (dosis correctas para cada paciente) y preparar al equipo para responder cuando el paciente tenga una recaída (incidente).</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- S3 CLASES DE CONTROLES -->
+<div class="slide" id="s3">
+  <div class="ph"><div><h2>Clases de Controles de Seguridad</h2><div class="meta">Unidad III · 3.1 — Taxonomía de controles</div></div><div style="font-size:2.5rem">🛡️</div></div>
+  <div class="g3" style="margin-bottom:20px">
+    <div class="ctrl-card ctrl-prev"><div class="icon">🚧</div><h3 style="color:var(--green)">Preventivo</h3><p style="font-size:.83rem;margin-top:8px;color:var(--muted)">Evita que ocurra el incidente antes de que suceda.</p><p style="font-size:.82rem;margin-top:6px;font-style:italic">Ej: firewall, control de acceso, capacitación</p></div>
+    <div class="ctrl-card ctrl-det"><div class="icon">🔍</div><h3 style="color:var(--blue)">Detectivo</h3><p style="font-size:.83rem;margin-top:8px;color:var(--muted)">Descubre que ocurrió o está ocurriendo un incidente.</p><p style="font-size:.82rem;margin-top:6px;font-style:italic">Ej: IDS, antivirus, monitoreo de logs, SIEM</p></div>
+    <div class="ctrl-card ctrl-cor"><div class="icon">🔧</div><h3 style="color:#C8922A">Correctivo</h3><p style="font-size:.83rem;margin-top:8px;color:var(--muted)">Reduce el impacto o repara el daño después del incidente.</p><p style="font-size:.82rem;margin-top:6px;font-style:italic">Ej: restaurar backup, parchar sistema, revocar acceso</p></div>
+    <div class="ctrl-card ctrl-dis"><div class="icon">⚠️</div><h3 style="color:var(--wine)">Disuasivo</h3><p style="font-size:.83rem;margin-top:8px;color:var(--muted)">Desalienta al atacante de intentar el ataque.</p><p style="font-size:.82rem;margin-top:6px;font-style:italic">Ej: aviso legal "acceso monitoreado", cámara de seguridad</p></div>
+    <div class="ctrl-card" style="border-color:var(--teal);background:#E0F2F1"><div class="icon">♻️</div><h3 style="color:var(--teal)">Recuperación</h3><p style="font-size:.83rem;margin-top:8px;color:var(--muted)">Restaura la operación normal después de un incidente.</p><p style="font-size:.82rem;margin-top:6px;font-style:italic">Ej: DRP, BCP, sistemas de failover</p></div>
+    <div class="ctrl-card" style="border-color:#6B21A8;background:#F3E8FF"><div class="icon">📋</div><h3 style="color:#6B21A8">Compensatorio</h3><p style="font-size:.83rem;margin-top:8px;color:var(--muted)">Sustituye a un control que no puede implementarse.</p><p style="font-size:.82rem;margin-top:6px;font-style:italic">Ej: supervisor cuando no hay MFA disponible</p></div>
+  </div>
+  <div class="card">
+    <h3>Dimensiones de los controles: ¿Cómo se aplican?</h3>
+    <table class="t">
+      <thead><tr><th>Dimensión</th><th>Descripción</th><th>Ejemplo en SECURITAS Corp</th></tr></thead>
+      <tbody>
+        <tr><td><span class="pill pg">⚙️ Técnico</span></td><td>Implementado por tecnología (software/hardware)</td><td>Firewall, antivirus, cifrado, IDS/IPS</td></tr>
+        <tr><td><span class="pill pb">📋 Administrativo/Gestión</span></td><td>Políticas, procedimientos, capacitación</td><td>Política de contraseñas, programa de awareness</td></tr>
+        <tr><td><span class="pill po">🏢 Físico/Operacional</span></td><td>Controles en el mundo físico</td><td>Torniquetes, cámaras, guardias, jaulas de servidores</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="meta-box"><div class="label">💡 Metáfora del banco</div><p style="font-size:.92rem">Un banco usa controles en capas: <strong>Disuasivo</strong> = cámara visible en la entrada. <strong>Preventivo</strong> = torniquete con tarjeta. <strong>Detectivo</strong> = alarma silenciosa. <strong>Correctivo</strong> = protocolo de cierre de emergencia. <strong>Recuperación</strong> = seguro y procedimiento de reapertura. Ningún control solo es suficiente; la defensa en profundidad usa todos.</p></div>
+</div>
+
+<!-- S4 CONTROL DE ACCESO -->
+<div class="slide" id="s4">
+  <div class="ph"><div><h2>Control de Acceso</h2><div class="meta">Unidad III · 3.2 — DAC · MAC · RBAC · TBAC</div></div><div style="font-size:2.5rem">🔑</div></div>
+  <div class="card" style="margin-bottom:12px">
+    <h3>Selecciona un modelo para ver sus características:</h3>
+    <div style="margin-bottom:16px">
+      <button class="tab-btn active" onclick="showAccess('dac',this)">DAC</button>
+      <button class="tab-btn" onclick="showAccess('mac',this)">MAC</button>
+      <button class="tab-btn" onclick="showAccess('rbac',this)">RBAC</button>
+      <button class="tab-btn" onclick="showAccess('tbac',this)">TBAC</button>
+    </div>
+    <div id="acc-dac" class="access-tab show">
+      <div class="g2">
+        <div class="hb green"><h4>🔓 DAC — Discretionary Access Control</h4><p style="font-size:.88rem">El <strong>dueño del recurso</strong> decide quién puede acceder. Control descentralizado y flexible. Usado en la mayoría de sistemas operativos (Windows NTFS, Linux permisos).</p><ul style="font-size:.85rem;padding-left:16px;margin-top:8px"><li>Alta flexibilidad, fácil de administrar</li><li>Riesgo: un usuario puede compartir acceso sin autorización de TI</li><li>Vulnerable al problema del "Confundido Deputy"</li></ul></div>
+        <div><div class="hb gold"><h4>Metáfora</h4><p style="font-size:.85rem">Es como el dueño de una casa que da copias de la llave a quien quiera. El problema: no controla cuántas copias circulan.</p></div><div class="hb blue"><h4>Ejemplo SECURITAS Corp</h4><p style="font-size:.85rem">El directorio de proyectos: cada gerente decide quién de su equipo puede ver/editar los archivos de su proyecto.</p></div></div>
+      </div>
+    </div>
+    <div id="acc-mac" class="access-tab">
+      <div class="g2">
+        <div class="hb wine"><h4>🔒 MAC — Mandatory Access Control</h4><p style="font-size:.88rem">El <strong>sistema/administrador</strong> impone reglas de acceso basadas en etiquetas de clasificación. El usuario no puede cambiar los permisos. Muy seguro pero rígido. Usado en sistemas militares y gubernamentales.</p><ul style="font-size:.85rem;padding-left:16px;margin-top:8px"><li>Máximo control centralizado</li><li>Muy complejo de administrar</li><li>Bell-LaPadula (confidencialidad) y Biba (integridad)</li></ul></div>
+        <div><div class="hb gold"><h4>Metáfora</h4><p style="font-size:.85rem">Como un sistema de seguridad de una embajada: el guardia (sistema) decide quién entra a cada sala según su nivel de autorización, sin importar lo que diga el visitante.</p></div><div class="hb blue"><h4>Ejemplo</h4><p style="font-size:.85rem">Archivos clasificados "Secreto" solo pueden ser leídos por usuarios con etiqueta de nivel "Secreto" o superior, sin excepción.</p></div></div>
+      </div>
+    </div>
+    <div id="acc-rbac" class="access-tab">
+      <div class="g2">
+        <div class="hb teal"><h4>👥 RBAC — Role-Based Access Control</h4><p style="font-size:.88rem">El acceso se otorga según el <strong>rol del usuario</strong> en la organización. El rol agrupa permisos. Al asignar un rol, el usuario hereda todos sus permisos. Estándar de facto en empresas.</p><ul style="font-size:.85rem;padding-left:16px;margin-top:8px"><li>Fácil de administrar a escala</li><li>Principio de separación de funciones</li><li>Facilita auditorías y cumplimiento</li></ul></div>
+        <div><div class="hb gold"><h4>Metáfora</h4><p style="font-size:.85rem">Como las llaves maestras de un hotel: el rol "Ama de llaves" abre todas las habitaciones; el rol "Huésped" solo abre su habitación.</p></div><div class="hb blue"><h4>Ejemplo SECURITAS Corp</h4><p style="font-size:.85rem">Rol "Desarrollador" → acceso a repositorio y servidor de pruebas. Rol "DBA" → acceso a BD de producción. Rol "Ventas" → CRM y Drive de propuestas.</p></div></div>
+      </div>
+    </div>
+    <div id="acc-tbac" class="access-tab">
+      <div class="g2">
+        <div class="hb blue"><h4>📋 TBAC — Task-Based Access Control</h4><p style="font-size:.88rem">El acceso se otorga según la <strong>tarea o actividad específica</strong> que el usuario debe realizar en ese momento. El permiso es temporal y contextual. Extensión de RBAC para flujos de trabajo.</p><ul style="font-size:.85rem;padding-left:16px;margin-top:8px"><li>Granularidad máxima en flujos de trabajo</li><li>Más complejo de implementar</li><li>Ideal para procesos multi-etapa con aprobaciones</li></ul></div>
+        <div><div class="hb gold"><h4>Metáfora</h4><p style="font-size:.85rem">Como un médico que solo puede prescribir un medicamento controlado cuando está activa una consulta registrada: el permiso existe mientras existe la tarea.</p></div><div class="hb blue"><h4>Ejemplo</h4><p style="font-size:.85rem">Un contador puede aprobar pagos solo cuando tiene asignada la tarea "Revisión de nómina Q3". Fuera de ese contexto, no tiene ese permiso.</p></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Comparativa rápida</h3>
+    <table class="t">
+      <thead><tr><th>Modelo</th><th>¿Quién decide el acceso?</th><th>Flexibilidad</th><th>Uso típico</th></tr></thead>
+      <tbody>
+        <tr><td><strong>DAC</strong></td><td>El dueño del recurso</td><td>Alta</td><td>Sistemas operativos, uso general</td></tr>
+        <tr><td><strong>MAC</strong></td><td>El sistema/política central</td><td>Baja</td><td>Militar, gobierno, alta seguridad</td></tr>
+        <tr><td><strong>RBAC</strong></td><td>Administrador según rol</td><td>Media-Alta</td><td>Empresas, ERP, sistemas corporativos</td></tr>
+        <tr><td><strong>TBAC</strong></td><td>Sistema según tarea activa</td><td>Media</td><td>Flujos de trabajo, BPM, finanzas</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- S5 ADMINISTRACIÓN DE CUENTAS -->
+<div class="slide" id="s5">
+  <div class="ph"><div><h2>Administración de Cuentas y Monitoreo</h2><div class="meta">Unidad III · 3.3 — Mínimo Privilegio · Bitácoras · SIEM</div></div><div style="font-size:2.5rem">📋</div></div>
+  <div class="g2">
+    <div>
+      <div class="hb blue"><h4>🔐 Principio de Mínimo Privilegio (PoLP)</h4><p style="font-size:.88rem">Cada usuario, proceso o sistema debe tener únicamente los permisos mínimos necesarios para realizar su función. Nada más.</p><p style="font-size:.82rem;margin-top:6px;font-style:italic">Metáfora: el mozo de un restaurante puede llevar platos pero no tocar la caja registradora ni la cocina.</p></div>
+      <div class="card">
+        <h3>Ciclo de vida de una cuenta de usuario</h3>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="background:#E8F5E9;border-radius:8px;padding:10px;display:flex;align-items:center;gap:10px"><span style="background:var(--green);color:#fff;border-radius:50%;width:28px;height:28px;display:grid;place-items:center;font-weight:800;flex-shrink:0">1</span><div><strong>Aprovisionamiento</strong> — Se crea la cuenta con los permisos mínimos para el rol</div></div>
+          <div style="background:#E3EEF9;border-radius:8px;padding:10px;display:flex;align-items:center;gap:10px"><span style="background:var(--blue);color:#fff;border-radius:50%;width:28px;height:28px;display:grid;place-items:center;font-weight:800;flex-shrink:0">2</span><div><strong>Uso activo</strong> — Monitoreo continuo, revisión periódica de permisos (access review)</div></div>
+          <div style="background:#FEF3DC;border-radius:8px;padding:10px;display:flex;align-items:center;gap:10px"><span style="background:var(--gold);color:#fff;border-radius:50%;width:28px;height:28px;display:grid;place-items:center;font-weight:800;flex-shrink:0">3</span><div><strong>Modificación</strong> — Cambio de rol, ajuste de permisos al cambiar de puesto</div></div>
+          <div style="background:#F9E8ED;border-radius:8px;padding:10px;display:flex;align-items:center;gap:10px"><span style="background:var(--wine);color:#fff;border-radius:50%;width:28px;height:28px;display:grid;place-items:center;font-weight:800;flex-shrink:0">4</span><div><strong>Desaprovisionamiento</strong> — Revocación inmediata al terminar la relación laboral</div></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Bitácoras y Monitoreo</h3>
+        <div class="hb green"><h4>¿Qué registrar en las bitácoras?</h4><ul style="font-size:.85rem;padding-left:16px;margin-top:6px"><li>Intentos de acceso exitosos y fallidos</li><li>Cambios en permisos y cuentas</li><li>Acceso a datos sensibles o clasificados</li><li>Comandos de administración ejecutados</li><li>Arranque y apagado de sistemas críticos</li></ul></div>
+        <div class="hb wine"><h4>🏗️ SIEM (Security Information and Event Management)</h4><p style="font-size:.85rem">Centraliza logs de múltiples fuentes, correlaciona eventos y genera alertas automáticas. Herramientas: Splunk, IBM QRadar, Microsoft Sentinel.</p><p style="font-size:.82rem;margin-top:6px;font-style:italic">Metáfora: el SIEM es como la central de seguridad del aeropuerto que ve todas las cámaras a la vez y lanza una alarma cuando detecta un patrón sospechoso.</p></div>
+        <div class="hb gold"><h4>Buenas prácticas</h4><ul style="font-size:.85rem;padding-left:16px;margin-top:6px"><li>Proteger las bitácoras contra modificación (inmutables)</li><li>Retención mínima: 90 días activos + 1 año en archivo</li><li>Revisar alertas diariamente</li><li>Realizar access reviews trimestrales</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S6 CONTROLES REMOTOS -->
+<div class="slide" id="s6">
+  <div class="ph"><div><h2>Controles Remotos de Autenticación</h2><div class="meta">Unidad III · 3.4 — TACACS · RADIUS · SSO · ACLs</div></div><div style="font-size:2.5rem">🌐</div></div>
+  <div class="g2">
+    <div class="hb blue" style="padding:20px">
+      <h4 style="font-size:1rem">🔵 RADIUS (Remote Authentication Dial-In User Service)</h4>
+      <table class="t" style="margin-top:10px;font-size:.83rem">
+        <tr><td><strong>Protocolo</strong></td><td>UDP (puertos 1812/1813)</td></tr>
+        <tr><td><strong>Cifrado</strong></td><td>Solo la contraseña (usuario y demás en claro)</td></tr>
+        <tr><td><strong>Funciones AAA</strong></td><td>Autenticación + Autorización (combinadas), Accounting separado</td></tr>
+        <tr><td><strong>Uso típico</strong></td><td>ISPs, WiFi empresarial (802.1X), VPN</td></tr>
+        <tr><td><strong>Estándar</strong></td><td>RFC 2865 / RFC 2866</td></tr>
+      </table>
+      <div style="margin-top:10px;font-size:.83rem;font-style:italic;color:var(--muted)">Metáfora: el guardia de la entrada que verifica tu credencial y anota la hora de entrada/salida, pero no controla qué salas puedes visitar dentro.</div>
+    </div>
+    <div class="hb wine" style="padding:20px">
+      <h4 style="font-size:1rem">🔴 TACACS+ (Terminal Access Controller Access-Control System Plus)</h4>
+      <table class="t" style="margin-top:10px;font-size:.83rem">
+        <tr><td><strong>Protocolo</strong></td><td>TCP (puerto 49)</td></tr>
+        <tr><td><strong>Cifrado</strong></td><td>Todo el cuerpo del paquete cifrado</td></tr>
+        <tr><td><strong>Funciones AAA</strong></td><td>Autenticación, Autorización y Accounting separados e independientes</td></tr>
+        <tr><td><strong>Uso típico</strong></td><td>Administración de dispositivos de red Cisco, routers, switches</td></tr>
+        <tr><td><strong>Estándar</strong></td><td>Propietario Cisco (RFC 8907 más reciente)</td></tr>
+      </table>
+      <div style="margin-top:10px;font-size:.83rem;font-style:italic;color:var(--muted)">Metáfora: el guardia que verifica tu credencial (Auth), te dice exactamente a qué salas puedes entrar (Authz) y registra cada movimiento (Accounting), todo en un sistema separado.</div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>SSO (Single Sign-On) y ACLs</h3>
+    <div class="g2">
+      <div class="hb teal">
+        <h4>🔑 SSO — Inicio de Sesión Único</h4>
+        <p style="font-size:.85rem">El usuario se autentica una sola vez y accede a múltiples sistemas sin volver a escribir sus credenciales. Ejemplo: inicias sesión en Google y accedes a Gmail, Drive, Meet y Classroom automáticamente.</p>
+        <ul style="font-size:.83rem;padding-left:16px;margin-top:8px">
+          <li><strong>Ventajas:</strong> menos contraseñas, mejor experiencia, menor fatiga de contraseñas</li>
+          <li><strong>Riesgo:</strong> si la cuenta SSO se compromete, todos los sistemas quedan expuestos</li>
+          <li><strong>Protocolos:</strong> SAML 2.0, OAuth 2.0, OpenID Connect</li>
+        </ul>
+      </div>
+      <div class="hb gold">
+        <h4>📋 ACLs — Listas de Control de Acceso</h4>
+        <p style="font-size:.85rem">Conjunto de reglas que definen qué tráfico o qué usuarios pueden acceder a un recurso específico. Implementadas en firewalls, routers y sistemas operativos.</p>
+        <ul style="font-size:.83rem;padding-left:16px;margin-top:8px">
+          <li><strong>ACL de red:</strong> filtra tráfico por IP, puerto, protocolo</li>
+          <li><strong>ACL de sistema de archivos:</strong> controla permisos por usuario/grupo sobre archivos</li>
+          <li><strong>Regla implícita final:</strong> "denegar todo lo que no esté explícitamente permitido"</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="hb green"><h4>🏢 Caso SECURITAS Corp: diseño de autenticación centralizada</h4><p style="font-size:.88rem">SECURITAS Corp usa <strong>RADIUS</strong> para el WiFi de empleados (integrado con Active Directory vía 802.1X), <strong>TACACS+</strong> para la administración de los routers y switches de red, y <strong>SSO con SAML 2.0</strong> para que los 80 empleados accedan con una sola cuenta a: ERP, CRM, Drive y sistema de tickets.</p></div>
+</div>
+
+<!-- S7 MÉTODOS DE ATAQUE -->
+<div class="slide" id="s7">
+  <div class="ph"><div><h2>Métodos de Ataque</h2><div class="meta">Unidad III · 3.5 — Ataques contra autenticación y el factor humano</div></div><div style="font-size:2.5rem">⚔️</div></div>
+  <div class="card" style="margin-bottom:16px">
+    <h3>Haz clic en cada ataque para ver cómo funciona y cómo defenderte</h3>
+    <div class="g3">
+      <div class="attack-card" onclick="toggleAttack('brute')">
+        <div class="icon">🔨</div>
+        <strong>Fuerza Bruta</strong>
+        <div id="atk-brute" class="attack-detail">
+          <strong>¿Cómo funciona?</strong> Prueba sistemáticamente todas las combinaciones posibles de contraseña hasta encontrar la correcta.<br><br>
+          <strong>Variantes:</strong> Ataque de diccionario (lista de palabras comunes), Rainbow tables (hashes precalculados), Password spraying (1 contraseña común contra muchos usuarios).<br><br>
+          <strong>Defensa:</strong> Bloqueo tras N intentos fallidos, CAPTCHA, MFA, contraseñas largas y complejas, detección de anomalías (muchos intentos en poco tiempo).<br><br>
+          <em style="color:var(--muted)">Metáfora: como intentar abrir una caja fuerte probando todas las combinaciones del 000 al 999. Con 12 dígitos tarda millones de años.</em>
+        </div>
+      </div>
+      <div class="attack-card" onclick="toggleAttack('social')">
+        <div class="icon">🎭</div>
+        <strong>Ingeniería Social</strong>
+        <div id="atk-social" class="attack-detail">
+          <strong>¿Cómo funciona?</strong> Manipula psicológicamente a personas para que revelen información o realicen acciones que comprometan la seguridad. Explota emociones: miedo, urgencia, autoridad, curiosidad.<br><br>
+          <strong>Técnicas:</strong> Pretexting (crear un escenario falso), Baiting (USB infectado abandonado), Quid pro quo (ofrecer algo a cambio), Vishing (por teléfono).<br><br>
+          <strong>Defensa:</strong> Awareness, verificación de identidad, procedimientos de validación antes de compartir información.<br><br>
+          <em style="color:var(--muted)">Metáfora: el estafador que llama haciéndose pasar por el banco para que le des tu NIP. El "firewall humano" capacitado lo detecta.</em>
+        </div>
+      </div>
+      <div class="attack-card" onclick="toggleAttack('phishing')">
+        <div class="icon">🎣</div>
+        <strong>Phishing / Spear Phishing</strong>
+        <div id="atk-phishing" class="attack-detail">
+          <strong>¿Cómo funciona?</strong> Correo/mensaje fraudulento que imita a una entidad legítima (banco, empresa, jefe) para robar credenciales o instalar malware.<br><br>
+          <strong>Variantes:</strong> Spear Phishing (dirigido a persona específica), Whaling (dirigido a ejecutivos), Smishing (SMS), Vishing (voz).<br><br>
+          <strong>Defensa:</strong> Filtros antispam, verificar remitente real (no solo nombre), no hacer clic en links sin verificar, MFA, reportar correos sospechosos.<br><br>
+          <em style="color:var(--muted)">Metáfora: el anzuelo en el mar. El phishing masivo es pesca con red; el spear phishing es pesca con arpón apuntando al pez más grande.</em>
+        </div>
+      </div>
+      <div class="attack-card" onclick="toggleAttack('sqli')">
+        <div class="icon">💉</div>
+        <strong>SQL Injection</strong>
+        <div id="atk-sqli" class="attack-detail">
+          <strong>¿Cómo funciona?</strong> El atacante inserta código SQL malicioso en campos de entrada para manipular la base de datos: extraer, modificar o eliminar datos.<br><br>
+          <strong>Ejemplo:</strong> En el campo usuario ingresa: <code>admin' OR '1'='1</code> — el sistema puede autenticar sin contraseña.<br><br>
+          <strong>Defensa:</strong> Consultas parametrizadas (prepared statements), ORM, WAF, validación de entradas, principio de mínimo privilegio en la BD.<br><br>
+          <em style="color:var(--muted)">Metáfora: como meter en el buzón de la empresa un sobre con instrucciones para que el empleado interno ejecute acciones no autorizadas.</em>
+        </div>
+      </div>
+      <div class="attack-card" onclick="toggleAttack('ransomware')">
+        <div class="icon">🔐</div>
+        <strong>Ransomware</strong>
+        <div id="atk-ransomware" class="attack-detail">
+          <strong>¿Cómo funciona?</strong> Cifra los archivos de la víctima y exige pago (rescate) para entregar la clave de descifrado. Entra por phishing, RDP expuesto, o vulnerabilidades sin parchar.<br><br>
+          <strong>Variantes modernas:</strong> Double extortion (cifra + amenaza publicar datos), Ransomware-as-a-Service (RaaS).<br><br>
+          <strong>Defensa:</strong> Backups offline y verificados, segmentación de red, parchado inmediato, no pagar (no garantiza recuperación).<br><br>
+          <em style="color:var(--muted)">Metáfora: el ladrón que no roba tus objetos sino que te cambia la cerradura de tu propia casa y pide dinero por darte la nueva llave.</em>
+        </div>
+      </div>
+      <div class="attack-card" onclick="toggleAttack('mitm')">
+        <div class="icon">👤</div>
+        <strong>Man-in-the-Middle</strong>
+        <div id="atk-mitm" class="attack-detail">
+          <strong>¿Cómo funciona?</strong> El atacante se interpone entre dos partes que creen comunicarse directamente, interceptando y posiblemente modificando la comunicación.<br><br>
+          <strong>Técnicas:</strong> ARP Spoofing, DNS Spoofing, SSL Stripping, WiFi Evil Twin.<br><br>
+          <strong>Defensa:</strong> HTTPS con HSTS, certificados válidos, VPN, no usar WiFi público sin VPN, DNSSEC.<br><br>
+          <em style="color:var(--muted)">Metáfora: el cartero corrupto que abre tus cartas, las lee, posiblemente las modifica y las reenvía, mientras tú crees que llegaron directo.</em>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S8 CERT/CSIRT -->
+<div class="slide" id="s8">
+  <div class="ph"><div><h2>Respuesta a Incidentes: CERT / CSIRT</h2><div class="meta">Unidad III · 3.5 — Cómputo Forense Básico</div></div><div style="font-size:2.5rem">🚨</div></div>
+  <div class="g2">
+    <div class="card">
+      <h3>Fases de Respuesta a Incidentes (NIST SP 800-61)</h3>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="background:#E3EEF9;border-radius:8px;padding:12px;border-left:4px solid var(--blue)"><strong style="color:var(--blue)">1. Preparación</strong><br><span style="font-size:.85rem">Establecer el equipo CSIRT, documentar procedimientos, configurar herramientas, capacitar al personal. Antes de que ocurra el incidente.</span></div>
+        <div style="background:#E8F5E9;border-radius:8px;padding:12px;border-left:4px solid var(--green)"><strong style="color:var(--green)">2. Detección y Análisis</strong><br><span style="font-size:.85rem">Identificar el incidente (SIEM, IDS, reporte de usuario), clasificar su severidad, documentar evidencias iniciales y determinar el alcance.</span></div>
+        <div style="background:#FDECEA;border-radius:8px;padding:12px;border-left:4px solid #B71C1C"><strong style="color:#B71C1C">3. Contención</strong><br><span style="font-size:.85rem">Limitar el daño inmediato. Corto plazo: aislar sistemas afectados. Largo plazo: implementar soluciones temporales mientras se trabaja en la erradicación.</span></div>
+        <div style="background:#FEF3DC;border-radius:8px;padding:12px;border-left:4px solid var(--gold)"><strong style="color:#92620A">4. Erradicación</strong><br><span style="font-size:.85rem">Eliminar la causa raíz: remover malware, cerrar vulnerabilidades explotadas, revocar credenciales comprometidas, parchar sistemas.</span></div>
+        <div style="background:#E8F5E9;border-radius:8px;padding:12px;border-left:4px solid var(--green)"><strong style="color:var(--green)">5. Recuperación</strong><br><span style="font-size:.85rem">Restaurar sistemas a operación normal: restaurar desde backups limpios, monitoreo intensificado post-incidente, validar que el sistema está sano.</span></div>
+        <div style="background:#F9E8ED;border-radius:8px;padding:12px;border-left:4px solid var(--wine)"><strong style="color:var(--wine)">6. Lecciones Aprendidas</strong><br><span style="font-size:.85rem">Reunión post-mortem (dentro de 2 semanas): ¿Qué pasó? ¿Cómo respondimos? ¿Qué mejorar? Documentar y actualizar procedimientos.</span></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>CERT vs CSIRT</h3>
+        <table class="t" style="font-size:.83rem">
+          <tr><td><strong>CERT</strong></td><td>Computer Emergency Response Team — término genérico, puede ser nacional o sectorial (ej: CERT-MX del gobierno de México)</td></tr>
+          <tr><td><strong>CSIRT</strong></td><td>Computer Security Incident Response Team — equipo interno de la organización que responde a incidentes propios</td></tr>
+        </table>
+        <div class="hb wine" style="margin-top:12px"><h4>CSIRT de SECURITAS Corp</h4><ul style="font-size:.85rem;padding-left:16px;margin-top:6px"><li>Coordinador de Incidentes (Líder de Seguridad)</li><li>Analista Forense (Custodio de TI)</li><li>Comunicaciones (RR.HH. / Dirección)</li><li>Técnico de Respuesta (Desarrolladores)</li></ul></div>
+      </div>
+      <div class="card">
+        <h3>Cómputo Forense — Principios básicos</h3>
+        <ul class="cl">
+          <li><strong>Cadena de custodia:</strong> documentar quién manejó la evidencia y cuándo</li>
+          <li><strong>No modificar la evidencia:</strong> trabajar sobre copias forenses (imágenes de disco)</li>
+          <li><strong>Orden de volatilidad:</strong> recolectar primero lo más volátil (RAM, conexiones de red activas) antes que lo estático (disco)</li>
+          <li><strong>Hashing para integridad:</strong> MD5/SHA-256 de la evidencia antes y después</li>
+          <li><strong>Herramientas:</strong> FTK, Autopsy, Volatility (RAM), Wireshark (red)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S9 SEGURIDAD EN BD -->
+<div class="slide" id="s9">
+  <div class="ph"><div><h2>Seguridad en Bases de Datos</h2><div class="meta">Unidad IV · 4.1 — Fundamentos y protección de datos</div></div><div style="font-size:2.5rem">💾</div></div>
+  <div class="g2">
+    <div class="card">
+      <h3>¿Por qué las bases de datos son un objetivo crítico?</h3>
+      <div class="hb wine"><h4>📊 El activo más valioso</h4><p style="font-size:.88rem">Las BD contienen el núcleo del negocio: datos de clientes, transacciones, propiedad intelectual, información financiera. Un breach de BD puede significar millones en multas (LFPDPPP, GDPR), pérdida de clientes y daño reputacional irreparable.</p></div>
+      <div class="hb blue"><h4>Estadística real (IBM Cost of a Data Breach 2023)</h4><ul style="font-size:.85rem;padding-left:16px;margin-top:6px"><li>Costo promedio de una brecha de datos: <strong>USD 4.45 millones</strong></li><li>Tiempo promedio de detección: <strong>204 días</strong></li><li>Tiempo promedio de contención: <strong>73 días adicionales</strong></li><li>Las brechas con cifrado de datos son 50% más baratas de gestionar</li></ul></div>
+    </div>
+    <div class="card">
+      <h3>Principios de seguridad en BD</h3>
+      <ul class="cl">
+        <li><strong>Autenticación robusta:</strong> cuentas individuales por usuario (nunca compartir cuenta DBA), MFA para acceso a producción</li>
+        <li><strong>Autorización granular:</strong> permisos a nivel de tabla, columna o fila según necesidad</li>
+        <li><strong>Cifrado en reposo:</strong> TDE (Transparent Data Encryption) para datos sensibles en disco</li>
+        <li><strong>Cifrado en tránsito:</strong> TLS/SSL entre la aplicación y la BD, nunca conexiones en claro</li>
+        <li><strong>Auditoría nativa:</strong> activar el módulo de auditoría del SGBD (Oracle Audit, SQL Server Audit)</li>
+        <li><strong>Backup y recuperación:</strong> backups cifrados, verificados periódicamente</li>
+        <li><strong>Hardening del SGBD:</strong> deshabilitar servicios innecesarios, aplicar parches de seguridad</li>
+        <li><strong>Separación de entornos:</strong> nunca usar datos reales en desarrollo o pruebas sin anonimizarlos</li>
+      </ul>
+    </div>
+  </div>
+  <div class="meta-box"><div class="label">💡 Metáfora de la bóveda dentro del banco</div><p style="font-size:.92rem">Si el sistema informático es el banco, la base de datos es la bóveda principal. No basta con asegurar el banco (servidor): la bóveda tiene su propia combinación (autenticación de BD), su propio sistema de alarma (auditoría) y sus cajas individuales cifradas (cifrado de columnas sensibles). Muchos hackers pasan el banco y apuntan directo a la bóveda.</p></div>
+</div>
+
+<!-- S10 AMENAZAS BD -->
+<div class="slide" id="s10">
+  <div class="ph"><div><h2>Amenazas Específicas a Bases de Datos</h2><div class="meta">Unidad IV · 4.2 — Agregación · Inferencia · Covert Channels · MLS</div></div><div style="font-size:2.5rem">🕵️</div></div>
+  <div class="g2">
+    <div>
+      <div class="hb wine">
+        <h4>🧩 Problema de Agregación</h4>
+        <p style="font-size:.88rem">Combinar varios datos que individualmente son de bajo nivel de clasificación para obtener información de nivel superior.</p>
+        <div style="background:rgba(0,0,0,.06);border-radius:8px;padding:10px;margin-top:8px;font-size:.83rem">
+          <strong>Ejemplo:</strong> Dato 1: "Juan Pérez trabaja en el Departamento de Sistemas" (Público)<br>Dato 2: "El Departamento de Sistemas tiene acceso al servidor de producción" (Interno)<br>Dato 3: "El servidor de producción tiene la IP 192.168.1.10" (Confidencial)<br><strong>→ Resultado agregado:</strong> Juan Pérez puede acceder al servidor 192.168.1.10 (¡nivel Secreto!)
+        </div>
+        <p style="font-size:.82rem;margin-top:8px;font-style:italic">Defensa: limitar acceso cruzado entre bases de datos, detectar patrones de consultas inusuales, necesidad de conocer ("need-to-know").</p>
+      </div>
+      <div class="hb gold">
+        <h4>🔍 Problema de Inferencia</h4>
+        <p style="font-size:.88rem">Deducir información de nivel superior a partir de consultas o respuestas de nivel inferior, incluso cuando la información directa no está disponible.</p>
+        <div style="background:rgba(0,0,0,.06);border-radius:8px;padding:10px;margin-top:8px;font-size:.83rem">
+          <strong>Ejemplo:</strong> Un analista sin acceso a salarios hace la consulta: "¿Cuántos empleados del área ejecutiva tienen salario > $100,000?" Si el resultado es 1, y sabe que solo hay una persona ejecutiva, acaba de inferir el salario.
+        </div>
+        <p style="font-size:.82rem;margin-top:8px;font-style:italic">Defensa: perturbación de datos estadísticos (añadir ruido), supresión de celdas con pocos registros, revisión de consultas estadísticas.</p>
+      </div>
+    </div>
+    <div>
+      <div class="hb teal">
+        <h4>🕳️ Covert Channels (Canales Encubiertos)</h4>
+        <p style="font-size:.88rem">Canal de comunicación no diseñado para transferir información pero que puede usarse para filtrar datos sin ser detectado.</p>
+        <ul style="font-size:.85rem;padding-left:16px;margin-top:8px">
+          <li><strong>Canal de almacenamiento:</strong> modificar atributos de archivos (timestamps) para codificar información</li>
+          <li><strong>Canal de tiempo:</strong> medir el tiempo de respuesta de queries para inferir datos</li>
+          <li><strong>DNS Tunneling:</strong> codificar datos en consultas DNS para exfiltrarlos</li>
+        </ul>
+        <p style="font-size:.82rem;margin-top:8px;font-style:italic">Defensa: monitoreo de tráfico DNS, detección de anomalías en patrones de acceso, separación estricta de redes.</p>
+      </div>
+      <div class="card">
+        <h3>DAC en BD y Multilevel Security (MLS)</h3>
+        <div class="hb blue"><h4>DAC en Bases de Datos</h4><p style="font-size:.85rem">Los SGBD implementan DAC: el dueño de un objeto (tabla, vista) concede permisos (GRANT) a otros usuarios. Ejemplo SQL: <code>GRANT SELECT ON Clientes TO Ventas;</code></p></div>
+        <div class="hb green"><h4>MLS — Multilevel Security</h4><p style="font-size:.85rem">La BD asigna etiquetas de clasificación a cada fila o celda. Un usuario solo puede ver los datos cuya clasificación es igual o inferior a su nivel de autorización. Implementado en: Oracle Label Security, PostgreSQL con extensiones, SELinux.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S11 OWASP Y APLICACIONES -->
+<div class="slide" id="s11">
+  <div class="ph"><div><h2>Seguridad en Aplicaciones</h2><div class="meta">Unidad IV · 4.3 — OWASP Top 10 · SDL · Oficial de Seguridad</div></div><div style="font-size:2.5rem">🧪</div></div>
+  <div class="card" style="margin-bottom:16px">
+    <h3>OWASP Top 10 (2021) — Las vulnerabilidades web más críticas</h3>
+    <div class="g2">
+      <div>
+        <div class="owasp-item" style="border-color:#B71C1C;background:#FDECEA"><strong style="color:#B71C1C">A01 — Control de Acceso Roto</strong><br><span style="font-size:.82rem">Usuarios acceden a funciones o datos que no deberían. Subir de privilegios, ver datos de otros. Defensa: RBAC estricto, tests de autorización.</span></div>
+        <div class="owasp-item" style="border-color:#E53935;background:#FEF2F2"><strong style="color:#E53935">A02 — Fallos Criptográficos</strong><br><span style="font-size:.82rem">Datos sensibles expuestos por cifrado débil o ausente. Defensa: TLS, AES-256, no almacenar contraseñas en claro.</span></div>
+        <div class="owasp-item" style="border-color:#C62828;background:#FDECEA"><strong style="color:#C62828">A03 — Inyección (SQLi, XSS, etc.)</strong><br><span style="font-size:.82rem">Datos no confiables enviados como comandos. Defensa: consultas parametrizadas, sanitización de entradas.</span></div>
+        <div class="owasp-item" style="border-color:var(--gold);background:#FEF3DC"><strong style="color:#92620A">A04 — Diseño Inseguro</strong><br><span style="font-size:.82rem">Falta de threat modeling desde el diseño. Defensa: SDL desde la fase de requisitos.</span></div>
+        <div class="owasp-item" style="border-color:#2196F3;background:#E3F2FD"><strong style="color:#1565C0">A05 — Configuración de Seguridad Incorrecta</strong><br><span style="font-size:.82rem">Configuraciones por defecto, directorios expuestos. Defensa: hardening, revisar configuraciones en cada deploy.</span></div>
+      </div>
+      <div>
+        <div class="owasp-item" style="border-color:var(--green);background:#E8F5E9"><strong style="color:var(--green)">A06 — Componentes Vulnerables</strong><br><span style="font-size:.82rem">Librerías desactualizadas con vulnerabilidades conocidas. Defensa: SCA (Software Composition Analysis), actualizar dependencias.</span></div>
+        <div class="owasp-item" style="border-color:var(--teal);background:#E0F2F1"><strong style="color:var(--teal)">A07 — Fallos de Autenticación</strong><br><span style="font-size:.82rem">Sesiones débiles, contraseñas por defecto, sin MFA. Defensa: MFA, gestión de sesiones robusta.</span></div>
+        <div class="owasp-item" style="border-color:#6B21A8;background:#F3E8FF"><strong style="color:#6B21A8">A08 — Fallos en Software e Integridad</strong><br><span style="font-size:.82rem">Actualización o serialización insegura. Defensa: verificar firmas digitales, CI/CD seguro.</span></div>
+        <div class="owasp-item" style="border-color:#C8922A;background:#FEF3DC"><strong style="color:#92620A">A09 — Fallos en Registro y Monitoreo</strong><br><span style="font-size:.82rem">Sin logs, sin alertas = los ataques pasan desapercibidos. Defensa: SIEM, logs centralizados.</span></div>
+        <div class="owasp-item" style="border-color:#455A64;background:#ECEFF1"><strong style="color:#455A64">A10 — Server-Side Request Forgery</strong><br><span style="font-size:.82rem">Servidor realiza peticiones a URLs internas controladas por el atacante. Defensa: validar URLs destino, listas blancas.</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="hb blue">
+      <h4>🔄 SDL — Secure Development Lifecycle</h4>
+      <p style="font-size:.85rem">Integrar seguridad en todas las fases del desarrollo: <strong>Requisitos</strong> (threat modeling) → <strong>Diseño</strong> (arquitectura segura) → <strong>Implementación</strong> (code review, SAST) → <strong>Pruebas</strong> (pentest, DAST) → <strong>Despliegue</strong> (hardening, secrets management) → <strong>Operación</strong> (monitoreo, parches).</p>
+    </div>
+    <div class="hb wine">
+      <h4>👮 Rol del Oficial de Seguridad en Aplicaciones</h4>
+      <ul style="font-size:.85rem;padding-left:16px;margin-top:6px">
+        <li>Definir estándares de codificación segura</li>
+        <li>Revisar y aprobar arquitecturas antes de implementar</li>
+        <li>Gestionar el proceso de gestión de vulnerabilidades</li>
+        <li>Coordinar pruebas de seguridad (pentest, code review)</li>
+        <li>Capacitar a los desarrolladores</li>
+        <li>Mantener el inventario de aplicaciones y sus riesgos</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- S12 CASO PRÁCTICO -->
+<div class="slide" id="s12">
+  <div class="ph"><div><h2>Caso Práctico — SECURITAS Corp</h2><div class="meta">Fase 2 del Proyecto Integrador · Simulacro de Incidente</div></div><div style="font-size:2.5rem">🚨</div></div>
+  <div class="hb red" style="margin-bottom:20px">
+    <h4>⚠️ ALERTA — Incidente en curso (Escenario del simulacro)</h4>
+    <p style="font-size:.9rem">Son las 9:15 AM del lunes. El departamento de TI recibe 5 reportes de empleados que recibieron un correo con asunto "Actualización urgente de contraseña corporativa". 3 empleados hicieron clic y proporcionaron sus credenciales en un sitio que imitaba el portal interno. Uno de ellos tiene acceso al servidor de BD de producción. Los logs muestran un acceso inusual a la BD a las 9:08 AM desde una IP de Colombia.</p>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <h3>Entregable — Manual de Controles (Fase 2)</h3>
+      <ul class="cl">
+        <li><strong>Sección 1:</strong> Esquema de control de acceso RBAC para los 80 empleados de SECURITAS Corp (roles, permisos por sistema)</li>
+        <li><strong>Sección 2:</strong> Diseño de autenticación centralizada (RADIUS para WiFi, SSO para aplicaciones)</li>
+        <li><strong>Sección 3:</strong> Procedimiento de administración de cuentas (aprovisionamiento, access review, offboarding)</li>
+        <li><strong>Sección 4:</strong> Identificación de amenazas a la BD: mapa de vulnerabilidades de agregación e inferencia</li>
+        <li><strong>Sección 5:</strong> Checklist de controles OWASP Top 10 para las aplicaciones web de SECURITAS Corp</li>
+        <li><strong>Sección 6:</strong> Protocolo de respuesta a incidente activado en el simulacro (con las 6 fases documentadas)</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Quiz — Respuesta al incidente del simulacro</h3>
+        <p style="font-size:.88rem;margin-bottom:12px">¿Cuál es la acción MÁS URGENTE en este momento?</p>
+        <div>
+          <button class="quiz-btn" onclick="ansQ12('a')">A) Notificar a todos los empleados por correo</button><br>
+          <button class="quiz-btn" onclick="ansQ12('b')" style="margin-top:6px">B) Revocar las credenciales comprometidas y aislar la sesión activa en BD</button><br>
+          <button class="quiz-btn" onclick="ansQ12('c')" style="margin-top:6px">C) Investigar primero quién envió el phishing</button><br>
+          <button class="quiz-btn" onclick="ansQ12('d')" style="margin-top:6px">D) Esperar a confirmar si realmente hay exfiltración de datos</button>
+        </div>
+        <div id="q12ok" class="qfb qok">✅ ¡Correcto! La fase de <strong>Contención</strong> es primero. Revocar credenciales y aislar la sesión activa detiene el daño en curso. Todo lo demás (investigación, notificación) viene después de contener.</div>
+        <div id="q12err" class="qfb qerr">❌ No es la prioridad inmediata. En incidentes activos, siempre primero <strong>Contener</strong>: revocar accesos y aislar sistemas afectados. Luego investigar y comunicar.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S13 BIBLIOGRAFÍA -->
+<div class="slide" id="s13">
+  <div class="ph"><div><h2>Bibliografía del Parcial 2</h2><div class="meta">Fuentes básicas y complementarias</div></div><div style="font-size:2.5rem">📚</div></div>
+  <div class="g2">
+    <div class="card">
+      <h3>📗 Bibliografía básica</h3>
+      <ul class="cl">
+        <li><strong>Baca, G. (2016).</strong> <em>Introducción a la seguridad informática.</em> Grupo Editorial Patria. <span class="pill pg">Caps. 4–7</span></li>
+        <li><strong>Vieites, G.A. (2006).</strong> <em>Enciclopedia de la seguridad informática.</em> Ra-Ma. <span class="pill pg">Partes III y IV</span></li>
+        <li><strong>Users Staff (2013).</strong> <em>Gestión de la seguridad informática: Manuales USERS.</em> Creative Andina Corp.</li>
+        <li><strong>Albert, J. (2021).</strong> <em>Ciberseguridad para PC.</em> Babelcube Inc.</li>
+        <li><strong>Kamberg, M.L. (2017).</strong> <em>Ciberseguridad: protege tu identidad y tus datos.</em> Rosen Central.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>📘 Bibliografía complementaria</h3>
+      <ul class="cl">
+        <li><strong>Reynoso, S.C. (2012).</strong> <em>Los 27 Controles Críticos de Seguridad Informática.</em> Createspace.</li>
+        <li><strong>Harris, S. & Maymi, F. (2022).</strong> <em>CISSP All-in-One Exam Guide</em> (9ª ed.). McGraw-Hill. <span class="pill pg">Caps. 5–9</span></li>
+        <li><strong>Tipton, H. & Krause, M. (2007).</strong> <em>Information Security Management Handbook</em> (6ª ed.). CRC Press.</li>
+        <li><strong>NIST SP 800-61 Rev.2.</strong> Computer Security Incident Handling Guide. NIST.</li>
+        <li><strong>OWASP Top 10 (2021).</strong> owasp.org/Top10</li>
+        <li><strong>CIS Controls v8 (2021).</strong> cisecurity.org</li>
+        <li><strong>SERACIS (2021).</strong> Análisis de riesgos de seguridad informática. seracis.com</li>
+        <li><strong>Paula, D. (2023).</strong> <em>Cybersecurity Essentials Made Easy.</em> Independently Published.</li>
+        <li><strong>Sosa, R.D. (2023).</strong> <em>Manual de Seguridad Informática.</em> Colombia.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <h3>🌐 Recursos digitales para el aula invertida</h3>
+    <div class="g3">
+      <div class="hb green"><h4>Controles y acceso</h4><ul style="font-size:.82rem;padding-left:16px;margin-top:6px"><li>CIS Controls — cisecurity.org</li><li>NIST CSF — csrc.nist.gov</li><li>ISACA — isaca.org</li></ul></div>
+      <div class="hb blue"><h4>Seguridad en aplicaciones y BD</h4><ul style="font-size:.82rem;padding-left:16px;margin-top:6px"><li>OWASP — owasp.org</li><li>PortSwigger Web Security Academy</li><li>HackTheBox (entorno controlado)</li></ul></div>
+      <div class="hb wine"><h4>Incidentes y respuesta</h4><ul style="font-size:.82rem;padding-left:16px;margin-top:6px"><li>CERT-MX — gob.mx/cert</li><li>Welivesecurity (en español)</li><li>Verizon DBIR (informe anual)</li></ul></div>
+    </div>
+  </div>
+  <div class="banner" style="text-align:center;padding:24px 32px;margin-top:4px">
+    <h2 style="font-size:1.2rem;margin-bottom:8px">🎓 ¡Éxito en el Parcial 2!</h2>
+    <p style="opacity:.9;font-size:.9rem">UPIICSA · IPN · Seguridad Informática · Plan 2021</p>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <button onclick="prevSlide()" id="btnPrev">← Anterior</button>
+  <div class="dots" id="navDots"></div>
+  <span class="nav-label" id="navLabel">Portada</span>
+  <button onclick="nextSlide()" id="btnNext">Siguiente →</button>
+</div>
+
+<script>
+const SLIDES=[
+  {id:'s1',label:'Portada'},{id:'s2',label:'Objetivos'},{id:'s3',label:'Clases de Controles'},
+  {id:'s4',label:'Control de Acceso'},{id:'s5',label:'Cuentas y Monitoreo'},{id:'s6',label:'TACACS/RADIUS/SSO'},
+  {id:'s7',label:'Métodos de Ataque'},{id:'s8',label:'CERT/CSIRT'},{id:'s9',label:'Seguridad en BD'},
+  {id:'s10',label:'Amenazas a BD'},{id:'s11',label:'OWASP Top 10'},{id:'s12',label:'Caso Práctico'},
+  {id:'s13',label:'Bibliografía'}
+];
+let cur=0;
+const dotsEl=document.getElementById('navDots');
+SLIDES.forEach((_,i)=>{const d=document.createElement('span');if(i===0)d.classList.add('active');d.onclick=()=>goTo(i+1);dotsEl.appendChild(d);});
+function showSlide(idx){
+  SLIDES.forEach((s,i)=>document.getElementById(s.id).classList.toggle('active',i===idx));
+  dotsEl.querySelectorAll('span').forEach((d,i)=>d.classList.toggle('active',i===idx));
+  document.getElementById('navLabel').textContent=SLIDES[idx].label;
+  document.getElementById('btnPrev').disabled=idx===0;
+  document.getElementById('btnNext').disabled=idx===SLIDES.length-1;
+  document.getElementById('slideNum').textContent=`${idx+1} / ${SLIDES.length}`;
+  window.scrollTo(0,0);cur=idx;
+}
+function nextSlide(){if(cur<SLIDES.length-1)showSlide(cur+1);}
+function prevSlide(){if(cur>0)showSlide(cur-1);}
+function goTo(n){showSlide(n-1);}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowDown')nextSlide();if(e.key==='ArrowLeft'||e.key==='ArrowUp')prevSlide();});
+function showAccess(model,btn){
+  document.querySelectorAll('.access-tab').forEach(t=>t.classList.remove('show'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('acc-'+model).classList.add('show');
+  btn.classList.add('active');
+}
+function toggleAttack(id){
+  const el=document.getElementById('atk-'+id);
+  el.classList.toggle('open');
+}
+function ansQ12(ans){
+  document.getElementById('q12ok').style.display=ans==='b'?'block':'none';
+  document.getElementById('q12err').style.display=ans!=='b'?'block':'none';
+}
+showSlide(0);
+</script>
+</body>
+</html>
