@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloque IV — Visualización, Dashboards y Big Data</title>
+<style>
+  :root{--bg:#04080f;--card:#0b1628;--border:#1e3a5f;--violet:#7c3aed;--cyan:#06b6d4;--green:#10b981;--orange:#f59e0b;--red:#ef4444;--pink:#ec4899;--yellow:#fbbf24;--text:#e2e8f0;--muted:#64748b;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden;height:100vh;}
+  #navbar{position:fixed;top:0;left:0;right:0;height:54px;background:rgba(4,8,15,.96);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:100;backdrop-filter:blur(8px);}
+  #navbar .brand{color:var(--orange);font-weight:700;font-size:.85rem;letter-spacing:1px;}
+  #navbar .brand span{color:var(--yellow);}
+  .stabs{display:flex;gap:6px;}
+  .stabs button{background:transparent;border:1px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:20px;cursor:pointer;font-size:.75rem;transition:all .2s;}
+  .stabs button.active{background:var(--orange);border-color:var(--orange);color:#000;font-weight:700;}
+  .stabs button:hover:not(.active){border-color:var(--orange);color:var(--orange);}
+  #ctr{color:var(--muted);font-size:.8rem;min-width:80px;text-align:right;}
+  #pb{position:fixed;top:54px;left:0;height:3px;background:linear-gradient(90deg,var(--orange),var(--yellow));transition:width .3s;z-index:100;}
+  #sc{position:fixed;top:57px;left:0;right:0;bottom:40px;overflow:hidden;}
+  .slide{position:absolute;top:0;left:0;right:0;bottom:0;padding:28px 48px;display:none;overflow-y:auto;animation:fi .35s ease;}
+  .slide.active{display:flex;flex-direction:column;}
+  @keyframes fi{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+  #footer{position:fixed;bottom:0;left:0;right:0;height:40px;background:rgba(4,8,15,.96);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:16px;z-index:100;}
+  #footer button{background:var(--card);border:1px solid var(--border);color:var(--text);padding:5px 20px;border-radius:6px;cursor:pointer;font-size:.8rem;transition:all .2s;}
+  #footer button:hover{border-color:var(--orange);color:var(--orange);}
+  #footer .hint{color:var(--muted);font-size:.72rem;}
+  h1{font-size:2rem;font-weight:800;line-height:1.2;margin-bottom:10px;}
+  h2{font-size:1.5rem;font-weight:700;margin-bottom:14px;}
+  h3{font-size:1.05rem;font-weight:600;color:var(--orange);margin-bottom:8px;margin-top:12px;}
+  p{font-size:.92rem;line-height:1.65;margin-bottom:8px;}
+  ul,ol{padding-left:20px;font-size:.9rem;line-height:1.8;}
+  li{margin-bottom:4px;}
+  .sub{color:var(--muted);font-size:1rem;}
+  .cover{align-items:center;justify-content:center;text-align:center;}
+  .cover h1{font-size:2.3rem;background:linear-gradient(135deg,var(--orange),var(--yellow));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;}
+  .badge{display:inline-block;border:1px solid var(--orange);border-radius:8px;padding:8px 24px;color:var(--orange);font-size:.9rem;font-weight:700;letter-spacing:2px;margin-bottom:20px;background:rgba(245,158,11,.08);}
+  .sg{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:20px;}
+  .sc2{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 16px;width:180px;text-align:left;}
+  .sc2 .num{color:var(--orange);font-size:.7rem;font-weight:700;}
+  .sc2 .nm{font-size:.8rem;margin-top:4px;}
+  .cg{display:grid;gap:14px;margin-top:8px;}
+  .cg.c2{grid-template-columns:1fr 1fr;}
+  .cg.c3{grid-template-columns:1fr 1fr 1fr;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;position:relative;overflow:hidden;}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+  .card.v::before{background:var(--violet);}
+  .card.c::before{background:var(--cyan);}
+  .card.g::before{background:var(--green);}
+  .card.o::before{background:var(--orange);}
+  .card.r::before{background:var(--red);}
+  .card.p::before{background:var(--pink);}
+  .card h3{margin-top:0;font-size:.95rem;}
+  .card p,.card ul,.card li{font-size:.85rem;}
+  .box{border-radius:10px;padding:14px 18px;margin:10px 0;}
+  .bm{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.4);}
+  .bc{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.4);}
+  .bl{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.4);}
+  .bd{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.4);}
+  .bq{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.4);cursor:pointer;}
+  .bt{font-weight:700;font-size:.8rem;margin-bottom:6px;letter-spacing:.5px;}
+  .bm .bt{color:var(--violet);}
+  .bc .bt{color:var(--orange);}
+  .bl .bt{color:var(--green);}
+  .bd .bt{color:var(--cyan);}
+  .bq .bt{color:var(--yellow);}
+  .box p,.box li,.box ul{font-size:.87rem;}
+  .qa{display:none;margin-top:8px;padding-top:8px;border-top:1px solid rgba(251,191,36,.3);color:var(--green);font-size:.85rem;}
+  .bq.revealed .qa{display:block;}
+  table{width:100%;border-collapse:collapse;font-size:.83rem;margin-top:8px;}
+  th{background:#071020;color:var(--orange);text-align:left;padding:8px 12px;border:1px solid var(--border);}
+  td{padding:7px 12px;border:1px solid var(--border);vertical-align:top;}
+  tr:nth-child(even) td{background:rgba(11,22,40,.6);}
+  .tl{list-style:none;padding:0;margin-top:8px;}
+  .tl li{display:flex;gap:14px;margin-bottom:12px;align-items:flex-start;}
+  .tl .st{min-width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+  .tl .st.v{background:rgba(124,58,237,.15);border:2px solid var(--violet);color:var(--violet);}
+  .tl .st.c{background:rgba(6,182,212,.15);border:2px solid var(--cyan);color:var(--cyan);}
+  .tl .st.g{background:rgba(16,185,129,.15);border:2px solid var(--green);color:var(--green);}
+  .tl .st.o{background:rgba(245,158,11,.15);border:2px solid var(--orange);color:var(--orange);}
+  .tl .content h4{font-size:.9rem;}
+  .tl .content p{font-size:.83rem;color:var(--muted);margin:0;}
+  .sr{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0;}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 18px;flex:1;min-width:120px;text-align:center;}
+  .stat .n{font-size:1.8rem;font-weight:800;line-height:1;}
+  .stat .l{font-size:.72rem;color:var(--muted);margin-top:4px;}
+  pre{background:#071020;border:1px solid var(--border);border-radius:6px;padding:12px;font-size:.78rem;color:var(--green);overflow-x:auto;margin:8px 0;font-family:'Courier New',monospace;line-height:1.5;}
+  code{background:#071020;padding:2px 6px;border-radius:4px;font-size:.82rem;color:var(--cyan);}
+  .ld{display:flex;flex-direction:column;gap:6px;margin:10px 0;}
+  .lr{border-radius:6px;padding:8px 16px;font-size:.82rem;font-weight:600;text-align:center;}
+  .tag{display:inline-block;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:2px 10px;font-size:.75rem;color:var(--muted);margin-right:6px;margin-bottom:4px;}
+  .slide::-webkit-scrollbar{width:4px;}
+  .slide::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+</style>
+</head>
+<body>
+<div id="navbar">
+  <div class="brand">📊 VIZ <span>BIGDATA</span> · BLOQUE IV</div>
+  <div class="stabs">
+    <button onclick="gts(0)" id="t0">S16</button>
+    <button onclick="gts(1)" id="t1">S17</button>
+    <button onclick="gts(2)" id="t2">S18</button>
+    <button onclick="gts(3)" id="t3">S19</button>
+    <button onclick="gts(4)" id="t4">S20</button>
+  </div>
+  <div id="ctr">1 / 57</div>
+</div>
+<div id="pb" style="width:1.75%"></div>
+<div id="sc">
+
+<!-- PORTADA -->
+<div class="slide active cover" data-s="0">
+  <div class="badge">BLOQUE IV · SESIONES 16 – 20</div>
+  <h1>Visualización, Dashboards<br>y Big Data con Spark</h1>
+  <p class="sub">Del gráfico al insight accionable · de Pandas a PySpark · 30 horas</p>
+  <div class="sg">
+    <div class="sc2"><div class="num">SESIÓN 16</div><div class="nm">Matplotlib, Seaborn, Plotly</div></div>
+    <div class="sc2"><div class="num">SESIÓN 17</div><div class="nm">Data Storytelling + Power BI</div></div>
+    <div class="sc2"><div class="num">SESIÓN 18</div><div class="nm">UX/UI + Streamlit Apps</div></div>
+    <div class="sc2"><div class="num">SESIÓN 19</div><div class="nm">PySpark — Big Data 5Vs</div></div>
+    <div class="sc2"><div class="num">SESIÓN 20</div><div class="nm">ML a Escala con MLlib</div></div>
+  </div>
+  <p style="margin-top:24px;color:var(--muted);font-size:.82rem;">← → o barra espaciadora · Click en S16–S20 para saltar sesión</p>
+</div>
+
+<!-- ═══ SESIÓN 16 ═══ -->
+<div class="slide" data-s="0">
+  <h2>Sesión 16 <span style="color:var(--orange)">— Visualización de Datos: Matplotlib, Seaborn, Plotly y GeoPandas</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>La visualización es el <strong>traductor entre datos y cerebros humanos</strong>. El cerebro procesa imágenes 60,000 veces más rápido que texto. Un gráfico bien diseñado hace en 3 segundos lo que una tabla de 500 filas no logra en 3 minutos. La pregunta no es "¿cómo dibujo esto?", sino "¿qué decisión debería generar esta visualización?"</p>
+  </div>
+  <div class="cg c3" style="margin-top:14px;">
+    <div class="card o"><h3>Matplotlib — Control Total</h3><p>La base de casi toda visualización Python. Máxima personalización pero verbosa. Ideal cuando necesitas control pixel a pixel: publicaciones científicas, gráficos de ingeniería con especificaciones exactas.</p></div>
+    <div class="card c"><h3>Seaborn — Estadística Visual</h3><p>Construido sobre Matplotlib. Gráficos estadísticos de alta calidad con menos código. Integrado con DataFrames. Especialidad: distribuciones, correlaciones, comparaciones entre grupos.</p></div>
+    <div class="card g"><h3>Plotly — Interactividad</h3><p>Gráficos interactivos (hover, zoom, filtros) en HTML. Funciona en Jupyter y web apps. Plotly Express = una línea de código. Plotly Go = control total con interactividad.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Seaborn: Gráficos Estadísticos Industriales</h2>
+  <div class="cg c2">
+    <div class="card c">
+      <h3>Gráficos de Distribución y Relación</h3>
+      <pre">import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Tema profesional
+sns.set_theme(style="darkgrid", palette="husl")
+fig, axes = plt.subplots(2,2, figsize=(14,10))
+
+# 1. Distribución con curva KDE
+sns.histplot(df['tiempo_ciclo'], kde=True,
+    color='#06b6d4', ax=axes[0,0])
+
+# 2. Comparación entre grupos
+sns.boxplot(data=df, x='turno', y='defectos',
+    hue='linea', ax=axes[0,1])
+
+# 3. Correlación — heatmap
+corr_matrix = df.select_dtypes('number').corr()
+sns.heatmap(corr_matrix, annot=True, cmap='RdYlGn',
+    center=0, fmt='.2f', ax=axes[1,0])
+
+# 4. Relación 3 variables (scatter + color + tamaño)
+sns.scatterplot(data=df, x='temperatura',
+    y='defectos', hue='turno', size='produccion',
+    sizes=(20,200), ax=axes[1,1])</pre>
+    </div>
+    <div class="card v">
+      <h3>Plotly Express: Interactividad en Una Línea</h3>
+      <pre">import plotly.express as px
+import plotly.graph_objects as go
+
+# Scatter interactivo con información al hover
+fig = px.scatter(df,
+    x='temperatura', y='defectos',
+    color='turno', size='produccion',
+    hover_data=['operador', 'fecha'],
+    title='Temperatura vs Defectos por Turno',
+    color_discrete_sequence=px.colors.qualitative.Vivid)
+fig.show()
+
+# Serie de tiempo interactiva
+fig2 = px.line(df_diario, x='fecha',
+    y=['produccion','defectos'],
+    title='Tendencia de Producción y Defectos')
+fig2.update_layout(
+    template='plotly_dark',
+    hovermode='x unified')
+fig2.show()
+
+# Guardar como HTML autocontenido
+fig2.write_html("reporte_produccion.html")</pre>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>GeoPandas: Análisis Geoespacial Industrial</h2>
+  <div class="cg c2">
+    <div class="card o">
+      <h3>¿Para qué GeoPandas en Industria?</h3>
+      <ul>
+        <li><strong>Logística</strong>: mapas de calor de demanda por zona geográfica</li>
+        <li><strong>Retail</strong>: cobertura de tiendas, zonas sin servicio, análisis de competencia</li>
+        <li><strong>Manufactura</strong>: ubicación de proveedores, riesgo de supply chain geográfico</li>
+        <li><strong>Servicios</strong>: tiempos de respuesta por colonia/municipio</li>
+        <li><strong>Agro-industria</strong>: análisis de rendimiento por parcela/región</li>
+      </ul>
+    </div>
+    <div class="card g">
+      <h3>Mapa de Demanda con GeoPandas + Plotly</h3>
+      <pre">import geopandas as gpd
+import pandas as pd
+import plotly.express as px
+
+# Cargar shapefile de estados de México
+mexico = gpd.read_file("mx_estados.shp")
+
+# Unir con datos de ventas
+ventas = pd.read_csv("ventas_por_estado.csv")
+mapa = mexico.merge(ventas, on='estado')
+
+# Mapa choropleth interactivo
+fig = px.choropleth(mapa,
+    geojson=mapa.geometry,
+    locations=mapa.index,
+    color='ventas_total',
+    hover_name='estado',
+    color_continuous_scale='Viridis',
+    title='Ventas por Estado (2024)')
+fig.update_geos(fitbounds="locations")
+fig.show()</pre>
+    </div>
+  </div>
+  <div class="box bl"><div class="bt">🔬 LABORATORIO — Dashboard Multi-gráfico</div>
+    <p>Construir un dashboard completo en Plotly con subplots: (1) serie de tiempo de OEE, (2) boxplot de defectos por turno, (3) heatmap de correlaciones, (4) mapa geográfico de distribuidores. Exportar como HTML interactivo para compartir con directivos sin necesidad de Python.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 17 ═══ -->
+<div class="slide" data-s="1">
+  <h2>Sesión 17 <span style="color:var(--yellow)">— Data Storytelling y Dashboards Power BI</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Los datos sin historia son como <strong>ingredientes sin receta</strong>. El data storytelling es la receta que convierte insights crudos en narrativas que mueven a la acción. La diferencia entre un dashboard que nadie usa y uno que cambia decisiones de negocio es el <em>contexto</em>, la <em>narrativa</em> y el <em>llamado a la acción</em>. Los datos convencen a la mente; la historia mueve a la acción.</p>
+  </div>
+  <div class="cg c3" style="margin-top:14px;">
+    <div class="card o"><h3>Los 3 Elementos del Storytelling</h3><ol><li><strong>Datos</strong>: la evidencia objetiva que sustenta el mensaje</li><li><strong>Narrativa</strong>: el hilo conductor que da contexto y significado</li><li><strong>Visualización</strong>: la representación visual que hace el mensaje memorable</li></ol></div>
+    <div class="card c"><h3>Estructura de una Historia de Datos</h3><ol><li><strong>Contexto</strong>: ¿cuál es la situación actual? (benchmark)</li><li><strong>Complicación</strong>: ¿qué problema o oportunidad revelan los datos?</li><li><strong>Resolución</strong>: ¿qué acción concreta se recomienda?</li></ol></div>
+    <div class="card g"><h3>Principios del Diseño Visual</h3><ul><li>Eliminar "chartjunk" — todo lo que no agrega información</li><li>Un gráfico, un mensaje</li><li>Jerarquía visual: lo más importante, más grande y con mayor contraste</li><li>Color con propósito, no decorativo</li></ul></div>
+  </div>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>Power BI: Dashboards Empresariales Profesionales</h2>
+  <div class="cg c2">
+    <div class="card o">
+      <h3>Flujo de Trabajo en Power BI</h3>
+      <ul class="tl" style="margin-top:6px;">
+        <li><div class="st o">1</div><div class="content"><h4>Power Query (ETL)</h4><p>Conectar fuentes de datos, transformar y limpiar. Interfaz visual, genera código M automáticamente.</p></div></li>
+        <li><div class="st c">2</div><div class="content"><h4>Modelo de Datos</h4><p>Definir relaciones entre tablas (dimensiones y hechos). Modelo estrella para mejor performance.</p></div></li>
+        <li><div class="st g">3</div><div class="content"><h4>DAX — Data Analysis Expressions</h4><p>Lenguaje de cálculo para medidas y columnas calculadas. Más potente que Excel pero similar en concepto.</p></div></li>
+        <li><div class="st v">4</div><div class="content"><h4>Visualizaciones y Dashboard</h4><p>Crear reportes interactivos con filtros cruzados. Publicar en Power BI Service para acceso web.</p></div></li>
+      </ul>
+    </div>
+    <div class="card c">
+      <h3>DAX Esencial para KPIs Industriales</h3>
+      <pre">-- Medidas básicas
+Total Producción = SUM(Produccion[unidades])
+Defectos Promedio = AVERAGE(Produccion[defectos])
+Tasa Defectos % =
+    DIVIDE([Total Defectos], [Total Produccion], 0) * 100
+
+-- OEE calculado dinámicamente
+OEE =
+    [Disponibilidad %] *
+    [Rendimiento %] *
+    [Calidad %]
+
+-- Comparación con período anterior
+Variación vs Mes Anterior =
+    VAR mes_actual = [Total Producción]
+    VAR mes_anterior =
+        CALCULATE([Total Producción],
+            DATEADD(Calendario[Fecha], -1, MONTH))
+    RETURN
+    DIVIDE(mes_actual - mes_anterior,
+           mes_anterior, 0) * 100
+
+-- Top N de máquinas con más defectos
+Top 5 Defectos = RANKX(ALL(Maquinas),
+    [Total Defectos], , DESC, DENSE)</pre>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>Buenas Prácticas de Dashboard Design</h2>
+  <table>
+    <tr><th>Principio</th><th>Qué hacer</th><th>Qué evitar</th></tr>
+    <tr><td><strong>Audiencia primero</strong></td><td>¿Quién lo usa? ¿Qué decisiones toma? Diseñar para ese usuario.</td><td>Dashboard "para todos" que no sirve a nadie específico.</td></tr>
+    <tr><td><strong>Jerarquía KPI</strong></td><td>KPIs de nivel C arriba (grandes, simples). Detalle abajo para drill-down.</td><td>Todos los números del mismo tamaño e importancia.</td></tr>
+    <tr><td><strong>Colores con significado</strong></td><td>Verde = bien, Rojo = mal. Consistente en todo el dashboard.</td><td>5+ colores sin significado. Paleta de arco iris.</td></tr>
+    <tr><td><strong>Contexto siempre</strong></td><td>Mostrar meta/benchmark junto al KPI. +15% vs... ¿vs qué?</td><td>Número solo sin referencia. "1,542 unidades" ¿es bueno o malo?</td></tr>
+    <tr><td><strong>Narrativa incorporada</strong></td><td>Títulos descriptivos: "OEE cayó 8pts por parada en L3 el martes"</td><td>Títulos genéricos: "Gráfico de barras 1"</td></tr>
+  </table>
+  <div class="box bc"><div class="bt">📰 CASO REAL — Dashboard de Operaciones en Cemex</div>
+    <p>Cemex implementó Power BI para consolidar datos de 50 plantas en un dashboard unificado de gerencia. Antes: reportes manuales en Excel tomaban 3 días. Ahora: datos en tiempo real de producción, costos y calidad actualizados cada 15 min. El CEO puede ver el rendimiento de cualquier planta en 10 segundos. Ahorro estimado: 2,000 horas/año en reportes.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 18 ═══ -->
+<div class="slide" data-s="2">
+  <h2>Sesión 18 <span style="color:var(--pink)">— UX/UI y Despliegue de Apps Web con Streamlit</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Streamlit es como tener un <strong>equipo de front-end incluido en tu librería de Python</strong>. Escribes lógica de datos en Python puro y Streamlit se encarga de convertirlo en una aplicación web interactiva. Sin HTML, sin JavaScript, sin CSS. Un científico de datos puede desplegar una app funcional en 30 minutos que antes requería semanas de desarrollo.</p>
+  </div>
+  <div class="cg c3" style="margin-top:14px;">
+    <div class="card p"><h3>Principios UX para Apps de Datos</h3><p><strong>Affordance</strong>: que sea obvio cómo se usa. <strong>Feedback</strong>: el usuario siempre sabe qué está pasando (spinners, mensajes). <strong>Error prevention</strong>: validar inputs antes de procesar. <strong>Consistency</strong>: mismo lenguaje visual en toda la app.</p></div>
+    <div class="card o"><h3>Cuándo usar Streamlit</h3><p>Prototipado rápido de herramientas analíticas internas. Demo de modelos ML para stakeholders. Dashboards dinámicos con predicciones en tiempo real. Herramientas de exploración de datos para equipos no técnicos.</p></div>
+    <div class="card c"><h3>Cuándo usar otras herramientas</h3><p><strong>Power BI/Tableau</strong>: dashboards BI para directivos con actualizaciones automáticas. <strong>FastAPI + React</strong>: apps de producción con alta carga y personalización. <strong>Dash (Plotly)</strong>: más control que Streamlit, layouts complejos.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-s="2">
+  <h2>Streamlit: App de Predicción de Fallas en 50 Líneas</h2>
+  <div class="cg c2">
+    <div class="card p">
+      <h3>app.py — Estructura Completa</h3>
+      <pre">import streamlit as st
+import pandas as pd
+import joblib
+import plotly.express as px
+
+st.set_page_config(page_title="Predictor de Fallas",
+    layout="wide", page_icon="⚙️")
+
+# Sidebar — inputs del usuario
+st.sidebar.header("🔧 Parámetros de la Máquina")
+temperatura = st.sidebar.slider("Temperatura (°C)",
+    min_value=50.0, max_value=120.0, value=75.0, step=0.5)
+vibracion = st.sidebar.slider("Vibración (mm/s)",
+    min_value=0.0, max_value=10.0, value=2.0)
+presion = st.sidebar.number_input("Presión (bar)",
+    min_value=80.0, max_value=150.0, value=100.0)
+turno = st.sidebar.selectbox("Turno", ['A','B','C'])
+
+# Cargar modelo
+@st.cache_resource
+def cargar_modelo():
+    return joblib.load('modelo_fallas.pkl')
+
+modelo = cargar_modelo()
+
+# Predicción
+if st.sidebar.button("🔮 Predecir Riesgo de Falla"):
+    X_nuevo = pd.DataFrame([{
+        'temperatura': temperatura,
+        'vibracion': vibracion,
+        'presion': presion,
+        'turno_B': 1 if turno=='B' else 0,
+        'turno_C': 1 if turno=='C' else 0
+    }])
+    prob = modelo.predict_proba(X_nuevo)[0][1]
+    pred = modelo.predict(X_nuevo)[0]
+
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Riesgo de Falla", f"{prob:.1%}",
+        delta="CRÍTICO" if prob > 0.7 else "Normal")
+    col2.metric("Temperatura", f"{temperatura}°C")
+    col3.metric("Vibración", f"{vibracion} mm/s")</pre>
+    </div>
+    <div class="card g">
+      <h3>Elementos UI Esenciales de Streamlit</h3>
+      <pre">## LAYOUT
+col1, col2 = st.columns(2)
+with col1:
+    st.plotly_chart(fig1, use_container_width=True)
+with col2:
+    st.dataframe(df_resumen)
+
+## INPUTS
+archivo = st.file_uploader("Subir CSV", type=['csv'])
+texto = st.text_area("Descripción de la falla:")
+fecha = st.date_input("Fecha de análisis:")
+opciones = st.multiselect("Líneas a analizar:",
+    ['L1','L2','L3','L4'], default=['L1','L2'])
+
+## FEEDBACK
+with st.spinner("Entrenando modelo..."):
+    modelo = entrenar_modelo(X_train, y_train)
+st.success("✅ Modelo entrenado correctamente")
+st.warning("⚠️ Solo 45 ejemplos de clase minoritaria")
+st.error("❌ Archivo no tiene la columna 'fecha'")
+
+## CACHE — evitar re-calcular en cada interacción
+@st.cache_data
+def cargar_datos(ruta):
+    return pd.read_csv(ruta)</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 19 ═══ -->
+<div class="slide" data-s="3">
+  <h2>Sesión 19 <span style="color:var(--cyan)">— PySpark y Big Data: Las 5 Vs de los Datos Masivos</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Pandas es como una <strong>mesa de trabajo en tu oficina</strong>: rápida, conveniente, pero con capacidad limitada. PySpark es como una <strong>fábrica con 1,000 trabajadores en paralelo</strong>: cada uno procesa una parte del problema simultáneamente. Cuando tus datos no caben en la RAM de tu computadora (>16GB), necesitas la fábrica.</p>
+  </div>
+  <div class="cg c3" style="margin-top:14px;">
+    <div class="card c"><h3>Volumen</h3><p>Datos que no caben en RAM. Terabytes o petabytes. Historial de transacciones, logs de IoT (millones de lecturas/día), imágenes médicas de hospitales, secuencias genómicas.</p></div>
+    <div class="card g"><h3>Velocidad</h3><p>Datos que se generan o procesan en tiempo real. Telemetría de sensores cada milisegundo, transacciones financieras, feeds de redes sociales. Spark Streaming procesa en micro-batches.</p></div>
+    <div class="card o"><h3>Variedad + Veracidad + Valor</h3><p><strong>Variedad</strong>: structured, semi-structured, unstructured. <strong>Veracidad</strong>: calidad y confiabilidad de los datos (sensores que fallan, duplicados). <strong>Valor</strong>: el resultado final: decisiones e inteligencia de negocio.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-s="3">
+  <h2>PySpark: Procesamiento Distribuido con Sintaxis Familiar</h2>
+  <div class="cg c2">
+    <div class="card c">
+      <h3>Inicialización y DataFrames</h3>
+      <pre">from pyspark.sql import SparkSession
+from pyspark.sql import functions as F
+from pyspark.sql.window import Window
+
+# Crear sesión Spark
+spark = SparkSession.builder \
+    .appName("AnalisisProduccion") \
+    .config("spark.driver.memory", "4g") \
+    .getOrCreate()
+
+# Leer datos masivos (CSV/Parquet/JSON)
+df = spark.read.csv("produccion_historico.csv",
+    header=True, inferSchema=True)
+df_parquet = spark.read.parquet("telemetria/")
+
+# Operaciones similares a Pandas
+df.printSchema()
+df.show(5)
+df.describe().show()
+print(f"Registros: {df.count():,}")</pre>
+    </div>
+    <div class="card g">
+      <h3>Transformaciones y Agregaciones</h3>
+      <pre">from pyspark.sql import functions as F
+
+# Filtrado y selección
+df_fallas = df.filter(F.col("defectos") > 5) \
+              .select("fecha","linea","defectos","operador")
+
+# GroupBy y agregaciones
+resumen = df.groupBy("turno","linea") \
+    .agg(
+        F.sum("produccion").alias("total_prod"),
+        F.avg("defectos").alias("prom_defectos"),
+        F.max("temperatura").alias("temp_max"),
+        F.countDistinct("operador").alias("operadores")
+    ) \
+    .orderBy("prom_defectos", ascending=False)
+
+# Window function — promedio móvil distribuido
+ventana = Window.partitionBy("linea") \
+                .orderBy("fecha") \
+                .rowsBetween(-6, 0)
+df = df.withColumn("media_7d",
+    F.avg("produccion").over(ventana))</pre>
+    </div>
+  </div>
+  <div class="box bc"><div class="bt">📰 CASO REAL — Uber y el Procesamiento en Tiempo Real</div>
+    <p>Uber procesa +15 millones de viajes diarios con Spark Streaming. Detección de precios dinámicos (surge pricing) basada en demanda en tiempo real por zona geográfica, cálculo de tiempos estimados de llegada y detección de fraudes en pagos. Todo distribuido en cientos de nodos procesando datos en segundos.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 20 ═══ -->
+<div class="slide" data-s="4">
+  <h2>Sesión 20 <span style="color:var(--violet)">— Machine Learning a Escala con PySpark MLlib</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>MLlib es como tener el poder de scikit-learn pero <strong>distribuido en una flota de computadoras</strong>. Cuando tienes 50 millones de registros de clientes y quieres segmentarlos con K-Means, un solo computador tardaría días; MLlib lo hace en minutos repartiendo el trabajo en paralelo. La misma idea, escala infinita.</p>
+  </div>
+  <div class="cg c3" style="margin-top:14px;">
+    <div class="card v"><h3>MLlib Pipeline</h3><p>Igual que sklearn: Pipeline de etapas (Transformer + Estimator). StringIndexer → OneHotEncoder → VectorAssembler → modelo. Fit en train, transform en test. Portabilidad garantizada.</p></div>
+    <div class="card c"><h3>Algoritmos Incluidos</h3><p>Regresión lineal/logística, Random Forest, Gradient Boosted Trees, K-Means, Bisecting K-Means, PCA, TF-IDF + Word2Vec (NLP), Naive Bayes, SVM lineal, ALS (recomendación).</p></div>
+    <div class="card g"><h3>Cuándo usar MLlib vs scikit-learn</h3><p>MLlib: datos &gt; 10GB, necesitas procesamiento distribuido, cluster disponible. scikit-learn: datos en RAM, prototipado rápido, más algoritmos avanzados. Para producción masiva: MLlib.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-s="4">
+  <h2>Pipeline MLlib: Clasificación Distribuida</h2>
+  <div class="cg c2">
+    <div class="card v">
+      <h3>Clasificación con Random Forest en Spark</h3>
+      <pre">from pyspark.ml import Pipeline
+from pyspark.ml.feature import (VectorAssembler,
+    StringIndexer, StandardScaler)
+from pyspark.ml.classification import RandomForestClassifier
+from pyspark.ml.evaluation import BinaryClassificationEvaluator
+
+# 1. Preparar features
+indexer = StringIndexer(inputCol="turno",
+    outputCol="turno_idx")
+assembler = VectorAssembler(
+    inputCols=["temperatura","vibracion",
+               "presion","turno_idx"],
+    outputCol="features_raw")
+scaler = StandardScaler(inputCol="features_raw",
+    outputCol="features")
+
+# 2. Modelo
+rf = RandomForestClassifier(
+    featuresCol="features",
+    labelCol="falla",
+    numTrees=200,
+    maxDepth=10)
+
+# 3. Pipeline completo
+pipeline = Pipeline(stages=[indexer, assembler, scaler, rf])
+
+# 4. Train/test split
+train, test = df.randomSplit([0.8, 0.2], seed=42)
+model = pipeline.fit(train)
+preds = model.transform(test)
+
+# 5. Evaluación
+evaluator = BinaryClassificationEvaluator(
+    labelCol="falla", metricName="areaUnderROC")
+auc = evaluator.evaluate(preds)
+print(f"AUC: {auc:.4f}")</pre>
+    </div>
+    <div class="card o">
+      <h3>PCA y NLP con MLlib</h3>
+      <pre">## PCA — Reducción dimensional distribuida
+from pyspark.ml.feature import PCA
+
+pca = PCA(k=10, inputCol="features",
+          outputCol="pca_features")
+model_pca = pca.fit(df_scaled)
+df_reducido = model_pca.transform(df_scaled)
+# Varianza explicada por componente
+print(model_pca.explainedVariance)
+
+## NLP — TF-IDF distribuido
+from pyspark.ml.feature import (Tokenizer,
+    HashingTF, IDF)
+
+tokenizer = Tokenizer(inputCol="descripcion_falla",
+                      outputCol="words")
+hashingTF = HashingTF(inputCol="words",
+    outputCol="rawFeatures", numFeatures=10000)
+idf = IDF(inputCol="rawFeatures",
+          outputCol="tfidf_features")
+
+nlp_pipe = Pipeline(stages=[tokenizer,
+                             hashingTF, idf])
+modelo_tfidf = nlp_pipe.fit(df_textos)
+df_vectorizado = modelo_tfidf.transform(df_textos)</pre>
+    </div>
+  </div>
+  <div class="box bl"><div class="bt">🔬 PRÁCTICA FINAL BLOQUE IV</div>
+    <p>Proyecto integrador: (1) Cargar 5 años de telemetría (>500MB) con PySpark, (2) ETL distribuido con filtros y agregaciones, (3) Pipeline MLlib de clasificación de fallas, (4) Exportar resultados a Pandas para visualización, (5) Dashboard Streamlit con predicciones en tiempo real + mapa GeoPandas de ubicación de plantas.</p>
+  </div>
+</div>
+
+<!-- CIERRE -->
+<div class="slide cover" data-s="4">
+  <div class="badge">BLOQUE IV — CIERRE</div>
+  <h1>Del Gráfico al<br>Big Data Industrial</h1>
+  <p style="max-width:600px;margin:16px auto;color:var(--muted);">Visualización efectiva, dashboards que generan acción, apps web de datos y procesamiento masivo con Spark: las herramientas que llevan el valor de los modelos ML a los tomadores de decisiones y escalan para datos de cualquier tamaño.</p>
+  <div class="sr" style="justify-content:center;max-width:700px;margin:20px auto;">
+    <div class="stat"><div class="n" style="color:var(--orange)">📈</div><div class="l">Matplotlib, Seaborn, Plotly</div></div>
+    <div class="stat"><div class="n" style="color:var(--yellow)">📊</div><div class="l">Power BI + DAX</div></div>
+    <div class="stat"><div class="n" style="color:var(--pink)">🚀</div><div class="l">Streamlit Web Apps</div></div>
+    <div class="stat"><div class="n" style="color:var(--cyan)">⚡</div><div class="l">PySpark Big Data</div></div>
+    <div class="stat"><div class="n" style="color:var(--violet)">🤖</div><div class="l">MLlib a escala</div></div>
+  </div>
+  <div style="margin-top:16px;font-size:.8rem;color:var(--muted);">
+    <strong style="color:var(--orange);">Referencias:</strong> Few (2012) Show Me the Numbers · McKinney (2022) Python for Data Analysis · VanderPlas (2022) Python Data Science Handbook
+  </div>
+</div>
+
+</div>
+<div id="footer">
+  <button onclick="prev()">← Anterior</button>
+  <span class="hint">← → · Espacio</span>
+  <button onclick="next()">Siguiente →</button>
+</div>
+<script>
+const slides=document.querySelectorAll('.slide'),total=slides.length;let cur=0;
+const ss=[];slides.forEach((s,i)=>{const v=parseInt(s.dataset.s);if(ss[v]===undefined)ss[v]=i;});
+function go(n){if(n<0||n>=total)return;slides[cur].classList.remove('active');cur=n;slides[cur].classList.add('active');document.getElementById('ctr').textContent=(cur+1)+' / '+total;document.getElementById('pb').style.width=((cur+1)/total*100)+'%';ut();slides[cur].scrollTop=0;}
+function next(){go(cur+1);}function prev(){go(cur-1);}function gts(i){go(ss[i]);}
+function ut(){const v=parseInt(slides[cur].dataset.s);for(let i=0;i<5;i++){const b=document.getElementById('t'+i);if(b)b.classList.toggle('active',i===v);}}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();}if(e.key==='ArrowLeft'){e.preventDefault();prev();}});
+ut();
+</script>
+</body>
+</html>

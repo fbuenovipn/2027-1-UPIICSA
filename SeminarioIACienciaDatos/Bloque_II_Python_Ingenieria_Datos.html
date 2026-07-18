@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloque II — Python e Ingeniería de Datos</title>
+<style>
+  :root{--bg:#04080f;--card:#0b1628;--border:#1e3a5f;--violet:#7c3aed;--cyan:#06b6d4;--green:#10b981;--orange:#f59e0b;--red:#ef4444;--pink:#ec4899;--yellow:#fbbf24;--text:#e2e8f0;--muted:#64748b;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden;height:100vh;}
+  #navbar{position:fixed;top:0;left:0;right:0;height:54px;background:rgba(4,8,15,.96);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:100;backdrop-filter:blur(8px);}
+  #navbar .brand{color:var(--cyan);font-weight:700;font-size:.85rem;letter-spacing:1px;}
+  #navbar .brand span{color:var(--green);}
+  .stabs{display:flex;gap:6px;}
+  .stabs button{background:transparent;border:1px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:20px;cursor:pointer;font-size:.75rem;transition:all .2s;}
+  .stabs button.active{background:var(--cyan);border-color:var(--cyan);color:#000;font-weight:700;}
+  .stabs button:hover:not(.active){border-color:var(--cyan);color:var(--cyan);}
+  #ctr{color:var(--muted);font-size:.8rem;min-width:80px;text-align:right;}
+  #pb{position:fixed;top:54px;left:0;height:3px;background:linear-gradient(90deg,var(--cyan),var(--green));transition:width .3s;z-index:100;}
+  #sc{position:fixed;top:57px;left:0;right:0;bottom:40px;overflow:hidden;}
+  .slide{position:absolute;top:0;left:0;right:0;bottom:0;padding:28px 48px;display:none;overflow-y:auto;animation:fi .35s ease;}
+  .slide.active{display:flex;flex-direction:column;}
+  @keyframes fi{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+  #footer{position:fixed;bottom:0;left:0;right:0;height:40px;background:rgba(4,8,15,.96);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:16px;z-index:100;}
+  #footer button{background:var(--card);border:1px solid var(--border);color:var(--text);padding:5px 20px;border-radius:6px;cursor:pointer;font-size:.8rem;transition:all .2s;}
+  #footer button:hover{border-color:var(--cyan);color:var(--cyan);}
+  #footer .hint{color:var(--muted);font-size:.72rem;}
+  h1{font-size:2rem;font-weight:800;line-height:1.2;margin-bottom:10px;}
+  h2{font-size:1.5rem;font-weight:700;margin-bottom:14px;}
+  h3{font-size:1.05rem;font-weight:600;color:var(--cyan);margin-bottom:8px;margin-top:12px;}
+  p{font-size:.92rem;line-height:1.65;margin-bottom:8px;}
+  ul,ol{padding-left:20px;font-size:.9rem;line-height:1.8;}
+  li{margin-bottom:4px;}
+  .sub{color:var(--muted);font-size:1rem;}
+  .cover{align-items:center;justify-content:center;text-align:center;}
+  .cover h1{font-size:2.3rem;background:linear-gradient(135deg,var(--cyan),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;}
+  .badge{display:inline-block;border:1px solid var(--cyan);border-radius:8px;padding:8px 24px;color:var(--cyan);font-size:.9rem;font-weight:700;letter-spacing:2px;margin-bottom:20px;background:rgba(6,182,212,.08);}
+  .sg{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:20px;}
+  .sc2{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 16px;width:168px;text-align:left;}
+  .sc2 .num{color:var(--cyan);font-size:.7rem;font-weight:700;}
+  .sc2 .nm{font-size:.8rem;margin-top:4px;}
+  .cg{display:grid;gap:14px;margin-top:8px;}
+  .cg.c2{grid-template-columns:1fr 1fr;}
+  .cg.c3{grid-template-columns:1fr 1fr 1fr;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;position:relative;overflow:hidden;}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+  .card.v::before{background:var(--violet);}
+  .card.c::before{background:var(--cyan);}
+  .card.g::before{background:var(--green);}
+  .card.o::before{background:var(--orange);}
+  .card.r::before{background:var(--red);}
+  .card.p::before{background:var(--pink);}
+  .card h3{margin-top:0;font-size:.95rem;}
+  .card p,.card ul,.card li{font-size:.85rem;}
+  .box{border-radius:10px;padding:14px 18px;margin:10px 0;}
+  .bm{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.4);}
+  .bc{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.4);}
+  .bl{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.4);}
+  .bd{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.4);}
+  .bq{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.4);cursor:pointer;}
+  .bt{font-weight:700;font-size:.8rem;margin-bottom:6px;letter-spacing:.5px;}
+  .bm .bt{color:var(--violet);}
+  .bc .bt{color:var(--orange);}
+  .bl .bt{color:var(--green);}
+  .bd .bt{color:var(--cyan);}
+  .bq .bt{color:var(--yellow);}
+  .box p,.box li,.box ul{font-size:.87rem;}
+  .qa{display:none;margin-top:8px;padding-top:8px;border-top:1px solid rgba(251,191,36,.3);color:var(--green);font-size:.85rem;}
+  .bq.revealed .qa{display:block;}
+  table{width:100%;border-collapse:collapse;font-size:.83rem;margin-top:8px;}
+  th{background:#071020;color:var(--cyan);text-align:left;padding:8px 12px;border:1px solid var(--border);}
+  td{padding:7px 12px;border:1px solid var(--border);vertical-align:top;}
+  tr:nth-child(even) td{background:rgba(11,22,40,.6);}
+  .tl{list-style:none;padding:0;margin-top:8px;}
+  .tl li{display:flex;gap:14px;margin-bottom:12px;align-items:flex-start;}
+  .tl .st{min-width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+  .tl .st.v{background:rgba(124,58,237,.15);border:2px solid var(--violet);color:var(--violet);}
+  .tl .st.c{background:rgba(6,182,212,.15);border:2px solid var(--cyan);color:var(--cyan);}
+  .tl .st.g{background:rgba(16,185,129,.15);border:2px solid var(--green);color:var(--green);}
+  .tl .st.o{background:rgba(245,158,11,.15);border:2px solid var(--orange);color:var(--orange);}
+  .tl .content h4{font-size:.9rem;}
+  .tl .content p{font-size:.83rem;color:var(--muted);margin:0;}
+  .sr{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0;}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 18px;flex:1;min-width:120px;text-align:center;}
+  .stat .n{font-size:1.8rem;font-weight:800;line-height:1;}
+  .stat .l{font-size:.72rem;color:var(--muted);margin-top:4px;}
+  .pill{display:inline-block;padding:2px 10px;border-radius:20px;font-size:.75rem;font-weight:600;margin:2px;}
+  .pc{background:rgba(6,182,212,.15);border:1px solid var(--cyan);color:var(--cyan);}
+  .pg{background:rgba(16,185,129,.15);border:1px solid var(--green);color:var(--green);}
+  .po{background:rgba(245,158,11,.15);border:1px solid var(--orange);color:var(--orange);}
+  .pv{background:rgba(124,58,237,.15);border:1px solid var(--violet);color:var(--violet);}
+  pre{background:#071020;border:1px solid var(--border);border-radius:6px;padding:12px;font-size:.78rem;color:var(--green);overflow-x:auto;margin:8px 0;font-family:'Courier New',monospace;line-height:1.5;}
+  code{background:#071020;padding:2px 6px;border-radius:4px;font-size:.82rem;color:var(--cyan);}
+  .ld{display:flex;flex-direction:column;gap:6px;margin:10px 0;}
+  .lr{border-radius:6px;padding:8px 16px;font-size:.82rem;font-weight:600;text-align:center;}
+  .tag{display:inline-block;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:2px 10px;font-size:.75rem;color:var(--muted);margin-right:6px;margin-bottom:4px;}
+  .slide::-webkit-scrollbar{width:4px;}
+  .slide::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+</style>
+</head>
+<body>
+<div id="navbar">
+  <div class="brand">🐍 PYTHON <span>DATOS</span> · BLOQUE II</div>
+  <div class="stabs">
+    <button onclick="gts(0)" id="t0">S6</button>
+    <button onclick="gts(1)" id="t1">S7</button>
+    <button onclick="gts(2)" id="t2">S8</button>
+    <button onclick="gts(3)" id="t3">S9</button>
+    <button onclick="gts(4)" id="t4">S10</button>
+  </div>
+  <div id="ctr">1 / 57</div>
+</div>
+<div id="pb" style="width:1.75%"></div>
+<div id="sc">
+
+<!-- PORTADA -->
+<div class="slide active cover" data-s="0">
+  <div class="badge">BLOQUE II · SESIONES 6 – 10</div>
+  <h1>Python e Ingeniería<br>de Datos</h1>
+  <p class="sub">Del código al pipeline de datos productivo · 30 horas</p>
+  <div class="sg">
+    <div class="sc2"><div class="num">SESIÓN 6</div><div class="nm">Python Fundamentos</div></div>
+    <div class="sc2"><div class="num">SESIÓN 7</div><div class="nm">NumPy y Pandas</div></div>
+    <div class="sc2"><div class="num">SESIÓN 8</div><div class="nm">SQL y Bases Relacionales</div></div>
+    <div class="sc2"><div class="num">SESIÓN 9</div><div class="nm">MongoDB, APIs y Scraping</div></div>
+    <div class="sc2"><div class="num">SESIÓN 10</div><div class="nm">EDA y Pipelines Kedro</div></div>
+  </div>
+  <p style="margin-top:24px;color:var(--muted);font-size:.82rem;">← → o barra espaciadora · Click en S6–S10 para saltar sesión</p>
+</div>
+
+<!-- ═══ SESIÓN 6 ═══ -->
+<div class="slide" data-s="0">
+  <h2>Sesión 6 <span style="color:var(--cyan)">— Python: El Lenguaje de la IA Industrial</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Python es como una <strong>navaja suiza de 200 herramientas</strong>. No es la más rápida para cada tarea individual, pero te permite pasar de leer datos, limpiarlos, entrenar un modelo y desplegar una API en el mismo lenguaje, en el mismo archivo, sin cambiar de contexto mental. Por eso domina la industria de datos.</p>
+  </div>
+  <div class="sr" style="margin-top:16px;">
+    <div class="stat"><div class="n" style="color:var(--cyan)">#1</div><div class="l">Lenguaje más usado en Data Science (Stack Overflow 2024)</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">+400K</div><div class="l">Paquetes disponibles en PyPI</div></div>
+    <div class="stat"><div class="n" style="color:var(--orange)">90%</div><div class="l">de los proyectos de ML usan Python como lenguaje principal</div></div>
+  </div>
+  <div class="cg c3" style="margin-top:14px;">
+    <div class="card c"><h3>Google Colab</h3><p>Jupyter Notebooks gratuito en la nube. GPU/TPU accesibles. Ideal para el seminario: sin instalación, colaborativo, comparte resultados como URLs.</p></div>
+    <div class="card g"><h3>Gestión de Entornos</h3><p>conda o venv para aislar dependencias por proyecto. requirements.txt / environment.yml para reproducibilidad. "Funciona en mi máquina" → eliminado con entornos virtuales.</p></div>
+    <div class="card v"><h3>Ecosistema Industrial</h3><p>pandas (datos), scikit-learn (ML), matplotlib/plotly (visualización), FastAPI (APIs), SQLAlchemy (bases de datos), Airflow/Kedro (pipelines). Todo en Python.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Estructuras de Datos Python en el Contexto Industrial</h2>
+  <div class="cg c2">
+    <div class="card c">
+      <h3>Tipos y Estructuras Esenciales</h3>
+      <pre># Tipos de datos clave
+sensor_temp = 87.4          # float
+num_piezas = 1500           # int
+linea_activa = True         # bool
+codigo_falla = "F-023"      # str
+
+# Colecciones
+turnos = ['A', 'B', 'C']                # list — ordenada, mutable
+operadores = {'Juan': 95, 'Ana': 98}    # dict — clave:valor
+estados_fijos = ('activo', 'inactivo')  # tuple — inmutable
+maquinas_unicas = {'M1','M2','M3'}      # set — sin duplicados</pre>
+    </div>
+    <div class="card g">
+      <h3>Comprensión de Listas y Funciones</h3>
+      <pre># List comprehension — esencial en DS
+defectos = [d for d in datos if d > umbral]
+normalizados = [x/max(x) for x in mediciones]
+
+# Funciones limpias
+def calcular_oee(disponibilidad, rendimiento, calidad):
+    """OEE = D × R × C"""
+    return disponibilidad * rendimiento * calidad
+
+# Lambda — funciones de una línea
+clasificar = lambda x: 'crítico' if x > 90 else 'normal'
+
+# map/filter/reduce — programación funcional
+tiempos_normales = list(filter(lambda t: t < 10, tiempos))</pre>
+    </div>
+  </div>
+  <div class="box bc"><div class="bt">📰 CASO REAL — Python en Automatización Industrial</div>
+    <p>Una empresa textil en Monterrey automatizó con Python la extracción de reportes de producción de un sistema SAP (scraping de interfaz web interna), el cálculo automático de KPIs y el envío de alertas por WhatsApp via API cuando la eficiencia caía por debajo del 80%. Antes tomaba 2 horas/día de trabajo manual; ahora es automático y corre cada 15 minutos.</p>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Automatización de Procesos con Python</h2>
+  <div class="cg c3">
+    <div class="card c">
+      <h3>Lectura de Archivos</h3>
+      <pre>import pandas as pd
+from pathlib import Path
+
+# Lectura flexible
+df = pd.read_csv("produccion.csv")
+df = pd.read_excel("reporte.xlsx",
+                   sheet_name="Enero")
+
+# Procesar múltiples archivos
+carpeta = Path("datos/")
+dfs = [pd.read_csv(f) for f in
+       carpeta.glob("*.csv")]
+df_total = pd.concat(dfs, ignore_index=True)</pre>
+    </div>
+    <div class="card g">
+      <h3>Manejo de Fechas y Tiempo</h3>
+      <pre>import pandas as pd
+
+df['fecha'] = pd.to_datetime(df['fecha'])
+df['mes'] = df['fecha'].dt.month
+df['dia_semana'] = df['fecha'].dt.day_name()
+df['hora'] = df['fecha'].dt.hour
+
+# Resample — agrupar por período
+diario = df.set_index('fecha')\
+           .resample('D')['produccion']\
+           .sum()</pre>
+    </div>
+    <div class="card v">
+      <h3>Envío de Alertas Automáticas</h3>
+      <pre>import smtplib
+from email.mime.text import MIMEText
+
+def enviar_alerta(kpi, valor, umbral):
+    if valor < umbral:
+        msg = MIMEText(
+          f"⚠️ {kpi}: {valor:.1f}% < {umbral}%")
+        msg['Subject'] = f'Alerta KPI: {kpi}'
+        msg['To'] = 'gerencia@empresa.mx'
+        # Configurar SMTP...
+        print(f"Alerta enviada: {kpi}")</pre>
+    </div>
+  </div>
+  <div class="box bl"><div class="bt">🔬 LABORATORIO — Automatización Real</div>
+    <p>Crear un script Python que: (1) lea archivos CSV de producción diaria de una carpeta, (2) calcule OEE por turno y línea, (3) genere un reporte Excel formateado con colores según semáforo, (4) identifique y reporte los 3 peores indicadores del mes.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 7 ═══ -->
+<div class="slide" data-s="1">
+  <h2>Sesión 7 <span style="color:var(--green)">— NumPy y Pandas: El Motor del Análisis de Datos</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>NumPy es el <strong>motor de cálculo vectorizado</strong>: opera sobre millones de números simultáneamente (como una calculadora industrial en paralelo, no una de escritorio). Pandas es la <strong>hoja de cálculo inteligente</strong>: filas, columnas, filtros y agregaciones con el poder de una base de datos, desde tu código Python.</p>
+  </div>
+  <div class="cg c2" style="margin-top:14px;">
+    <div class="card g">
+      <h3>NumPy — Computación Vectorizada</h3>
+      <pre>import numpy as np
+
+# Arrays — la estructura fundamental del ML
+temps = np.array([72.3, 74.1, 73.8, 75.2, 71.9])
+
+# Operaciones vectorizadas (sin for loops)
+z_scores = (temps - np.mean(temps)) / np.std(temps)
+anomalias = np.where(np.abs(z_scores) > 2, 1, 0)
+
+# Álgebra lineal — base del ML
+A = np.array([[1,2],[3,4]])
+autovalores, autovectores = np.linalg.eig(A)
+correlacion = np.corrcoef(X, Y)  # matriz de correlación</pre>
+    </div>
+    <div class="card c">
+      <h3>Pandas — Manipulación de DataFrames</h3>
+      <pre>import pandas as pd
+
+df = pd.read_csv("produccion.csv")
+
+# Exploración inicial
+df.info()           # tipos de datos
+df.describe()       # estadísticas
+df.isnull().sum()   # valores faltantes
+
+# Filtrado y selección
+df_turno_a = df[df['turno'] == 'A']
+df[['linea','defectos']].head(10)
+df.query("defectos > 5 and turno == 'B'")</pre>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>Pandas Avanzado: Transformaciones Clave para el Negocio</h2>
+  <div class="cg c2">
+    <div class="card v">
+      <h3>GroupBy y Agregaciones</h3>
+      <pre># Resumen por turno y línea
+resumen = df.groupby(['turno','linea']).agg(
+    produccion_total=('produccion', 'sum'),
+    defectos_promedio=('defectos', 'mean'),
+    tiempo_promedio=('tiempo_ciclo', 'median'),
+    eficiencia_max=('eficiencia', 'max')
+).reset_index()
+
+# Tabla pivote — como en Excel pero en código
+pivot = df.pivot_table(
+    values='defectos',
+    index='turno',
+    columns='tipo_falla',
+    aggfunc='sum',
+    fill_value=0)</pre>
+    </div>
+    <div class="card o">
+      <h3>Limpieza y Transformación</h3>
+      <pre># Manejo de valores faltantes
+df['temp'].fillna(df['temp'].median(), inplace=True)
+df.dropna(subset=['fecha','produccion'], inplace=True)
+
+# Codificación de variables categóricas
+df = pd.get_dummies(df, columns=['turno'], drop_first=True)
+
+# Detección y manejo de outliers
+Q1 = df['defectos'].quantile(0.25)
+Q3 = df['defectos'].quantile(0.75)
+IQR = Q3 - Q1
+df_limpio = df[
+    (df['defectos'] >= Q1 - 1.5*IQR) &
+    (df['defectos'] <= Q3 + 1.5*IQR)
+]</pre>
+    </div>
+  </div>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Click para ver respuesta</div>
+    <p>Tienes un DataFrame con 100,000 filas de telemetría de sensores. El 15% de valores de temperatura son NaN. ¿Qué harías antes de entrenar un modelo con esos datos?</p>
+    <div class="qa">Primero investiga el patrón de missings: ¿son aleatorios (MAR), completamente aleatorios (MCAR) o dependen de otra variable (MNAR)? Si son MCAR/MAR: imputar con la mediana (robusta ante outliers) o con el valor del sensor más cercano en el tiempo (forward/backward fill para series temporales). Crear una columna binaria "temp_imputed" como indicador. Si son MNAR: el motivo de la falla puede ser información valiosa — considerar modelar la ausencia. Nunca eliminar filas si son 15% de datos (pérdida significativa).</div>
+  </div>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>Merge, Join y Combinación de Fuentes de Datos</h2>
+  <div class="cg c2">
+    <div class="card c">
+      <h3>Combinando DataFrames</h3>
+      <pre># INNER JOIN — solo registros en ambos
+df_combined = pd.merge(
+    df_produccion,
+    df_operadores,
+    on='id_operador',
+    how='inner')
+
+# LEFT JOIN — todos los de producción
+df_left = pd.merge(
+    df_produccion,
+    df_mantenimiento,
+    left_on='id_maquina',
+    right_on='maquina_id',
+    how='left')
+
+# CONCAT — apilar DataFrames
+df_anual = pd.concat(
+    [df_q1, df_q2, df_q3, df_q4],
+    keys=['Q1','Q2','Q3','Q4'])</pre>
+    </div>
+    <div class="card g">
+      <h3>Caso Práctico: Enriquecer Datos de Producción</h3>
+      <ul>
+        <li>Unir telemetría de máquinas (CSV) con maestro de equipos (Excel)</li>
+        <li>Combinar órdenes de trabajo con historial de fallas (SQL)</li>
+        <li>Agregar datos de clima (API) a registros de producción por fecha</li>
+        <li>Cruzar datos de calidad con datos de turno y operador</li>
+      </ul>
+      <p style="margin-top:8px;color:var(--muted);font-size:.82rem;">El 80% del tiempo en proyectos reales de DS se gasta en la preparación y combinación de datos de múltiples fuentes.</p>
+    </div>
+  </div>
+  <div class="box bl"><div class="bt">🔬 LABORATORIO — Pandas Industrial</div>
+    <p>Dataset: telemetría de 10 máquinas de manufactura (temperatura, vibración, presión, producción por hora). Tareas: (1) limpieza y manejo de NaNs, (2) detección de outliers con IQR, (3) groupby por máquina y turno, (4) correlación entre variables de proceso y tasa de defectos, (5) exportar reporte Excel con múltiples hojas.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 8 ═══ -->
+<div class="slide" data-s="2">
+  <h2>Sesión 8 <span style="color:var(--orange)">— SQL y Bases de Datos Relacionales para el Científico de Datos</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>SQL es como el <strong>idioma universal de las empresas</strong>. No importa si los datos están en Oracle, PostgreSQL, MySQL o SQL Server: la gramática es la misma. El 80% de los datos empresariales viven en bases de datos relacionales. No saber SQL como científico de datos es como ser mecánico y no saber usar la llave de tuercas.</p>
+  </div>
+  <div class="cg c3" style="margin-top:14px;">
+    <div class="card o"><h3>Modelo Relacional</h3><p>Datos organizados en tablas con filas y columnas. Las relaciones entre tablas se establecen mediante claves primarias (PK) y foráneas (FK). Elimina redundancia y garantiza integridad.</p></div>
+    <div class="card c"><h3>SQLite en Python</h3><p>Base de datos relacional embebida. Sin servidor, un solo archivo. Ideal para prototipado, análisis local y proyectos de DS sin infraestructura adicional.</p></div>
+    <div class="card v"><h3>SQLAlchemy ORM</h3><p>Abstracción de Python sobre SQL. Crea y consulta tablas usando clases Python. Portable entre motores (SQLite, PostgreSQL, MySQL) sin cambiar código.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-s="2">
+  <h2>SQL Esencial para Ciencia de Datos</h2>
+  <div class="cg c2">
+    <div class="card c">
+      <h3>Consultas Fundamentales</h3>
+      <pre>-- Selección y filtrado
+SELECT maquina_id, AVG(defectos) as prom_defectos,
+       MAX(temperatura) as temp_max
+FROM produccion
+WHERE fecha >= '2024-01-01'
+  AND turno IN ('A', 'B')
+GROUP BY maquina_id
+HAVING AVG(defectos) > 5
+ORDER BY prom_defectos DESC
+LIMIT 10;
+
+-- JOIN entre tablas
+SELECT p.fecha, p.defectos, o.nombre as operador
+FROM produccion p
+JOIN operadores o ON p.operador_id = o.id
+WHERE p.linea = 'L1';</pre>
+    </div>
+    <div class="card v">
+      <h3>SQL Avanzado para Análisis</h3>
+      <pre>-- Window Functions — estadísticas por ventana
+SELECT fecha, linea, produccion,
+  AVG(produccion) OVER (
+    PARTITION BY linea
+    ORDER BY fecha
+    ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
+  ) AS promedio_7dias
+FROM produccion;
+
+-- CTE — consultas legibles y reutilizables
+WITH resumen_turno AS (
+  SELECT turno, SUM(produccion) as total
+  FROM produccion
+  GROUP BY turno
+)
+SELECT turno, total,
+  ROUND(total*100.0/SUM(total) OVER(), 1) as pct
+FROM resumen_turno;</pre>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="2">
+  <h2>Pandas + SQL: La Combinación Perfecta</h2>
+  <div class="cg c2">
+    <div class="card g">
+      <h3>SQLAlchemy + Pandas</h3>
+      <pre>from sqlalchemy import create_engine
+import pandas as pd
+
+# Conexión (portable entre motores)
+engine = create_engine('sqlite:///planta.db')
+# Para PostgreSQL:
+# engine = create_engine('postgresql://user:pw@host/db')
+
+# Leer SQL directamente en DataFrame
+df = pd.read_sql("""
+    SELECT m.nombre, p.fecha, p.defectos, p.eficiencia
+    FROM produccion p
+    JOIN maquinas m ON p.maquina_id = m.id
+    WHERE p.eficiencia < 80
+    ORDER BY p.fecha
+""", engine)
+
+# Escribir DataFrame a SQL
+df_resultado.to_sql('analisis_defectos',
+    engine, if_exists='replace', index=False)</pre>
+    </div>
+    <div class="card o">
+      <h3>Diseño de Base de Datos Industrial</h3>
+      <ul>
+        <li><strong>Tabla MAQUINAS</strong>: id, nombre, linea, modelo, fecha_instalacion</li>
+        <li><strong>Tabla PRODUCCION</strong>: id, maquina_id (FK), fecha, turno, unidades, defectos, eficiencia</li>
+        <li><strong>Tabla MANTENIMIENTO</strong>: id, maquina_id (FK), fecha, tipo, tecnico, costo, horas_parada</li>
+        <li><strong>Tabla OPERADORES</strong>: id, nombre, turno, certificaciones</li>
+        <li>Índices en: fechas, maquina_id (columnas de JOIN frecuente)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box bc"><div class="bt">📰 CASO REAL — SQL en OXXO/FEMSA</div>
+    <p>La dirección de analítica de FEMSA consulta +50M transacciones de OXXO diariamente usando SQL sobre warehouse columnar (BigQuery). Consultas de "¿qué producto se vende más por zona geográfica + hora del día + temperatura exterior?" que toman días en Excel toman segundos en SQL bien diseñado con índices.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 9 ═══ -->
+<div class="slide" data-s="3">
+  <h2>Sesión 9 <span style="color:var(--violet)">— MongoDB, APIs REST y Web Scraping</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Si SQL es como una <strong>biblioteca bien catalogada con estantes ordenados</strong> (tablas fijas, esquema rígido), MongoDB es como un <strong>almacén flexible</strong> donde cada caja puede tener distinto contenido y forma. Perfecto para datos semiestructurados: logs de eventos, datos de sensores IoT con atributos variables, registros de clientes con campos opcionales.</p>
+  </div>
+  <div class="cg c3" style="margin-top:14px;">
+    <div class="card v"><h3>MongoDB — NoSQL Documental</h3><p>Almacena documentos JSON (BSON internamente). Sin esquema fijo. Escala horizontalmente. Ideal para datos de IoT, logs, perfiles de usuario, catálogos de productos variables.</p></div>
+    <div class="card c"><h3>APIs REST</h3><p>Interfaz estándar para intercambiar datos entre sistemas. GET (obtener), POST (enviar), PUT (actualizar), DELETE. Autenticación: API key, OAuth 2.0, JWT. Respuesta típica: JSON.</p></div>
+    <div class="card g"><h3>Web Scraping</h3><p>Extracción automatizada de datos de sitios web. BeautifulSoup para HTML estático, Selenium para sitios dinámicos con JavaScript. Verificar robots.txt y términos de uso.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-s="3">
+  <h2>MongoDB con PyMongo: Consultas a Datos No Estructurados</h2>
+  <div class="cg c2">
+    <div class="card v">
+      <h3>Operaciones CRUD</h3>
+      <pre>from pymongo import MongoClient
+import pandas as pd
+
+client = MongoClient("mongodb://localhost:27017/")
+db = client["planta_industrial"]
+col = db["telemetria_iot"]
+
+# INSERT — un documento o muchos
+col.insert_one({"sensor_id": "T-101",
+    "timestamp": "2024-01-15T14:30:00",
+    "temperatura": 87.4, "unidad": "°C"})
+
+# FIND — consulta con filtro
+docs = col.find({
+    "temperatura": {"$gt": 90},
+    "sensor_id": {"$in": ["T-101","T-102"]}
+})
+
+# A DataFrame para análisis
+df = pd.DataFrame(list(docs))</pre>
+    </div>
+    <div class="card c">
+      <h3>Agregaciones en MongoDB</h3>
+      <pre># Pipeline de agregación
+pipeline = [
+    {"$match": {"turno": "A"}},
+    {"$group": {
+        "_id": "$sensor_id",
+        "temp_promedio": {"$avg": "$temperatura"},
+        "lecturas": {"$sum": 1},
+        "max_temp": {"$max": "$temperatura"}
+    }},
+    {"$sort": {"temp_promedio": -1}},
+    {"$limit": 10}
+]
+resultado = list(col.aggregate(pipeline))
+df_resumen = pd.DataFrame(resultado)</pre>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="3">
+  <h2>APIs REST e Integración de Datos Externos</h2>
+  <div class="cg c2">
+    <div class="card g">
+      <h3>Consumir APIs con Requests</h3>
+      <pre>import requests
+import pandas as pd
+
+# API de clima (para enriquecer datos de producción)
+API_KEY = "tu_api_key"
+url = "https://api.openweathermap.org/data/2.5/weather"
+params = {"q": "Monterrey,MX", "appid": API_KEY,
+          "units": "metric", "lang": "es"}
+
+response = requests.get(url, params=params)
+if response.status_code == 200:
+    datos = response.json()
+    temperatura = datos["main"]["temp"]
+    humedad = datos["main"]["humidity"]
+    print(f"Temp: {temperatura}°C | Hum: {humedad}%")
+else:
+    print(f"Error: {response.status_code}")</pre>
+    </div>
+    <div class="card o">
+      <h3>Web Scraping con BeautifulSoup</h3>
+      <pre">import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+
+# Scraping de precios de competidores (ej.)
+url = "https://ejemplo-catalogo.com/productos"
+headers = {"User-Agent": "Mozilla/5.0"}
+resp = requests.get(url, headers=headers)
+
+soup = BeautifulSoup(resp.text, 'html.parser')
+productos = []
+for item in soup.find_all('div', class_='producto'):
+    nombre = item.find('h3').text.strip()
+    precio = item.find('span', class_='precio').text
+    productos.append({'nombre': nombre,
+                      'precio': precio})
+df = pd.DataFrame(productos)</pre>
+    </div>
+  </div>
+  <div class="box bl"><div class="bt">🔬 LABORATORIO — Pipeline Multi-Fuente</div>
+    <p>Construir un pipeline que: (1) extraiga datos de producción desde SQLite, (2) enriquezca con datos de clima de API pública por fecha/ciudad, (3) almacene datos de IoT en MongoDB, (4) combine todo en un DataFrame Pandas, (5) exporte CSV listo para modelado. Documentar en Google Colab con markdown.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 10 ═══ -->
+<div class="slide" data-s="4">
+  <h2>Sesión 10 <span style="color:var(--pink)">— EDA Profundo y Pipelines de Datos con Kedro</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>El EDA (Análisis Exploratorio) es como el <strong>reconocimiento del terreno antes de construir</strong>. El arquitecto más brillante diseña mal si no inspecciona el suelo. Y Kedro es como el <strong>sistema de control de calidad de la construcción</strong>: asegura que cada etapa del pipeline está documentada, es reproducible y puede auditarse. Transforma el código de "notebook sucio" a "fábrica de datos profesional".</p>
+  </div>
+  <div class="cg c2" style="margin-top:14px;">
+    <div class="card p">
+      <h3>EDA — Los 5 Pasos</h3>
+      <ul class="tl" style="margin-top:6px;">
+        <li><div class="st c">1</div><div class="content"><h4>Forma y tipos</h4><p>df.shape, df.info(), df.dtypes — entender estructura básica</p></div></li>
+        <li><div class="st v">2</div><div class="content"><h4>Distribuciones</h4><p>Histogramas, boxplots, estadísticas descriptivas por variable</p></div></li>
+        <li><div class="st g">3</div><div class="content"><h4>Valores faltantes</h4><p>Mapa de calor de NaNs, patrones de missingness</p></div></li>
+        <li><div class="st o">4</div><div class="content"><h4>Correlaciones</h4><p>Heatmap de correlación, scatter matrix, PairPlot</p></div></li>
+        <li><div class="st c">5</div><div class="content"><h4>Hipótesis de negocio</h4><p>¿Qué variables predicen mejor el target? ¿Hay segmentos naturales?</p></div></li>
+      </ul>
+    </div>
+    <div class="card g">
+      <h3>EDA con Código</h3>
+      <pre">import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Mapa de calor de correlación
+plt.figure(figsize=(10,8))
+sns.heatmap(df.corr(), annot=True,
+    cmap='coolwarm', center=0,
+    fmt='.2f')
+plt.title('Correlaciones entre Variables')
+plt.tight_layout()
+
+# Detección visual de outliers por categoría
+sns.boxplot(data=df, x='turno',
+    y='defectos', hue='linea')
+
+# Scatter matrix para ver relaciones
+pd.plotting.scatter_matrix(
+    df[['temp','vibracion','defectos']],
+    figsize=(10,8), diagonal='hist')</pre>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="4">
+  <h2>Kedro: Pipelines de Datos Reproducibles y Productivos</h2>
+  <div class="ld">
+    <div class="lr" style="background:rgba(6,182,212,.1);border:1px solid var(--cyan);color:var(--cyan);">📂 DATA CATALOG — Define fuentes de datos (CSV, SQL, APIs, Parquet) en YAML. El código no "sabe" dónde están los archivos.</div>
+    <div class="lr" style="background:rgba(16,185,129,.1);border:1px solid var(--green);color:var(--green);">⚙️ NODES — Funciones Python puras: input → transformación → output. Sin efectos secundarios, fáciles de testear.</div>
+    <div class="lr" style="background:rgba(245,158,11,.1);border:1px solid var(--orange);color:var(--orange);">🔗 PIPELINE — Grafo de dependencias entre nodos. Kedro resuelve el orden automáticamente (DAG). Paralelización automática.</div>
+    <div class="lr" style="background:rgba(124,58,237,.1);border:1px solid var(--violet);color:var(--violet);">📊 KEDRO-VIZ — Visualización interactiva del pipeline. Ver el flujo de datos completo de un vistazo.</div>
+    <div class="lr" style="background:rgba(236,72,153,.1);border:1px solid var(--pink);color:var(--pink);">🔬 EXPERIMENTOS — Registro de parámetros, métricas y versiones de datos. MLflow integration.</div>
+  </div>
+  <div class="box bc"><div class="bt">📰 CASO REAL — Kedro en QuantumBlack (McKinsey Digital)</div>
+    <p>McKinsey Digital creó Kedro para estandarizar proyectos de DS en sus clientes industriales. Una empresa petrolera migró 15 notebooks de análisis a un pipeline Kedro: tiempo de re-ejecución pasó de 4 horas (manual) a 12 minutos (automatizado), con trazabilidad completa de cada transformación para auditoría regulatoria.</p>
+  </div>
+</div>
+
+<div class="slide" data-s="4">
+  <h2>Arquitectura de un Pipeline de Producción con Kedro</h2>
+  <div class="cg c3">
+    <div class="card c">
+      <h3>Data Ingestion Layer</h3>
+      <ul>
+        <li>Conectores a fuentes: SQL, APIs, archivos</li>
+        <li>Validación de esquema con Great Expectations</li>
+        <li>Logging de errores y registros rechazados</li>
+        <li>Versionado de datos raw</li>
+      </ul>
+      <pre style="margin-top:8px;">def load_produccion_data(filepath):
+    df = pd.read_csv(filepath)
+    assert 'fecha' in df.columns
+    return df</pre>
+    </div>
+    <div class="card v">
+      <h3>Data Processing Layer</h3>
+      <ul>
+        <li>Limpieza, imputación, normalización</li>
+        <li>Feature engineering (nuevas variables)</li>
+        <li>Encoding de categóricas</li>
+        <li>Split train/validation/test</li>
+      </ul>
+      <pre style="margin-top:8px;">def preprocess(df: pd.DataFrame,
+               params: dict) -> pd.DataFrame:
+    df = df.dropna(subset=params['required_cols'])
+    df['oee'] = (df['disponibilidad'] *
+                 df['rendimiento'] *
+                 df['calidad'])
+    return df</pre>
+    </div>
+    <div class="card g">
+      <h3>Model + Reporting Layer</h3>
+      <ul>
+        <li>Entrenamiento del modelo ML</li>
+        <li>Evaluación con métricas estándar</li>
+        <li>Almacenamiento del modelo (MLflow/pickle)</li>
+        <li>Generación de reportes automáticos</li>
+      </ul>
+      <pre style="margin-top:8px;">def train_model(X_train, y_train,
+                params: dict):
+    model = RandomForestRegressor(
+        **params['rf_params'])
+    model.fit(X_train, y_train)
+    return model</pre>
+    </div>
+  </div>
+  <div class="box bl"><div class="bt">🔬 PRÁCTICA FINAL BLOQUE II</div>
+    <p>Proyecto integrador: construir un mini-pipeline Kedro que cargue datos de producción (CSV), los enriquezca con clima (API), limpie y transforme, genere un EDA automático con Pandas Profiling, y exporte el dataset listo para ML al catálogo de datos.</p>
+  </div>
+</div>
+
+<!-- CIERRE -->
+<div class="slide cover" data-s="4">
+  <div class="badge">BLOQUE II — CIERRE</div>
+  <h1>Python: De Código a<br>Fábrica de Datos</h1>
+  <p style="max-width:600px;margin:16px auto;color:var(--muted);">Python, NumPy, Pandas, SQL, MongoDB, APIs y Kedro son las herramientas que transforman datos crudos en activos empresariales valiosos. El pipeline de datos es la columna vertebral de cualquier proyecto de IA industrial exitoso.</p>
+  <div class="sr" style="justify-content:center;max-width:700px;margin:20px auto;">
+    <div class="stat"><div class="n" style="color:var(--cyan)">🐍</div><div class="l">Python fundamentos y automatización</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">🐼</div><div class="l">NumPy + Pandas para análisis</div></div>
+    <div class="stat"><div class="n" style="color:var(--orange)">🗄️</div><div class="l">SQL y bases relacionales</div></div>
+    <div class="stat"><div class="n" style="color:var(--violet)">🍃</div><div class="l">MongoDB y APIs externas</div></div>
+    <div class="stat"><div class="n" style="color:var(--pink)">⚙️</div><div class="l">EDA y pipelines Kedro</div></div>
+  </div>
+  <div style="margin-top:16px;font-size:.8rem;color:var(--muted);">
+    <strong style="color:var(--cyan);">Referencias:</strong> McKinney (2022) Python for Data Analysis · VanderPlas (2022) Python Data Science Handbook · Provost &amp; Fawcett (2013) Data Science for Business
+  </div>
+</div>
+
+</div>
+<div id="footer">
+  <button onclick="prev()">← Anterior</button>
+  <span class="hint">← → · Espacio</span>
+  <button onclick="next()">Siguiente →</button>
+</div>
+<script>
+const slides=document.querySelectorAll('.slide'),total=slides.length;let cur=0;
+const ss=[];slides.forEach((s,i)=>{const v=parseInt(s.dataset.s);if(ss[v]===undefined)ss[v]=i;});
+function go(n){if(n<0||n>=total)return;slides[cur].classList.remove('active');cur=n;slides[cur].classList.add('active');document.getElementById('ctr').textContent=(cur+1)+' / '+total;document.getElementById('pb').style.width=((cur+1)/total*100)+'%';ut();slides[cur].scrollTop=0;}
+function next(){go(cur+1);}function prev(){go(cur-1);}function gts(i){go(ss[i]);}
+function ut(){const v=parseInt(slides[cur].dataset.s);for(let i=0;i<5;i++){const b=document.getElementById('t'+i);if(b)b.classList.toggle('active',i===v);}}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();}if(e.key==='ArrowLeft'){e.preventDefault();prev();}});
+ut();
+</script>
+</body>
+</html>

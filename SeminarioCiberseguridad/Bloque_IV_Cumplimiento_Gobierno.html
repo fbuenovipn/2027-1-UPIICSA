@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloque IV — Cumplimiento, Gobierno y Continuidad del Negocio</title>
+<style>
+  :root {
+    --bg: #050a14; --card: #0d1a2e; --card2: #0a1525; --border: #1a3050;
+    --cyan: #00d4ff; --green: #00ff88; --orange: #ff8c42; --red: #ff3366;
+    --purple: #bb86fc; --yellow: #ffd60a; --text: #e0eaf8; --muted: #7a9bbf;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; overflow: hidden; height: 100vh; }
+  #navbar { position: fixed; top: 0; left: 0; right: 0; height: 54px; background: rgba(5,10,20,0.95); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 100; backdrop-filter: blur(8px); }
+  #navbar .brand { color: var(--purple); font-weight: 700; font-size: 0.85rem; letter-spacing: 1px; }
+  #navbar .brand span { color: var(--cyan); }
+  .session-tabs { display: flex; gap: 6px; }
+  .session-tabs button { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 4px 12px; border-radius: 20px; cursor: pointer; font-size: 0.75rem; transition: all 0.2s; }
+  .session-tabs button.active { background: var(--purple); border-color: var(--purple); color: #000; font-weight: 700; }
+  .session-tabs button:hover:not(.active) { border-color: var(--purple); color: var(--purple); }
+  #slide-counter { color: var(--muted); font-size: 0.8rem; min-width: 80px; text-align: right; }
+  #progress-bar { position: fixed; top: 54px; left: 0; height: 3px; background: linear-gradient(90deg, var(--purple), var(--cyan)); transition: width 0.3s ease; z-index: 100; }
+  #slides-container { position: fixed; top: 57px; left: 0; right: 0; bottom: 40px; overflow: hidden; }
+  .slide { position: absolute; top: 0; left: 0; right: 0; bottom: 0; padding: 28px 48px; display: none; overflow-y: auto; animation: fadeIn 0.35s ease; }
+  .slide.active { display: flex; flex-direction: column; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+  #footer { position: fixed; bottom: 0; left: 0; right: 0; height: 40px; background: rgba(5,10,20,0.95); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 16px; z-index: 100; }
+  #footer button { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 5px 20px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; transition: all 0.2s; }
+  #footer button:hover { border-color: var(--purple); color: var(--purple); }
+  #footer .hint { color: var(--muted); font-size: 0.72rem; }
+  h1 { font-size: 2rem; font-weight: 800; line-height: 1.2; margin-bottom: 10px; }
+  h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 14px; }
+  h3 { font-size: 1.1rem; font-weight: 600; color: var(--purple); margin-bottom: 8px; margin-top: 14px; }
+  p { font-size: 0.92rem; line-height: 1.65; color: var(--text); margin-bottom: 8px; }
+  ul, ol { padding-left: 20px; font-size: 0.9rem; line-height: 1.8; }
+  li { margin-bottom: 4px; }
+  .subtitle { color: var(--muted); font-size: 1rem; margin-bottom: 6px; }
+  .tag { display: inline-block; background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 2px 10px; font-size: 0.75rem; color: var(--muted); margin-right: 6px; }
+  .cover { align-items: center; justify-content: center; text-align: center; }
+  .cover h1 { font-size: 2.4rem; background: linear-gradient(135deg, var(--purple), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 16px; }
+  .cover .block-badge { display: inline-block; background: linear-gradient(135deg, #1a0a40, #0d1a2e); border: 1px solid var(--purple); border-radius: 8px; padding: 8px 24px; color: var(--purple); font-size: 0.9rem; font-weight: 700; letter-spacing: 2px; margin-bottom: 20px; }
+  .cover .sessions-grid { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+  .cover .sess-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; width: 160px; text-align: left; }
+  .cover .sess-card .num { color: var(--purple); font-size: 0.7rem; font-weight: 700; }
+  .cover .sess-card .name { font-size: 0.8rem; margin-top: 4px; }
+  .card-grid { display: grid; gap: 14px; margin-top: 8px; }
+  .card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+  .card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; position: relative; overflow: hidden; }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .card.cyan::before { background: var(--cyan); }
+  .card.green::before { background: var(--green); }
+  .card.orange::before { background: var(--orange); }
+  .card.red::before { background: var(--red); }
+  .card.purple::before { background: var(--purple); }
+  .card h3 { margin-top: 0; font-size: 0.95rem; }
+  .card p, .card ul, .card li { font-size: 0.85rem; }
+  .box { border-radius: 10px; padding: 14px 18px; margin: 10px 0; }
+  .box-meta { background: rgba(187,134,252,0.08); border: 1px solid rgba(187,134,252,0.4); }
+  .box-caso { background: rgba(255,140,66,0.08); border: 1px solid rgba(255,140,66,0.4); }
+  .box-lab  { background: rgba(0,255,136,0.08);  border: 1px solid rgba(0,255,136,0.4); }
+  .box-dato { background: rgba(0,212,255,0.08);  border: 1px solid rgba(0,212,255,0.4); }
+  .box-quiz { background: rgba(255,214,10,0.08); border: 1px solid rgba(255,214,10,0.4); cursor: pointer; }
+  .box-title { font-weight: 700; font-size: 0.8rem; margin-bottom: 6px; letter-spacing: 0.5px; }
+  .box-meta .box-title { color: var(--purple); }
+  .box-caso .box-title { color: var(--orange); }
+  .box-lab  .box-title { color: var(--green); }
+  .box-dato .box-title { color: var(--cyan); }
+  .box-quiz .box-title { color: var(--yellow); }
+  .box p, .box li, .box ul { font-size: 0.87rem; }
+  .quiz-answer { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,214,10,0.3); color: var(--green); font-size: 0.85rem; }
+  .box-quiz.revealed .quiz-answer { display: block; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.83rem; margin-top: 8px; }
+  th { background: #0a1a30; color: var(--purple); text-align: left; padding: 8px 12px; border: 1px solid var(--border); }
+  td { padding: 7px 12px; border: 1px solid var(--border); vertical-align: top; }
+  tr:nth-child(even) td { background: rgba(13,26,46,0.6); }
+  .timeline { list-style: none; padding: 0; margin-top: 8px; }
+  .timeline li { display: flex; gap: 14px; margin-bottom: 12px; align-items: flex-start; }
+  .timeline .step { min-width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; flex-shrink: 0; }
+  .timeline .step.cyan   { background: rgba(0,212,255,0.15); border: 2px solid var(--cyan); color: var(--cyan); }
+  .timeline .step.green  { background: rgba(0,255,136,0.15); border: 2px solid var(--green); color: var(--green); }
+  .timeline .step.orange { background: rgba(255,140,66,0.15); border: 2px solid var(--orange); color: var(--orange); }
+  .timeline .step.red    { background: rgba(255,51,102,0.15); border: 2px solid var(--red); color: var(--red); }
+  .timeline .step.purple { background: rgba(187,134,252,0.15); border: 2px solid var(--purple); color: var(--purple); }
+  .timeline .content h4  { font-size: 0.9rem; color: var(--text); }
+  .timeline .content p   { font-size: 0.83rem; color: var(--muted); margin: 0; }
+  .stat-row { display: flex; gap: 16px; flex-wrap: wrap; margin: 10px 0; }
+  .stat { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; flex: 1; min-width: 120px; text-align: center; }
+  .stat .num { font-size: 1.8rem; font-weight: 800; line-height: 1; }
+  .stat .lbl { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
+  .pill { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; margin: 2px; }
+  .pill-cyan   { background: rgba(0,212,255,0.15); border: 1px solid var(--cyan); color: var(--cyan); }
+  .pill-green  { background: rgba(0,255,136,0.15); border: 1px solid var(--green); color: var(--green); }
+  .pill-orange { background: rgba(255,140,66,0.15); border: 1px solid var(--orange); color: var(--orange); }
+  .pill-red    { background: rgba(255,51,102,0.15); border: 1px solid var(--red); color: var(--red); }
+  .pill-purple { background: rgba(187,134,252,0.15); border: 1px solid var(--purple); color: var(--purple); }
+  .layer-diagram { display: flex; flex-direction: column; gap: 6px; margin: 10px 0; }
+  .layer { border-radius: 6px; padding: 8px 16px; font-size: 0.82rem; font-weight: 600; text-align: center; }
+  .slide::-webkit-scrollbar { width: 4px; }
+  .slide::-webkit-scrollbar-track { background: transparent; }
+  .slide::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div id="navbar">
+  <div class="brand">🏛️ CIBER<span>SEG</span> · BLOQUE IV</div>
+  <div class="session-tabs">
+    <button onclick="goToSession(0)" id="tab-0">S16</button>
+    <button onclick="goToSession(1)" id="tab-1">S17</button>
+    <button onclick="goToSession(2)" id="tab-2">S18</button>
+    <button onclick="goToSession(3)" id="tab-3">S19</button>
+    <button onclick="goToSession(4)" id="tab-4">S20</button>
+  </div>
+  <div id="slide-counter">1 / 60</div>
+</div>
+<div id="progress-bar" style="width:1.67%"></div>
+
+<div id="slides-container">
+
+<!-- PORTADA -->
+<div class="slide active cover" data-session="0">
+  <div class="block-badge">BLOQUE IV · SESIONES 16 – 20</div>
+  <h1>Cumplimiento, Gobierno<br>y Continuidad del Negocio</h1>
+  <p class="subtitle">Ciberseguridad Empresarial · Seminario de Titulación · 30 horas</p>
+  <div class="sessions-grid">
+    <div class="sess-card"><div class="num">SESIÓN 16</div><div class="name">Gobierno y CISO</div></div>
+    <div class="sess-card"><div class="num">SESIÓN 17</div><div class="name">Métricas y Auditoría</div></div>
+    <div class="sess-card"><div class="num">SESIÓN 18</div><div class="name">Legal y Privacidad</div></div>
+    <div class="sess-card"><div class="num">SESIÓN 19</div><div class="name">BCP / DRP</div></div>
+    <div class="sess-card"><div class="num">SESIÓN 20</div><div class="name">Seguridad Física</div></div>
+  </div>
+  <p style="margin-top:24px; color:var(--muted); font-size:0.82rem;">← → o barra espaciadora para navegar · Click en S16–S20 para ir a cada sesión</p>
+</div>
+
+<!-- ═══ SESIÓN 16 — GOBIERNO Y CISO ═══ -->
+<div class="slide" data-session="0">
+  <h2>Sesión 16 <span style="color:var(--purple)">— Gobierno de la Ciberseguridad y Rol del CISO</span></h2>
+  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
+    <p>La ciberseguridad sin gobierno es como un ejército sin cadena de mando: hay soldados, hay armas, pero nadie sabe a quién reportar ni qué defender primero. El <strong>gobierno convierte las herramientas técnicas en una estrategia coherente</strong> alineada con los objetivos del negocio.</p>
+  </div>
+  <div class="card-grid cols-3" style="margin-top:14px;">
+    <div class="card purple"><h3>Del TI al Negocio</h3><p>La seguridad dejó de ser un problema técnico. Es un riesgo empresarial que la junta directiva debe gestionar como cualquier otro riesgo corporativo.</p></div>
+    <div class="card cyan"><h3>¿Qué es Gobierno de Seguridad?</h3><p>Conjunto de políticas, procesos, estructuras y métricas que aseguran que la seguridad apoya los objetivos del negocio y se gestiona responsablemente.</p></div>
+    <div class="card orange"><h3>Marcos de Gobierno</h3><ul><li>COBIT 2019</li><li>ISO/IEC 27001</li><li>NIST CSF</li><li>CIS Controls v8</li><li>ISF Standard of Good Practice</li></ul></div>
+  </div>
+</div>
+
+<div class="slide" data-session="0">
+  <h2>El CISO: Chief Information Security Officer</h2>
+  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
+    <p>El CISO es el <strong>director de orquesta de la seguridad</strong>. No toca ningún instrumento directamente, pero asegura que todos los músicos (equipos técnicos, legales, operaciones, directivos) toquen la misma partitura en el momento correcto. Su lenguaje es el del negocio, no solo el del código.</p>
+  </div>
+  <div class="card-grid cols-2" style="margin-top:14px;">
+    <div class="card cyan">
+      <h3>Perfil y Competencias del CISO Moderno</h3>
+      <ul>
+        <li>Comunicador ejecutivo: habla con el consejo y con el técnico</li>
+        <li>Gestor de riesgos empresariales (no solo técnicos)</li>
+        <li>Conocimiento legal: regulaciones, contratos, litigios</li>
+        <li>Liderazgo de equipos diversos y bajo presión</li>
+        <li>Comprensión del negocio: finanzas, operaciones, clientes</li>
+        <li>Visión estratégica de largo plazo</li>
+      </ul>
+    </div>
+    <div class="card purple">
+      <h3>¿A quién reporta el CISO?</h3>
+      <p><strong>Debate activo en la industria:</strong></p>
+      <ul>
+        <li><strong>Al CIO</strong>: acceso técnico, pero conflicto de intereses (TI audita a TI)</li>
+        <li><strong>Al CEO/COO</strong>: mejor independencia, mayor autoridad</li>
+        <li><strong>Al General Counsel</strong>: alineación legal, pero límite técnico</li>
+        <li><strong>Al Consejo Directivo</strong>: máxima independencia (best practice)</li>
+      </ul>
+      <p style="margin-top:8px; color:var(--muted); font-size:0.8rem;">Recomendación ISACA: reporte directo al CEO o al Comité de Auditoría del Consejo.</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-session="0">
+  <h2>Estructura de Gobierno: Comités y Roles</h2>
+  <div class="layer-diagram">
+    <div class="layer" style="background:rgba(187,134,252,0.15);border:1px solid var(--purple);color:var(--purple);">🏛️ CONSEJO DIRECTIVO / COMITÉ DE AUDITORÍA — Supervisión estratégica y tolerancia al riesgo</div>
+    <div class="layer" style="background:rgba(0,212,255,0.12);border:1px solid var(--cyan);color:var(--cyan);">👔 COMITÉ DE SEGURIDAD — CISO + CIO + CFO + Legal + Operaciones — Decisiones de política</div>
+    <div class="layer" style="background:rgba(255,140,66,0.12);border:1px solid var(--orange);color:var(--orange);">🛡️ FUNCIÓN CISO — Estrategia, riesgo, política, gobierno, compliance, comunicación</div>
+    <div class="layer" style="background:rgba(0,255,136,0.12);border:1px solid var(--green);color:var(--green);">⚙️ EQUIPOS OPERATIVOS — SOC · Arquitectura · IAM · Red · Aplicaciones · GRC</div>
+    <div class="layer" style="background:rgba(255,51,102,0.12);border:1px solid var(--red);color:var(--red);">👥 USUARIOS Y LÍNEA DE NEGOCIO — Propietarios de activos y datos · Cultura de seguridad</div>
+  </div>
+  <div class="box box-dato"><div class="box-title">💡 DATO CLAVE — RACI en Seguridad</div>
+    <p>RACI: <strong>R</strong>esponsable (quien hace), <strong>A</strong>ccountable (quien responde ante dirección), <strong>C</strong>onsultado (quien da input), <strong>I</strong>nformado (quien debe saber). Define claramente quién es dueño de cada decisión de seguridad. Sin RACI, todos culpan a todos cuando falla algo.</p>
+  </div>
+</div>
+
+<div class="slide" data-session="0">
+  <h2>Cómo Vender la Seguridad a la Alta Dirección</h2>
+  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
+    <p>Nadie compra una vacuna explicándole la biología del virus. Le dices: "Con esta vacuna no pierdes 3 semanas en cama y te ahorras el médico." Al director financiero no le importa el CVE-2024-xxxx; le importa que <strong>sin ese control, la empresa arriesga $2M en multas y 3 días sin operar</strong>.</p>
+  </div>
+  <div class="card-grid cols-2" style="margin-top:14px;">
+    <div class="card orange">
+      <h3>Lenguaje que entiende la Dirección</h3>
+      <ul>
+        <li><strong>Riesgo financiero</strong>: "Este control reduce ALE de $800K a $200K"</li>
+        <li><strong>Continuidad</strong>: "Sin esto, 4 horas de producción paradas = $1.2M"</li>
+        <li><strong>Regulatorio</strong>: "Multa INAI hasta 320,000 días de salario mínimo"</li>
+        <li><strong>Reputación</strong>: "Una brecha pública reduce clientes 15% en promedio"</li>
+        <li><strong>Competitividad</strong>: "ISO 27001 es requisito de licitación con gobierno"</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h3>Estructura del Business Case</h3>
+      <ul>
+        <li>Situación actual (riesgo cuantificado)</li>
+        <li>Costo del control propuesto</li>
+        <li>Reducción de riesgo esperada</li>
+        <li>ROI de seguridad (ROSI)</li>
+        <li>Alternativas consideradas</li>
+        <li>Recomendación clara con urgencia</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-session="0">
+  <h2>Madurez del Programa: CMMI de Ciberseguridad</h2>
+  <table>
+    <tr><th>Nivel</th><th>Nombre</th><th>Características</th><th>¿Cómo llegar?</th></tr>
+    <tr><td><span class="pill pill-red">0</span></td><td>Inexistente</td><td>Sin procesos formales, caótico, incidentes frecuentes</td><td>Punto de partida</td></tr>
+    <tr><td><span class="pill pill-orange">1</span></td><td>Inicial</td><td>Reactivo, depende de héroes individuales, sin documentación</td><td>Políticas básicas escritas</td></tr>
+    <tr><td><span class="pill pill-cyan">2</span></td><td>Gestionado</td><td>Procesos documentados, repetibles, métricas básicas</td><td>ISO 27001 implementado</td></tr>
+    <tr><td><span class="pill pill-green">3</span></td><td>Definido</td><td>Estándar organizacional, formación, mejora continua</td><td>Auditorías internas, KPIs</td></tr>
+    <tr><td><span class="pill pill-purple">4</span></td><td>Cuantificado</td><td>Datos guían decisiones, predicción de riesgos</td><td>SIEM maduro, threat intel</td></tr>
+    <tr><td><span class="pill pill-cyan">5</span></td><td>Optimizado</td><td>Innovación, aprendizaje continuo, referente del sector</td><td>Red team continuo, CSIRT world-class</td></tr>
+  </table>
+  <div class="box box-dato" style="margin-top:12px;"><div class="box-title">💡 DATO CLAVE</div>
+    <p>El <strong>promedio de madurez en empresas industriales de México</strong> está entre nivel 1 y 2. La mayoría tienen alguna política escrita pero sin aplicación consistente. El objetivo realista a 2 años de implementar este seminario es alcanzar nivel 3.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 17 — MÉTRICAS Y AUDITORÍA ═══ -->
+<div class="slide" data-session="1">
+  <h2>Sesión 17 <span style="color:var(--cyan)">— Métricas, Auditoría y Cumplimiento de Seguridad</span></h2>
+  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
+    <p>"Lo que no se mide no se mejora" — Peter Drucker. En ciberseguridad, si no tienes métricas, no puedes demostrar que tu programa funciona ni justificar el presupuesto. Las métricas son el <strong>velocímetro y el GPS del programa de seguridad</strong>: te dicen a qué velocidad vas y si vas por el camino correcto.</p>
+  </div>
+  <div class="card-grid cols-3" style="margin-top:14px;">
+    <div class="card purple"><h3>KPI (Indicador de desempeño)</h3><p>Mide el desempeño actual del programa: ¿estamos haciendo bien las cosas? Ej: % sistemas con parches al día.</p></div>
+    <div class="card orange"><h3>KRI (Indicador de riesgo)</h3><p>Señal de alerta temprana: ¿el riesgo está aumentando? Ej: número de vulnerabilidades críticas abiertas &gt; 30 días.</p></div>
+    <div class="card green"><h3>KCI (Indicador de control)</h3><p>Mide si los controles están funcionando: ¿están activos y efectivos? Ej: % usuarios con MFA habilitado.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-session="1">
+  <h2>Catálogo de Métricas para el Dashboard del CISO</h2>
+  <table>
+    <tr><th>Categoría</th><th>Métrica</th><th>Meta</th><th>Audiencia</th></tr>
+    <tr><td>Gestión de parches</td><td>% activos críticos parchados en SLA (&lt;72h)</td><td>&gt; 95%</td><td>CISO, CIO</td></tr>
+    <tr><td>Vulnerabilidades</td><td>Tiempo promedio de remediación (CVSS ≥ 9)</td><td>&lt; 7 días</td><td>SOC, Infra</td></tr>
+    <tr><td>Identidades</td><td>% usuarios con MFA activo</td><td>100%</td><td>Dirección</td></tr>
+    <tr><td>Incidentes</td><td>MTTD (Mean Time to Detect)</td><td>&lt; 24h</td><td>SOC Manager</td></tr>
+    <tr><td>Incidentes</td><td>MTTR (Mean Time to Respond)</td><td>&lt; 4h críticos</td><td>CISO, CEO</td></tr>
+    <tr><td>Concientización</td><td>% empleados que completaron training anual</td><td>&gt; 95%</td><td>RH, Dirección</td></tr>
+    <tr><td>Phishing</td><td>Tasa de click en simulaciones</td><td>&lt; 5%</td><td>CISO, RH</td></tr>
+    <tr><td>Disponibilidad</td><td>Uptime de sistemas críticos</td><td>99.9%</td><td>Dirección</td></tr>
+    <tr><td>Cumplimiento</td><td>% controles ISO 27001 implementados</td><td>&gt; 90%</td><td>Auditoría, Legal</td></tr>
+  </table>
+</div>
+
+<div class="slide" data-session="1">
+  <h2>Auditoría de Seguridad: Tipos y Proceso</h2>
+  <div class="card-grid cols-2">
+    <div class="card purple">
+      <h3>Tipos de Auditoría</h3>
+      <ul>
+        <li><strong>Interna</strong>: realizada por equipo de la organización, más frecuente</li>
+        <li><strong>Externa</strong>: por tercero independiente, mayor credibilidad</li>
+        <li><strong>Regulatoria</strong>: CNBV, IMSS, SAT, INAI — sujeta a sanciones</li>
+        <li><strong>De certificación</strong>: ISO 27001 por certificadora acreditada</li>
+        <li><strong>Técnica</strong>: pentest, vulnerability assessment, code review</li>
+        <li><strong>Compliance</strong>: verificación de cumplimiento PCI-DSS, GDPR</li>
+      </ul>
+    </div>
+    <div class="card cyan">
+      <h3>Proceso de Auditoría</h3>
+      <ul>
+        <li><strong>Planificación</strong>: alcance, criterios, equipo auditor, cronograma</li>
+        <li><strong>Trabajo de campo</strong>: entrevistas, revisión documental, pruebas técnicas</li>
+        <li><strong>Hallazgos</strong>: no conformidades (NC) mayores y menores, observaciones</li>
+        <li><strong>Informe</strong>: hallazgos, evidencia, recomendaciones, plan de acción</li>
+        <li><strong>Seguimiento</strong>: verificación de cierre de NCs, re-auditoría</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box box-lab" style="margin-top:12px;"><div class="box-title">🔬 LABORATORIO — Dashboard Power BI</div>
+    <p>Construir dashboard de métricas de seguridad: conectar Excel con datos de vulnerabilidades, incidentes y phishing → visualizar KPIs en semáforo (rojo/amarillo/verde) → exportar reporte ejecutivo para presentar al Comité de Seguridad mensualmente.</p>
+  </div>
+</div>
+
+<div class="slide" data-session="1">
+  <h2>Frameworks de Métricas y Madurez</h2>
+  <div class="card-grid cols-3">
+    <div class="card orange">
+      <h3>NIST CSF v2.0</h3>
+      <p>6 funciones: <strong>Govern, Identify, Protect, Detect, Respond, Recover</strong>. Cada función tiene categorías y subcategorías con niveles de implementación (1-4).</p>
+    </div>
+    <div class="card green">
+      <h3>CIS Controls v8</h3>
+      <p>18 controles priorizados por impacto. Grupos de implementación IG1 (básico), IG2 (medio), IG3 (avanzado). Ideal para medir madurez de controles técnicos.</p>
+    </div>
+    <div class="card purple">
+      <h3>ISO/IEC 27004</h3>
+      <p>Estándar específico para métricas de seguridad: define cómo seleccionar, implementar y analizar medidas del SGSI (Sistema de Gestión de Seguridad).</p>
+    </div>
+  </div>
+  <div class="box box-quiz" onclick="this.classList.toggle('revealed')" style="margin-top:14px;"><div class="box-title">❓ QUIZ — Click para ver respuesta</div>
+    <p>El Comité de Dirección pide una sola métrica que resuma el estado del programa de seguridad. ¿Cuál propones y por qué?</p>
+    <div class="quiz-answer">No existe una sola métrica perfecta, pero el <strong>Cyber Risk Score</strong> (o Security Posture Index) que combina vulnerabilidades abiertas × impacto × cobertura de controles × tendencia de incidentes es el más usado para comunicar a dirección. Alternativa práctica: un semáforo con 5-7 KPIs clave. Lo importante es consistencia y tendencia, no el número absoluto.</div>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 18 — LEGAL Y PRIVACIDAD ═══ -->
+<div class="slide" data-session="2">
+  <h2>Sesión 18 <span style="color:var(--red)">— Aspectos Legales, Éticos y Protección de Datos</span></h2>
+  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
+    <p>La ciberseguridad sin perspectiva legal es como un médico que opera sin conocer las leyes de responsabilidad profesional. Puede ser técnicamente brillante pero terminar en un juicio. El profesional de seguridad necesita <strong>entender qué puede y qué no puede hacer legalmente</strong>, qué debe reportar y a quién.</p>
+  </div>
+  <div class="card-grid cols-2" style="margin-top:14px;">
+    <div class="card cyan">
+      <h3>LFPDPPP — México</h3>
+      <ul>
+        <li>Ley Federal de Protección de Datos Personales en Posesión de los Particulares (2010)</li>
+        <li>Aplica a cualquier empresa que trate datos personales</li>
+        <li>Obligaciones: aviso de privacidad, consentimiento, seguridad, derechos ARCO</li>
+        <li>Notificar vulneraciones al INAI en <strong>72 horas</strong></li>
+        <li>Sanciones: multas hasta 320,000 días de salario mínimo (~$200M MXN)</li>
+        <li>Autoridad: INAI (Instituto Nacional de Transparencia)</li>
+      </ul>
+    </div>
+    <div class="card purple">
+      <h3>GDPR — Unión Europea</h3>
+      <ul>
+        <li>Aplica si procesas datos de ciudadanos europeos, aunque seas empresa mexicana</li>
+        <li>Multas: hasta €20M o 4% de ingresos globales anuales</li>
+        <li>Notificación de brecha: 72 horas a autoridad supervisora</li>
+        <li>Privacy by Design: seguridad en el diseño, no al final</li>
+        <li>Derecho al olvido: borrado de datos a petición del titular</li>
+        <li>DPO: Data Protection Officer obligatorio en ciertos casos</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-session="2">
+  <h2>Ética en Ciberseguridad</h2>
+  <div class="card-grid cols-2">
+    <div class="card orange">
+      <h3>Código de Ética (ISC)²</h3>
+      <ul>
+        <li>Proteger la sociedad, el bien común y la infraestructura</li>
+        <li>Actuar con honor, honestidad, justicia y responsabilidad</li>
+        <li>Proveer servicio diligente y competente</li>
+        <li>Avanzar y proteger la profesión</li>
+      </ul>
+      <p style="margin-top:8px;color:var(--muted);font-size:0.8rem;">Aplicable a CISSP, SSCP, CSSP y otras certificaciones (ISC)²</p>
+    </div>
+    <div class="card red">
+      <h3>Dilemas Éticos Comunes</h3>
+      <ul>
+        <li><strong>Hacker ético contratado</strong> que descubre datos de competencia del cliente: ¿reporta? ¿calla?</li>
+        <li><strong>Empleado de seguridad</strong> que detecta fraude interno de su jefe: ¿escala? ¿a quién?</li>
+        <li><strong>Investigador de vulnerabilidades</strong> que descubre falla crítica en infraestructura nacional antes del parche: ¿publica ya?</li>
+        <li><strong>Pagar o no el rescate</strong> de ransomware: decisión legal, ética y estratégica</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box box-dato"><div class="box-title">💡 DATO CLAVE — Divulgación Responsable</div>
+    <p>El estándar de la industria es la <strong>Responsible Disclosure / Coordinated Vulnerability Disclosure (CVD)</strong>: reportar la vulnerabilidad al proveedor, dar tiempo razonable para parchear (90 días es el estándar de Google Project Zero) y luego publicar. No es lo mismo que "full disclosure" inmediata que pone a todos en riesgo.</p>
+  </div>
+</div>
+
+<div class="slide" data-session="2">
+  <h2>Marco Legal de Delitos Informáticos en México</h2>
+  <table>
+    <tr><th>Delito</th><th>Fundamento Legal</th><th>Pena</th></tr>
+    <tr><td>Acceso ilícito a sistemas</td><td>Art. 211 bis 1 CPF</td><td>3 meses – 2 años + multa</td></tr>
+    <tr><td>Acceso a datos protegidos</td><td>Art. 211 bis 2 CPF</td><td>6 meses – 2 años + multa</td></tr>
+    <tr><td>Daño a sistemas (sabotaje)</td><td>Art. 211 bis 5-6 CPF</td><td>1 – 8 años</td></tr>
+    <tr><td>Fraude informático / ciberfraude</td><td>Art. 386 CPF</td><td>3 – 12 años</td></tr>
+    <tr><td>Intercepción de comunicaciones</td><td>Art. 167 CPF</td><td>1 – 9 años</td></tr>
+    <tr><td>Violación de datos personales</td><td>LFPDPPP Art. 67</td><td>Multa INAI + penal en agravantes</td></tr>
+    <tr><td>Violación de propiedad intelectual</td><td>LFDA, Art. 424 CPF</td><td>2 – 10 años</td></tr>
+  </table>
+  <div class="box box-caso" style="margin-top:12px;"><div class="box-title">📰 CASO REAL — Brecha Buró de Crédito México (2019)</div>
+    <p>Datos de 30,000 personas de Buró de Crédito fueron expuestos. INAI inició investigación. La empresa fue sancionada por no contar con medidas de seguridad adecuadas. El caso estableció precedente sobre responsabilidad del responsable del tratamiento ante brechas de datos personales.</p>
+  </div>
+</div>
+
+<div class="slide" data-session="2">
+  <h2>Contratos de Ciberseguridad: Claves para el Profesional</h2>
+  <div class="card-grid cols-2">
+    <div class="card cyan">
+      <h3>SLA de Seguridad</h3>
+      <ul>
+        <li><strong>SLA</strong>: Service Level Agreement — define tiempos de respuesta garantizados</li>
+        <li>Ejemplo: "Tiempo de respuesta a incidente crítico: &lt; 30 min"</li>
+        <li>Penalizaciones contractuales por incumplimiento</li>
+        <li>Métricas de disponibilidad: 99.9% = max 8.7h downtime/año</li>
+      </ul>
+    </div>
+    <div class="card orange">
+      <h3>NDA en Pentesting</h3>
+      <ul>
+        <li><strong>NDA</strong>: Non-Disclosure Agreement — confidencialidad de los hallazgos</li>
+        <li>Contrato de pentesting: alcance exacto, fechas, metodología, responsabilidades</li>
+        <li>Cláusula de "get out of jail": autorización escrita ANTES de explotar</li>
+        <li>Entregables del pentest: reporte técnico + ejecutivo</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box box-lab" style="margin-top:12px;"><div class="box-title">🔬 ACTIVIDAD PRÁCTICA</div>
+    <p>Elaborar cláusulas de seguridad y privacidad para un contrato de outsourcing de TI: incluir obligaciones de seguridad del proveedor, derecho de auditoría, SLA de seguridad, NDA, notificación de incidentes y alineación con LFPDPPP.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 19 — BCP/DRP ═══ -->
+<div class="slide" data-session="3">
+  <h2>Sesión 19 <span style="color:var(--green)">— Continuidad del Negocio y Recuperación de Desastres (BCP/DRP)</span></h2>
+  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
+    <p>El BCP/DRP es el <strong>Plan B del negocio</strong>. Cuando tienes un accidente en carretera, no empiezas a pensar qué hacer parado en la autopista: lo tenías planificado (seguro, llanta de repuesto, número del seguro). Las empresas que sobreviven a los grandes incidentes son las que practicaron el Plan B antes de necesitarlo.</p>
+  </div>
+  <div class="card-grid cols-2" style="margin-top:14px;">
+    <div class="card green">
+      <h3>BCP — Business Continuity Plan</h3>
+      <p>Asegura que los <strong>procesos críticos del negocio continúen operando</strong> durante y después de un incidente. Va más allá de la tecnología: personas, instalaciones, proveedores, comunicación.</p>
+    </div>
+    <div class="card cyan">
+      <h3>DRP — Disaster Recovery Plan</h3>
+      <p>Foco en <strong>recuperar la infraestructura tecnológica</strong> (servidores, bases de datos, sistemas) tras un desastre. Es un componente del BCP, no lo mismo.</p>
+    </div>
+  </div>
+  <div class="box box-dato" style="margin-top:12px;"><div class="box-title">💡 DATO CLAVE</div>
+    <p>El <strong>93% de empresas que pierden su centro de datos por más de 10 días quiebran en el primer año</strong> (Gartner). El BCP no es un gasto: es un seguro de vida corporativo.</p>
+  </div>
+</div>
+
+<div class="slide" data-session="3">
+  <h2>Business Impact Analysis (BIA): El Corazón del BCP</h2>
+  <ul class="timeline">
+    <li><div class="step cyan">1</div><div class="content"><h4>Identificar Procesos Críticos</h4><p>¿Qué procesos, si se interrumpen, comprometen la supervivencia del negocio? Manufactura, nómina, facturación, operación de flota, control de planta.</p></div></li>
+    <li><div class="step orange">2</div><div class="content"><h4>Análisis de Dependencias</h4><p>¿Qué sistemas, personas, proveedores y ubicaciones dependen de cada proceso? Mapa completo de dependencias.</p></div></li>
+    <li><div class="step green">3</div><div class="content"><h4>Cuantificar el Impacto</h4><p>Costo por hora de interrupción (revenue lost + costos operativos). Ej: línea de ensamble = $50,000/hora parada.</p></div></li>
+    <li><div class="step purple">4</div><div class="content"><h4>Definir RTO y RPO</h4><p><strong>RTO</strong>: ¿Cuánto tiempo puede estar este proceso caído? <strong>RPO</strong>: ¿Cuántos datos puedo perder (ventana máxima de backup)?</p></div></li>
+    <li><div class="step red">5</div><div class="content"><h4>Priorizar Recuperación</h4><p>Ordenar procesos de mayor a menor criticidad → orden de recuperación en el DRP</p></div></li>
+  </ul>
+</div>
+
+<div class="slide" data-session="3">
+  <h2>RTO, RPO y Estrategias de Recuperación</h2>
+  <div class="stat-row">
+    <div class="stat"><div class="num" style="color:var(--cyan)">RTO</div><div class="lbl">Recovery Time Objective: máximo tiempo caído tolerable</div></div>
+    <div class="stat"><div class="num" style="color:var(--green)">RPO</div><div class="lbl">Recovery Point Objective: máxima pérdida de datos tolerable</div></div>
+    <div class="stat"><div class="num" style="color:var(--orange)">MTPD</div><div class="lbl">Maximum Tolerable Period of Disruption: punto sin retorno</div></div>
+  </div>
+  <table style="margin-top:14px;">
+    <tr><th>Estrategia</th><th>RTO típico</th><th>Costo</th><th>Descripción</th></tr>
+    <tr><td><strong>Hot Site</strong></td><td>Minutos</td><td>$$$$</td><td>Centro de datos alternativo completamente replicado, activo en tiempo real. Failover automático.</td></tr>
+    <tr><td><strong>Warm Site</strong></td><td>Horas</td><td>$$$</td><td>Infraestructura lista, datos parcialmente actualizados. Requiere activación manual.</td></tr>
+    <tr><td><strong>Cold Site</strong></td><td>Días</td><td>$$</td><td>Espacio físico preparado pero sin equipos activos. Se instala y configura tras el desastre.</td></tr>
+    <tr><td><strong>Cloud DR</strong></td><td>Horas</td><td>$$</td><td>Replicación en nube (AWS, Azure). Escalable, pago por uso. Modern standard para PYMES.</td></tr>
+    <tr><td><strong>Backups 3-2-1</strong></td><td>Días</td><td>$</td><td>3 copias, 2 medios distintos, 1 offsite. Mínimo recomendado para cualquier organización.</td></tr>
+  </table>
+</div>
+
+<div class="slide" data-session="3">
+  <h2>Pruebas del BCP/DRP: No Confundir el Mapa con el Territorio</h2>
+  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
+    <p>Un BCP no probado es como un paracaídas que nunca se ha abierto: <strong>puede funcionar perfecto en teoría y fallar completamente cuando lo necesitas</strong>. La diferencia entre las empresas que sobreviven y las que no es que practicaron el plan antes del desastre.</p>
+  </div>
+  <div class="card-grid cols-3" style="margin-top:14px;">
+    <div class="card cyan"><h3>Tabletop</h3><p>Discusión en sala del escenario. Sin activar sistemas. Descubre gaps en el plan, roles y comunicación. Bajo costo, alta frecuencia.</p></div>
+    <div class="card orange"><h3>Walkthrough</h3><p>Cada equipo revisa su procedimiento paso a paso. Verifica que el plan esté actualizado y sea ejecutable.</p></div>
+    <div class="card green"><h3>Simulation / Parallel</h3><p>Activa el sitio alternativo en paralelo al principal. Verifica que los sistemas alternos funcionen sin interrumpir la producción.</p></div>
+    <div class="card purple"><h3>Full Interruption</h3><p>Prueba real: se apaga el sistema principal y se activa el DRP. Alta visibilidad, alto riesgo, mayor aprendizaje. Solo para planes maduros.</p></div>
+    <div class="card red"><h3>Frecuencia Recomendada</h3><ul><li>Tabletop: trimestral</li><li>Walkthrough: semestral</li><li>Simulation: anual</li><li>Full interruption: cada 2-3 años</li></ul></div>
+    <div class="card cyan"><h3>Post-Prueba</h3><p>Informe con hallazgos, acciones correctivas, actualización del plan. La mejora es el objetivo, no "pasar la prueba".</p></div>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 20 — SEGURIDAD FÍSICA ═══ -->
+<div class="slide" data-session="4">
+  <h2>Sesión 20 <span style="color:var(--orange)">— Seguridad Física y Protección del Centro de Datos</span></h2>
+  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
+    <p>Puedes tener el firewall más sofisticado del mundo, pero si alguien entra a la sala de servidores con un USB, todo se acabó. La <strong>seguridad física es el primer anillo de defensa</strong>: antes de que cualquier atacante pueda comprometer un sistema digitalmente, primero debe acceder físicamente al entorno. Ignorarla crea la brecha más obvia.</p>
+  </div>
+  <div class="card-grid cols-3" style="margin-top:14px;">
+    <div class="card orange"><h3>Convergencia IT/OT/Física</h3><p>Los tres dominios son inseparables. Un intruso físico puede plantar un keylogger en un servidor. Un operador OT puede conectar su laptop infectada a la red de planta. La seguridad requiere visión integrada.</p></div>
+    <div class="card cyan"><h3>Activos Físicos Críticos</h3><ul><li>Servidores y storage</li><li>Equipos de red (switches, routers, firewalls)</li><li>Instalaciones del datacenter</li><li>PLCs, HMIs, redes OT</li><li>Estaciones de trabajo de operación</li></ul></div>
+    <div class="card purple"><h3>Amenazas Físicas</h3><ul><li>Robo de hardware</li><li>Inserción de dispositivos maliciosos</li><li>Tailgating / piggybacking</li><li>Desastres naturales (incendio, inundación)</li><li>Sabotaje de instalaciones</li><li>Espionaje físico</li></ul></div>
+  </div>
+</div>
+
+<div class="slide" data-session="4">
+  <h2>Controles de Acceso Físico: Anillos de Seguridad</h2>
+  <div class="layer-diagram">
+    <div class="layer" style="background:rgba(255,51,102,0.1);border:1px solid var(--red);color:var(--red);">🌍 PERÍMETRO EXTERIOR — Barda, concertina, iluminación, vigilancia perimetral, caseta de acceso vehicular</div>
+    <div class="layer" style="background:rgba(255,140,66,0.1);border:1px solid var(--orange);color:var(--orange);">🏢 EDIFICIO / RECEPCIÓN — Credenciales de acceso, registro de visitas, escolta de visitantes, detector de metales</div>
+    <div class="layer" style="background:rgba(0,212,255,0.1);border:1px solid var(--cyan);color:var(--cyan);">🚪 ÁREA RESTRINGIDA — Tarjeta RFID / biometría, mantrap (vestíbulo de seguridad), cámaras, alarma</div>
+    <div class="layer" style="background:rgba(187,134,252,0.1);border:1px solid var(--purple);color:var(--purple);">🖥️ SALA DE SERVIDORES / CCTV — Acceso biométrico multi-factor, jaulas individuales, rack con llave, sensores ambientales</div>
+    <div class="layer" style="background:rgba(0,255,136,0.1);border:1px solid var(--green);color:var(--green);">💾 HARDWARE / ACTIVO — Etiquetado de activos, cable lock, cifrado de disco, gestión de inventario en tiempo real</div>
+  </div>
+</div>
+
+<div class="slide" data-session="4">
+  <h2>Centro de Datos: Requisitos de Infraestructura</h2>
+  <div class="card-grid cols-2">
+    <div class="card cyan">
+      <h3>Redundancia Eléctrica</h3>
+      <ul>
+        <li><strong>UPS (Uninterruptible Power Supply)</strong>: protección ante micro-cortes y apagones momentáneos</li>
+        <li><strong>Generador diesel</strong>: autonomía de horas/días ante corte de CFE</li>
+        <li><strong>Doble acometida eléctrica</strong>: dos suministros independientes de CFE</li>
+        <li><strong>PDU redundante</strong>: distribución de energía por rutas independientes en el rack</li>
+      </ul>
+    </div>
+    <div class="card orange">
+      <h3>Climatización y Ambiente</h3>
+      <ul>
+        <li><strong>HVAC dedicado</strong>: 18-22°C constante, &lt; 50% humedad relativa</li>
+        <li><strong>Hot/cold aisle containment</strong>: optimización del flujo de aire</li>
+        <li><strong>Sensores de temperatura</strong>: alerta antes del apagado por calor</li>
+        <li><strong>Sistema contra incendios</strong>: gases limpios (FM200, Novec) que no dañan equipos</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box box-dato" style="margin-top:12px;"><div class="box-title">💡 DATO CLAVE — Tier de Datacenter (Uptime Institute)</div>
+    <p><strong>Tier I</strong>: 99.671% disponibilidad (28.8h downtime/año). <strong>Tier II</strong>: 99.741%. <strong>Tier III</strong>: 99.982% (1.6h/año). <strong>Tier IV</strong>: 99.995% (26.3 min/año). Los bancos y hospitales requieren Tier III mínimo. Un datacenter en planta industrial típicamente debe aspirar a Tier II o III.</p>
+  </div>
+</div>
+
+<div class="slide" data-session="4">
+  <h2>Seguridad Ambiental en Planta Industrial</h2>
+  <div class="card-grid cols-2">
+    <div class="card red">
+      <h3>Riesgos Específicos de Planta</h3>
+      <ul>
+        <li>Polvo, vibraciones y temperatura extrema dañan hardware estándar</li>
+        <li>Operadores con USB personales en estaciones de trabajo HMI</li>
+        <li>Contratistas con acceso físico temporal a red OT</li>
+        <li>Laptops de mantenimiento remoto (vendor laptops) sin escaneo previo</li>
+        <li>PLCs expuestos en paneles de control sin seguro físico</li>
+        <li>Cámaras IP de vigilancia en red corporativa sin contraseña cambiada</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h3>Controles para Entorno Industrial</h3>
+      <ul>
+        <li>Hardware industrial certificado (IP65, temperatura extendida)</li>
+        <li>Política de cero-USB en estaciones HMI / OT</li>
+        <li>Acceso de contratistas: credencial temporal + escolta + registro</li>
+        <li>Laptop de mantenimiento dedicada: escaneada antes de conectar a OT</li>
+        <li>Paneles de control con llave: acceso restringido a operadores autorizados</li>
+        <li>Cámaras en VLAN aislada con contraseña fuerte y firmware actualizado</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box box-quiz" onclick="this.classList.toggle('revealed')" style="margin-top:14px;"><div class="box-title">❓ QUIZ FINAL — Click para ver respuesta</div>
+    <p>Una empresa recibe un técnico de un proveedor de SCADA para mantenimiento preventivo de los PLCs. ¿Qué controles de seguridad física y lógica deben implementarse ANTES de permitir su acceso?</p>
+    <div class="quiz-answer"><strong>Controles mínimos:</strong> (1) Verificar identidad con credencial oficial + NDA firmado; (2) Escolta permanente durante toda la visita; (3) Conectar su laptop en zona DMZ/aislada, nunca directamente a OT; (4) Escanear la laptop con antivirus antes de conectar; (5) Crear cuenta temporal con permisos mínimos; (6) Monitorear y registrar toda la actividad en su sesión; (7) Cambiar credenciales de los PLCs accedidos tras la visita; (8) Revisar logs de cambios realizados después de que el técnico se vaya.</div>
+  </div>
+</div>
+
+<!-- CIERRE -->
+<div class="slide cover" data-session="4">
+  <div class="block-badge">BLOQUE IV — CIERRE</div>
+  <h1>El CISO que Habla el Idioma del Negocio</h1>
+  <p style="max-width:600px;margin:16px auto;color:var(--muted);">El gobierno de seguridad no es un departamento técnico. Es la función que traduce riesgos cibernéticos en decisiones empresariales, cumple la ley y asegura que la organización sobreviva cualquier tormenta.</p>
+  <div class="stat-row" style="justify-content:center;max-width:700px;margin:20px auto;">
+    <div class="stat"><div class="num" style="color:var(--purple)">CISO</div><div class="lbl">Gobierno y estrategia</div></div>
+    <div class="stat"><div class="num" style="color:var(--cyan)">KPIs</div><div class="lbl">Métricas que convencen</div></div>
+    <div class="stat"><div class="num" style="color:var(--orange)">Ley</div><div class="lbl">Cumplimiento y ética</div></div>
+    <div class="stat"><div class="num" style="color:var(--green)">BCP</div><div class="lbl">Resiliencia ante todo</div></div>
+    <div class="stat"><div class="num" style="color:var(--red)">Física</div><div class="lbl">El primer anillo</div></div>
+  </div>
+  <div class="box box-dato" style="max-width:600px;margin:0 auto;"><div class="box-title">💡 SIGUIENTE</div>
+    <p>Bloque V: <strong>Seguridad en la Nube, OT Industrial y Proyecto Integrador</strong> — AWS, ICS/SCADA, IoT, vehículos conectados y la defensa de tu proyecto integrador ante el panel evaluador.</p>
+  </div>
+  <div style="margin-top:20px;">
+    <span class="tag">ISO 27001</span><span class="tag">COBIT 2019</span><span class="tag">LFPDPPP</span>
+    <span class="tag">GDPR</span><span class="tag">BCP/DRP</span><span class="tag">Tier Datacenter</span><span class="tag">CISO</span>
+  </div>
+</div>
+
+</div>
+
+<div id="footer">
+  <button onclick="prevSlide()">← Anterior</button>
+  <span class="hint">← → · Espacio</span>
+  <button onclick="nextSlide()">Siguiente →</button>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let current = 0;
+const sessionStarts = [];
+slides.forEach((s, i) => { const sess = parseInt(s.dataset.session); if (sessionStarts[sess] === undefined) sessionStarts[sess] = i; });
+function goTo(n) { if (n < 0 || n >= total) return; slides[current].classList.remove('active'); current = n; slides[current].classList.add('active'); document.getElementById('slide-counter').textContent = (current+1)+' / '+total; document.getElementById('progress-bar').style.width=((current+1)/total*100)+'%'; updateTabs(); slides[current].scrollTop=0; }
+function nextSlide() { goTo(current+1); }
+function prevSlide() { goTo(current-1); }
+function goToSession(idx) { goTo(sessionStarts[idx]); }
+function updateTabs() { const sess = parseInt(slides[current].dataset.session); for(let i=0;i<5;i++){const btn=document.getElementById('tab-'+i);if(btn)btn.classList.toggle('active',i===sess);} }
+document.addEventListener('keydown',e=>{ if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();nextSlide();} if(e.key==='ArrowLeft'){e.preventDefault();prevSlide();} });
+updateTabs();
+</script>
+</body>
+</html>

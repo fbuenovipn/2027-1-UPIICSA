@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seminario de Titulación — Ciberseguridad Empresarial</title>
+<style>
+  :root {
+    --azul-oscuro: #0f172a;
+    --azul: #1e3a5f;
+    --azul-medio: #1d4ed8;
+    --azul-claro: #3b82f6;
+    --rojo: #dc2626;
+    --rojo-oscuro: #991b1b;
+    --verde: #16a34a;
+    --naranja: #ea580c;
+    --purpura: #7c3aed;
+    --acento: #f59e0b;
+    --acento-claro: #fbbf24;
+    --gris-claro: #f1f5f9;
+    --gris: #64748b;
+    --gris-oscuro: #334155;
+    --texto: #1e293b;
+    --blanco: #ffffff;
+    --sombra: 0 4px 24px rgba(0,0,0,0.13);
+    --sombra-hover: 0 8px 36px rgba(0,0,0,0.18);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--gris-claro);
+    color: var(--texto);
+    line-height: 1.65;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(140deg, var(--azul-oscuro) 0%, #1a2744 45%, #1e3a5f 100%);
+    color: var(--blanco);
+    padding: 56px 24px 52px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 20% 50%, rgba(220,38,38,0.15) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(59,130,246,0.12) 0%, transparent 60%);
+  }
+  .hero::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M20 20.5V18H0v-2h20v-2.5l5 3.5-5 3.5zM0 12v-2h20v-2.5l5 3.5-5 3.5V12H0zm20 8.5V18H0v-2h20v-2.5l5 3.5-5 3.5z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(220,38,38,0.2);
+    border: 1px solid rgba(220,38,38,0.4);
+    border-radius: 24px;
+    padding: 6px 18px;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 22px;
+    position: relative;
+  }
+  .hero-badge .pulse {
+    width: 8px; height: 8px;
+    background: #ef4444;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.3); }
+  }
+  .hero h1 {
+    font-size: clamp(1.55rem, 4.5vw, 2.9rem);
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 14px;
+    position: relative;
+  }
+  .hero h1 .highlight { color: var(--acento-claro); }
+  .hero h1 .accent { color: #f87171; }
+  .hero .subtitle {
+    font-size: 1rem;
+    opacity: 0.82;
+    max-width: 700px;
+    margin: 0 auto 36px;
+    position: relative;
+  }
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    position: relative;
+  }
+  .stat-box {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 14px;
+    padding: 14px 22px;
+    min-width: 100px;
+    backdrop-filter: blur(4px);
+    transition: background 0.2s;
+  }
+  .stat-box:hover { background: rgba(255,255,255,0.13); }
+  .stat-box .num { font-size: 1.9rem; font-weight: 900; color: var(--acento-claro); display: block; }
+  .stat-box .lbl { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em; opacity: 0.75; }
+
+  /* ── CARRERAS RAIL ── */
+  .carreras-rail {
+    background: var(--blanco);
+    border-bottom: 2px solid #e2e8f0;
+    padding: 14px 24px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--gris-claro);
+    border: 1.5px solid #cbd5e1;
+    border-radius: 24px;
+    padding: 6px 15px;
+    font-size: 0.79rem;
+    font-weight: 600;
+    color: var(--gris-oscuro);
+    cursor: pointer;
+    transition: all 0.18s;
+    user-select: none;
+  }
+  .chip:hover { border-color: var(--azul-claro); color: var(--azul); background: #eff6ff; }
+  .chip.on { background: var(--azul); border-color: var(--azul); color: var(--blanco); }
+  .chip .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ── MAIN CONTAINER ── */
+  .container { max-width: 1220px; margin: 0 auto; padding: 34px 24px 48px; }
+
+  /* ── SEARCH ── */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 26px;
+    flex-wrap: wrap;
+  }
+  .search-wrap {
+    flex: 1;
+    min-width: 220px;
+    position: relative;
+  }
+  .search-wrap input {
+    width: 100%;
+    padding: 11px 16px 11px 42px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 0.88rem;
+    color: var(--texto);
+    outline: none;
+    background: var(--blanco);
+    transition: border-color 0.2s;
+  }
+  .search-wrap input:focus { border-color: var(--azul-claro); }
+  .search-icon {
+    position: absolute;
+    left: 13px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--gris);
+    font-size: 1rem;
+    pointer-events: none;
+  }
+  .expand-btn {
+    padding: 10px 18px;
+    background: var(--azul);
+    color: var(--blanco);
+    border: none;
+    border-radius: 10px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s;
+  }
+  .expand-btn:hover { background: var(--azul-medio); }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 26px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: thin;
+  }
+  .tab {
+    flex-shrink: 0;
+    padding: 9px 17px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    background: var(--blanco);
+    color: var(--gris);
+    font-size: 0.81rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.18s;
+  }
+  .tab:hover { border-color: var(--azul-claro); color: var(--azul); }
+  .tab.on { background: var(--azul-oscuro); border-color: var(--azul-oscuro); color: var(--blanco); }
+
+  /* ── BLOQUE HEADER ── */
+  .bloque-hd {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    border-radius: 16px;
+    margin-bottom: 18px;
+    color: var(--blanco);
+    position: relative;
+    overflow: hidden;
+  }
+  .bloque-hd::after {
+    content: '';
+    position: absolute;
+    right: -20px; top: -20px;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+  }
+  .b1 { background: linear-gradient(135deg, #1e3a5f, #2563ab); }
+  .b2 { background: linear-gradient(135deg, #7c1f1f, #dc2626); }
+  .b3 { background: linear-gradient(135deg, #1f4a1f, #16a34a); }
+  .b4 { background: linear-gradient(135deg, #4a1f7a, #7c3aed); }
+  .b5 { background: linear-gradient(135deg, #7a3a00, #ea580c); }
+
+  .bloque-hd .icon { font-size: 2.1rem; position: relative; }
+  .bloque-hd h2 { font-size: 1.1rem; font-weight: 800; position: relative; }
+  .bloque-hd span { font-size: 0.79rem; opacity: 0.8; position: relative; display: block; margin-top: 2px; }
+
+  /* ── SESIÓN CARD ── */
+  .sc {
+    background: var(--blanco);
+    border-radius: 16px;
+    box-shadow: var(--sombra);
+    margin-bottom: 14px;
+    overflow: hidden;
+    border-left: 4px solid #cbd5e1;
+    transition: box-shadow 0.2s, transform 0.15s;
+  }
+  .sc:hover { box-shadow: var(--sombra-hover); transform: translateY(-1px); }
+  .sc[data-b="1"] { border-color: #3b82f6; }
+  .sc[data-b="2"] { border-color: #dc2626; }
+  .sc[data-b="3"] { border-color: #16a34a; }
+  .sc[data-b="4"] { border-color: #7c3aed; }
+  .sc[data-b="5"] { border-color: #ea580c; }
+
+  .sc-head {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 17px 22px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .snum {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.05rem; font-weight: 800;
+    color: var(--blanco);
+    flex-shrink: 0;
+  }
+  .sc[data-b="1"] .snum { background: #2563ab; }
+  .sc[data-b="2"] .snum { background: #dc2626; }
+  .sc[data-b="3"] .snum { background: #16a34a; }
+  .sc[data-b="4"] .snum { background: #7c3aed; }
+  .sc[data-b="5"] .snum { background: #ea580c; }
+
+  .sc-info { flex: 1; }
+  .sc-info h3 { font-size: 0.97rem; font-weight: 700; color: var(--azul-oscuro); margin-bottom: 2px; }
+  .sc-info p { font-size: 0.78rem; color: var(--gris); }
+
+  .chevron {
+    width: 24px; height: 24px;
+    border: 2px solid #cbd5e1;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.65rem;
+    color: var(--gris);
+    transition: transform 0.28s, border-color 0.2s, color 0.2s;
+    flex-shrink: 0;
+  }
+  .sc.open .chevron { transform: rotate(180deg); border-color: var(--azul-claro); color: var(--azul-claro); }
+
+  /* ── BODY ── */
+  .sc-body {
+    display: none;
+    padding: 4px 22px 22px;
+    border-top: 1px solid #f1f5f9;
+  }
+  .sc.open .sc-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+    gap: 14px 20px;
+  }
+  @media (max-width: 700px) { .sc.open .sc-body { grid-template-columns: 1fr; } }
+
+  .full { grid-column: 1 / -1; }
+
+  .obj-box {
+    background: #f0f7ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-top: 12px;
+  }
+  .obj-box strong { display: block; font-size: 0.69rem; text-transform: uppercase; letter-spacing: 0.07em; color: #1d4ed8; margin-bottom: 7px; }
+  .obj-box p { font-size: 0.86rem; }
+
+  .list-box { margin-top: 12px; }
+  .list-box h4 { font-size: 0.69rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--gris); margin-bottom: 9px; }
+  .list-box ol { padding-left: 18px; }
+  .list-box li { font-size: 0.86rem; margin-bottom: 5px; color: var(--texto); }
+
+  .act-box {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-top: 12px;
+  }
+  .act-box strong { display: block; font-size: 0.69rem; text-transform: uppercase; letter-spacing: 0.07em; color: #15803d; margin-bottom: 7px; }
+  .act-box p { font-size: 0.86rem; }
+
+  .tools-box {
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 10px;
+    padding: 10px 14px;
+  }
+  .tools-box .lbl { font-size: 0.69rem; font-weight: 700; color: #92400e; text-transform: uppercase; letter-spacing: 0.06em; margin-right: 4px; }
+  .tool-tag {
+    background: #d97706;
+    color: var(--blanco);
+    border-radius: 20px;
+    padding: 3px 11px;
+    font-size: 0.74rem;
+    font-weight: 700;
+  }
+
+  /* ── RESUMEN / TABLAS ── */
+  .section-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--azul-oscuro);
+    margin: 44px 0 20px;
+    padding-bottom: 8px;
+    border-bottom: 3px solid var(--rojo);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; }
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 18px; }
+
+  .icard {
+    background: var(--blanco);
+    border-radius: 14px;
+    padding: 22px 24px;
+    box-shadow: var(--sombra);
+  }
+  .icard h3 { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--gris); margin-bottom: 16px; }
+
+  .bt { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  .bt th { background: var(--azul-oscuro); color: var(--blanco); padding: 10px 14px; text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .bt td { padding: 10px 14px; border-bottom: 1px solid #f1f5f9; }
+  .bt tr:nth-child(even) td { background: #f8fafc; }
+  .bt tr:last-child td { font-weight: 700; background: #fef9f0 !important; border-top: 2px solid #fde68a; }
+  .bt tr:last-child td:nth-child(n+3) { color: var(--rojo); }
+
+  .eval-item { padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
+  .eval-item:last-child { border: none; }
+  .eval-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+  .eval-name { font-size: 0.86rem; }
+  .eval-pct { font-size: 1.1rem; font-weight: 800; color: var(--azul-medio); }
+  .pb { height: 5px; background: #e2e8f0; border-radius: 10px; overflow: hidden; }
+  .pbf { height: 100%; border-radius: 10px; background: linear-gradient(90deg, var(--azul-medio), var(--azul-claro)); }
+
+  .car-row { display: flex; gap: 12px; padding: 9px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.84rem; align-items: flex-start; }
+  .car-row:last-child { border: none; }
+  .car-n { font-weight: 700; min-width: 175px; }
+  .car-a { color: var(--gris); }
+
+  .tool-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .tool-item { background: var(--gris-claro); border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; }
+  .tool-item strong { display: block; color: var(--azul-oscuro); font-size: 0.78rem; }
+  .tool-item span { color: var(--gris); font-size: 0.73rem; }
+
+  .nota-box {
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.83rem;
+    color: #9a3412;
+    margin-top: 14px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--azul-oscuro);
+    color: rgba(255,255,255,0.6);
+    text-align: center;
+    padding: 26px 24px;
+    font-size: 0.78rem;
+    margin-top: 44px;
+  }
+  footer strong { color: var(--blanco); }
+  footer .shield { font-size: 1.6rem; display: block; margin-bottom: 6px; }
+
+  .hidden { display: none !important; }
+
+  @media (max-width: 480px) {
+    .hero h1 { font-size: 1.35rem; }
+    .stat-box .num { font-size: 1.5rem; }
+    .hero-stats { gap: 10px; }
+    .bloque-hd h2 { font-size: 0.95rem; }
+    .tool-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ HERO ═══ -->
+<div class="hero">
+  <div class="hero-badge"><span class="pulse"></span> Seminario de Titulación · UPIICSA</div>
+  <h1>
+    Ciberseguridad <span class="highlight">Empresarial</span><br>
+    <span style="font-size:0.65em; font-weight:600; opacity:0.88">Gestión de Riesgos, <span class="accent">Protección de Activos Digitales</span> y Resiliencia Organizacional</span>
+  </h1>
+  <p class="subtitle">Estándares ISO 27001 · NIST CSF · Kali Linux · SIEM · Cloud Security · OT/SCADA · BCP/DRP — aplicados en entornos industriales reales.</p>
+  <div class="hero-stats">
+    <div class="stat-box"><span class="num">150</span><span class="lbl">Horas</span></div>
+    <div class="stat-box"><span class="num">25</span><span class="lbl">Sesiones</span></div>
+    <div class="stat-box"><span class="num">5</span><span class="lbl">Bloques</span></div>
+    <div class="stat-box"><span class="num">5</span><span class="lbl">Carreras</span></div>
+    <div class="stat-box"><span class="num">10+</span><span class="lbl">Herramientas</span></div>
+  </div>
+</div>
+
+<!-- ═══ CARRERAS RAIL (STICKY) ═══ -->
+<div class="carreras-rail">
+  <div class="chip on" onclick="filtrar('todas',this)"><div class="dot" style="background:#64748b"></div>Todas las carreras</div>
+  <div class="chip" onclick="filtrar('adm',this)"><div class="dot" style="background:#2563ab"></div>Adm. Industrial</div>
+  <div class="chip" onclick="filtrar('info',this)"><div class="dot" style="background:#dc2626"></div>Ing. Informática</div>
+  <div class="chip" onclick="filtrar('ind',this)"><div class="dot" style="background:#16a34a"></div>Ing. Industrial</div>
+  <div class="chip" onclick="filtrar('trans',this)"><div class="dot" style="background:#7c3aed"></div>Ing. Transporte</div>
+  <div class="chip" onclick="filtrar('auto',this)"><div class="dot" style="background:#ea580c"></div>Ing. Automotriz</div>
+</div>
+
+<div class="container">
+
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <div class="search-wrap">
+      <span class="search-icon">&#128269;</span>
+      <input type="text" id="q" placeholder="Buscar sesión, herramienta o tema (ej. SIEM, ransomware, ISO 27001)..." oninput="buscar(this.value)">
+    </div>
+    <button class="expand-btn" onclick="toggleAll()">&#9660; Expandir todo</button>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab on" onclick="showBloque('all',this)">Todos los bloques</button>
+    <button class="tab" onclick="showBloque('1',this)">I · Riesgos &amp; Fundamentos</button>
+    <button class="tab" onclick="showBloque('2',this)">II · Arquitectura &amp; Infraestructura</button>
+    <button class="tab" onclick="showBloque('3',this)">III · SOC · SIEM · Incidentes</button>
+    <button class="tab" onclick="showBloque('4',this)">IV · Gobierno &amp; Cumplimiento</button>
+    <button class="tab" onclick="showBloque('5',this)">V · Cloud · OT · Proyecto</button>
+  </div>
+
+  <!-- ═══════ BLOQUE I ═══════ -->
+  <div class="bc" data-b="1">
+    <div class="bloque-hd b1">
+      <span class="icon">&#128737;</span>
+      <div>
+        <h2>Bloque I — Fundamentos de Ciberseguridad y Gestión de Riesgos Empresariales</h2>
+        <span>Sesiones 1–5 · 30 horas · ISO 27001 · NIST CSF · FRAP · Kali Linux · OpenVAS</span>
+      </div>
+    </div>
+
+    <div class="sc" data-b="1" data-c="todas adm info ind trans auto" data-q="cia activos amenazas ciberseguridad panorama ataques ciso función negocio">
+      <div class="sc-head" onclick="toggle(this.parentElement)">
+        <div class="snum">1</div>
+        <div class="sc-info"><h3>Ciberseguridad Empresarial: Panorama, Activos y Amenazas</h3><p>Tríada CIA · Clasificación de activos · Top ciberataques · Rol del CISO</p></div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sc-body">
+        <div class="obj-box full"><strong>Objetivo de la sesión</strong><p>Comprender el ecosistema de ciberseguridad empresarial, identificar los activos de información críticos de la organización y mapear el panorama de amenazas relevantes por sector industrial.</p></div>
+        <div class="list-box"><h4>Contenido temático</h4><ol>
+          <li>Conceptos fundamentales: seguridad de la información e Industria 4.0</li>
+          <li>La tríada CIA: Confidencialidad, Integridad, Disponibilidad — aplicación empresarial</li>
+          <li>Activos de información: clasificación, valoración y propiedad</li>
+          <li>Panorama de amenazas 2024: top ciberataques por sector</li>
+          <li>Tipos de atacantes: cibercriminales, insiders, actores de Estado</li>
+          <li>El CISO y la función de seguridad como área de negocio</li>
+        </ol></div>
+        <div>
+          <div class="act-box"><strong>&#9997; Actividad práctica</strong><p>Inventario y clasificación de activos críticos en caso empresarial (manufactura, transporte o automotriz).</p></div>
+          <div class="tools-box"><span class="lbl">Herramientas:</span><span class="tool-tag">Plantilla ISO 27001</span><span class="tool-tag">Registro de activos</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="1" data-c="todas adm info ind trans auto" data-q="iso 27001 nist csf cobit pci gdpr compliance normativo regulatorio certificaciones">
+      <div class="sc-head" onclick="toggle(this.parentElement)">
+        <div class="snum">2</div>
+        <div class="sc-info"><h3>Marco Normativo y Regulatorio de la Ciberseguridad</h3><p>ISO 27001 · NIST CSF · COBIT · PCI-DSS · GDPR · LFPDPPP México</p></div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sc-body">
+        <div class="obj-box full"><strong>Objetivo de la sesión</strong><p>Aplicar los marcos normativos y regulatorios internacionales para estructurar un programa de seguridad que cumpla requisitos legales y reduzca la exposición de la organización.</p></div>
+        <div class="list-box"><h4>Contenido temático</h4><ol>
+          <li>ISO/IEC 27001 e ISO 27002: sistema de gestión de seguridad</li>
+          <li>NIST Cybersecurity Framework: identificar, proteger, detectar, responder, recuperar</li>
+          <li>COBIT: gobierno de TI y alineación estratégica</li>
+          <li>PCI-DSS, GDPR y Ley Federal de Protección de Datos (México)</li>
+          <li>Compliance vs. seguridad real: diferencias y complementariedad</li>
+          <li>Certificaciones individuales: CompTIA Sec+, CISSP, CISM, CEH</li>
+        </ol></div>
+        <div>
+          <div class="act-box"><strong>&#9997; Actividad práctica</strong><p>Diagnóstico de cumplimiento ISO 27001 para organización industrial tipo.</p></div>
+          <div class="tools-box"><span class="lbl">Herramientas:</span><span class="tool-tag">Checklist ISO 27001</span><span class="tool-tag">NIST CSF Tool</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="1" data-c="todas adm info ind trans auto" data-q="análisis riesgos ale aro sle frap matriz cualitativo cuantitativo iso 13335">
+      <div class="sc-head" onclick="toggle(this.parentElement)">
+        <div class="snum">3</div>
+        <div class="sc-info"><h3>Análisis de Riesgos de Ciberseguridad</h3><p>Metodología FRAP · ALE · ARO · SLE · Matriz de riesgos · MS Excel</p></div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sc-body">
+        <div class="obj-box full"><strong>Objetivo de la sesión</strong><p>Identificar, analizar y priorizar los riesgos de ciberseguridad utilizando metodologías cuantitativas y cualitativas para tomar decisiones informadas sobre controles.</p></div>
+        <div class="list-box"><h4>Contenido temático</h4><ol>
+          <li>Conceptos del riesgo: amenaza, vulnerabilidad, probabilidad e impacto</li>
+          <li>Análisis cualitativo: matriz de riesgos y escala de valoración</li>
+          <li>Análisis cuantitativo: Valor Anual de Pérdida (ALE), ARO, SLE</li>
+          <li>Metodología FRAP: proceso paso a paso y caso práctico</li>
+          <li>ISO/IEC TR 13335: guía para identificación y priorización</li>
+          <li>Integración del análisis al Business Case de ciberseguridad</li>
+        </ol></div>
+        <div>
+          <div class="act-box"><strong>&#9997; Actividad práctica</strong><p>Aplicación de metodología FRAP a caso de empresa manufacturera o de transporte.</p></div>
+          <div class="tools-box"><span class="lbl">Herramientas:</span><span class="tool-tag">MS Excel</span><span class="tool-tag">Matriz de riesgos</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="1" data-c="todas adm info ind trans auto" data-q="estrategia riesgos kpi kri presupuesto seguridad ciberseguro inversión dirección dashboard">
+      <div class="sc-head" onclick="toggle(this.parentElement)">
+        <div class="snum">4</div>
+        <div class="sc-info"><h3>Gestión Estratégica del Riesgo Cibernético</h3><p>KPIs · KRIs · Presupuesto de seguridad · Business Case ante dirección</p></div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sc-body">
+        <div class="obj-box full"><strong>Objetivo de la sesión</strong><p>Diseñar una estrategia integral de gestión del riesgo que alinee controles de seguridad con los objetivos estratégicos del negocio y optimice el retorno sobre la inversión en seguridad.</p></div>
+        <div class="list-box"><h4>Contenido temático</h4><ol>
+          <li>Ciclo de vida de la gestión de riesgos: planear, implementar, monitorear, mejorar</li>
+          <li>Estrategias de respuesta: mitigar, transferir, aceptar, evitar</li>
+          <li>KPIs y KRIs de ciberseguridad: diseño e interpretación</li>
+          <li>Monitoreo continuo: dashboards ejecutivos de riesgo</li>
+          <li>El presupuesto de seguridad: cómo justificar inversiones ante la dirección</li>
+          <li>Ciberseguros: coberturas, exclusiones y casos de uso empresarial</li>
+        </ol></div>
+        <div>
+          <div class="act-box"><strong>&#9997; Actividad práctica</strong><p>Elaboración del plan de tratamiento de riesgos y presentación ejecutiva de inversión en seguridad.</p></div>
+          <div class="tools-box"><span class="lbl">Herramientas:</span><span class="tool-tag">MS Excel</span><span class="tool-tag">Plantilla ISO 27001</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="1" data-c="todas info ind adm" data-q="pentest penetración vulnerabilidades kali linux openvas nessus metasploit osstmm ptes owasp">
+      <div class="sc-head" onclick="toggle(this.parentElement)">
+        <div class="snum">5</div>
+        <div class="sc-info"><h3>Evaluación de Vulnerabilidades y Pruebas de Penetración</h3><p>OSSTMM · PTES · Kali Linux · OpenVAS · Metasploit · VirtualBox</p></div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sc-body">
+        <div class="obj-box full"><strong>Objetivo de la sesión</strong><p>Aplicar metodologías y herramientas de pentesting para identificar debilidades en la infraestructura tecnológica antes de que los atacantes lo hagan.</p></div>
+        <div class="list-box"><h4>Contenido temático</h4><ol>
+          <li>Metodologías de evaluación: OSSTMM, PTES, OWASP</li>
+          <li>Security Content Automation Protocol (SCAP)</li>
+          <li>Fases del pentest: reconocimiento, escaneo, explotación, reporte</li>
+          <li>Tipos de pentest: caja negra, blanca y gris</li>
+          <li>Herramientas: Nessus/OpenVAS, Nmap, Metasploit, Kali Linux</li>
+          <li>Elaboración del reporte de pentest: hallazgos, severidad y recomendaciones</li>
+        </ol></div>
+        <div>
+          <div class="act-box"><strong>&#9997; Laboratorio práctico</strong><p>Escaneo de vulnerabilidades en entorno de laboratorio con OpenVAS sobre máquina virtual Metasploitable.</p></div>
+          <div class="tools-box"><span class="lbl">Herramientas:</span><span class="tool-tag">Kali Linux</span><span class="tool-tag">OpenVAS</span><span class="tool-tag">VirtualBox</span><span class="tool-tag">Metasploitable</span></div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /bloque 1 -->
+
+  <!-- ═══════ BLOQUE II ═══════ -->
+  <div class="bc" data-b="2">
+    <div class="bloque-hd b2">
+      <span class="icon">&#127963;</span>
+      <div>
+        <h2>Bloque II — Arquitectura de Seguridad y Protección de Infraestructura</h2>
+        <span>Sesiones 6–10 · 30 horas · Firewalls · IDS/IPS · DVWA · Snort · Kali Linux · AWS IAM</span>
+      </div>
+    </div>
+
+    <div class="sc" data-b="2" data-c="todas info ind adm trans" data-q="arquitectura seguridad sabsa togaf bell lapadula biba defensa profundidad mínimo privilegio">
+      <div class="sc-head" onclick="toggle(this.parentElement)">
+        <div class="snum">6</div>
+        <div class="sc-info"><h3>Arquitectura de Seguridad Empresarial</h3><p>SABSA · TOGAF Security · Defensa en profundidad · Modelos de seguridad</p></div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sc-body">
+        <div class="obj-box full"><strong>Objetivo de la sesión</strong><p>Diseñar arquitecturas de seguridad empresarial que protejan la infraestructura de manera estructurada, aplicando frameworks reconocidos y principios de seguridad por diseño.</p></div>
+        <div class="list-box"><h4>Contenido temático</h4><ol>
+          <li>Principios: defensa en profundidad, mínimo privilegio, separación de funciones</li>
+          <li>Frameworks: SABSA, TOGAF Security, NIST SP 800-160</li>
+          <li>Modelos de seguridad: Bell-LaPadula, Biba, Clark-Wilson</li>
+          <li>Análisis de riesgos para la arquitectura: requisitos de seguridad</li>
+          <li>Diseño e implementación de la arquitectura de seguridad</li>
+          <li>Evaluación y mantenimiento: revisiones periódicas y mejora continua</li>
+        </ol></div>
+        <div class="act-box full"><strong>&#9997; Actividad práctica</strong><p>Diseño de arquitectura de seguridad para empresa manufacturera con entornos IT/OT convergentes.</p></div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="2" data-c="todas info ind trans auto adm" data-q="firewall ids ips redes inalámbricas vpn segmentación dmz snort wireshark perimetral">
+      <div class="sc-head" onclick="toggle(this.parentElement)">
+        <div class="snum">7</div>
+        <div class="sc-info"><h3>Seguridad Perimetral, Redes y Comunicaciones</h3><p>Next-Gen Firewalls · IDS/IPS · VPN · Segmentación · Snort · Wireshark</p></div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sc-body">
+        <div class="obj-box full"><strong>Objetivo de la sesión</strong><p>Implementar controles de seguridad en redes para proteger el perímetro organizacional y los flujos de información frente a amenazas externas e internas.</p></div>
+        <div class="list-box"><h4>Contenido temático</h4><ol>
+          <li>Firewalls perimetrales: UTM y Next-Gen Firewalls</li>
+          <li>IDS/IPS: sistemas de detección y prevención de intrusos</li>
+          <li>Seguridad en redes inalámbricas: WPA3, redes de invitados, segmentación</li>
+          <li>VPN, VPC y VPS: protección de comunicaciones remotas</li>
+          <li>Segmentación de redes y DMZ en entornos industriales</li>
+          <li>Herramientas de gestión y monitoreo de redes</li>
+        </ol></div>
+        <div>
+          <div class="act-box"><strong>&#9997; Laboratorio práctico</strong><p>Configuración de reglas de firewall y análisis de tráfico con Wireshark/Snort en laboratorio.</p></div>
+          <div class="tools-box"><span class="lbl">Herramientas:</span><span class="tool-tag">Snort</span><span class="tool-tag">Wireshark</span><span class="tool-tag">Docker</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="2" data-c="todas info ind adm" data-q="owasp top 10 sql injection xss csrf apis bases datos sdlc dvwa burp suite aplicaciones web">
+      <div class="sc-head" onclick="toggle(this.parentElement)">
+        <div class="snum">8</div>
+        <div class="sc-info"><h3>Seguridad en Aplicaciones, APIs y Bases de Datos</h3><p>OWASP Top 10 · SQL Injection · XSS · CSRF · DVWA · Burp Suite</p></div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sc-body">
+        <div class="obj-box full"><strong>Objetivo de la sesión</strong><p>Identificar y mitigar las vulnerabilidades más comunes en aplicaciones web, APIs y bases de datos para reducir la superficie de ataque de los sistemas empresariales.</p></div>
+        <div class="list-box"><h4>Contenido temático</h4><ol>
+          <li>OWASP Top 10: las vulnerabilidades más críticas en aplicaciones web</li>
+          <li>SQL Injection: identificación, explotación y prevención</li>
+          <li>XSS y CSRF: mecanismos y controles</li>
+          <li>Seguridad en APIs REST: autenticación, autorización y validación</li>
+          <li>Seguridad en bases de datos: cifrado, enmascaramiento y control de acceso</li>
+          <li>SDLC seguro: integración de seguridad desde el diseño</li>
+        </ol></div>
+        <div>
+          <div class="act-box"><strong>&#9997; Laboratorio práctico</strong><p>Identificación y explotación de vulnerabilidades web en entorno DVWA (Damn Vulnerable Web Application).</p></div>
+          <div class="tools-box"><span class="lbl">Herramientas:</span><span class="tool-tag">Kali Linux</span><span class="tool-tag">DVWA</span><span class="tool-tag">Burp Suite Community</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="2" data-c="todas info adm ind trans auto" data-q="criptografía iam mfa control acceso rbac abac pam privilegiadas identidades aws">
+      <div class="sc-head" onclick="toggle(this.parentElement)">
+        <div class="snum">9</div>
+        <div class="sc-info"><h3>Criptografía, Identidades y Control de Acceso</h3><p>PKI · IAM · MFA · RBAC · ABAC · PAM · AWS IAM</p></div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sc-body">
+        <div class="obj-box full"><strong>Objetivo de la sesión</strong><p>Aplicar criptografía y modelos de gestión de identidades para proteger la confidencialidad y garantizar que solo usuarios autorizados accedan a recursos críticos.</p></div>
+        <div class="list-box"><h4>Contenido temático</h4><ol>
+          <li>Fundamentos de criptografía: simétrica, asimétrica y hashing</li>
+          <li>Criptografía aplicada: PKI, certificados digitales y firma electrónica</li>
+          <li>IAM: componentes, ciclo de vida y mejores prácticas</li>
+          <li>Autenticación multifactor (MFA): tipos y mejores prácticas</li>
+          <li>Modelos de control de acceso: RBAC, ABAC, MAC, DAC</li>
+          <li>Gestión de cuentas privilegiadas (PAM): riesgos y controles</li>
+        </ol></div>
+        <div>
+          <div class="act-box"><strong>&#9997; Laboratorio práctico</strong><p>Configuración de IAM y MFA en entorno AWS (laboratorio de nube).</p></div>
+          <div class="tools-box"><span class="lbl">Herramientas:</span><span class="tool-tag">AWS IAM</span><span class="tool-tag">Herramientas de cifrado</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="2" data-c="todas info ind adm trans" data-q="hardening parches configuraciones seguras cis benchmark lynis windows linux due care diligence byod">
+      <div class="sc-head" onclick="toggle(this.parentElement)">
+        <div class="snum">10</div>
+        <div class="sc-info"><h3>Seguridad Operativa: Hardening, Parches y Configuraciones Seguras</h3><p>CIS Benchmarks · Lynis · Gestión de parches · BYOD · Due Care/Diligence</p></div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sc-body">
+        <div class="obj-box full"><strong>Objetivo de la sesión</strong><p>Establecer líneas base de configuración segura y procesos de gestión de parches que reduzcan la superficie de ataque en sistemas, servidores y dispositivos.</p></div>
+        <div class="list-box"><h4>Contenido temático</h4><ol>
+          <li>Hardening: Windows, Linux y sistemas embebidos</li>
+          <li>Líneas base de seguridad (baselines): CIS Benchmarks</li>
+          <li>Gestión de vulnerabilidades y parches: proceso, priorización y SLA</li>
+          <li>Control de cambios y gestión de versiones</li>
+          <li>Seguridad en dispositivos móviles y BYOD: políticas y controles</li>
+          <li>Due Care y Due Diligence: responsabilidad organizacional</li>
+        </ol></div>
+        <div>
+          <div class="act-box"><strong>&#9997; Laboratorio práctico</strong><p>Hardening de sistema Linux con checklist CIS Benchmark y verificación con Lynis.</p></div>
+          <div class="tools-box"><span class="lbl">Herramientas:</span><span class="tool-tag">Kali Linux</span><span class="tool-tag">Lynis</span><span class="tool-tag">CIS Benchmarks</span></div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /bloque 2 -->
+
+  <!-- ═══════ BLOQUE III ═══════ -->
+  <div class="bc" data-b="3">
+    <div class="bloque-hd b3">
+      <span class="icon">&#128065;</span>
+      <div>
+        <h2>Bloque III — Operaciones de Seguridad, SIEM y Respuesta a Incidentes</h2>
+        <span>Sesiones 11–15 · 30 horas · AlienVault SIEM · Security Onion · Autopsy · OSINT · Threat Hunting</span>
+      </div>
+    </div>
+
+    <div class="sc" data-b="3" data-c="todas info adm ind" data-q="soc siem alienvault splunk sentinel correlación logs soar mttd mttr operaciones seguridad">
+      <div class="sc-head" onclick="toggle(this.parentElement)">
+        <div class="snum">11</div>
+        <div class="sc-info"><h3>Centro de Operaciones de Seguridad (SOC) y SIEM</h3><p>AlienVault · Splunk · SOAR · MTTD · MTTR · Correlación de eventos</p></div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sc-body">
+        <div class="obj-box full"><strong>Objetivo de la sesión</strong><p>Diseñar e implementar operaciones de seguridad con herramientas SIEM para detectar, correlacionar y responder a amenazas de manera continua, reduciendo el tiempo de detección y contención.</p></div>
+        <div class="list-box"><h4>Contenido temático</h4><ol>
+          <li>Estructura del SOC: roles, niveles y modelos operativos</li>
+          <li>Herramientas SIEM: arquitectura, componentes y casos de uso</li>
+          <li>Correlación y análisis de logs: detección de patrones anómalos</li>
+          <li>Automatización con SOAR: orquestación y respuesta automática</li>
+          <li>KPIs del SOC: MTTD, MTTR, tasa de falsos positivos</li>
+          <li>Integración del SOC con la estrategia de riesgos</li>
+        </ol></div>
+        <div>
+          <div class="act-box"><strong>&#9997; Laboratorio práctico</strong><p>Configuración de reglas de correlación y análisis de alertas en AlienVault SIEM.</p></div>
+          <div class="tools-box"><span class="lbl">Herramientas:</span><span class="tool-tag">AlienVault SIEM</span><span class="tool-tag">Security Onion</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="3" data-c="todas info adm ind trans" data-q="inteligencia amenazas threat intelligence osint humint isac threat hunting ciclo inteligencia maltego shodan">
+      <div class="sc-head" onclick="toggle(this.parentElement)">
+        <div class="snum">12</div>
+        <div class="sc-info"><h3>Inteligencia sobre Amenazas (Threat Intelligence)</h3><p>Ciclo de inteligencia · OSINT · Threat Hunting · Maltego · Shodan</p></div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sc-body">
+        <div class="obj-box full"><strong>Objetivo de la sesión</strong><p>Producir y consumir inteligencia sobre amenazas accionable que permita anticipar ataques, priorizar controles y tomar decisiones basadas en evidencia.</p></div>
+        <div class="list-box"><h4>Contenido temático</h4><ol>
+          <li>Ciclo de vida de la inteligencia: planeación, recolección, análisis, diseminación</li>
+          <li>Preguntas Clave de Inteligencia (KIQ)</li>
+          <li>Tipos de productos: estratégicos, tácticos y operacionales</li>
+          <li>Fuentes de inteligencia: OSINT, HUMINT, comerciales e ISAC</li>
+          <li>Threat Hunting: cacería proactiva de amenazas en la red</li>
+          <li>Casos de uso: respuesta a incidentes, gestión de vulnerabilidades, fraudes</li>
+        </ol></div>
+        <div>
+          <div class="act-box"><strong>&#9997; Laboratorio práctico</strong><p>Recopilación y análisis de inteligencia OSINT sobre amenaza sectorial.</p></div>
+          <div class="tools-box"><span class="lbl">Herramientas:</span><span class="tool-tag">Maltego CE</span><span class="tool-tag">theHarvester</span><span class="tool-tag">Shodan</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="3" data-c="todas info adm ind trans auto" data-q="respuesta incidentes csirt nist 800-61 ransomware tabletop ejercicio triage contención erradicación">
+      <div class="sc-head" onclick="toggle(this.parentElement)">
+        <div class="snum">13</div>
+        <div class="sc-info"><h3>Respuesta a Incidentes de Ciberseguridad</h3><p>NIST SP 800-61 · CSIRT · Tabletop Exercise · Triage · Ransomware</p></div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sc-body">
+        <div class="obj-box full"><strong>Objetivo de la sesión</strong><p>Estructurar y operar un proceso formal de respuesta a incidentes que minimice el impacto operativo, preserve evidencia y permita la recuperación rápida de los sistemas afectados.</p></div>
+        <div class="list-box"><h4>Contenido temático</h4><ol>
+          <li>Estándares: NIST SP 800-61, ISO 27035</li>
+          <li>Estructura del CSIRT: roles, responsabilidades y comunicación</li>
+          <li>Fases: preparación, detección, contención, erradicación, recuperación, lecciones aprendidas</li>
+          <li>Triage: clasificación, priorización y escalamiento</li>
+          <li>Comunicación durante la crisis: interna, clientes y reguladores</li>
+          <li>Tabletop exercise: dinámica y valor para la organización</li>
+        </ol></div>
+        <div class="act-box full"><strong>&#9997; Actividad práctica</strong><p>Simulación de respuesta a incidente de ransomware en empresa industrial — tabletop exercise en equipo.</p></div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="3" data-c="todas info adm ind" data-q="forense digital autopsy ftk imager volatility cadena custodia delitos informáticos evidencia peritaje">
+      <div class="sc-head" onclick="toggle(this.parentElement)">
+        <div class="snum">14</div>
+        <div class="sc-info"><h3>Cómputo Forense Digital</h3><p>Autopsy · FTK Imager · Volatility · Cadena de custodia · Peritaje informático</p></div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sc-body">
+        <div class="obj-box full"><strong>Objetivo de la sesión</strong><p>Aplicar procedimientos de cómputo forense para preservar, adquirir y analizar evidencia digital de manera técnicamente rigurosa y legalmente válida.</p></div>
+        <div class="list-box"><h4>Contenido temático</h4><ol>
+          <li>Introducción al cómputo forense: principios y alcance</li>
+          <li>Cadena de custodia: preservación de evidencia para uso legal</li>
+          <li>Proceso forense: identificación, adquisición, análisis, presentación</li>
+          <li>Análisis de artefactos: RAM, disco, logs del sistema y red</li>
+          <li>Herramientas: Autopsy, FTK Imager, Volatility</li>
+          <li>Marco jurídico de peritaje informático en México</li>
+        </ol></div>
+        <div>
+          <div class="act-box"><strong>&#9997; Laboratorio práctico</strong><p>Análisis forense de imagen de disco en Autopsy: recuperación de archivos eliminados y reconstrucción de eventos.</p></div>
+          <div class="tools-box"><span class="lbl">Herramientas:</span><span class="tool-tag">Autopsy</span><span class="tool-tag">FTK Imager</span><span class="tool-tag">Kali Linux</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="3" data-c="todas adm ind trans auto info" data-q="concientización phishing ingeniería social ransomware awareness cultura seguridad byod campaña">
+      <div class="sc-head" onclick="toggle(this.parentElement)">
+        <div class="snum">15</div>
+        <div class="sc-info"><h3>Concientización, Cultura de Seguridad e Ingeniería Social</h3><p>Phishing · Vishing · Ransomware · Metodología de Awareness · BYOD</p></div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sc-body">
+        <div class="obj-box full"><strong>Objetivo de la sesión</strong><p>Diseñar e implementar programas de concientización que transformen la cultura organizacional y reduzcan el riesgo humano, el vector de ataque más explotado.</p></div>
+        <div class="list-box"><h4>Contenido temático</h4><ol>
+          <li>El factor humano: por qué las personas son el eslabón más débil</li>
+          <li>Ingeniería social: phishing, spear phishing, vishing, pretexting, baiting</li>
+          <li>Ransomware: modo de operación, vectores de entrada y protección</li>
+          <li>Metodología de awareness: del marketing al cambio organizacional real</li>
+          <li>Diseño del programa: segmentación por perfil, métricas y ciclo de mejora</li>
+          <li>Protección de dispositivos personales y BYOD: políticas prácticas</li>
+        </ol></div>
+        <div class="act-box full"><strong>&#9997; Actividad práctica</strong><p>Diseño de campaña de concientización para área operativa industrial: infografías, simulación de phishing y métricas de seguimiento.</p></div>
+      </div>
+    </div>
+  </div><!-- /bloque 3 -->
+
+  <!-- ═══════ BLOQUE IV ═══════ -->
+  <div class="bc" data-b="4">
+    <div class="bloque-hd b4">
+      <span class="icon">&#9878;</span>
+      <div>
+        <h2>Bloque IV — Cumplimiento, Gobierno y Continuidad del Negocio</h2>
+        <span>Sesiones 16–20 · 30 horas · Gobierno CISO · Auditoría · BCP · DRP · BIA · Power BI</span>
+      </div>
+    </div>
+
+    <div class="sc" data-b="4" data-c="todas adm info ind trans auto" data-q="ciso gobierno corporativo organigrama política seguridad raci comité dirección programa madurez cmmi">
+      <div class="sc-head" onclick="toggle(this.parentElement)">
+        <div class="snum">16</div>
+        <div class="sc-info"><h3>Gobierno de la Ciberseguridad y Rol del CISO</h3><p>Gobierno corporativo · RACI · Políticas de seguridad · Madurez CMMI</p></div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sc-body">
+        <div class="obj-box full"><strong>Objetivo de la sesión</strong><p>Diseñar la estructura de gobierno de ciberseguridad, definiendo el rol del CISO, los comités de seguridad y la alineación de la función con la estrategia corporativa.</p></div>
+        <div class="list-box"><h4>Contenido temático</h4><ol>
+          <li>La ciberseguridad como función de negocio: del departamento TI al gobierno corporativo</li>
+          <li>El CISO: visión, skills, organigrama y relación con el consejo directivo</li>
+          <li>Estructura de gobierno: comités de seguridad, roles y RACI</li>
+          <li>Cómo vender la seguridad: lenguaje de negocio y business cases</li>
+          <li>Diseño de políticas, estándares, procedimientos y guías</li>
+          <li>Madurez del programa: CMMI de ciberseguridad y planes de mejora</li>
+        </ol></div>
+        <div class="act-box full"><strong>&#9997; Actividad práctica</strong><p>Diseño de estructura de gobierno y elaboración de política de seguridad para empresa del sector del participante.</p></div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="4" data-c="todas adm info ind trans auto" data-q="métricas auditoría kpi kri dashboard power bi iso 27004 nist cis controls indicadores ejecutivos">
+      <div class="sc-head" onclick="toggle(this.parentElement)">
+        <div class="snum">17</div>
+        <div class="sc-info"><h3>Métricas, Auditoría y Cumplimiento de Seguridad</h3><p>KPIs · KRIs · ISO 27004 · Auditoría de seguridad · Dashboard Power BI</p></div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sc-body">
+        <div class="obj-box full"><strong>Objetivo de la sesión</strong><p>Implementar sistemas de métricas que demuestren el valor del programa de seguridad, faciliten la toma de decisiones y soporten auditorías internas y externas.</p></div>
+        <div class="list-box"><h4>Contenido temático</h4><ol>
+          <li>Métricas de seguridad: características, categorización y audiencias</li>
+          <li>KPIs y KRIs: diseño, recolección y presentación ejecutiva</li>
+          <li>Frameworks de métricas: NIST, CIS Controls, ISO 27004</li>
+          <li>Alcance y tipos de auditoría de seguridad de la información</li>
+          <li>Diferencias entre auditoría de seguridad y auditoría de TI</li>
+          <li>Proceso de auditoría: planificación, ejecución, hallazgos y seguimiento</li>
+        </ol></div>
+        <div>
+          <div class="act-box"><strong>&#9997; Actividad práctica</strong><p>Construcción de dashboard de métricas de seguridad en Power BI para reporte ejecutivo.</p></div>
+          <div class="tools-box"><span class="lbl">Herramientas:</span><span class="tool-tag">Power BI</span><span class="tool-tag">MS Excel</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="4" data-c="todas adm info ind trans auto" data-q="legal ético privacidad datos personales gdpr lfpdppp delitos informáticos contratos sla nda outsourcing mssp">
+      <div class="sc-head" onclick="toggle(this.parentElement)">
+        <div class="snum">18</div>
+        <div class="sc-info"><h3>Aspectos Legales, Éticos y Protección de Datos Personales</h3><p>LFPDPPP México · GDPR · Delitos informáticos · Contratos SLA · MSSP</p></div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sc-body">
+        <div class="obj-box full"><strong>Objetivo de la sesión</strong><p>Aplicar el marco legal y ético de la ciberseguridad para proteger a la organización de litigios, sanciones regulatorias y responsabilidades penales.</p></div>
+        <div class="list-box"><h4>Contenido temático</h4><ol>
+          <li>Ética en ciberseguridad: código de ética (ISC)², RFC 1087 y dilemas profesionales</li>
+          <li>Privacidad y datos personales: LFPDPPP (México) y GDPR (Europa)</li>
+          <li>Protección jurídica del software: propiedad intelectual y licencias</li>
+          <li>Delitos informáticos en México: acceso ilícito, sabotaje, fraude electrónico</li>
+          <li>Tipos de contratos en ciberseguridad: SLA, NDA, contratos de pentesting</li>
+          <li>Outsourcing de seguridad (MSSP): RFP, SLA y gestión de proveedores</li>
+        </ol></div>
+        <div class="act-box full"><strong>&#9997; Actividad práctica</strong><p>Elaboración de cláusulas de seguridad y privacidad para contrato de outsourcing de TI.</p></div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="4" data-c="todas adm info ind trans auto" data-q="bcp drp continuidad negocio rto rpo bia análisis impacto negocio recuperación desastres pruebas">
+      <div class="sc-head" onclick="toggle(this.parentElement)">
+        <div class="snum">19</div>
+        <div class="sc-info"><h3>Continuidad del Negocio y Recuperación de Desastres (BCP/DRP)</h3><p>BIA · RTO · RPO · Hot/Warm/Cold Site · Pruebas del plan</p></div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sc-body">
+        <div class="obj-box full"><strong>Objetivo de la sesión</strong><p>Desarrollar planes de continuidad y recuperación que garanticen la resiliencia operativa ante incidentes cibernéticos, desastres naturales o fallas tecnológicas mayores.</p></div>
+        <div class="list-box"><h4>Contenido temático</h4><ol>
+          <li>BCP y DRP: conceptos, diferencias y complementariedad</li>
+          <li>Análisis de Impacto al Negocio (BIA): procesos críticos y tolerancias</li>
+          <li>Objetivos de recuperación: RTO y RPO</li>
+          <li>Estrategias de respaldo: hot site, warm site, cold site, cloud DR</li>
+          <li>Diseño del documento BCP/DRP: estructura y responsables</li>
+          <li>Pruebas y mantenimiento: tabletop, walkthrough, full interruption</li>
+        </ol></div>
+        <div class="act-box full"><strong>&#9997; Actividad práctica</strong><p>Elaboración de BCP/DRP para proceso crítico de empresa industrial con análisis BIA completo.</p></div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="4" data-c="todas ind trans auto adm" data-q="seguridad física cctv biometría rfid centro datos data center planta industrial ot convergencia">
+      <div class="sc-head" onclick="toggle(this.parentElement)">
+        <div class="snum">20</div>
+        <div class="sc-info"><h3>Seguridad Física y Protección del Centro de Datos</h3><p>CCTV · Biometría · RFID · Data Center · OT/IT Convergencia</p></div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sc-body">
+        <div class="obj-box full"><strong>Objetivo de la sesión</strong><p>Integrar controles de seguridad física con la estrategia de ciberseguridad para proteger la infraestructura crítica de amenazas físicas y garantizar la disponibilidad de los sistemas.</p></div>
+        <div class="list-box"><h4>Contenido temático</h4><ol>
+          <li>El rol de la seguridad física en la seguridad informática: convergencia IT-OT</li>
+          <li>Identificación y valoración de activos físicos críticos</li>
+          <li>Controles de acceso: tarjetas RFID, biometría, mantraps</li>
+          <li>CCTV: diseño, retención de video y análisis de eventos</li>
+          <li>Seguridad del centro de datos: redundancia, climatización, contra incendios</li>
+          <li>Seguridad ambiental en planta industrial: PLC, HMI y redes OT</li>
+        </ol></div>
+        <div class="act-box full"><strong>&#9997; Actividad práctica</strong><p>Diseño de plan de seguridad física para centro de datos o planta de producción con mapa de controles.</p></div>
+      </div>
+    </div>
+  </div><!-- /bloque 4 -->
+
+  <!-- ═══════ BLOQUE V ═══════ -->
+  <div class="bc" data-b="5">
+    <div class="bloque-hd b5">
+      <span class="icon">&#127758;</span>
+      <div>
+        <h2>Bloque V — Seguridad en la Nube, OT Industrial y Proyecto Integrador</h2>
+        <span>Sesiones 21–25 · 30 horas · AWS · ICS/SCADA · IoT · Vehículos conectados · Defensa ante panel</span>
+      </div>
+    </div>
+
+    <div class="sc" data-b="5" data-c="todas info ind adm trans" data-q="cloud aws nube iaas paas saas iam s3 cloudtrail vpc responsabilidad compartida pentesting contenedores">
+      <div class="sc-head" onclick="toggle(this.parentElement)">
+        <div class="snum">21</div>
+        <div class="sc-info"><h3>Seguridad en la Nube (Cloud Security)</h3><p>AWS · IAM · S3 · CloudTrail · VPC · Responsabilidad compartida · Docker</p></div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sc-body">
+        <div class="obj-box full"><strong>Objetivo de la sesión</strong><p>Implementar controles de seguridad en entornos de nube para proteger datos, aplicaciones e infraestructura gestionando los riesgos del modelo de responsabilidad compartida.</p></div>
+        <div class="list-box"><h4>Contenido temático</h4><ol>
+          <li>Modelos de servicio: IaaS, PaaS, SaaS — responsabilidades de seguridad</li>
+          <li>Modelo de responsabilidad compartida: qué protege el proveedor y el cliente</li>
+          <li>Seguridad en AWS: IAM, grupos de seguridad, VPC, CloudTrail, Config</li>
+          <li>Seguridad en almacenamiento: cifrado S3, control de acceso</li>
+          <li>Vulnerabilidades en aplicaciones cloud: Lambda, CI/CD, contenedores</li>
+          <li>Pentesting en la nube: normativa AWS y herramientas autorizadas</li>
+        </ol></div>
+        <div>
+          <div class="act-box"><strong>&#9997; Laboratorio práctico</strong><p>Configuración de controles de seguridad en AWS: IAM, políticas de bucket S3, activación de CloudTrail.</p></div>
+          <div class="tools-box"><span class="lbl">Herramientas:</span><span class="tool-tag">AWS</span><span class="tool-tag">Docker</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="5" data-c="todas ind trans auto info" data-q="ot scada ics plc hmi industrial iec 62443 stuxnet purdue model segmentación redes industriales">
+      <div class="sc-head" onclick="toggle(this.parentElement)">
+        <div class="snum">22</div>
+        <div class="sc-info"><h3>Ciberseguridad Industrial: OT, ICS y SCADA</h3><p>IEC 62443 · NIST SP 800-82 · Purdue Model · PLC · HMI · Stuxnet</p></div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sc-body">
+        <div class="obj-box full"><strong>Objetivo de la sesión</strong><p>Identificar y mitigar los riesgos cibernéticos de los sistemas de control industrial, las redes OT y los entornos de manufactura conectada, protegiendo la continuidad de la producción.</p></div>
+        <div class="list-box"><h4>Contenido temático</h4><ol>
+          <li>Convergencia IT/OT: diferencias, riesgos y vectores de ataque específicos</li>
+          <li>Sistemas de control industrial: PLC, HMI, SCADA, DCS — vulnerabilidades</li>
+          <li>Estándares: IEC 62443, NIST SP 800-82</li>
+          <li>Ataques históricos: Stuxnet, Industroyer, Colonial Pipeline</li>
+          <li>Segmentación de redes OT: zonas, conductos y Purdue Model</li>
+          <li>Controles para entornos industriales: monitoreo OT, parches en sistemas legacy</li>
+        </ol></div>
+        <div class="act-box full"><strong>&#9997; Actividad práctica</strong><p>Análisis de vulnerabilidades en red OT simulada y diseño de plan de segmentación para planta industrial.</p></div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="5" data-c="todas ind trans auto info" data-q="iot iiot inteligencia artificial rpa vehículos conectados ecu can bus v2x ota unece iso sae 21434 industria 4.0">
+      <div class="sc-head" onclick="toggle(this.parentElement)">
+        <div class="snum">23</div>
+        <div class="sc-info"><h3>Tecnologías Emergentes: IoT, IA y Vehículos Conectados</h3><p>IIoT · IA en ciberseguridad · Vehículos conectados · V2X · ISO/SAE 21434</p></div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sc-body">
+        <div class="obj-box full"><strong>Objetivo de la sesión</strong><p>Evaluar los riesgos de ciberseguridad en tecnologías emergentes para diseñar controles adecuados en cada contexto industrial.</p></div>
+        <div class="list-box"><h4>Contenido temático</h4><ol>
+          <li>Seguridad en IoT industrial (IIoT): vulnerabilidades, vectores y controles</li>
+          <li>IA en ciberseguridad: detección de anomalías, análisis predictivo y deepfakes</li>
+          <li>Ciberseguridad en vehículos conectados: ECU, CAN bus, V2X, OTA updates</li>
+          <li>Ransomware en manufactura inteligente: casos reales y estrategias</li>
+          <li>Seguridad en transporte inteligente: flotas GPS y plataformas telemáticas</li>
+          <li>Marco regulatorio: UNECE WP.29 e ISO/SAE 21434</li>
+        </ol></div>
+        <div class="act-box full"><strong>&#9997; Actividad práctica</strong><p>Análisis de riesgo cibernético para sistema IoT industrial o plataforma de vehículo conectado según carrera del participante.</p></div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="5" data-c="todas adm info ind trans auto" data-q="taller proyecto integrador revisión retroalimentación defensa panel presentación ejecutiva">
+      <div class="sc-head" onclick="toggle(this.parentElement)">
+        <div class="snum">24</div>
+        <div class="sc-info"><h3>Taller de Proyecto Integrador: Revisión y Preparación de Defensa</h3><p>Retroalimentación del facilitador · Ajuste de entregables · Simulación de panel</p></div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sc-body">
+        <div class="obj-box full"><strong>Objetivo de la sesión</strong><p>Consolidar los entregables del proyecto integrador con retroalimentación personalizada y practicar la defensa oral ante las preguntas del panel evaluador.</p></div>
+        <div class="list-box full"><h4>Dinámica de la sesión</h4><ol>
+          <li>Presentación de avance por equipo ante el grupo</li>
+          <li>Retroalimentación técnica y estratégica del facilitador</li>
+          <li>Ajuste del análisis de riesgos y plan de tratamiento</li>
+          <li>Perfeccionamiento de la presentación ejecutiva: claridad, impacto y narrativa</li>
+          <li>Simulación de preguntas del panel evaluador con retroalimentación</li>
+          <li>Checklist de entregables finales requeridos</li>
+        </ol></div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="5" data-c="todas adm info ind trans auto" data-q="presentación final defensa titulación clausura proyecto integrador entregables panel evaluador">
+      <div class="sc-head" onclick="toggle(this.parentElement)">
+        <div class="snum">25</div>
+        <div class="sc-info"><h3>Presentación Final del Proyecto Integrador y Cierre del Seminario</h3><p>Defensa ante panel · Entregables finales · Clausura y reconocimientos</p></div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sc-body">
+        <div class="obj-box full"><strong>Objetivo de la sesión</strong><p>Demostrar ante un panel evaluador el dominio de las competencias del seminario mediante la defensa oral y escrita de una estrategia integral de ciberseguridad empresarial.</p></div>
+        <div class="list-box"><h4>Estructura de la sesión</h4><ol>
+          <li>Presentación ejecutiva por equipo (15–20 min)</li>
+          <li>Defensa ante panel: preguntas técnicas y estratégicas con réplica</li>
+          <li>Evaluación formal: criterios y retroalimentación estructurada</li>
+          <li>Entrega del informe final y carpeta de evidencias</li>
+          <li>Reflexión colectiva y retroalimentación general</li>
+          <li>Clausura: reconocimientos, certificaciones y oportunidades del mercado</li>
+        </ol></div>
+        <div class="act-box"><strong>&#128203; Entregables del Proyecto Integrador</strong><p>Inventario de activos (ISO 27001) · Matriz de riesgos (cualitativo + cuantitativo) · Plan de tratamiento de riesgos · Política de seguridad · Plan de respuesta a incidentes (NIST SP 800-61) · BCP/DRP con análisis BIA · Dashboard de métricas (Power BI/Excel) · Presentación ejecutiva (15–20 diapositivas)</p></div>
+      </div>
+    </div>
+  </div><!-- /bloque 5 -->
+
+  <!-- ═══════ RESUMEN ═══════ -->
+  <div class="section-title">&#128202; Estructura, Evaluación y Recursos</div>
+
+  <div style="background:var(--blanco);border-radius:16px;padding:24px;box-shadow:var(--sombra);margin-bottom:18px;">
+    <h3 style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--gris);margin-bottom:16px;">Distribución por bloques</h3>
+    <table class="bt">
+      <thead><tr><th>Bloque</th><th>Nombre</th><th>Sesiones</th><th>Horas</th></tr></thead>
+      <tbody>
+        <tr><td>I</td><td>Fundamentos de Ciberseguridad y Gestión de Riesgos Empresariales</td><td>1–5</td><td>30 h</td></tr>
+        <tr><td>II</td><td>Arquitectura de Seguridad y Protección de Infraestructura</td><td>6–10</td><td>30 h</td></tr>
+        <tr><td>III</td><td>Operaciones de Seguridad, SIEM y Respuesta a Incidentes</td><td>11–15</td><td>30 h</td></tr>
+        <tr><td>IV</td><td>Cumplimiento, Gobierno y Continuidad del Negocio</td><td>16–20</td><td>30 h</td></tr>
+        <tr><td>V</td><td>Seguridad en la Nube, OT Industrial y Proyecto Integrador</td><td>21–25</td><td>30 h</td></tr>
+        <tr><td>Total</td><td></td><td>25 sesiones</td><td>150 h</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid2">
+    <div class="icard">
+      <h3>Criterios de evaluación</h3>
+      <div class="eval-item"><div class="eval-row"><span class="eval-name">Participación y laboratorios en sesión</span><span class="eval-pct">20%</span></div><div class="pb"><div class="pbf" style="width:20%"></div></div></div>
+      <div class="eval-item"><div class="eval-row"><span class="eval-name">Entregables por bloque (5 entregables)</span><span class="eval-pct">30%</span></div><div class="pb"><div class="pbf" style="width:30%"></div></div></div>
+      <div class="eval-item"><div class="eval-row"><span class="eval-name">Proyecto integrador escrito</span><span class="eval-pct">25%</span></div><div class="pb"><div class="pbf" style="width:25%"></div></div></div>
+      <div class="eval-item"><div class="eval-row"><span class="eval-name">Presentación y defensa ante panel</span><span class="eval-pct">25%</span></div><div class="pb"><div class="pbf" style="width:25%"></div></div></div>
+      <div class="nota-box">Calificación mínima aprobatoria: <strong>80/100</strong> · Asistencia mínima: <strong>90%</strong> (23 de 25 sesiones)</div>
+    </div>
+    <div class="icard">
+      <h3>Relevancia por carrera</h3>
+      <div class="car-row"><span class="car-n" style="color:#2563ab">Adm. Industrial</span><span class="car-a">Gobierno de seguridad, riesgos empresariales, cumplimiento y continuidad del negocio</span></div>
+      <div class="car-row"><span class="car-n" style="color:#dc2626">Ing. Informática</span><span class="car-a">Arquitectura de seguridad, SOC, forense digital, pentesting y cloud security</span></div>
+      <div class="car-row"><span class="car-n" style="color:#16a34a">Ing. Industrial</span><span class="car-a">Ciberseguridad en ICS/SCADA, Industria 4.0 y protección de planta</span></div>
+      <div class="car-row"><span class="car-n" style="color:#7c3aed">Ing. Transporte</span><span class="car-a">Seguridad en flotas conectadas, plataformas logísticas y sistemas de rastreo</span></div>
+      <div class="car-row"><span class="car-n" style="color:#ea580c">Ing. Automotriz</span><span class="car-a">Vehículos conectados, ECU, CAN bus, V2X, OTA e ISO/SAE 21434</span></div>
+    </div>
+  </div>
+
+  <div class="icard" style="margin-top:18px;">
+    <h3>Herramientas y software utilizados</h3>
+    <div class="tool-grid">
+      <div class="tool-item"><strong>Kali Linux + VirtualBox</strong><span>Sesiones 5, 8, 10, 14</span></div>
+      <div class="tool-item"><strong>OpenVAS / Nessus</strong><span>Sesión 5</span></div>
+      <div class="tool-item"><strong>Metasploitable / DVWA / Burp Suite</strong><span>Sesiones 5, 8</span></div>
+      <div class="tool-item"><strong>Snort / Wireshark</strong><span>Sesión 7</span></div>
+      <div class="tool-item"><strong>AlienVault SIEM / Security Onion</strong><span>Sesión 11</span></div>
+      <div class="tool-item"><strong>Autopsy / FTK Imager / Volatility</strong><span>Sesión 14</span></div>
+      <div class="tool-item"><strong>AWS (IAM, S3, CloudTrail)</strong><span>Sesiones 9, 21</span></div>
+      <div class="tool-item"><strong>Docker</strong><span>Sesiones 7, 21</span></div>
+      <div class="tool-item"><strong>Maltego / theHarvester / Shodan</strong><span>Sesión 12</span></div>
+      <div class="tool-item"><strong>Power BI / MS Excel</strong><span>Sesiones 4, 17</span></div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<footer>
+  <span class="shield">&#128737;</span>
+  <strong>Ciberseguridad Empresarial: Gestión de Riesgos, Protección de Activos Digitales y Resiliencia Organizacional</strong><br>
+  Seminario de Titulación · 150 horas · 25 sesiones · TecNM<br>
+  Adm. Industrial · Ing. Informática · Ing. Industrial · Ing. Transporte · Ing. Sistemas Automotrices
+</footer>
+
+<script>
+  var allOpen = false;
+
+  function toggle(card) { card.classList.toggle('open'); }
+
+  function toggleAll() {
+    allOpen = !allOpen;
+    document.querySelectorAll('.sc').forEach(c => c.classList.toggle('open', allOpen));
+    document.querySelector('.expand-btn').textContent = allOpen ? '▲ Colapsar todo' : '▼ Expandir todo';
+  }
+
+  function showBloque(b, btn) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+    btn.classList.add('on');
+    document.querySelectorAll('.bc').forEach(bc => {
+      bc.style.display = (b === 'all' || bc.dataset.b === b) ? '' : 'none';
+    });
+  }
+
+  function filtrar(c, chip) {
+    document.querySelectorAll('.chip').forEach(ch => ch.classList.remove('on'));
+    chip.classList.add('on');
+    document.querySelectorAll('.sc').forEach(card => {
+      const cs = card.dataset.c || '';
+      card.style.display = (c === 'todas' || cs.includes(c)) ? '' : 'none';
+    });
+  }
+
+  function buscar(q) {
+    q = q.toLowerCase().trim();
+    if (q) {
+      // Mostrar todos los bloques cuando se busca
+      document.querySelectorAll('.bc').forEach(b => b.style.display = '');
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+      document.querySelectorAll('.tab')[0].classList.add('on');
+    }
+    document.querySelectorAll('.sc').forEach(card => {
+      const txt = (
+        (card.querySelector('h3') ? card.querySelector('h3').textContent : '') + ' ' +
+        (card.querySelector('p') ? card.querySelector('p').textContent : '') + ' ' +
+        (card.dataset.q || '')
+      ).toLowerCase();
+      const vis = !q || txt.includes(q);
+      card.style.display = vis ? '' : 'none';
+      if (vis && q) card.classList.add('open');
+    });
+    if (!q) document.querySelectorAll('.sc').forEach(c => c.classList.remove('open'));
+  }
+</script>
+</body>
+</html>

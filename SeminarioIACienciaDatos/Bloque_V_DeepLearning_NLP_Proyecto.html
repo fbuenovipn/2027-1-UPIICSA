@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloque V — Deep Learning, NLP, RL y Proyecto Final</title>
+<style>
+  :root{--bg:#04080f;--card:#0b1628;--border:#1e3a5f;--violet:#7c3aed;--cyan:#06b6d4;--green:#10b981;--orange:#f59e0b;--red:#ef4444;--pink:#ec4899;--yellow:#fbbf24;--text:#e2e8f0;--muted:#64748b;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden;height:100vh;}
+  #navbar{position:fixed;top:0;left:0;right:0;height:54px;background:rgba(4,8,15,.96);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:100;backdrop-filter:blur(8px);}
+  #navbar .brand{color:var(--violet);font-weight:700;font-size:.85rem;letter-spacing:1px;}
+  #navbar .brand span{color:var(--pink);}
+  .stabs{display:flex;gap:6px;}
+  .stabs button{background:transparent;border:1px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:20px;cursor:pointer;font-size:.75rem;transition:all .2s;}
+  .stabs button.active{background:var(--violet);border-color:var(--violet);color:#fff;font-weight:700;}
+  .stabs button:hover:not(.active){border-color:var(--violet);color:var(--violet);}
+  #ctr{color:var(--muted);font-size:.8rem;min-width:80px;text-align:right;}
+  #pb{position:fixed;top:54px;left:0;height:3px;background:linear-gradient(90deg,var(--violet),var(--pink));transition:width .3s;z-index:100;}
+  #sc{position:fixed;top:57px;left:0;right:0;bottom:40px;overflow:hidden;}
+  .slide{position:absolute;top:0;left:0;right:0;bottom:0;padding:28px 48px;display:none;overflow-y:auto;animation:fi .35s ease;}
+  .slide.active{display:flex;flex-direction:column;}
+  @keyframes fi{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+  #footer{position:fixed;bottom:0;left:0;right:0;height:40px;background:rgba(4,8,15,.96);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:16px;z-index:100;}
+  #footer button{background:var(--card);border:1px solid var(--border);color:var(--text);padding:5px 20px;border-radius:6px;cursor:pointer;font-size:.8rem;transition:all .2s;}
+  #footer button:hover{border-color:var(--violet);color:var(--violet);}
+  #footer .hint{color:var(--muted);font-size:.72rem;}
+  h1{font-size:2rem;font-weight:800;line-height:1.2;margin-bottom:10px;}
+  h2{font-size:1.5rem;font-weight:700;margin-bottom:14px;}
+  h3{font-size:1.05rem;font-weight:600;color:var(--violet);margin-bottom:8px;margin-top:12px;}
+  p{font-size:.92rem;line-height:1.65;margin-bottom:8px;}
+  ul,ol{padding-left:20px;font-size:.9rem;line-height:1.8;}
+  li{margin-bottom:4px;}
+  .sub{color:var(--muted);font-size:1rem;}
+  .cover{align-items:center;justify-content:center;text-align:center;}
+  .cover h1{font-size:2.3rem;background:linear-gradient(135deg,var(--violet),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;}
+  .badge{display:inline-block;border:1px solid var(--violet);border-radius:8px;padding:8px 24px;color:var(--violet);font-size:.9rem;font-weight:700;letter-spacing:2px;margin-bottom:20px;background:rgba(124,58,237,.08);}
+  .sg{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:20px;}
+  .sc2{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 16px;width:180px;text-align:left;}
+  .sc2 .num{color:var(--violet);font-size:.7rem;font-weight:700;}
+  .sc2 .nm{font-size:.8rem;margin-top:4px;}
+  .cg{display:grid;gap:14px;margin-top:8px;}
+  .cg.c2{grid-template-columns:1fr 1fr;}
+  .cg.c3{grid-template-columns:1fr 1fr 1fr;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;position:relative;overflow:hidden;}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+  .card.v::before{background:var(--violet);}
+  .card.c::before{background:var(--cyan);}
+  .card.g::before{background:var(--green);}
+  .card.o::before{background:var(--orange);}
+  .card.r::before{background:var(--red);}
+  .card.p::before{background:var(--pink);}
+  .card h3{margin-top:0;font-size:.95rem;}
+  .card p,.card ul,.card li{font-size:.85rem;}
+  .box{border-radius:10px;padding:14px 18px;margin:10px 0;}
+  .bm{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.4);}
+  .bc{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.4);}
+  .bl{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.4);}
+  .bd{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.4);}
+  .bq{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.4);cursor:pointer;}
+  .bt{font-weight:700;font-size:.8rem;margin-bottom:6px;letter-spacing:.5px;}
+  .bm .bt{color:var(--violet);}
+  .bc .bt{color:var(--orange);}
+  .bl .bt{color:var(--green);}
+  .bd .bt{color:var(--cyan);}
+  .bq .bt{color:var(--yellow);}
+  .box p,.box li,.box ul{font-size:.87rem;}
+  .qa{display:none;margin-top:8px;padding-top:8px;border-top:1px solid rgba(251,191,36,.3);color:var(--green);font-size:.85rem;}
+  .bq.revealed .qa{display:block;}
+  table{width:100%;border-collapse:collapse;font-size:.83rem;margin-top:8px;}
+  th{background:#071020;color:var(--violet);text-align:left;padding:8px 12px;border:1px solid var(--border);}
+  td{padding:7px 12px;border:1px solid var(--border);vertical-align:top;}
+  tr:nth-child(even) td{background:rgba(11,22,40,.6);}
+  .tl{list-style:none;padding:0;margin-top:8px;}
+  .tl li{display:flex;gap:14px;margin-bottom:12px;align-items:flex-start;}
+  .tl .st{min-width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+  .tl .st.v{background:rgba(124,58,237,.15);border:2px solid var(--violet);color:var(--violet);}
+  .tl .st.c{background:rgba(6,182,212,.15);border:2px solid var(--cyan);color:var(--cyan);}
+  .tl .st.g{background:rgba(16,185,129,.15);border:2px solid var(--green);color:var(--green);}
+  .tl .st.o{background:rgba(245,158,11,.15);border:2px solid var(--orange);color:var(--orange);}
+  .tl .content h4{font-size:.9rem;}
+  .tl .content p{font-size:.83rem;color:var(--muted);margin:0;}
+  .sr{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0;}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 18px;flex:1;min-width:120px;text-align:center;}
+  .stat .n{font-size:1.8rem;font-weight:800;line-height:1;}
+  .stat .l{font-size:.72rem;color:var(--muted);margin-top:4px;}
+  pre{background:#071020;border:1px solid var(--border);border-radius:6px;padding:12px;font-size:.78rem;color:var(--green);overflow-x:auto;margin:8px 0;font-family:'Courier New',monospace;line-height:1.5;}
+  code{background:#071020;padding:2px 6px;border-radius:4px;font-size:.82rem;color:var(--cyan);}
+  .ld{display:flex;flex-direction:column;gap:6px;margin:10px 0;}
+  .lr{border-radius:6px;padding:8px 16px;font-size:.82rem;font-weight:600;text-align:center;}
+  .tag{display:inline-block;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:2px 10px;font-size:.75rem;color:var(--muted);margin-right:6px;margin-bottom:4px;}
+  .slide::-webkit-scrollbar{width:4px;}
+  .slide::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+  /* Rubric */
+  .rubric{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:8px;margin-top:12px;}
+  .rh{font-weight:700;font-size:.8rem;color:var(--violet);padding:6px;background:rgba(124,58,237,.1);border-radius:4px;}
+  .rc{font-size:.8rem;padding:6px;background:var(--card);border:1px solid var(--border);border-radius:4px;}
+</style>
+</head>
+<body>
+<div id="navbar">
+  <div class="brand">🧠 DEEP <span>LEARNING</span> · BLOQUE V</div>
+  <div class="stabs">
+    <button onclick="gts(0)" id="t0">S21</button>
+    <button onclick="gts(1)" id="t1">S22</button>
+    <button onclick="gts(2)" id="t2">S23</button>
+    <button onclick="gts(3)" id="t3">S24</button>
+    <button onclick="gts(4)" id="t4">S25</button>
+  </div>
+  <div id="ctr">1 / 60</div>
+</div>
+<div id="pb" style="width:1.67%"></div>
+<div id="sc">
+
+<!-- PORTADA -->
+<div class="slide active cover" data-s="0">
+  <div class="badge">BLOQUE V · SESIONES 21 – 25</div>
+  <h1>Deep Learning, NLP,<br>Reinforcement Learning y Proyecto Final</h1>
+  <p class="sub">La vanguardia de la IA aplicada a la industria · 30 horas</p>
+  <div class="sg">
+    <div class="sc2"><div class="num">SESIÓN 21</div><div class="nm">NLP y Transformers</div></div>
+    <div class="sc2"><div class="num">SESIÓN 22</div><div class="nm">Deep Learning CNN/Transfer</div></div>
+    <div class="sc2"><div class="num">SESIÓN 23</div><div class="nm">Reinforcement Learning</div></div>
+    <div class="sc2"><div class="num">SESIÓN 24</div><div class="nm">Taller Proyecto Integrador</div></div>
+    <div class="sc2"><div class="num">SESIÓN 25</div><div class="nm">Defensa Final</div></div>
+  </div>
+  <p style="margin-top:24px;color:var(--muted);font-size:.82rem;">← → o barra espaciadora · Click en S21–S25 para saltar sesión</p>
+</div>
+
+<!-- ═══ SESIÓN 21 ═══ -->
+<div class="slide" data-s="0">
+  <h2>Sesión 21 <span style="color:var(--violet)">— NLP y Transformers: El Lenguaje de la Industria</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Antes de los Transformers, los modelos de lenguaje leían texto como <strong>alguien que lee una carta cubriéndola con la mano</strong>: solo veían una palabra a la vez. El mecanismo de <strong>atención</strong> en los Transformers es como leer toda la carta simultáneamente y poder mirar cualquier parte en cualquier momento. Eso cambió todo.</p>
+  </div>
+  <div class="sr" style="margin-top:16px;">
+    <div class="stat"><div class="n" style="color:var(--violet)">2017</div><div class="l">"Attention Is All You Need" — el paper que cambió la NLP (Google Brain)</div></div>
+    <div class="stat"><div class="n" style="color:var(--cyan)">BERT</div><div class="l">Primer modelo preentrenado masivo de comprensión bidireccional (Google, 2018)</div></div>
+    <div class="stat"><div class="n" style="color:var(--pink)">GPT-4</div><div class="l">Estado del arte en generación de texto, razonamiento y código</div></div>
+  </div>
+  <div class="cg c3" style="margin-top:14px;">
+    <div class="card v"><h3>TF-IDF — La Base</h3><p>Term Frequency × Inverse Document Frequency. Representa texto como vector numérico ponderado. Simple, interpretable, funciona bien para clasificación de documentos cortos y búsqueda.</p></div>
+    <div class="card c"><h3>Word Embeddings</h3><p>Word2Vec, GloVe, FastText: representaciones densas que capturan significado semántico. "rey - hombre + mujer ≈ reina". La base conceptual de los LLMs modernos.</p></div>
+    <div class="card g"><h3>Transformers y BERT</h3><p>Atención multi-cabeza: cada token atiende a todos los demás simultáneamente. BERT aprende representaciones bidireccionales preentrenando en enorme corpus. Fine-tuning con pocos datos propios.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Clasificación de Texto con Hugging Face Transformers</h2>
+  <div class="cg c2">
+    <div class="card v">
+      <h3>Pipeline de Inferencia (Zero-Shot)</h3>
+      <pre">from transformers import pipeline
+
+# Clasificación sin entrenamiento adicional
+clasificador = pipeline(
+    "zero-shot-classification",
+    model="facebook/bart-large-mnli")
+
+texto = """El compresor C-101 presenta vibración
+excesiva a 50Hz y temperatura de 95°C en los
+rodamientos. Se recomienda parada inmediata."""
+
+etiquetas = ["falla mecánica", "falla eléctrica",
+             "mantenimiento preventivo",
+             "operación normal"]
+
+resultado = clasificador(texto, etiquetas)
+for label, score in zip(resultado['labels'],
+                        resultado['scores']):
+    print(f"{label}: {score:.1%}")</pre>
+    </div>
+    <div class="card c">
+      <h3>Fine-tuning BERT para Reportes Técnicos</h3>
+      <pre">from transformers import (AutoTokenizer,
+    AutoModelForSequenceClassification,
+    TrainingArguments, Trainer)
+from datasets import Dataset
+
+# Cargar modelo preentrenado en español
+model_name = "dccuchile/bert-base-spanish-wwm-cased"
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForSequenceClassification.from_pretrained(
+    model_name, num_labels=4)  # 4 tipos de falla
+
+# Tokenizar dataset propio
+def tokenize(examples):
+    return tokenizer(examples['descripcion'],
+        truncation=True, max_length=256,
+        padding='max_length')
+
+dataset = Dataset.from_pandas(df_reportes)
+tokenized = dataset.map(tokenize, batched=True)
+
+# Fine-tuning con Trainer API
+args = TrainingArguments(
+    output_dir="./bert-fallas",
+    num_train_epochs=3,
+    per_device_train_batch_size=16,
+    evaluation_strategy="epoch",
+    save_strategy="epoch",
+    load_best_model_at_end=True)
+
+trainer = Trainer(model=model, args=args,
+    train_dataset=tokenized['train'],
+    eval_dataset=tokenized['test'])
+trainer.train()</pre>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>NLP Industrial: Casos de Uso Reales</h2>
+  <table>
+    <tr><th>Caso de Uso</th><th>Técnica NLP</th><th>Impacto</th></tr>
+    <tr><td><strong>Clasificación de tickets de mantenimiento</strong></td><td>BERT fine-tuned en descripciones técnicas</td><td>Reducción 70% en tiempo de triaje y asignación a técnico</td></tr>
+    <tr><td><strong>Extracción de información de contratos</strong></td><td>NER (Named Entity Recognition) + LLM</td><td>Análisis de 1,000 contratos en horas vs semanas</td></tr>
+    <tr><td><strong>Análisis de sentimiento en reseñas</strong></td><td>Transformers multilingüe (XLM-RoBERTa)</td><td>Monitoreo automático de VOC (voz del cliente)</td></tr>
+    <tr><td><strong>QA sobre manuales técnicos</strong></td><td>RAG + BERT (extractive QA)</td><td>Técnicos de campo con asistente que responde en 3 segundos</td></tr>
+    <tr><td><strong>Traducción de especificaciones</strong></td><td>MarianMT / NLLB-200 (Meta)</td><td>Proveedores internacionales integrados sin traductores humanos</td></tr>
+  </table>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Click para ver respuesta</div>
+    <p>Tienes 10,000 reportes históricos de fallas en texto libre (en español) etiquetados con tipo de falla (4 categorías). ¿Usarías TF-IDF + Random Forest o fine-tuning de BERT? ¿Por qué?</p>
+    <div class="qa">Dependería: con <strong>10,000 ejemplos</strong> y texto relativamente corto y técnico, <strong>ambas opciones pueden funcionar bien</strong>. TF-IDF + RF: más rápido de entrenar, interpretable, sin GPU requerida. Fine-tuning BERT: captura matices semánticos, maneja mejor abreviaturas y jerga técnica no vista. Recomendación: empezar con TF-IDF + RF como baseline (fast to implement), luego comparar con BERT fine-tuned. Si la mejora justifica el costo computacional (+5% F1), usar BERT en producción.</div>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 22 ═══ -->
+<div class="slide" data-s="1">
+  <h2>Sesión 22 <span style="color:var(--pink)">— Deep Learning: CNN, PyTorch y Transfer Learning</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Una red neuronal profunda aprende como un <strong>niño que aprende a reconocer objetos</strong>: primero detecta bordes, luego formas, luego partes, finalmente objetos completos. Las capas convolucionales (CNN) son detectores de patrones jerárquicos: de píxeles a texturas a formas a objetos. Transfer Learning es como <strong>contratar a alguien que ya sabe ver</strong> y solo entrenarle para tu problema específico.</p>
+  </div>
+  <div class="cg c3" style="margin-top:14px;">
+    <div class="card p"><h3>Redes Neuronales Profundas</h3><p>Capas de neuronas artificiales con funciones de activación no lineales. Aprenden representaciones jerárquicas de los datos. Requieren: muchos datos, GPU, regularización cuidadosa.</p></div>
+    <div class="card v"><h3>CNN — Redes Convolucionales</h3><p>Especializadas en datos con estructura espacial: imágenes, señales de sensores 1D. Capas: Conv2D (detectar patrones) → MaxPool (reducir) → Dense (clasificar). Estado del arte en visión computacional.</p></div>
+    <div class="card g"><h3>Transfer Learning</h3><p>Usar un modelo preentrenado en millones de imágenes (ResNet, EfficientNet) y re-entrenar solo las últimas capas con tus pocos datos. Funciona con 100-1,000 imágenes. El "hack" más poderoso del deep learning.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>Inspección Visual de Calidad con Transfer Learning</h2>
+  <div class="cg c2">
+    <div class="card p">
+      <h3>Fine-tuning ResNet50 con PyTorch</h3>
+      <pre">import torch
+import torch.nn as nn
+import torchvision.transforms as transforms
+from torchvision import models, datasets
+from torch.utils.data import DataLoader
+
+# Transformaciones de imagen
+transform = transforms.Compose([
+    transforms.Resize((224, 224)),
+    transforms.RandomHorizontalFlip(),
+    transforms.ColorJitter(brightness=0.2),
+    transforms.ToTensor(),
+    transforms.Normalize([0.485,0.456,0.406],
+                         [0.229,0.224,0.225])])
+
+# Dataset de imágenes de piezas (defecto/ok)
+train_data = datasets.ImageFolder(
+    'data/piezas/train/', transform=transform)
+test_data = datasets.ImageFolder(
+    'data/piezas/test/', transform=transform)
+train_loader = DataLoader(train_data,
+    batch_size=32, shuffle=True, num_workers=4)
+
+# Cargar ResNet50 preentrenado
+modelo = models.resnet50(pretrained=True)
+
+# Congelar todas las capas excepto las últimas
+for param in modelo.parameters():
+    param.requires_grad = False
+
+# Reemplazar última capa para 2 clases
+num_ftrs = modelo.fc.in_features
+modelo.fc = nn.Sequential(
+    nn.Dropout(0.4),
+    nn.Linear(num_ftrs, 2))  # ok / defecto
+
+device = torch.device("cuda" if
+    torch.cuda.is_available() else "cpu")
+modelo = modelo.to(device)</pre>
+    </div>
+    <div class="card g">
+      <h3>Entrenamiento y Evaluación</h3>
+      <pre">criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(
+    modelo.fc.parameters(), lr=0.001)
+scheduler = torch.optim.lr_scheduler.StepLR(
+    optimizer, step_size=7, gamma=0.1)
+
+# Bucle de entrenamiento
+for epoch in range(15):
+    modelo.train()
+    running_loss, correct = 0.0, 0
+    for inputs, labels in train_loader:
+        inputs, labels = inputs.to(device), \
+                         labels.to(device)
+        optimizer.zero_grad()
+        outputs = modelo(inputs)
+        loss = criterion(outputs, labels)
+        loss.backward()
+        optimizer.step()
+        running_loss += loss.item()
+        _, preds = torch.max(outputs, 1)
+        correct += (preds == labels).sum().item()
+    scheduler.step()
+    acc = correct / len(train_data)
+    print(f"Época {epoch+1}: Loss={running_loss:.3f}, Acc={acc:.1%}")
+
+# Guardar modelo
+torch.save(modelo.state_dict(),
+           'resnet_calidad_v1.pth')</pre>
+    </div>
+  </div>
+  <div class="box bc"><div class="bt">📰 CASO REAL — Foxconn: Inspección Visual con IA</div>
+    <p>Foxconn (fabricante de iPhones) implementó CNNs para inspección de PCBs. El sistema analiza 12 puntos de soldadura por segundo con >99.5% de precisión, vs 92% de inspectores humanos a 60 piezas/hora. Resultado: reducción de 80% en defectos que llegaban al cliente. La cámara industrial + CNN reemplazó 120 inspectores en una línea.</p>
+  </div>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>TensorFlow/Keras: Construcción Rápida de Redes</h2>
+  <div class="cg c2">
+    <div class="card c">
+      <h3>Red Neuronal para Series de Tiempo (LSTM)</h3>
+      <pre">import tensorflow as tf
+from tensorflow import keras
+
+# LSTM para predicción de consumo energético
+modelo = keras.Sequential([
+    keras.layers.LSTM(128, input_shape=(24, 5),
+        return_sequences=True),  # 24 horas, 5 features
+    keras.layers.Dropout(0.2),
+    keras.layers.LSTM(64, return_sequences=False),
+    keras.layers.Dropout(0.2),
+    keras.layers.Dense(32, activation='relu'),
+    keras.layers.Dense(1)  # predicción siguiente hora
+])
+
+modelo.compile(
+    optimizer=keras.optimizers.Adam(lr=0.001),
+    loss='mse',
+    metrics=['mae'])
+
+# Callbacks para entrenamiento inteligente
+callbacks = [
+    keras.callbacks.EarlyStopping(
+        patience=10, restore_best_weights=True),
+    keras.callbacks.ReduceLROnPlateau(
+        factor=0.5, patience=5),
+    keras.callbacks.ModelCheckpoint(
+        'mejor_lstm.h5', save_best_only=True)
+]
+
+history = modelo.fit(X_train, y_train,
+    epochs=100, batch_size=32,
+    validation_split=0.2,
+    callbacks=callbacks, verbose=1)</pre>
+    </div>
+    <div class="card v">
+      <h3>Autoencoder para Detección de Anomalías</h3>
+      <pre">## Autoencoder — aprende la distribución "normal"
+## y detecta anomalías como puntos difíciles de reconstruir
+
+encoder = keras.Sequential([
+    keras.layers.Dense(32, activation='relu',
+        input_shape=(n_features,)),
+    keras.layers.Dense(16, activation='relu'),
+    keras.layers.Dense(8, activation='relu')  # bottleneck
+], name='encoder')
+
+decoder = keras.Sequential([
+    keras.layers.Dense(16, activation='relu',
+        input_shape=(8,)),
+    keras.layers.Dense(32, activation='relu'),
+    keras.layers.Dense(n_features, activation='linear')
+], name='decoder')
+
+autoencoder = keras.Sequential([encoder, decoder])
+autoencoder.compile(optimizer='adam', loss='mse')
+
+# Entrenar SOLO con datos normales
+autoencoder.fit(X_normal, X_normal,
+    epochs=100, batch_size=32, validation_split=0.1)
+
+# Detectar anomalías por error de reconstrucción
+X_pred = autoencoder.predict(X_test)
+mse_por_punto = np.mean((X_test - X_pred)**2, axis=1)
+threshold = np.percentile(mse_por_punto, 95)  # umbral 95th percentil
+anomalias = mse_por_punto > threshold</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 23 ═══ -->
+<div class="slide" data-s="2">
+  <h2>Sesión 23 <span style="color:var(--cyan)">— Reinforcement Learning: El Agente que Aprende Jugando</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Reinforcement Learning es como <strong>entrenar a un perro con premios y castigos</strong>, pero el perro es un algoritmo y puede intentar millones de veces por hora. El agente no aprende de ejemplos etiquetados, sino de la consecuencia de sus acciones en un entorno. Gana recompensas por buenas decisiones, penalidades por malas. Con suficiente práctica, aprende estrategias que ningún humano había imaginado.</p>
+  </div>
+  <div class="cg c3" style="margin-top:14px;">
+    <div class="card c"><h3>El Paradigma RL</h3><p><strong>Agente</strong> observa el <strong>estado</strong> del entorno, toma una <strong>acción</strong>, recibe una <strong>recompensa</strong> y pasa al siguiente estado. El objetivo: maximizar la recompensa acumulada a largo plazo.</p></div>
+    <div class="card v"><h3>Q-Learning</h3><p>Tabla Q(s,a) que estima el valor esperado de tomar acción a en estado s. Se actualiza con la ecuación de Bellman. Simple, funciona para espacios pequeños de estados y acciones.</p></div>
+    <div class="card g"><h3>Deep Q-Network (DQN)</h3><p>Reemplaza la tabla Q con una red neuronal. Permite estados continuos y de alta dimensión (imágenes, sensores). Inventado por DeepMind para jugar Atari a nivel humano (2013).</p></div>
+  </div>
+</div>
+
+<div class="slide" data-s="2">
+  <h2>RL en Python: Gymnasium + Stable Baselines 3</h2>
+  <div class="cg c2">
+    <div class="card c">
+      <h3>Entorno Gymnasium y Primeros Pasos</h3>
+      <pre">import gymnasium as gym
+import numpy as np
+
+# CartPole — equilibrar un palo sobre un carro
+env = gym.make("CartPole-v1",
+               render_mode="human")
+
+# Anatomía del entorno
+print(f"Espacio de estados: {env.observation_space}")
+# Box(4,) — posición, velocidad, ángulo, vel. angular
+print(f"Espacio de acciones: {env.action_space}")
+# Discrete(2) — empujar izq o der
+
+# Episodio con política aleatoria (baseline)
+obs, info = env.reset(seed=42)
+total_reward = 0
+for step in range(500):
+    action = env.action_space.sample()  # aleatorio
+    obs, reward, terminated, truncated, info = env.step(action)
+    total_reward += reward
+    if terminated or truncated:
+        print(f"Episodio terminó en paso {step+1}")
+        print(f"Recompensa total: {total_reward}")
+        obs, info = env.reset()
+        break
+env.close()</pre>
+    </div>
+    <div class="card g">
+      <h3>Entrenamiento con PPO (Stable Baselines 3)</h3>
+      <pre">from stable_baselines3 import PPO, DQN, A2C
+from stable_baselines3.common.vec_env import DummyVecEnv
+from stable_baselines3.common.evaluation import evaluate_policy
+import gymnasium as gym
+
+# Crear entorno
+env = DummyVecEnv([lambda: gym.make("CartPole-v1")])
+
+# PPO — Proximal Policy Optimization (el mejor general)
+modelo = PPO(
+    policy="MlpPolicy",
+    env=env,
+    learning_rate=3e-4,
+    n_steps=2048,
+    batch_size=64,
+    n_epochs=10,
+    gamma=0.99,     # factor de descuento
+    gae_lambda=0.95,
+    verbose=1)
+
+# Entrenar por 100k pasos
+modelo.learn(total_timesteps=100_000,
+             progress_bar=True)
+
+# Evaluar política aprendida
+mean_reward, std_reward = evaluate_policy(
+    modelo, env, n_eval_episodes=20)
+print(f"Recompensa media: {mean_reward:.2f} ± {std_reward:.2f}")
+
+# Guardar y cargar
+modelo.save("ppo_cartpole")
+modelo_cargado = PPO.load("ppo_cartpole", env=env)</pre>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="2">
+  <h2>RL en Industria: Más Allá de los Videojuegos</h2>
+  <table>
+    <tr><th>Aplicación Industrial</th><th>Estado</th><th>Acciones</th><th>Recompensa</th></tr>
+    <tr><td><strong>Control de proceso en refinería</strong></td><td>Temperatura, presión, flujo de 50+ sensores</td><td>Ajuste de válvulas y calentadores</td><td>Maximizar rendimiento, minimizar consumo</td></tr>
+    <tr><td><strong>Gestión de red eléctrica</strong></td><td>Demanda por zona, precios spot, generación renovable</td><td>Encender/apagar plantas, redirigir flujo</td><td>Mínimo costo + máxima estabilidad</td></tr>
+    <tr><td><strong>Robot de almacén (Amazon)</strong></td><td>Posición del robot, inventario, órdenes pendientes</td><td>Mover, recoger, depositar</td><td>Máx. órdenes completadas/hora</td></tr>
+    <tr><td><strong>Comercio de materias primas</strong></td><td>Precios históricos, volatilidad, señales macro</td><td>Comprar, mantener, vender</td><td>Rendimiento ajustado por riesgo (Sharpe)</td></tr>
+    <tr><td><strong>Programación de producción</strong></td><td>Cola de órdenes, estado de máquinas, personal</td><td>Asignar orden a máquina y turno</td><td>Mínimo makespan, máx. OEE</td></tr>
+  </table>
+  <div class="box bc"><div class="bt">📰 CASO REAL — Google DeepMind en Data Centers</div>
+    <p>DeepMind entrenó un agente RL para controlar la refrigeración de los data centers de Google. El agente aprendió políticas de control que redujeron el consumo energético de refrigeración en <strong>40%</strong> comparado con los sistemas de control de ingenieros expertos, ahorrando cientos de millones de dólares anuales en electricidad. El agente "inventó" estrategias que los ingenieros no habían considerado.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 24 ═══ -->
+<div class="slide" data-s="3">
+  <h2>Sesión 24 <span style="color:var(--yellow)">— Taller del Proyecto Integrador de IA</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>El proyecto integrador es el <strong>examen de conducir</strong> del seminario. Puedes haber memorizado el reglamento de tránsito (la teoría), pero demuestras competencia real cuando manejas en la ciudad (un problema real de tu industria) sin instructor. Es donde la teoría se convierte en habilidad profesional.</p>
+  </div>
+  <div class="cg c2" style="margin-top:14px;">
+    <div class="card v">
+      <h3>Requisitos del Proyecto</h3>
+      <ul class="tl" style="margin-top:6px;">
+        <li><div class="st v">1</div><div class="content"><h4>Problema de negocio real</h4><p>Formulación clara del problema, KPI objetivo, impacto económico estimado de la solución</p></div></li>
+        <li><div class="st c">2</div><div class="content"><h4>Pipeline de datos completo</h4><p>Fuentes, limpieza, EDA documentado, feature engineering justificado</p></div></li>
+        <li><div class="st g">3</div><div class="content"><h4>Modelo(s) ML/DL</h4><p>Al menos 2 algoritmos comparados con métricas estándar y justificación de la elección final</p></div></li>
+        <li><div class="st o">4</div><div class="content"><h4>Visualización y comunicación</h4><p>Dashboard interactivo (Plotly, Power BI o Streamlit) con hallazgos clave para tomadores de decisión</p></div></li>
+        <li><div class="st c">5</div><div class="content"><h4>Reproducibilidad</h4><p>Repositorio Git con requirements.txt o environment.yml. Notebook documentado en Google Colab.</p></div></li>
+      </ul>
+    </div>
+    <div class="card g">
+      <h3>Ejemplos de Proyectos por Sector</h3>
+      <ul>
+        <li><strong>Manufactura</strong>: predicción de fallas en línea de producción (mantenimiento predictivo)</li>
+        <li><strong>Logística</strong>: optimización de rutas de última milla con datos históricos + algoritmo genético</li>
+        <li><strong>Retail/FMCG</strong>: predicción de demanda por SKU/punto de venta + análisis de canibalización</li>
+        <li><strong>Energía</strong>: detección de anomalías en consumo eléctrico (posible fraude o equipo defectuoso)</li>
+        <li><strong>Agro-industria</strong>: predicción de rendimiento por parcela usando imágenes satelitales + variables de suelo</li>
+        <li><strong>Salud/Farma</strong>: clasificación de incidentes de calidad en reportes de texto (NLP)</li>
+        <li><strong>Banca</strong>: scoring de crédito con interpretabilidad (SHAP) para cumplimiento regulatorio</li>
+        <li><strong>Construcción</strong>: estimación de costos de proyecto con Random Forest + análisis de desviaciones históricas</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="3">
+  <h2>Estructura del Notebook Final</h2>
+  <div class="ld">
+    <div class="lr" style="background:rgba(6,182,212,.1);border:1px solid var(--cyan);color:var(--cyan);">📋 SECCIÓN 1 — EXECUTIVE SUMMARY: Problema, solución propuesta, impacto esperado (1 página para directivos)</div>
+    <div class="lr" style="background:rgba(16,185,129,.1);border:1px solid var(--green);color:var(--green);">📊 SECCIÓN 2 — EDA: Descripción del dataset, estadísticas descriptivas, visualizaciones clave, hipótesis de negocio</div>
+    <div class="lr" style="background:rgba(245,158,11,.1);border:1px solid var(--orange);color:var(--orange);">🔧 SECCIÓN 3 — PREPROCESAMIENTO: Limpieza, imputación, encoding, feature engineering con justificación de cada decisión</div>
+    <div class="lr" style="background:rgba(124,58,237,.1);border:1px solid var(--violet);color:var(--violet);">🤖 SECCIÓN 4 — MODELADO: Baseline + mínimo 2 modelos comparados con cross-validation y métricas apropiadas</div>
+    <div class="lr" style="background:rgba(236,72,153,.1);border:1px solid var(--pink);color:var(--pink);">🔍 SECCIÓN 5 — INTERPRETABILIDAD: SHAP values, feature importance, casos de error (análisis de falsos positivos/negativos)</div>
+    <div class="lr" style="background:rgba(251,191,36,.1);border:1px solid var(--yellow);color:var(--yellow);">🚀 SECCIÓN 6 — DEPLOYMENT: API FastAPI o app Streamlit funcionando. Instrucciones de uso.</div>
+  </div>
+  <div class="box bd"><div class="bt">💡 DATO CLAVE — Lo que diferencia un buen proyecto</div>
+    <p>Los mejores proyectos no son los con el modelo más complejo, sino los que <strong>conectan cada decisión técnica con el impacto de negocio</strong>. "Elegí recall como métrica principal porque un falso negativo (falla no detectada) cuesta $50,000 en parada de planta, mientras que un falso positivo (mantenimiento innecesario) solo cuesta $500." Eso es pensar como ingeniero de datos industrial.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 25 ═══ -->
+<div class="slide" data-s="4">
+  <h2>Sesión 25 <span style="color:var(--green)">— Defensa Final: Cómo Presentar tu Proyecto de IA</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Una defensa de proyecto de IA es como <strong>vender una solución a un directivo escéptico</strong> en 15 minutos. El directivo no entiende de gradiente descendente ni de cross-entropy loss. Lo que sí entiende es: ¿cuánto dinero ahorra?, ¿cómo funciona en términos simples?, ¿qué pasa si falla? Tu trabajo es traducir ciencia en valor empresarial.</p>
+  </div>
+  <div class="cg c3" style="margin-top:14px;">
+    <div class="card g"><h3>Estructura de la Presentación (15 min)</h3><ol><li>Problema y contexto (2 min)</li><li>Datos utilizados (1 min)</li><li>Solución técnica simplificada (3 min)</li><li>Resultados medibles (3 min)</li><li>Demo en vivo (3 min)</li><li>Inversión y ROI estimado (2 min)</li><li>Preguntas (5 min adicionales)</li></ol></div>
+    <div class="card v"><h3>Cómo Explicar ML sin Tecnicismos</h3><p>En lugar de "Random Forest con 200 árboles de decisión y profundidad máxima 10": <em>"Un comité de 200 expertos independientes que cada uno analiza parte del historial de fallas y vota; la mayoría decide si hay riesgo. El sistema aprendió de 3 años de datos históricos."</em></p></div>
+    <div class="card c"><h3>Manejo de Preguntas Difíciles</h3><ul><li>"¿Y si el modelo se equivoca?" → describir el plan de fallback y monitoreo</li><li>"¿Por qué no Excel?" → mostrar lo que Excel no puede hacer a esa escala</li><li>"¿Es seguro para producción?" → hablar de validación, pruebas en paralelo y rollout gradual</li></ul></div>
+  </div>
+</div>
+
+<div class="slide" data-s="4">
+  <h2>Rúbrica de Evaluación del Proyecto Final</h2>
+  <table>
+    <tr><th>Criterio</th><th>Excelente (30-25)</th><th>Bueno (24-18)</th><th>Suficiente (17-10)</th></tr>
+    <tr><td><strong>Problema y Datos (20%)</strong></td><td>Problema real con impacto cuantificado, datos propios o representativos del sector</td><td>Problema claro, datos de calidad media con justificación</td><td>Problema genérico, dataset de Kaggle sin adaptación industrial</td></tr>
+    <tr><td><strong>Pipeline Técnico (25%)</strong></td><td>EDA profundo, feature engineering creativo justificado, preprocesamiento robusto</td><td>EDA básico completo, preprocesamiento estándar aplicado correctamente</td><td>Preprocesamiento mínimo, sin EDA significativo</td></tr>
+    <tr><td><strong>Modelado y Evaluación (30%)</strong></td><td>2+ modelos comparados, métricas correctas para el problema, análisis de errores, interpretabilidad</td><td>2 modelos comparados con métricas apropiadas</td><td>1 modelo sin comparación ni análisis de errores</td></tr>
+    <tr><td><strong>Comunicación (25%)</strong></td><td>Dashboard/App funcional, presentación clara para no-técnicos, ROI estimado</td><td>Visualizaciones claras, presentación comprensible</td><td>Resultados solo en notebook, sin visualización ejecutiva</td></tr>
+  </table>
+  <div class="box bl"><div class="bt">🔬 CONSEJOS PARA LA DEFENSA</div>
+    <p>(1) Demo en vivo con datos reales de tu empresa (impacto máximo). (2) Mostrar comparación "antes/después" del proceso manual vs el modelo. (3) Tener preparada una diapositiva de errores: "El modelo se equivoca en estos casos y aquí está cómo los manejamos." La transparencia sobre limitaciones aumenta la confianza. (4) Traer una propuesta de plan de implementación de 90 días.</p>
+  </div>
+</div>
+
+<!-- CIERRE FINAL DEL SEMINARIO -->
+<div class="slide cover" data-s="4">
+  <div class="badge">BLOQUE V — CIERRE DEL SEMINARIO</div>
+  <h1>De Principiante a<br>Profesional de IA Industrial</h1>
+  <p style="max-width:650px;margin:16px auto;color:var(--muted);">150 horas de formación práctica que transforman profesionales con conocimiento de su industria en arquitectos de soluciones de IA que generan valor medible. El seminario termina, el aprendizaje continúa.</p>
+  <div class="sr" style="justify-content:center;max-width:800px;margin:20px auto;">
+    <div class="stat"><div class="n" style="color:var(--violet)">🧠</div><div class="l">NLP + Transformers + Hugging Face</div></div>
+    <div class="stat"><div class="n" style="color:var(--pink)">👁️</div><div class="l">CNN + Transfer Learning + PyTorch</div></div>
+    <div class="stat"><div class="n" style="color:var(--cyan)">🎮</div><div class="l">RL + Q-Learning + Stable Baselines</div></div>
+    <div class="stat"><div class="n" style="color:var(--yellow)">🏆</div><div class="l">Proyecto integrador real</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">🎓</div><div class="l">Defensa ante comité</div></div>
+  </div>
+  <div class="box bd" style="max-width:650px;margin:16px auto;"><div class="bt">💡 EL VERDADERO VALOR DE ESTE SEMINARIO</div>
+    <p>No es conocer los algoritmos — eso está en Google. El valor es <strong>saber cuál algoritmo usar para cada problema de negocio</strong>, cómo preparar datos industriales reales, cómo medir el éxito en términos del negocio y cómo comunicarlo a quien toma decisiones. Eso es lo que hace un profesional de IA industrial.</p>
+  </div>
+  <div style="margin-top:16px;font-size:.8rem;color:var(--muted);max-width:650px;margin-left:auto;margin-right:auto;">
+    <strong style="color:var(--violet);">Referencias Bloque V:</strong><br>
+    Géron (2022) Hands-On ML · Goodfellow et al. (2016) Deep Learning · Tunstall et al. (2022) NLP with Transformers · Sutton &amp; Barto (2018) Reinforcement Learning: An Introduction
+  </div>
+  <div style="margin-top:14px;">
+    <span class="tag">PyTorch</span><span class="tag">TensorFlow/Keras</span><span class="tag">Hugging Face</span>
+    <span class="tag">Stable Baselines 3</span><span class="tag">Gymnasium</span><span class="tag">LangChain</span>
+    <span class="tag">FastAPI</span><span class="tag">Streamlit</span><span class="tag">MLflow</span>
+  </div>
+</div>
+
+</div>
+<div id="footer">
+  <button onclick="prev()">← Anterior</button>
+  <span class="hint">← → · Espacio</span>
+  <button onclick="next()">Siguiente →</button>
+</div>
+<script>
+const slides=document.querySelectorAll('.slide'),total=slides.length;let cur=0;
+const ss=[];slides.forEach((s,i)=>{const v=parseInt(s.dataset.s);if(ss[v]===undefined)ss[v]=i;});
+function go(n){if(n<0||n>=total)return;slides[cur].classList.remove('active');cur=n;slides[cur].classList.add('active');document.getElementById('ctr').textContent=(cur+1)+' / '+total;document.getElementById('pb').style.width=((cur+1)/total*100)+'%';ut();slides[cur].scrollTop=0;}
+function next(){go(cur+1);}function prev(){go(cur-1);}function gts(i){go(ss[i]);}
+function ut(){const v=parseInt(slides[cur].dataset.s);for(let i=0;i<5;i++){const b=document.getElementById('t'+i);if(b)b.classList.toggle('active',i===v);}}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();}if(e.key==='ArrowLeft'){e.preventDefault();prev();}});
+ut();
+</script>
+</body>
+</html>

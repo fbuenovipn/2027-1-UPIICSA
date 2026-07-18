@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seminario de Titulación — Inteligencia Artificial para la Industria</title>
+<style>
+  :root {
+    --ink:      #0f172a;
+    --azul:     #1e40af;
+    --azul-m:   #2563eb;
+    --azul-l:   #3b82f6;
+    --cyan:     #0891b2;
+    --verde:    #059669;
+    --purpura:  #7c3aed;
+    --naranja:  #d97706;
+    --rosa:     #db2777;
+    --acento:   #f59e0b;
+    --acento-l: #fbbf24;
+    --gris-bg:  #f1f5f9;
+    --gris:     #64748b;
+    --gris-d:   #334155;
+    --borde:    #e2e8f0;
+    --blanco:   #ffffff;
+    --sombra:   0 4px 24px rgba(0,0,0,.10);
+    --sombra-h: 0 8px 32px rgba(0,0,0,.15);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--gris-bg);color:var(--ink);line-height:1.65}
+
+  /* ── HERO ── */
+  .hero{
+    background:linear-gradient(145deg,#0f172a 0%,#1e1b4b 50%,#1e3a5f 100%);
+    color:#fff;padding:56px 24px 52px;text-align:center;position:relative;overflow:hidden;
+  }
+  .hero::before{
+    content:'';position:absolute;inset:0;
+    background:radial-gradient(ellipse at 15% 60%,rgba(139,92,246,.18) 0%,transparent 55%),
+               radial-gradient(ellipse at 85% 40%,rgba(59,130,246,.14) 0%,transparent 55%);
+  }
+  .hero::after{
+    content:'';position:absolute;inset:0;opacity:.04;
+    background:repeating-linear-gradient(0deg,transparent,transparent 30px,#fff 30px,#fff 31px),
+               repeating-linear-gradient(90deg,transparent,transparent 30px,#fff 30px,#fff 31px);
+  }
+  .hero-badge{
+    display:inline-flex;align-items:center;gap:8px;
+    background:rgba(139,92,246,.25);border:1px solid rgba(139,92,246,.45);
+    border-radius:24px;padding:6px 18px;font-size:.74rem;letter-spacing:.1em;
+    text-transform:uppercase;margin-bottom:22px;position:relative;
+  }
+  .blink{width:8px;height:8px;background:#a78bfa;border-radius:50%;animation:blink 2s infinite}
+  @keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.4)}}
+  .hero h1{
+    font-size:clamp(1.5rem,4.5vw,2.8rem);font-weight:900;line-height:1.15;
+    margin-bottom:12px;position:relative;
+  }
+  .hero h1 .y{color:var(--acento-l)}
+  .hero h1 .g{color:#86efac}
+  .hero .sub{font-size:1rem;opacity:.82;max-width:700px;margin:0 auto 36px;position:relative}
+  .stats{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;position:relative}
+  .stat{
+    background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);
+    border-radius:14px;padding:13px 20px;min-width:96px;backdrop-filter:blur(4px);
+    transition:background .2s;
+  }
+  .stat:hover{background:rgba(255,255,255,.14)}
+  .stat .n{font-size:1.85rem;font-weight:900;color:var(--acento-l);display:block}
+  .stat .l{font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;opacity:.72}
+
+  /* ── STICKY RAIL ── */
+  .rail{
+    background:var(--blanco);border-bottom:2px solid var(--borde);
+    padding:12px 24px;display:flex;justify-content:center;flex-wrap:wrap;gap:8px;
+    position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.06);
+  }
+  .chip{
+    display:inline-flex;align-items:center;gap:7px;
+    background:var(--gris-bg);border:1.5px solid #cbd5e1;border-radius:24px;
+    padding:6px 14px;font-size:.78rem;font-weight:600;color:var(--gris-d);
+    cursor:pointer;transition:all .18s;user-select:none;
+  }
+  .chip:hover{border-color:var(--azul-l);color:var(--azul);background:#eff6ff}
+  .chip.on{background:var(--ink);border-color:var(--ink);color:#fff}
+  .chip .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+
+  /* ── CONTAINER ── */
+  .wrap{max-width:1220px;margin:0 auto;padding:32px 24px 52px}
+
+  /* ── TOP BAR ── */
+  .topbar{display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+  .sbox{flex:1;min-width:220px;position:relative}
+  .sbox input{
+    width:100%;padding:11px 16px 11px 42px;border:2px solid var(--borde);border-radius:12px;
+    font-size:.88rem;outline:none;background:var(--blanco);color:var(--ink);transition:border .2s;
+  }
+  .sbox input:focus{border-color:var(--azul-l)}
+  .sicon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--gris);font-size:1rem;pointer-events:none}
+  .xbtn{
+    padding:10px 18px;background:var(--ink);color:#fff;border:none;border-radius:10px;
+    font-size:.81rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .2s;
+  }
+  .xbtn:hover{background:var(--azul)}
+
+  /* ── TABS ── */
+  .tabs{display:flex;gap:6px;margin-bottom:24px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
+  .tab{
+    flex-shrink:0;padding:9px 16px;border:2px solid var(--borde);border-radius:10px;
+    background:var(--blanco);color:var(--gris);font-size:.8rem;font-weight:600;cursor:pointer;
+    white-space:nowrap;transition:all .18s;
+  }
+  .tab:hover{border-color:var(--azul-l);color:var(--azul)}
+  .tab.on{background:var(--ink);border-color:var(--ink);color:#fff}
+
+  /* ── BLOQUE HEADER ── */
+  .bhd{
+    display:flex;align-items:center;gap:16px;padding:20px 24px;border-radius:16px;
+    margin-bottom:16px;color:#fff;position:relative;overflow:hidden;
+  }
+  .bhd::after{content:'';position:absolute;right:-15px;top:-15px;width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,.06)}
+  .b1{background:linear-gradient(135deg,#1e3a5f,#2563eb)}
+  .b2{background:linear-gradient(135deg,#065f46,#059669)}
+  .b3{background:linear-gradient(135deg,#4c1d95,#7c3aed)}
+  .b4{background:linear-gradient(135deg,#7c2d12,#d97706)}
+  .b5{background:linear-gradient(135deg,#831843,#db2777)}
+  .bhd .ico{font-size:2rem;position:relative}
+  .bhd h2{font-size:1.08rem;font-weight:800;position:relative}
+  .bhd span{font-size:.77rem;opacity:.82;display:block;margin-top:2px;position:relative}
+
+  /* ── SESIÓN CARD ── */
+  .sc{
+    background:var(--blanco);border-radius:16px;box-shadow:var(--sombra);
+    margin-bottom:12px;overflow:hidden;border-left:4px solid var(--borde);
+    transition:box-shadow .2s,transform .15s;
+  }
+  .sc:hover{box-shadow:var(--sombra-h);transform:translateY(-1px)}
+  .sc[data-b="1"]{border-color:var(--azul-l)}
+  .sc[data-b="2"]{border-color:var(--verde)}
+  .sc[data-b="3"]{border-color:var(--purpura)}
+  .sc[data-b="4"]{border-color:var(--naranja)}
+  .sc[data-b="5"]{border-color:var(--rosa)}
+
+  .sc-h{display:flex;align-items:center;gap:14px;padding:16px 20px;cursor:pointer;user-select:none}
+  .sn{
+    width:43px;height:43px;border-radius:11px;display:flex;align-items:center;
+    justify-content:center;font-size:1.05rem;font-weight:800;color:#fff;flex-shrink:0;
+  }
+  .sc[data-b="1"] .sn{background:var(--azul-m)}
+  .sc[data-b="2"] .sn{background:var(--verde)}
+  .sc[data-b="3"] .sn{background:var(--purpura)}
+  .sc[data-b="4"] .sn{background:var(--naranja)}
+  .sc[data-b="5"] .sn{background:var(--rosa)}
+
+  .si{flex:1}
+  .si h3{font-size:.95rem;font-weight:700;color:var(--ink);margin-bottom:2px}
+  .si p{font-size:.77rem;color:var(--gris)}
+
+  .chv{
+    width:23px;height:23px;border:2px solid var(--borde);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-size:.63rem;
+    color:var(--gris);transition:transform .28s,border-color .2s,color .2s;flex-shrink:0;
+  }
+  .sc.open .chv{transform:rotate(180deg);border-color:var(--azul-l);color:var(--azul-l)}
+
+  /* ── BODY ── */
+  .sc-b{display:none;padding:4px 20px 20px;border-top:1px solid #f1f5f9}
+  .sc.open .sc-b{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px}
+  @media(max-width:680px){.sc.open .sc-b{grid-template-columns:1fr}}
+  .full{grid-column:1/-1}
+
+  .ob{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:14px 15px;margin-top:12px}
+  .ob strong{display:block;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:#1d4ed8;margin-bottom:7px}
+  .ob p{font-size:.85rem}
+
+  .lb{margin-top:12px}
+  .lb h4{font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--gris);margin-bottom:8px}
+  .lb ol{padding-left:18px}
+  .lb li{font-size:.85rem;margin-bottom:5px;color:var(--ink)}
+
+  .ab{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:14px 15px;margin-top:12px}
+  .ab strong{display:block;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:#15803d;margin-bottom:7px}
+  .ab p{font-size:.85rem}
+
+  .tb{
+    display:flex;flex-wrap:wrap;gap:6px;align-items:center;
+    background:#fffbeb;border:1px solid #fde68a;border-radius:10px;
+    padding:10px 14px;margin-top:12px;
+  }
+  .tl{font-size:.67rem;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:.06em;margin-right:3px}
+  .tag{background:#d97706;color:#fff;border-radius:20px;padding:3px 10px;font-size:.73rem;font-weight:700}
+
+  /* ── RESUMEN ── */
+  .sec-title{
+    font-size:1.22rem;font-weight:800;color:var(--ink);
+    margin:44px 0 20px;padding-bottom:8px;border-bottom:3px solid var(--purpura);
+    display:flex;align-items:center;gap:10px;
+  }
+  .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px}
+  .ic{background:var(--blanco);border-radius:14px;padding:22px 24px;box-shadow:var(--sombra)}
+  .ic h3{font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--gris);margin-bottom:16px}
+
+  .bt{width:100%;border-collapse:collapse;font-size:.84rem}
+  .bt th{background:var(--ink);color:#fff;padding:10px 13px;text-align:left;font-size:.73rem;text-transform:uppercase;letter-spacing:.05em}
+  .bt td{padding:10px 13px;border-bottom:1px solid #f1f5f9}
+  .bt tr:nth-child(even) td{background:#f8fafc}
+  .bt tr:last-child td{font-weight:700;background:#fef9f0!important;border-top:2px solid #fde68a}
+
+  .ei{padding:9px 0;border-bottom:1px solid #f1f5f9}
+  .ei:last-child{border:none}
+  .er{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+  .en{font-size:.85rem}
+  .ep{font-size:1.1rem;font-weight:800;color:var(--azul-m)}
+  .pb{height:5px;background:#e2e8f0;border-radius:10px;overflow:hidden}
+  .pf{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--azul),var(--purpura))}
+
+  .cr{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid #f1f5f9;font-size:.83rem;align-items:flex-start}
+  .cr:last-child{border:none}
+  .cn{font-weight:700;min-width:170px}
+  .ca{color:var(--gris)}
+
+  .tg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .ti{background:var(--gris-bg);border-radius:8px;padding:8px 11px}
+  .ti strong{display:block;font-size:.77rem;color:var(--ink)}
+  .ti span{color:var(--gris);font-size:.72rem}
+
+  .nbox{background:#f5f3ff;border:1px solid #ddd6fe;border-radius:10px;padding:12px 15px;font-size:.82rem;color:#5b21b6;margin-top:14px}
+
+  footer{background:var(--ink);color:rgba(255,255,255,.6);text-align:center;padding:26px 24px;font-size:.77rem;margin-top:44px}
+  footer strong{color:#fff}
+  footer .ico{font-size:1.6rem;display:block;margin-bottom:6px}
+
+  .hidden{display:none!important}
+
+  @media(max-width:480px){
+    .hero h1{font-size:1.3rem}
+    .stat .n{font-size:1.5rem}
+    .stats{gap:10px}
+    .tg{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ HERO ═══ -->
+<div class="hero">
+  <div class="hero-badge"><span class="blink"></span> Seminario de Titulación · UPIICSA</div>
+  <h1>
+    Inteligencia Artificial <span class="y">para la Industria</span><br>
+    <span style="font-size:.65em;font-weight:600;opacity:.88">
+      Del <span class="g">Análisis de Datos</span> al Valor Empresarial
+    </span>
+  </h1>
+  <p class="sub">Estadística · Python · Machine Learning · Big Data · Deep Learning · NLP · IA Generativa — aplicados en manufactura, logística, transporte y sistemas automotrices.</p>
+  <div class="stats">
+    <div class="stat"><span class="n">150</span><span class="l">Horas</span></div>
+    <div class="stat"><span class="n">25</span><span class="l">Sesiones</span></div>
+    <div class="stat"><span class="n">5</span><span class="l">Bloques</span></div>
+    <div class="stat"><span class="n">5</span><span class="l">Carreras</span></div>
+    <div class="stat"><span class="n">15+</span><span class="l">Herramientas</span></div>
+  </div>
+</div>
+
+<!-- ═══ STICKY RAIL ═══ -->
+<div class="rail">
+  <div class="chip on" onclick="filtrar('todas',this)"><div class="dot" style="background:#64748b"></div>Todas las carreras</div>
+  <div class="chip" onclick="filtrar('adm',this)"><div class="dot" style="background:#2563eb"></div>Adm. Industrial</div>
+  <div class="chip" onclick="filtrar('info',this)"><div class="dot" style="background:#059669"></div>Ing. Informática</div>
+  <div class="chip" onclick="filtrar('ind',this)"><div class="dot" style="background:#7c3aed"></div>Ing. Industrial</div>
+  <div class="chip" onclick="filtrar('trans',this)"><div class="dot" style="background:#d97706"></div>Ing. Transporte</div>
+  <div class="chip" onclick="filtrar('auto',this)"><div class="dot" style="background:#db2777"></div>Ing. Automotriz</div>
+</div>
+
+<div class="wrap">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="sbox">
+      <span class="sicon">&#128269;</span>
+      <input type="text" id="q" placeholder="Buscar sesión, herramienta o tema  (ej. PySpark, regresión, NLP, dashboard)..." oninput="buscar(this.value)">
+    </div>
+    <button class="xbtn" onclick="xpand()">&#9660; Expandir todo</button>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab on" onclick="showB('all',this)">Todos los bloques</button>
+    <button class="tab" onclick="showB('1',this)">I · IA &amp; Estrategia</button>
+    <button class="tab" onclick="showB('2',this)">II · Python &amp; Datos</button>
+    <button class="tab" onclick="showB('3',this)">III · Machine Learning</button>
+    <button class="tab" onclick="showB('4',this)">IV · Viz &amp; Big Data</button>
+    <button class="tab" onclick="showB('5',this)">V · Deep Learning &amp; PI</button>
+  </div>
+
+  <!-- ═══ BLOQUE I ═══ -->
+  <div class="bc" data-b="1">
+    <div class="bhd b1">
+      <span class="ico">&#129504;</span>
+      <div>
+        <h2>Bloque I — Fundamentos de IA, Datos y Estrategia Empresarial</h2>
+        <span>Sesiones 1–5 · 30 horas · IA Generativa · Estadística · Regresión · LangFlow · LangChain · ChatGPT</span>
+      </div>
+    </div>
+
+    <div class="sc" data-b="1" data-c="todas adm info ind trans auto" data-q="panorama ia casos éxito ética regulación estrategia madurez analítica chatgpt tendencias edge ai">
+      <div class="sc-h" onclick="tog(this.parentElement)">
+        <div class="sn">1</div>
+        <div class="si"><h3>IA en la Industria: Panorama, Casos de Éxito y Ética</h3><p>Madurez analítica · Impacto organizacional · Regulación · Hoja de ruta</p></div>
+        <div class="chv">&#9660;</div>
+      </div>
+      <div class="sc-b">
+        <div class="ob full"><strong>Objetivo de la sesión</strong><p>Comprender el ecosistema de la IA, identificar casos de éxito en cada sector industrial y establecer el marco ético y regulatorio que guía su aplicación responsable.</p></div>
+        <div class="lb"><h4>Contenido temático</h4><ol>
+          <li>Ciencia de datos e IA: definiciones, historia y madurez tecnológica</li>
+          <li>Impacto de la IA en la toma de decisiones: del dato al valor empresarial</li>
+          <li>Casos de éxito por sector: manufactura, transporte, automotriz y logística</li>
+          <li>Cumplimiento normativo y ética en IA: sesgos, privacidad y regulación</li>
+          <li>Tendencias 2024–2030: IA generativa, agentes autónomos y Edge AI</li>
+          <li>Estrategia de IA organizacional: madurez analítica y hoja de ruta</li>
+        </ol></div>
+        <div>
+          <div class="ab"><strong>&#9997; Actividad práctica</strong><p>Diagnóstico de madurez analítica y diseño de hoja de ruta de IA para empresa del sector del participante.</p></div>
+          <div class="tb"><span class="tl">Herramientas:</span><span class="tag">ChatGPT</span><span class="tag">Plantilla de madurez</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="1" data-c="todas adm ind trans auto info" data-q="estadística descriptiva media mediana moda desviación histograma tablas frecuencia kpi reporte">
+      <div class="sc-h" onclick="tog(this.parentElement)">
+        <div class="sn">2</div>
+        <div class="si"><h3>Estadística Descriptiva para Decisiones Empresariales</h3><p>Medidas de tendencia central · Dispersión · Visualización · Reporte estadístico</p></div>
+        <div class="chv">&#9660;</div>
+      </div>
+      <div class="sc-b">
+        <div class="ob full"><strong>Objetivo de la sesión</strong><p>Aplicar estadística descriptiva para resumir, visualizar e interpretar datos operativos y financieros, identificando patrones que soporten la toma de decisiones.</p></div>
+        <div class="lb"><h4>Contenido temático</h4><ol>
+          <li>Estadística y su importancia en la industria: tipos de variables y escalas</li>
+          <li>Tablas de frecuencia, histogramas y diagramas de caja</li>
+          <li>Medidas de tendencia central: media, mediana y moda</li>
+          <li>Medidas de dispersión: varianza, desviación estándar, IQR</li>
+          <li>Distribución normal: teorema de Chebyshev y verificación</li>
+          <li>Elaboración de reporte estadístico ejecutivo con Python</li>
+        </ol></div>
+        <div>
+          <div class="ab"><strong>&#9997; Actividad práctica</strong><p>Análisis descriptivo de dataset de producción, logística o mantenimiento con Python y Excel.</p></div>
+          <div class="tb"><span class="tl">Herramientas:</span><span class="tag">Python (Pandas, Matplotlib)</span><span class="tag">Google Colab</span><span class="tag">MS Excel</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="1" data-c="todas adm ind trans info" data-q="inferencial hipótesis t-test anova confianza p-value normalidad muestras control calidad">
+      <div class="sc-h" onclick="tog(this.parentElement)">
+        <div class="sn">3</div>
+        <div class="si"><h3>Estadística Inferencial y Pruebas de Hipótesis</h3><p>Intervalos de confianza · t-test · ANOVA · Error tipo I/II · p-value</p></div>
+        <div class="chv">&#9660;</div>
+      </div>
+      <div class="sc-b">
+        <div class="ob full"><strong>Objetivo de la sesión</strong><p>Extraer conclusiones sobre poblaciones a partir de muestras y validar decisiones empresariales con niveles de confianza cuantificables.</p></div>
+        <div class="lb"><h4>Contenido temático</h4><ol>
+          <li>Estadística inferencial: muestreo y estimación puntual</li>
+          <li>Distribución normal y verificación de normalidad</li>
+          <li>Pruebas de hipótesis para una y dos poblaciones: t-test y ANOVA</li>
+          <li>Pruebas para proporciones: aplicaciones en calidad y logística</li>
+          <li>Interpretación: error tipo I, tipo II y p-value en contexto de negocio</li>
+          <li>Presentación ejecutiva de resultados estadísticos a la dirección</li>
+        </ol></div>
+        <div>
+          <div class="ab"><strong>&#9997; Actividad práctica</strong><p>Pruebas de hipótesis sobre datos de procesos industriales para validar mejoras operativas.</p></div>
+          <div class="tb"><span class="tl">Herramientas:</span><span class="tag">Python (SciPy, Statsmodels)</span><span class="tag">Google Colab</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="1" data-c="todas adm ind trans auto info" data-q="regresión lineal múltiple predicción demanda series de tiempo r² rmse train test scikit">
+      <div class="sc-h" onclick="tog(this.parentElement)">
+        <div class="sn">4</div>
+        <div class="si"><h3>Modelos de Regresión para Predicción Empresarial</h3><p>Regresión simple y múltiple · Series de tiempo · R² · Train/Test · Scikit-learn</p></div>
+        <div class="chv">&#9660;</div>
+      </div>
+      <div class="sc-b">
+        <div class="ob full"><strong>Objetivo de la sesión</strong><p>Construir modelos de regresión para predecir variables clave como demanda, costos, tiempos de entrega y consumo de energía, y comunicarlos a la dirección.</p></div>
+        <div class="lb"><h4>Contenido temático</h4><ol>
+          <li>Correlación: coeficiente de Pearson y análisis bivariado</li>
+          <li>Regresión lineal simple: construcción, interpretación y evaluación (R², RMSE)</li>
+          <li>Regresión lineal múltiple: selección de variables y multicolinealidad</li>
+          <li>Análisis de series de tiempo: tendencia, estacionalidad y suavizamiento</li>
+          <li>Validación del modelo: partición train/test y validación cruzada</li>
+          <li>Presentación ejecutiva de modelos predictivos a la dirección</li>
+        </ol></div>
+        <div>
+          <div class="ab"><strong>&#9997; Actividad práctica</strong><p>Modelo de regresión para predicción de demanda o consumo de recursos en Python.</p></div>
+          <div class="tb"><span class="tl">Herramientas:</span><span class="tag">Python (Scikit-learn, Statsmodels)</span><span class="tag">Google Colab</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="1" data-c="todas adm info ind trans auto" data-q="ia generativa llm prompts prompt engineering rag langchain langflow agentes chatgpt documentos">
+      <div class="sc-h" onclick="tog(this.parentElement)">
+        <div class="sn">5</div>
+        <div class="si"><h3>IA Generativa, Prompt Engineering y Agentes LLM</h3><p>LangChain · LangFlow · RAG · Zero-shot · Few-shot · Agentes con memoria</p></div>
+        <div class="chv">&#9660;</div>
+      </div>
+      <div class="sc-b">
+        <div class="ob full"><strong>Objetivo de la sesión</strong><p>Diseñar prompts efectivos y construir aplicaciones RAG con agentes LLM para automatizar tareas documentales, reportes y asistentes inteligentes de procesos industriales.</p></div>
+        <div class="lb"><h4>Contenido temático</h4><ol>
+          <li>IA generativa: LLMs, modelos fundacionales y casos empresariales</li>
+          <li>Técnicas de ingeniería de prompts: zero-shot, few-shot, chain-of-thought</li>
+          <li>El ecosistema LangChain: herramientas de bajo código para IA generativa</li>
+          <li>RAG con LangFlow: consultas inteligentes a documentos organizacionales</li>
+          <li>Creación de agentes con memoria y uso de herramientas (APIs, bases de datos)</li>
+          <li>Ética y límites de la IA generativa en entornos empresariales</li>
+        </ol></div>
+        <div>
+          <div class="ab"><strong>&#9997; Actividad práctica</strong><p>Asistente RAG que consulta un manual técnico o normativa de empresa usando LangFlow.</p></div>
+          <div class="tb"><span class="tl">Herramientas:</span><span class="tag">ChatGPT</span><span class="tag">LangChain</span><span class="tag">LangFlow</span><span class="tag">Google Colab</span></div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /bloque 1 -->
+
+  <!-- ═══ BLOQUE II ═══ -->
+  <div class="bc" data-b="2">
+    <div class="bhd b2">
+      <span class="ico">&#128290;</span>
+      <div>
+        <h2>Bloque II — Python e Ingeniería de Datos</h2>
+        <span>Sesiones 6–10 · 30 horas · Python · NumPy · Pandas · SQL · MongoDB · Kedro · APIs</span>
+      </div>
+    </div>
+
+    <div class="sc" data-b="2" data-c="todas info adm ind trans auto" data-q="python colab algoritmos funciones bucles condicionales automatización csv archivos scripts">
+      <div class="sc-h" onclick="tog(this.parentElement)">
+        <div class="sn">6</div>
+        <div class="si"><h3>Python para la Industria: Fundamentos y Automatización</h3><p>Google Colab · Tipos de datos · Funciones · Bucles · Manejo de archivos CSV</p></div>
+        <div class="chv">&#9660;</div>
+      </div>
+      <div class="sc-b">
+        <div class="ob full"><strong>Objetivo de la sesión</strong><p>Programar scripts funcionales para automatizar tareas repetitivas, procesar archivos y construir soluciones básicas de análisis aplicadas a contextos industriales.</p></div>
+        <div class="lb"><h4>Contenido temático</h4><ol>
+          <li>Introducción a Python y Google Colab: entorno y primeros pasos</li>
+          <li>Tipos de datos, variables, operadores y expresiones</li>
+          <li>Estructuras condicionales: toma de decisiones en código</li>
+          <li>Estructuras de repetición: automatización con bucles</li>
+          <li>Funciones: modularización y reutilización de código</li>
+          <li>Manejo de archivos CSV: lectura, escritura y procesamiento</li>
+        </ol></div>
+        <div>
+          <div class="ab"><strong>&#9997; Actividad práctica</strong><p>Automatización de reporte diario de producción o logística leyendo archivos CSV con Python.</p></div>
+          <div class="tb"><span class="tl">Herramientas:</span><span class="tag">Python</span><span class="tag">Google Colab</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="2" data-c="todas info adm ind trans auto" data-q="numpy pandas dataframe series pivot table limpieza transformación agrupación filtrado datos">
+      <div class="sc-h" onclick="tog(this.parentElement)">
+        <div class="sn">7</div>
+        <div class="si"><h3>NumPy, Pandas y Procesamiento de Datos</h3><p>DataFrames · Pivot Tables · Limpieza · Transformación · Agrupación · IA + Pandas</p></div>
+        <div class="chv">&#9660;</div>
+      </div>
+      <div class="sc-b">
+        <div class="ob full"><strong>Objetivo de la sesión</strong><p>Manipular grandes conjuntos de datos tabulares con NumPy y Pandas, aplicando operaciones de limpieza, transformación y análisis que aceleran el trabajo con datos industriales.</p></div>
+        <div class="lb"><h4>Contenido temático</h4><ol>
+          <li>NumPy: arreglos, matrices y operaciones vectorizadas</li>
+          <li>Pandas: DataFrames, Series, lectura y almacenamiento de datos tabulares</li>
+          <li>Selección y filtrado de información con Pandas</li>
+          <li>Procesamiento: agrupaciones, ordenamientos y cálculos derivados</li>
+          <li>Pivot Tables y manejo de índices en Pandas</li>
+          <li>Integración con IA: uso de LLMs para acelerar el análisis de datos</li>
+        </ol></div>
+        <div>
+          <div class="ab"><strong>&#9997; Actividad práctica</strong><p>Limpieza y transformación de dataset industrial (inventarios, telemetría o mantenimiento) con Pandas.</p></div>
+          <div class="tb"><span class="tl">Herramientas:</span><span class="tag">Python (Pandas, NumPy)</span><span class="tag">Google Colab</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="2" data-c="todas info adm ind trans" data-q="sql bases de datos relacionales join consultas filtros group by aggregate pandas sqlalchemy">
+      <div class="sc-h" onclick="tog(this.parentElement)">
+        <div class="sn">8</div>
+        <div class="si"><h3>Bases de Datos Relacionales: SQL y Python</h3><p>SELECT · JOIN · GROUP BY · SQLAlchemy · Pandas + SQL · Reportes desde BD</p></div>
+        <div class="chv">&#9660;</div>
+      </div>
+      <div class="sc-b">
+        <div class="ob full"><strong>Objetivo de la sesión</strong><p>Consultar, filtrar y transformar datos en bases de datos relacionales usando SQL desde Python, integrando múltiples fuentes para enriquecer los análisis operativos.</p></div>
+        <div class="lb"><h4>Contenido temático</h4><ol>
+          <li>Fundamentos de bases de datos relacionales: tablas, claves y relaciones</li>
+          <li>SQL básico: SELECT, WHERE, ORDER BY, LIMIT</li>
+          <li>SQL avanzado: JOINs, subconsultas y CTEs</li>
+          <li>Funciones de agregación: COUNT, SUM, AVG, GROUP BY, HAVING</li>
+          <li>SQL con Python: integración entre Pandas y bases de datos SQL</li>
+          <li>Casos: reportes de producción, inventarios y logística desde bases de datos</li>
+        </ol></div>
+        <div>
+          <div class="ab"><strong>&#9997; Actividad práctica</strong><p>Consultas SQL sobre base de datos de operaciones industriales e integración con DataFrame de Pandas.</p></div>
+          <div class="tb"><span class="tl">Herramientas:</span><span class="tag">Python (SQLite/SQLAlchemy)</span><span class="tag">Pandas</span><span class="tag">Google Colab</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="2" data-c="todas info adm ind trans" data-q="mongodb nosql pymongo apis web scraping beautiful soup extracción datos documentos json">
+      <div class="sc-h" onclick="tog(this.parentElement)">
+        <div class="sn">9</div>
+        <div class="si"><h3>Bases de Datos NoSQL, APIs y Extracción de Datos</h3><p>MongoDB · PyMongo · Beautiful Soup · Web Scraping · REST APIs · JSON</p></div>
+        <div class="chv">&#9660;</div>
+      </div>
+      <div class="sc-b">
+        <div class="ob full"><strong>Objetivo de la sesión</strong><p>Almacenar y consultar datos en MongoDB, y extraer datos de APIs y sitios web para ampliar las fuentes de información disponibles para el análisis.</p></div>
+        <div class="lb"><h4>Contenido temático</h4><ol>
+          <li>Bases de datos NoSQL: cuándo y por qué usarlas vs. relacionales</li>
+          <li>Fundamentos de MongoDB: documentos, colecciones y consultas</li>
+          <li>Consultas, filtros y agregaciones en MongoDB con Python</li>
+          <li>Consumo de APIs REST con Python: autenticación y paginación</li>
+          <li>Web scraping con Beautiful Soup: extracción de datos de sitios web</li>
+          <li>Consolidación de fuentes heterogéneas en DataFrame</li>
+        </ol></div>
+        <div>
+          <div class="ab"><strong>&#9997; Actividad práctica</strong><p>Extracción de datos de API pública (clima, transporte o mercados) y almacenamiento en MongoDB.</p></div>
+          <div class="tb"><span class="tl">Herramientas:</span><span class="tag">Python (PyMongo, Requests, BS4)</span><span class="tag">MongoDB</span><span class="tag">Google Colab</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="2" data-c="todas info adm ind trans auto" data-q="eda análisis exploratorio univariado bivariado multivariado outliers valores faltantes series tiempo kedro pipeline">
+      <div class="sc-h" onclick="tog(this.parentElement)">
+        <div class="sn">10</div>
+        <div class="si"><h3>Análisis Exploratorio de Datos (EDA) y Pipelines</h3><p>Univariado · Bivariado · Outliers · Series de tiempo · Kedro · Reproducibilidad</p></div>
+        <div class="chv">&#9660;</div>
+      </div>
+      <div class="sc-b">
+        <div class="ob full"><strong>Objetivo de la sesión</strong><p>Realizar análisis exploratorio completo para descubrir patrones y anomalías antes de construir modelos, y organizar el flujo de trabajo en pipelines reproducibles con Kedro.</p></div>
+        <div class="lb"><h4>Contenido temático</h4><ol>
+          <li>Fundamentos del EDA: preguntas, hipótesis y ciclo de exploración</li>
+          <li>Análisis univariado: distribuciones, valores atípicos y datos faltantes</li>
+          <li>Análisis bivariado y multivariado: correlaciones, scatter y heatmaps</li>
+          <li>Preprocesamiento: imputación, codificación y normalización</li>
+          <li>Análisis de series de tiempo: descomposición, tendencia y estacionalidad</li>
+          <li>Pipelines escalables con Kedro: organización y buenas prácticas</li>
+        </ol></div>
+        <div>
+          <div class="ab"><strong>&#9997; Actividad práctica</strong><p>EDA completo sobre dataset de sensores industriales, registros de mantenimiento o datos de movilidad.</p></div>
+          <div class="tb"><span class="tl">Herramientas:</span><span class="tag">Python (Pandas, Seaborn, Matplotlib, Kedro)</span><span class="tag">Google Colab</span></div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /bloque 2 -->
+
+  <!-- ═══ BLOQUE III ═══ -->
+  <div class="bc" data-b="3">
+    <div class="bhd b3">
+      <span class="ico">&#129302;</span>
+      <div>
+        <h2>Bloque III — Machine Learning y Modelos Predictivos</h2>
+        <span>Sesiones 11–15 · 30 horas · Scikit-learn · K-Means · Random Forest · AutoML · Metaheurísticas</span>
+      </div>
+    </div>
+
+    <div class="sc" data-b="3" data-c="todas info ind adm trans auto" data-q="preprocesamiento feature engineering valores perdidos outliers escalado codificación train test validación cruzada">
+      <div class="sc-h" onclick="tog(this.parentElement)">
+        <div class="sn">11</div>
+        <div class="si"><h3>Preprocesamiento Avanzado y Feature Engineering</h3><p>Imputación · Escalado · Codificación · Selección de características · Validación cruzada</p></div>
+        <div class="chv">&#9660;</div>
+      </div>
+      <div class="sc-b">
+        <div class="ob full"><strong>Objetivo de la sesión</strong><p>Preparar datos de alta calidad para modelos de ML aplicando ingeniería de características que maximiza el poder predictivo y reduce el riesgo de sesgo.</p></div>
+        <div class="lb"><h4>Contenido temático</h4><ol>
+          <li>Manejo de valores perdidos: estrategias y su impacto en el modelo</li>
+          <li>Detección y tratamiento de valores atípicos (outliers)</li>
+          <li>Evaluación y selección de características: correlación e importancia</li>
+          <li>Creación de características por agrupamiento y separación</li>
+          <li>Transformaciones: escalado, normalización, codificación de categóricas</li>
+          <li>Partición: train/validation/test y validación cruzada k-fold</li>
+        </ol></div>
+        <div>
+          <div class="ab"><strong>&#9997; Actividad práctica</strong><p>Preprocesamiento completo de dataset industrial para prepararlo para modelado con Scikit-learn.</p></div>
+          <div class="tb"><span class="tl">Herramientas:</span><span class="tag">Python (Scikit-learn, Pandas)</span><span class="tag">Google Colab</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="3" data-c="todas info ind adm trans auto" data-q="clustering k-means dbscan tsne segmentación clientes anomalías detección mantenimiento calidad">
+      <div class="sc-h" onclick="tog(this.parentElement)">
+        <div class="sn">12</div>
+        <div class="si"><h3>Aprendizaje No Supervisado: Clustering y Segmentación</h3><p>K-Means · DBSCAN · t-SNE · Elbow · Silhouette · Detección de anomalías</p></div>
+        <div class="chv">&#9660;</div>
+      </div>
+      <div class="sc-b">
+        <div class="ob full"><strong>Objetivo de la sesión</strong><p>Segmentar clientes, detectar anomalías en procesos industriales e identificar patrones ocultos en datos sin etiquetas usando algoritmos de clustering.</p></div>
+        <div class="lb"><h4>Contenido temático</h4><ol>
+          <li>Definición y propósitos del aprendizaje no supervisado</li>
+          <li>Preparación: normalización y reducción de dimensionalidad</li>
+          <li>K-Means: algoritmo, selección del número de clusters (Elbow, Silhouette)</li>
+          <li>Otros algoritmos: DBSCAN, agrupamiento jerárquico y t-SNE</li>
+          <li>Detección de anomalías: aplicación en mantenimiento y calidad</li>
+          <li>Interpretación y comunicación de los segmentos encontrados</li>
+        </ol></div>
+        <div>
+          <div class="ab"><strong>&#9997; Actividad práctica</strong><p>Segmentación de clientes, rutas o piezas industriales con K-Means sobre datos reales de la industria.</p></div>
+          <div class="tb"><span class="tl">Herramientas:</span><span class="tag">Python (Scikit-learn, Seaborn)</span><span class="tag">Google Colab</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="3" data-c="todas info ind adm trans auto" data-q="supervisado clasificación random forest svm naive bayes redes neuronales perceptrón métricas confusion matrix roc auc">
+      <div class="sc-h" onclick="tog(this.parentElement)">
+        <div class="sn">13</div>
+        <div class="si"><h3>Aprendizaje Supervisado para Clasificación y Predicción</h3><p>Random Forest · SVM · Naive Bayes · Perceptrón · ROC-AUC · F1 Score</p></div>
+        <div class="chv">&#9660;</div>
+      </div>
+      <div class="sc-b">
+        <div class="ob full"><strong>Objetivo de la sesión</strong><p>Construir y evaluar modelos supervisados para predecir fallas, diagnosticar calidad y estimar tiempos en entornos industriales.</p></div>
+        <div class="lb"><h4>Contenido temático</h4><ol>
+          <li>Flujo de trabajo del aprendizaje supervisado y métricas de evaluación</li>
+          <li>Árboles de decisión y Random Forest: interpretabilidad y robustez</li>
+          <li>Support Vector Machines (SVM) y Naive Bayes: casos de uso</li>
+          <li>Redes neuronales perceptrón multicapa: introducción y aplicaciones</li>
+          <li>Evaluación: matriz de confusión, precisión, recall, F1, ROC-AUC</li>
+          <li>Construcción del mejor modelo final con un LLM como asistente</li>
+        </ol></div>
+        <div>
+          <div class="ab"><strong>&#9997; Actividad práctica</strong><p>Clasificación de fallas en equipo industrial o predicción de calidad de producto con Random Forest y SVM.</p></div>
+          <div class="tb"><span class="tl">Herramientas:</span><span class="tag">Python (Scikit-learn)</span><span class="tag">Google Colab</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="3" data-c="todas info ind adm trans auto" data-q="flujo trabajo machine learning sesgo varianza smote clases desbalanceadas regresión clasificación stakeholders">
+      <div class="sc-h" onclick="tog(this.parentElement)">
+        <div class="sn">14</div>
+        <div class="si"><h3>Taller de ML: Flujos de Trabajo Completos</h3><p>Sesgo-varianza · SMOTE · Clases desbalanceadas · MAE · Documentación del modelo</p></div>
+        <div class="chv">&#9660;</div>
+      </div>
+      <div class="sc-b">
+        <div class="ob full"><strong>Objetivo de la sesión</strong><p>Implementar el ciclo completo de un proyecto de ML —desde datos crudos hasta modelo evaluado y listo para comunicar a la dirección— en un caso empresarial real.</p></div>
+        <div class="lb"><h4>Contenido temático</h4><ol>
+          <li>Problema de sesgo y varianza: diagnóstico y corrección de modelos</li>
+          <li>Flujo de trabajo completo para problemas de regresión</li>
+          <li>Evaluación: R², RMSE, MAE y comparación de modelos</li>
+          <li>Manejo de clases desbalanceadas: SMOTE y remuestreo</li>
+          <li>Flujo completo para clasificación con datos desbalanceados</li>
+          <li>Documentación y presentación del modelo a stakeholders no técnicos</li>
+        </ol></div>
+        <div>
+          <div class="ab"><strong>&#9997; Actividad práctica</strong><p>Modelo predictivo completo para predicción de demanda, diagnóstico de falla o estimación de tiempo de entrega.</p></div>
+          <div class="tb"><span class="tl">Herramientas:</span><span class="tag">Python (Scikit-learn, Imbalanced-learn)</span><span class="tag">Google Colab</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="3" data-c="todas info ind trans auto adm" data-q="automl h2o tpot metaheurísticas algoritmos genéticos enjambre partículas vrp rutas optimización producción asignación">
+      <div class="sc-h" onclick="tog(this.parentElement)">
+        <div class="sn">15</div>
+        <div class="si"><h3>AutoML y Optimización con Metaheurísticas</h3><p>H2O.ai · TPOT · Algoritmos genéticos · VRP · Programación de producción · DEAP</p></div>
+        <div class="chv">&#9660;</div>
+      </div>
+      <div class="sc-b">
+        <div class="ob full"><strong>Objetivo de la sesión</strong><p>Automatizar el pipeline de ML con AutoML y aplicar metaheurísticas para resolver problemas de optimización industrial sin solución analítica exacta.</p></div>
+        <div class="lb"><h4>Contenido temático</h4><ol>
+          <li>AutoML end-to-end: automatización del pipeline de ciencia de datos</li>
+          <li>AutoML para EDA, feature engineering y selección de modelos</li>
+          <li>Plataformas: H2O.ai, AutoSklearn, TPOT — comparativa y casos de uso</li>
+          <li>Metaheurísticas: algoritmos genéticos, enjambre de partículas, recocido simulado</li>
+          <li>Aplicaciones: VRP (ruteo de vehículos), programación de producción, asignación de turnos</li>
+          <li>Comparativa: cuándo usar cada metaheurística según el problema industrial</li>
+        </ol></div>
+        <div>
+          <div class="ab"><strong>&#9997; Actividad práctica</strong><p>Optimización de rutas de distribución o programación de mantenimiento con algoritmos genéticos.</p></div>
+          <div class="tb"><span class="tl">Herramientas:</span><span class="tag">Python (TPOT, H2O AutoML, DEAP)</span><span class="tag">Google Colab</span></div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /bloque 3 -->
+
+  <!-- ═══ BLOQUE IV ═══ -->
+  <div class="bc" data-b="4">
+    <div class="bhd b4">
+      <span class="ico">&#128202;</span>
+      <div>
+        <h2>Bloque IV — Visualización, Big Data y Comunicación de Resultados</h2>
+        <span>Sesiones 16–20 · 30 horas · GeoPandas · Power BI · Tableau · Streamlit · PySpark · AWS EMR</span>
+      </div>
+    </div>
+
+    <div class="sc" data-b="4" data-c="todas info ind adm trans auto" data-q="visualización matplotlib seaborn plotly gráficos scatter heatmap 3D geoespacial geopandas mapas rutas logística">
+      <div class="sc-h" onclick="tog(this.parentElement)">
+        <div class="sn">16</div>
+        <div class="si"><h3>Visualización de Datos con Python y Análisis Geoespacial</h3><p>Matplotlib · Seaborn · Plotly · GeoPandas · Mapas de rutas y zonas</p></div>
+        <div class="chv">&#9660;</div>
+      </div>
+      <div class="sc-b">
+        <div class="ob full"><strong>Objetivo de la sesión</strong><p>Crear visualizaciones estáticas e interactivas que comuniquen hallazgos analíticos de manera efectiva, incluyendo mapas para análisis de distribución y logística.</p></div>
+        <div class="lb"><h4>Contenido temático</h4><ol>
+          <li>Plataformas de visualización en Python: Matplotlib, Seaborn, Plotly</li>
+          <li>Gráficos de comparación: barras, líneas de tiempo, waterfall</li>
+          <li>Gráficos de distribución: histogramas, violín, densidad</li>
+          <li>Gráficos de relación: scatter, heatmap, correlación</li>
+          <li>Visualización avanzada: subgráficas, anotaciones y 3D</li>
+          <li>Análisis geoespacial con GeoPandas: mapas de rutas, zonas y cobertura</li>
+        </ol></div>
+        <div>
+          <div class="ab"><strong>&#9997; Actividad práctica</strong><p>Visualización de datos de distribución logística o plantas industriales sobre mapas con GeoPandas.</p></div>
+          <div class="tb"><span class="tl">Herramientas:</span><span class="tag">Python (Matplotlib, Seaborn, Plotly, GeoPandas)</span><span class="tag">Google Colab</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="4" data-c="todas adm info ind trans auto" data-q="data storytelling power bi tableau dashboard ejecutivo kpi dax medidas narrativa audiencia dirección">
+      <div class="sc-h" onclick="tog(this.parentElement)">
+        <div class="sn">17</div>
+        <div class="si"><h3>Data Storytelling y Dashboards Ejecutivos con Power BI / Tableau</h3><p>Narrativas con datos · DAX · Filtros · KPIs · Publicación · Audiencia ejecutiva</p></div>
+        <div class="chv">&#9660;</div>
+      </div>
+      <div class="sc-b">
+        <div class="ob full"><strong>Objetivo de la sesión</strong><p>Diseñar dashboards ejecutivos que narren historias con datos, conectando los hallazgos analíticos con las decisiones de negocio que la dirección necesita tomar.</p></div>
+        <div class="lb"><h4>Contenido temático</h4><ol>
+          <li>Big Data Storytelling: del dato a la narrativa empresarial</li>
+          <li>Principios de storytelling: estructura, tensión y resolución con datos</li>
+          <li>Entendimiento de la audiencia: ejecutivos, gerentes y operadores</li>
+          <li>IA aplicada al Data Storytelling: generación automática de narrativas</li>
+          <li>Power BI o Tableau: medidas DAX, filtros y visualizaciones interactivas</li>
+          <li>Publicación y distribución ejecutiva del dashboard</li>
+        </ol></div>
+        <div>
+          <div class="ab"><strong>&#9997; Actividad práctica</strong><p>Dashboard ejecutivo en Power BI o Tableau para monitoreo de KPIs operativos del sector del participante.</p></div>
+          <div class="tb"><span class="tl">Herramientas:</span><span class="tag">Power BI (Windows)</span><span class="tag">Tableau</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="4" data-c="todas info adm ind" data-q="ux ui streamlit aplicación web despliegue dashboard interactivo github git prototipo wireframe accesibilidad">
+      <div class="sc-h" onclick="tog(this.parentElement)">
+        <div class="sn">18</div>
+        <div class="si"><h3>UX/UI para Aplicaciones Analíticas y Dashboards Web</h3><p>Streamlit · GitHub · Despliegue en la nube · Wireframes · Usabilidad</p></div>
+        <div class="chv">&#9660;</div>
+      </div>
+      <div class="sc-b">
+        <div class="ob full"><strong>Objetivo de la sesión</strong><p>Aplicar principios UX/UI para crear dashboards e interfaces analíticas que maximicen la usabilidad, y desplegar aplicaciones web con Streamlit conectadas a modelos de ML.</p></div>
+        <div class="lb"><h4>Contenido temático</h4><ol>
+          <li>UX/UI en analytics: principios y su impacto en la adopción de dashboards</li>
+          <li>Diseño centrado en el usuario: personas, flujos y wireframes</li>
+          <li>Accesibilidad e inclusión en el diseño de dashboards analíticos</li>
+          <li>UX/UI impulsado por IA: generación automática de prototipos</li>
+          <li>Fundamentos de Streamlit: construcción de apps web con Python</li>
+          <li>Despliegue en la nube con GitHub: publicación y versionamiento</li>
+        </ol></div>
+        <div>
+          <div class="ab"><strong>&#9997; Actividad práctica</strong><p>Aplicación web analítica con Streamlit conectada a modelo de ML desarrollado en sesiones previas, desplegada en GitHub.</p></div>
+          <div class="tb"><span class="tl">Herramientas:</span><span class="tag">Python (Streamlit)</span><span class="tag">GitHub</span><span class="tag">Google Colab</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="4" data-c="todas info ind trans auto" data-q="big data pyspark spark rdd iot telemetría 5vs mllib regresión clasificación cluster nube aws emr">
+      <div class="sc-h" onclick="tog(this.parentElement)">
+        <div class="sn">19</div>
+        <div class="si"><h3>Big Data con PySpark: Procesamiento a Escala</h3><p>5 Vs · Spark Architecture · MLlib · SQL en PySpark · Cluster en la nube</p></div>
+        <div class="chv">&#9660;</div>
+      </div>
+      <div class="sc-b">
+        <div class="ob full"><strong>Objetivo de la sesión</strong><p>Procesar grandes volúmenes de datos que superan la capacidad de herramientas convencionales usando PySpark en arquitecturas distribuidas locales y en la nube.</p></div>
+        <div class="lb"><h4>Contenido temático</h4><ol>
+          <li>¿Qué es Big Data? Las 5 Vs y su impacto en la industria</li>
+          <li>Arquitectura Spark: RDDs, DataFrames y arquitectura distribuida</li>
+          <li>Manipulación de datos en PySpark: transformaciones y acciones</li>
+          <li>SQL en PySpark: análisis a gran escala</li>
+          <li>Machine Learning con PySpark MLlib: regresión, clasificación y clustering</li>
+          <li>Creación de cluster Spark en la nube: arquitectura y costos</li>
+        </ol></div>
+        <div>
+          <div class="ab"><strong>&#9997; Actividad práctica</strong><p>Análisis de dataset de Big Data (sensores IoT, tráfico o telemetría vehicular) con PySpark.</p></div>
+          <div class="tb"><span class="tl">Herramientas:</span><span class="tag">Python (PySpark)</span><span class="tag">Google Colab</span><span class="tag">AWS EMR</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="4" data-c="todas info ind trans auto" data-q="pyspark mllib pca big data clasificación clustering nlp spark producción pipeline masivo escala">
+      <div class="sc-h" onclick="tog(this.parentElement)">
+        <div class="sn">20</div>
+        <div class="si"><h3>Machine Learning Aplicado a Big Data con PySpark</h3><p>PCA en Spark · Clasificación masiva · NLP en Spark · Pipeline de producción</p></div>
+        <div class="chv">&#9660;</div>
+      </div>
+      <div class="sc-b">
+        <div class="ob full"><strong>Objetivo de la sesión</strong><p>Construir modelos de ML supervisados y no supervisados sobre plataformas Big Data, analizando resultados para escalar las soluciones a producción.</p></div>
+        <div class="lb"><h4>Contenido temático</h4><ol>
+          <li>Análisis de Componentes Principales (PCA) con Spark</li>
+          <li>ML supervisado con PySpark: clasificación a escala industrial</li>
+          <li>ML no supervisado con PySpark: clustering de grandes volúmenes</li>
+          <li>NLP en Spark: análisis de texto a escala</li>
+          <li>Evaluación de modelos distribuidos: métricas y selección del mejor</li>
+          <li>Arquitectura de producción: pipeline completo ingesta → predicción</li>
+        </ol></div>
+        <div>
+          <div class="ab"><strong>&#9997; Actividad práctica</strong><p>Modelo de clasificación o segmentación sobre datos masivos de operaciones industriales en PySpark.</p></div>
+          <div class="tb"><span class="tl">Herramientas:</span><span class="tag">Python (PySpark MLlib)</span><span class="tag">Google Colab</span><span class="tag">AWS EMR</span></div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /bloque 4 -->
+
+  <!-- ═══ BLOQUE V ═══ -->
+  <div class="bc" data-b="5">
+    <div class="bhd b5">
+      <span class="ico">&#127775;</span>
+      <div>
+        <h2>Bloque V — Deep Learning, NLP y Proyecto Integrador</h2>
+        <span>Sesiones 21–25 · 30 horas · Hugging Face · PyTorch · TensorFlow · Reinforcement Learning · Defensa ante panel</span>
+      </div>
+    </div>
+
+    <div class="sc" data-b="5" data-c="todas info ind adm trans auto" data-q="nlp procesamiento lenguaje natural transformers hugging face tokenización embeddings clasificación texto ner tickets">
+      <div class="sc-h" onclick="tog(this.parentElement)">
+        <div class="sn">21</div>
+        <div class="si"><h3>Procesamiento de Lenguaje Natural (NLP) y Transformers</h3><p>Tokenización · Embeddings · NER · Hugging Face · QA · Resumen de texto</p></div>
+        <div class="chv">&#9660;</div>
+      </div>
+      <div class="sc-b">
+        <div class="ob full"><strong>Objetivo de la sesión</strong><p>Extraer información de textos industriales y construir modelos de clasificación, resumen y respuesta a preguntas sobre documentos empresariales con Transformers.</p></div>
+        <div class="lb"><h4>Contenido temático</h4><ol>
+          <li>NLP: tokenización, POS-tagging y árboles de dependencia</li>
+          <li>Representación vectorial: Bag-of-Words, TF-IDF y Word Embeddings</li>
+          <li>Clasificación y extracción de entidades (NER): Naive Bayes a Transformers</li>
+          <li>Transformers y Hugging Face: arquitectura y ecosistema</li>
+          <li>Clasificación y resumen de texto con modelos pre-entrenados</li>
+          <li>Respuesta a preguntas (QA) sobre documentos empresariales</li>
+        </ol></div>
+        <div>
+          <div class="ab"><strong>&#9997; Actividad práctica</strong><p>Sistema de clasificación de órdenes de trabajo o tickets de soporte técnico con Hugging Face Transformers.</p></div>
+          <div class="tb"><span class="tl">Herramientas:</span><span class="tag">Python (Hugging Face, NLTK, spaCy)</span><span class="tag">Google Colab</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="5" data-c="todas info ind auto adm" data-q="deep learning pytorch tensorflow cnn redes neuronales imágenes transfer learning resnet efficientnet visión industrial">
+      <div class="sc-h" onclick="tog(this.parentElement)">
+        <div class="sn">22</div>
+        <div class="si"><h3>Deep Learning con PyTorch y TensorFlow</h3><p>CNNs · Transfer Learning · ResNet · Inspección de calidad visual · Streamlit/Gradio</p></div>
+        <div class="chv">&#9660;</div>
+      </div>
+      <div class="sc-b">
+        <div class="ob full"><strong>Objetivo de la sesión</strong><p>Construir redes neuronales profundas para clasificación de imágenes industriales, detección de defectos y diagnóstico visual de componentes automotrices.</p></div>
+        <div class="lb"><h4>Contenido temático</h4><ol>
+          <li>Redes neuronales profundas: arquitectura y backpropagation</li>
+          <li>PyTorch: tensores, capas y entrenamiento desde cero</li>
+          <li>CNNs con PyTorch: clasificación de imágenes industriales</li>
+          <li>TensorFlow: construcción de modelos con API Keras</li>
+          <li>Transfer Learning: adaptación de ResNet y EfficientNet a problemas industriales</li>
+          <li>Despliegue de modelos de visión con Streamlit o Gradio</li>
+        </ol></div>
+        <div>
+          <div class="ab"><strong>&#9997; Actividad práctica</strong><p>Clasificación de piezas industriales (aceptadas/rechazadas) o diagnóstico visual de componentes automotrices con CNN.</p></div>
+          <div class="tb"><span class="tl">Herramientas:</span><span class="tag">Python (PyTorch, TensorFlow/Keras)</span><span class="tag">Streamlit</span><span class="tag">Google Colab</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="5" data-c="todas info ind trans auto" data-q="reinforcement learning agente recompensa q-learning dqn inventarios scheduling routing dinámico optimización">
+      <div class="sc-h" onclick="tog(this.parentElement)">
+        <div class="sn">23</div>
+        <div class="si"><h3>Reinforcement Learning y Optimización Avanzada con IA</h3><p>MDP · Q-Learning · DQN · Stable Baselines3 · Inventarios · Scheduling</p></div>
+        <div class="chv">&#9660;</div>
+      </div>
+      <div class="sc-b">
+        <div class="ob full"><strong>Objetivo de la sesión</strong><p>Entrenar agentes de RL para optimizar decisiones secuenciales en entornos industriales: control de inventarios, programación de producción y gestión de recursos de transporte.</p></div>
+        <div class="lb"><h4>Contenido temático</h4><ol>
+          <li>Reinforcement Learning: agente, entorno, estado, acción y recompensa</li>
+          <li>Procesos de decisión de Markov (MDP): fundamentos matemáticos</li>
+          <li>Métodos clásicos: Q-Learning y diferencias temporales (TD)</li>
+          <li>Deep RL: DQN y aprendizaje profundo por refuerzo</li>
+          <li>Casos industriales: inventarios, robótica y routing dinámico</li>
+          <li>Matemáticas para IA: álgebra lineal, cálculo y optimización de parámetros</li>
+        </ol></div>
+        <div>
+          <div class="ab"><strong>&#9997; Actividad práctica</strong><p>Agente de RL para optimizar scheduling o asignación de recursos en entorno industrial simulado.</p></div>
+          <div class="tb"><span class="tl">Herramientas:</span><span class="tag">Python (Stable Baselines3, Gymnasium)</span><span class="tag">Google Colab</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="5" data-c="todas adm info ind trans auto" data-q="taller proyecto integrador revisión retroalimentación defensa presentación ejecutiva narrativa">
+      <div class="sc-h" onclick="tog(this.parentElement)">
+        <div class="sn">24</div>
+        <div class="si"><h3>Taller de Proyecto Integrador: Desarrollo y Revisión</h3><p>Retroalimentación técnica · Ajuste de modelo · Presentación ejecutiva · Simulación de panel</p></div>
+        <div class="chv">&#9660;</div>
+      </div>
+      <div class="sc-b">
+        <div class="ob full"><strong>Objetivo de la sesión</strong><p>Consolidar los entregables del proyecto integrador con retroalimentación personalizada y practicar la defensa oral ante el panel evaluador.</p></div>
+        <div class="lb full"><h4>Dinámica de la sesión</h4><ol>
+          <li>Presentación de avance por equipo ante el grupo</li>
+          <li>Retroalimentación técnica: calidad del modelo, datos y resultados</li>
+          <li>Ajuste del análisis y mejora de métricas de evaluación</li>
+          <li>Perfeccionamiento de la presentación: narrativa, claridad y valor de negocio</li>
+          <li>Simulación de preguntas del panel evaluador con retroalimentación</li>
+          <li>Checklist de entregables finales requeridos</li>
+        </ol></div>
+      </div>
+    </div>
+
+    <div class="sc" data-b="5" data-c="todas adm info ind trans auto" data-q="presentación final defensa titulación clausura proyecto integrador entregables panel código fuente github">
+      <div class="sc-h" onclick="tog(this.parentElement)">
+        <div class="sn">25</div>
+        <div class="si"><h3>Presentación Final del Proyecto Integrador y Cierre del Seminario</h3><p>Defensa ante panel · Código fuente · Dashboard · Clausura y ruta de certificación</p></div>
+        <div class="chv">&#9660;</div>
+      </div>
+      <div class="sc-b">
+        <div class="ob full"><strong>Objetivo de la sesión</strong><p>Demostrar ante un panel evaluador el dominio de las competencias del seminario mediante la defensa de un proyecto de IA o ciencia de datos que genera valor en una organización real.</p></div>
+        <div class="lb"><h4>Estructura de la sesión</h4><ol>
+          <li>Presentación ejecutiva por equipo (15–20 min)</li>
+          <li>Defensa: preguntas técnicas y de impacto empresarial con réplica</li>
+          <li>Evaluación formal del panel: técnica, negocio y presentación</li>
+          <li>Entrega del informe, código fuente y carpeta de evidencias</li>
+          <li>Reflexión colectiva y retroalimentación general</li>
+          <li>Clausura: reconocimientos, certificaciones y mercado laboral en IA</li>
+        </ol></div>
+        <div class="ab"><strong>&#128203; Entregables del Proyecto Integrador</strong><p>Business Case del problema · Dataset documentado y EDA · Modelo de IA construido y evaluado · Código Python (Jupyter/GitHub) · Dashboard en Power BI/Tableau o app Streamlit · Presentación ejecutiva (15–20 diapositivas)</p></div>
+      </div>
+    </div>
+  </div><!-- /bloque 5 -->
+
+  <!-- ═══ RESUMEN ═══ -->
+  <div class="sec-title">&#128202; Estructura, Evaluación y Herramientas</div>
+
+  <div style="background:var(--blanco);border-radius:16px;padding:24px;box-shadow:var(--sombra);margin-bottom:18px">
+    <h3 style="font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--gris);margin-bottom:16px">Distribución por bloques</h3>
+    <table class="bt">
+      <thead><tr><th>Bloque</th><th>Nombre</th><th>Sesiones</th><th>Horas</th></tr></thead>
+      <tbody>
+        <tr><td>I</td><td>Fundamentos de IA, Datos y Estrategia Empresarial</td><td>1–5</td><td>30 h</td></tr>
+        <tr><td>II</td><td>Python e Ingeniería de Datos</td><td>6–10</td><td>30 h</td></tr>
+        <tr><td>III</td><td>Machine Learning y Modelos Predictivos</td><td>11–15</td><td>30 h</td></tr>
+        <tr><td>IV</td><td>Visualización, Big Data y Comunicación de Resultados</td><td>16–20</td><td>30 h</td></tr>
+        <tr><td>V</td><td>Deep Learning, NLP y Proyecto Integrador</td><td>21–25</td><td>30 h</td></tr>
+        <tr><td>Total</td><td></td><td>25 sesiones</td><td>150 h</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid2">
+    <div class="ic">
+      <h3>Criterios de evaluación</h3>
+      <div class="ei"><div class="er"><span class="en">Participación y laboratorios en sesión</span><span class="ep">20%</span></div><div class="pb"><div class="pf" style="width:20%"></div></div></div>
+      <div class="ei"><div class="er"><span class="en">Entregables por bloque (5 entregables)</span><span class="ep">30%</span></div><div class="pb"><div class="pf" style="width:30%"></div></div></div>
+      <div class="ei"><div class="er"><span class="en">Proyecto integrador escrito + código</span><span class="ep">25%</span></div><div class="pb"><div class="pf" style="width:25%"></div></div></div>
+      <div class="ei"><div class="er"><span class="en">Presentación y defensa ante panel</span><span class="ep">25%</span></div><div class="pb"><div class="pf" style="width:25%"></div></div></div>
+      <div class="nbox">Calificación mínima aprobatoria: <strong>80/100</strong> · Asistencia mínima: <strong>90%</strong> (23 de 25 sesiones)</div>
+    </div>
+    <div class="ic">
+      <h3>Relevancia por carrera</h3>
+      <div class="cr"><span class="cn" style="color:#2563eb">Adm. Industrial</span><span class="ca">KPIs, dashboards ejecutivos, automatización de reportes con IA generativa y análisis de costos</span></div>
+      <div class="cr"><span class="cn" style="color:#059669">Ing. Informática</span><span class="ca">Ingeniería de datos, pipelines, ML, NLP, deep learning y despliegue de aplicaciones</span></div>
+      <div class="cr"><span class="cn" style="color:#7c3aed">Ing. Industrial</span><span class="ca">Optimización con metaheurísticas, predicción de demanda, anomalías y calidad en planta</span></div>
+      <div class="cr"><span class="cn" style="color:#d97706">Ing. Transporte</span><span class="ca">Optimización de rutas, predicción de tiempos, análisis geoespacial y modelos de demanda</span></div>
+      <div class="cr"><span class="cn" style="color:#db2777">Ing. Automotriz</span><span class="ca">Mantenimiento predictivo, computer vision, análisis de sensores CAN/OBD y diagnóstico inteligente</span></div>
+    </div>
+  </div>
+
+  <div class="ic" style="margin-top:18px">
+    <h3>Herramientas y software utilizados</h3>
+    <div class="tg">
+      <div class="ti"><strong>Python + Google Colab</strong><span>Todas las sesiones</span></div>
+      <div class="ti"><strong>Pandas · NumPy · Matplotlib · Seaborn</strong><span>Sesiones 2, 7, 10</span></div>
+      <div class="ti"><strong>Scikit-learn</strong><span>Sesiones 4, 11, 12, 13, 14</span></div>
+      <div class="ti"><strong>SQL (SQLite / SQLAlchemy)</strong><span>Sesión 8</span></div>
+      <div class="ti"><strong>MongoDB (PyMongo)</strong><span>Sesión 9</span></div>
+      <div class="ti"><strong>Kedro</strong><span>Sesión 10</span></div>
+      <div class="ti"><strong>Power BI / Tableau</strong><span>Sesión 17</span></div>
+      <div class="ti"><strong>GeoPandas / Plotly</strong><span>Sesión 16</span></div>
+      <div class="ti"><strong>Streamlit + GitHub</strong><span>Sesiones 18, 22</span></div>
+      <div class="ti"><strong>PySpark / AWS EMR</strong><span>Sesiones 19, 20</span></div>
+      <div class="ti"><strong>Hugging Face Transformers</strong><span>Sesión 21</span></div>
+      <div class="ti"><strong>PyTorch / TensorFlow</strong><span>Sesión 22</span></div>
+      <div class="ti"><strong>Stable Baselines3 (RL)</strong><span>Sesión 23</span></div>
+      <div class="ti"><strong>LangChain / LangFlow</strong><span>Sesión 5</span></div>
+      <div class="ti"><strong>AutoML (H2O / TPOT) + DEAP</strong><span>Sesión 15</span></div>
+      <div class="ti"><strong>SciPy · Statsmodels</strong><span>Sesiones 3, 4</span></div>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<footer>
+  <span class="ico">&#129504;</span>
+  <strong>Inteligencia Artificial para la Industria: Del Análisis de Datos al Valor Empresarial</strong><br>
+  Seminario de Titulación · 150 horas · 25 sesiones · TecNM<br>
+  Adm. Industrial · Ing. Informática · Ing. Industrial · Ing. Transporte · Ing. Sistemas Automotrices
+</footer>
+
+<script>
+  var allOpen = false;
+
+  function tog(c){ c.classList.toggle('open'); }
+
+  function xpand(){
+    allOpen = !allOpen;
+    document.querySelectorAll('.sc').forEach(c => c.classList.toggle('open', allOpen));
+    document.querySelector('.xbtn').textContent = allOpen ? '▲ Colapsar todo' : '▼ Expandir todo';
+  }
+
+  function showB(b, btn){
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+    btn.classList.add('on');
+    document.querySelectorAll('.bc').forEach(bc => {
+      bc.style.display = (b === 'all' || bc.dataset.b === b) ? '' : 'none';
+    });
+  }
+
+  function filtrar(c, chip){
+    document.querySelectorAll('.chip').forEach(ch => ch.classList.remove('on'));
+    chip.classList.add('on');
+    document.querySelectorAll('.sc').forEach(card => {
+      const cs = card.dataset.c || '';
+      card.style.display = (c === 'todas' || cs.includes(c)) ? '' : 'none';
+    });
+  }
+
+  function buscar(q){
+    q = q.toLowerCase().trim();
+    if(q){
+      document.querySelectorAll('.bc').forEach(b => b.style.display = '');
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+      document.querySelectorAll('.tab')[0].classList.add('on');
+    }
+    document.querySelectorAll('.sc').forEach(card => {
+      const txt = (
+        (card.querySelector('h3') ? card.querySelector('h3').textContent : '') + ' ' +
+        (card.querySelector('p') ? card.querySelector('p').textContent : '') + ' ' +
+        (card.dataset.q || '')
+      ).toLowerCase();
+      const vis = !q || txt.includes(q);
+      card.style.display = vis ? '' : 'none';
+      if(vis && q) card.classList.add('open');
+    });
+    if(!q) document.querySelectorAll('.sc').forEach(c => c.classList.remove('open'));
+  }
+</script>
+</body>
+</html>

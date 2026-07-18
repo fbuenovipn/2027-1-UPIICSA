@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloque III — Machine Learning Aplicado</title>
+<style>
+  :root{--bg:#04080f;--card:#0b1628;--border:#1e3a5f;--violet:#7c3aed;--cyan:#06b6d4;--green:#10b981;--orange:#f59e0b;--red:#ef4444;--pink:#ec4899;--yellow:#fbbf24;--text:#e2e8f0;--muted:#64748b;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden;height:100vh;}
+  #navbar{position:fixed;top:0;left:0;right:0;height:54px;background:rgba(4,8,15,.96);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:100;backdrop-filter:blur(8px);}
+  #navbar .brand{color:var(--green);font-weight:700;font-size:.85rem;letter-spacing:1px;}
+  #navbar .brand span{color:var(--orange);}
+  .stabs{display:flex;gap:6px;}
+  .stabs button{background:transparent;border:1px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:20px;cursor:pointer;font-size:.75rem;transition:all .2s;}
+  .stabs button.active{background:var(--green);border-color:var(--green);color:#000;font-weight:700;}
+  .stabs button:hover:not(.active){border-color:var(--green);color:var(--green);}
+  #ctr{color:var(--muted);font-size:.8rem;min-width:80px;text-align:right;}
+  #pb{position:fixed;top:54px;left:0;height:3px;background:linear-gradient(90deg,var(--green),var(--orange));transition:width .3s;z-index:100;}
+  #sc{position:fixed;top:57px;left:0;right:0;bottom:40px;overflow:hidden;}
+  .slide{position:absolute;top:0;left:0;right:0;bottom:0;padding:28px 48px;display:none;overflow-y:auto;animation:fi .35s ease;}
+  .slide.active{display:flex;flex-direction:column;}
+  @keyframes fi{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+  #footer{position:fixed;bottom:0;left:0;right:0;height:40px;background:rgba(4,8,15,.96);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:16px;z-index:100;}
+  #footer button{background:var(--card);border:1px solid var(--border);color:var(--text);padding:5px 20px;border-radius:6px;cursor:pointer;font-size:.8rem;transition:all .2s;}
+  #footer button:hover{border-color:var(--green);color:var(--green);}
+  #footer .hint{color:var(--muted);font-size:.72rem;}
+  h1{font-size:2rem;font-weight:800;line-height:1.2;margin-bottom:10px;}
+  h2{font-size:1.5rem;font-weight:700;margin-bottom:14px;}
+  h3{font-size:1.05rem;font-weight:600;color:var(--green);margin-bottom:8px;margin-top:12px;}
+  p{font-size:.92rem;line-height:1.65;margin-bottom:8px;}
+  ul,ol{padding-left:20px;font-size:.9rem;line-height:1.8;}
+  li{margin-bottom:4px;}
+  .sub{color:var(--muted);font-size:1rem;}
+  .cover{align-items:center;justify-content:center;text-align:center;}
+  .cover h1{font-size:2.3rem;background:linear-gradient(135deg,var(--green),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;}
+  .badge{display:inline-block;border:1px solid var(--green);border-radius:8px;padding:8px 24px;color:var(--green);font-size:.9rem;font-weight:700;letter-spacing:2px;margin-bottom:20px;background:rgba(16,185,129,.08);}
+  .sg{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:20px;}
+  .sc2{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 16px;width:180px;text-align:left;}
+  .sc2 .num{color:var(--green);font-size:.7rem;font-weight:700;}
+  .sc2 .nm{font-size:.8rem;margin-top:4px;}
+  .cg{display:grid;gap:14px;margin-top:8px;}
+  .cg.c2{grid-template-columns:1fr 1fr;}
+  .cg.c3{grid-template-columns:1fr 1fr 1fr;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;position:relative;overflow:hidden;}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+  .card.v::before{background:var(--violet);}
+  .card.c::before{background:var(--cyan);}
+  .card.g::before{background:var(--green);}
+  .card.o::before{background:var(--orange);}
+  .card.r::before{background:var(--red);}
+  .card.p::before{background:var(--pink);}
+  .card h3{margin-top:0;font-size:.95rem;}
+  .card p,.card ul,.card li{font-size:.85rem;}
+  .box{border-radius:10px;padding:14px 18px;margin:10px 0;}
+  .bm{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.4);}
+  .bc{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.4);}
+  .bl{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.4);}
+  .bd{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.4);}
+  .bq{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.4);cursor:pointer;}
+  .bt{font-weight:700;font-size:.8rem;margin-bottom:6px;letter-spacing:.5px;}
+  .bm .bt{color:var(--violet);}
+  .bc .bt{color:var(--orange);}
+  .bl .bt{color:var(--green);}
+  .bd .bt{color:var(--cyan);}
+  .bq .bt{color:var(--yellow);}
+  .box p,.box li,.box ul{font-size:.87rem;}
+  .qa{display:none;margin-top:8px;padding-top:8px;border-top:1px solid rgba(251,191,36,.3);color:var(--green);font-size:.85rem;}
+  .bq.revealed .qa{display:block;}
+  table{width:100%;border-collapse:collapse;font-size:.83rem;margin-top:8px;}
+  th{background:#071020;color:var(--green);text-align:left;padding:8px 12px;border:1px solid var(--border);}
+  td{padding:7px 12px;border:1px solid var(--border);vertical-align:top;}
+  tr:nth-child(even) td{background:rgba(11,22,40,.6);}
+  .tl{list-style:none;padding:0;margin-top:8px;}
+  .tl li{display:flex;gap:14px;margin-bottom:12px;align-items:flex-start;}
+  .tl .st{min-width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+  .tl .st.v{background:rgba(124,58,237,.15);border:2px solid var(--violet);color:var(--violet);}
+  .tl .st.c{background:rgba(6,182,212,.15);border:2px solid var(--cyan);color:var(--cyan);}
+  .tl .st.g{background:rgba(16,185,129,.15);border:2px solid var(--green);color:var(--green);}
+  .tl .st.o{background:rgba(245,158,11,.15);border:2px solid var(--orange);color:var(--orange);}
+  .tl .content h4{font-size:.9rem;}
+  .tl .content p{font-size:.83rem;color:var(--muted);margin:0;}
+  .sr{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0;}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 18px;flex:1;min-width:120px;text-align:center;}
+  .stat .n{font-size:1.8rem;font-weight:800;line-height:1;}
+  .stat .l{font-size:.72rem;color:var(--muted);margin-top:4px;}
+  pre{background:#071020;border:1px solid var(--border);border-radius:6px;padding:12px;font-size:.78rem;color:var(--green);overflow-x:auto;margin:8px 0;font-family:'Courier New',monospace;line-height:1.5;}
+  code{background:#071020;padding:2px 6px;border-radius:4px;font-size:.82rem;color:var(--cyan);}
+  .ld{display:flex;flex-direction:column;gap:6px;margin:10px 0;}
+  .lr{border-radius:6px;padding:8px 16px;font-size:.82rem;font-weight:600;text-align:center;}
+  .tag{display:inline-block;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:2px 10px;font-size:.75rem;color:var(--muted);margin-right:6px;margin-bottom:4px;}
+  .slide::-webkit-scrollbar{width:4px;}
+  .slide::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+</style>
+</head>
+<body>
+<div id="navbar">
+  <div class="brand">🤖 ML <span>INDUSTRIA</span> · BLOQUE III</div>
+  <div class="stabs">
+    <button onclick="gts(0)" id="t0">S11</button>
+    <button onclick="gts(1)" id="t1">S12</button>
+    <button onclick="gts(2)" id="t2">S13</button>
+    <button onclick="gts(3)" id="t3">S14</button>
+    <button onclick="gts(4)" id="t4">S15</button>
+  </div>
+  <div id="ctr">1 / 58</div>
+</div>
+<div id="pb" style="width:1.72%"></div>
+<div id="sc">
+
+<!-- PORTADA -->
+<div class="slide active cover" data-s="0">
+  <div class="badge">BLOQUE III · SESIONES 11 – 15</div>
+  <h1>Machine Learning<br>Aplicado a la Industria</h1>
+  <p class="sub">Del feature engineering al AutoML · 30 horas</p>
+  <div class="sg">
+    <div class="sc2"><div class="num">SESIÓN 11</div><div class="nm">Preprocesamiento Avanzado</div></div>
+    <div class="sc2"><div class="num">SESIÓN 12</div><div class="nm">Clustering No Supervisado</div></div>
+    <div class="sc2"><div class="num">SESIÓN 13</div><div class="nm">Clasificación y Predicción</div></div>
+    <div class="sc2"><div class="num">SESIÓN 14</div><div class="nm">Flujo ML Completo</div></div>
+    <div class="sc2"><div class="num">SESIÓN 15</div><div class="nm">AutoML + Metaheurísticas</div></div>
+  </div>
+  <p style="margin-top:24px;color:var(--muted);font-size:.82rem;">← → o barra espaciadora · Click en S11–S15 para saltar sesión</p>
+</div>
+
+<!-- ═══ SESIÓN 11 ═══ -->
+<div class="slide" data-s="0">
+  <h2>Sesión 11 <span style="color:var(--green)">— Preprocesamiento Avanzado y Feature Engineering</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>El feature engineering es como <strong>preparar los ingredientes antes de cocinar</strong>. Con los mejores ingredientes mal preparados (datos crudos, mal escalados, con categorías sin codificar), incluso el mejor chef (modelo ML) producirá un plato mediocre. La calidad de las features determina el techo del modelo, más que el algoritmo elegido.</p>
+  </div>
+  <div class="cg c3" style="margin-top:14px;">
+    <div class="card g"><h3>Imputación de Datos</h3><p><strong>Simple</strong>: media/mediana/moda. <strong>KNN Imputer</strong>: usa los k vecinos más similares. <strong>IterativeImputer</strong>: itera entre variables para imputación multivariada. Sklearn lo hace con una línea de código.</p></div>
+    <div class="card c"><h3>Escalado y Normalización</h3><p><strong>StandardScaler</strong>: z-score (media 0, std 1). Necesario para SVM, redes neuronales, PCA. <strong>MinMaxScaler</strong>: escala a [0,1]. <strong>RobustScaler</strong>: usa IQR, robusto ante outliers.</p></div>
+    <div class="card o"><h3>Codificación Categórica</h3><p><strong>One-Hot</strong>: dummy variables (turno A/B/C → 3 columnas binarias). <strong>Label Encoder</strong>: ordinal (A=0, B=1, C=2). <strong>Target Encoder</strong>: reemplaza categoría por media del target (evita alta dimensionalidad).</p></div>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Feature Engineering: Crear Variables que el Modelo No Puede Ver</h2>
+  <div class="cg c2">
+    <div class="card g">
+      <h3>Features Derivadas de Tiempo</h3>
+      <pre>df['hora'] = df['timestamp'].dt.hour
+df['dia_semana'] = df['timestamp'].dt.dayofweek
+df['es_fin_semana'] = df['dia_semana'].isin([5,6]).astype(int)
+df['turno'] = pd.cut(df['hora'],
+    bins=[0,8,16,24], labels=['noche','mañana','tarde'])
+
+# Lag features — valores anteriores como predictores
+df['prod_t-1'] = df['produccion'].shift(1)   # 1 hora atrás
+df['prod_t-24'] = df['produccion'].shift(24) # 24 horas atrás
+
+# Rolling statistics — tendencia reciente
+df['media_7d'] = df['produccion'].rolling(7).mean()
+df['std_7d'] = df['produccion'].rolling(7).std()</pre>
+    </div>
+    <div class="card v">
+      <h3>Features de Dominio Industrial</h3>
+      <pre># OEE compuesto desde sus componentes
+df['oee'] = (df['disponibilidad'] *
+             df['rendimiento'] *
+             df['calidad'])
+
+# Temperatura × humedad → índice de estrés térmico
+df['stress_termico'] = df['temp'] * df['humedad'] / 100
+
+# Interacciones entre variables
+df['vel_x_temp'] = df['velocidad'] * df['temperatura']
+df['ratio_defectos'] = df['defectos'] / df['produccion'].clip(1)
+
+# Encoding cíclico de tiempo (para ML)
+import numpy as np
+df['hora_sin'] = np.sin(2*np.pi*df['hora']/24)
+df['hora_cos'] = np.cos(2*np.pi*df['hora']/24)</pre>
+    </div>
+  </div>
+  <div class="box bl"><div class="bt">🔬 LABORATORIO — Pipeline de Preprocesamiento</div>
+    <p>Usar sklearn Pipeline para encadenar: SimpleImputer → RobustScaler → OneHotEncoder (con ColumnTransformer para tratar numéricas y categóricas por separado) → modelo. Ventaja: fit() en train, transform() en test. Sin data leakage garantizado.</p>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Selección de Features: Eliminar el Ruido</h2>
+  <table>
+    <tr><th>Método</th><th>Cómo funciona</th><th>Cuándo usarlo</th></tr>
+    <tr><td><strong>Varianza umbral</strong></td><td>Elimina features con varianza casi cero (sin información)</td><td>Primer filtro antes de cualquier análisis</td></tr>
+    <tr><td><strong>Correlación con target</strong></td><td>Selecciona features más correlacionadas con Y</td><td>Regresión/clasificación, rápido y simple</td></tr>
+    <tr><td><strong>SelectKBest (F-test/Chi²)</strong></td><td>Test estadístico de dependencia entre feature y target</td><td>Datos con muchas features, clasificación</td></tr>
+    <tr><td><strong>Feature Importance (RF)</strong></td><td>Random Forest calcula contribución de cada feature</td><td>El más confiable para datos tabulares industriales</td></tr>
+    <tr><td><strong>SHAP values</strong></td><td>Atribuye a cada feature su contribución en cada predicción individual</td><td>Cuando necesitas explicabilidad + selección</td></tr>
+    <tr><td><strong>RFE (Recursive Feature Elimination)</strong></td><td>Elimina iterativamente las features menos importantes</td><td>Cuando calidad > velocidad</td></tr>
+  </table>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Click para ver respuesta</div>
+    <p>Tienes 150 variables de sensores para predecir fallas. El modelo Random Forest tiene R²=0.97 en train y R²=0.43 en test. ¿Qué está pasando y cómo lo resuelves?</p>
+    <div class="qa"><strong>Overfitting severo</strong>. El modelo memorizó el train en lugar de aprender patrones generalizables. Soluciones: (1) Reducir complejidad del modelo (menos árboles, menor profundidad máxima), (2) Feature selection para eliminar variables irrelevantes o ruidosas, (3) Regularización, (4) Más datos de entrenamiento, (5) Cross-validation para detectar overfitting antes de reportar métricas, (6) Verificar data leakage — quizás alguna feature "filtra" el target.</div>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 12 ═══ -->
+<div class="slide" data-s="1">
+  <h2>Sesión 12 <span style="color:var(--cyan)">— Aprendizaje No Supervisado: Clustering Industrial</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>El clustering es como <strong>organizar un almacén sin etiquetas</strong>. No sabes de antemano cuántas categorías hay ni cuáles son, pero el algoritmo encuentra los grupos "naturales" según la similitud de los objetos. Es el ojo que descubre patrones ocultos que ningún humano habría predefinido: segmentos de clientes, modos de falla, patrones de consumo.</p>
+  </div>
+  <div class="cg c3" style="margin-top:14px;">
+    <div class="card c"><h3>K-Means</h3><p>Asigna cada punto al centroide más cercano. Rápido, escalable. Requiere especificar K. Sensible a outliers y a la escala. Ideal para segmentación de clientes y clasificación de productos.</p></div>
+    <div class="card v"><h3>DBSCAN</h3><p>Basado en densidad. No requiere K. Detecta outliers como ruido. Encuentra clusters de forma arbitraria. Ideal para detección de anomalías en telemetría de sensores.</p></div>
+    <div class="card g"><h3>Jerárquico</h3><p>Construye un dendrograma de fusiones. Permite visualizar la jerarquía de clusters. Útil para datasets medianos y cuando el número de clusters no es claro.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>K-Means en la Práctica: Segmentación Industrial</h2>
+  <div class="cg c2">
+    <div class="card c">
+      <h3>Implementación Completa</h3>
+      <pre">from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import silhouette_score
+import matplotlib.pyplot as plt
+
+# SIEMPRE escalar antes de clustering
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Método del codo para elegir K
+inercias = []
+for k in range(2, 11):
+    km = KMeans(n_clusters=k, random_state=42, n_init=10)
+    km.fit(X_scaled)
+    inercias.append(km.inertia_)
+
+plt.plot(range(2,11), inercias, 'bo-')
+plt.xlabel('K'); plt.ylabel('Inercia')
+plt.title('Método del Codo')
+
+# Validar con Silhouette Score (0 a 1, mayor = mejor)
+km_final = KMeans(n_clusters=4, random_state=42, n_init=10)
+labels = km_final.fit_predict(X_scaled)
+score = silhouette_score(X_scaled, labels)
+print(f"Silhouette Score: {score:.3f}")</pre>
+    </div>
+    <div class="card g">
+      <h3>Casos de Uso en Industria</h3>
+      <ul>
+        <li><strong>Mantenimiento</strong>: agrupar máquinas por perfil de desgaste para programar mantenimiento diferenciado</li>
+        <li><strong>Logística</strong>: segmentar zonas de entrega por densidad de pedidos y tiempo → rutas optimizadas</li>
+        <li><strong>Clientes B2B</strong>: segmentar distribuidores por volumen, frecuencia y margen → estrategia comercial diferenciada</li>
+        <li><strong>Calidad</strong>: agrupar tipos de defectos por patrón de variables de proceso → causas raíz distintas</li>
+      </ul>
+      <div class="box bc" style="margin-top:8px;"><div class="bt">📰 CASO REAL</div>
+        <p>BIMBO segmentó 50,000 puntos de venta con K-Means (variables: ventas/semana, tipo de negocio, zona, SKUs activos). Resultado: 6 segmentos con estrategia de surtido y visita diferenciada. Reducción de 12% en merma y aumento de 8% en ventas por ruta.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>t-SNE y UMAP: Visualizando Datos de Alta Dimensión</h2>
+  <div class="cg c2">
+    <div class="card v">
+      <h3>¿Por qué necesitamos reducción dimensional?</h3>
+      <p>Con 50+ variables de sensores, no podemos visualizar los datos. t-SNE y UMAP proyectan los datos en 2D/3D preservando las relaciones de proximidad entre puntos. Permite:</p>
+      <ul>
+        <li>Ver si los clusters son naturalmente separables</li>
+        <li>Detectar outliers visualmente antes de modelar</li>
+        <li>Validar la calidad del clustering en 2D</li>
+        <li>Descubrir subestructuras no obvias en los datos</li>
+      </ul>
+    </div>
+    <div class="card c">
+      <h3>Código t-SNE</h3>
+      <pre">from sklearn.manifold import TSNE
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Reducir a 2D para visualización
+tsne = TSNE(n_components=2,
+            perplexity=30,
+            random_state=42,
+            n_iter=1000)
+X_2d = tsne.fit_transform(X_scaled)
+
+# Visualizar con colores de cluster
+plt.figure(figsize=(10,8))
+scatter = plt.scatter(X_2d[:,0], X_2d[:,1],
+    c=labels, cmap='tab10', s=15, alpha=0.7)
+plt.colorbar(scatter, label='Cluster')
+plt.title('Clusters en 2D (t-SNE)')
+plt.tight_layout()</pre>
+    </div>
+  </div>
+  <div class="box bl"><div class="bt">🔬 PRÁCTICA — Clustering de Fallas de Producción</div>
+    <p>Dataset: 5,000 registros de fallas con 20 variables de proceso. (1) Escalar datos, (2) Elegir K óptimo con codo + silhouette, (3) Aplicar K-Means y DBSCAN, (4) Visualizar en 2D con t-SNE, (5) Caracterizar cada cluster con estadísticas descriptivas, (6) Proponer nombre y estrategia de acción para cada grupo.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 13 ═══ -->
+<div class="slide" data-s="2">
+  <h2>Sesión 13 <span style="color:var(--orange)">— Clasificación y Predicción: Random Forest, SVM y MLP</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p><strong>Random Forest</strong> es como consultar a 500 expertos independientes que cada uno ve un subconjunto distinto de los datos y vota: la democracia gana al experto individual. <strong>SVM</strong> busca el mejor "pasillo" entre clases — más ancho el pasillo, más segura la clasificación. <strong>MLP</strong> (red neuronal) aprende representaciones jerárquicas: neuronas simples se combinan para capturar patrones complejos.</p>
+  </div>
+  <div class="sr" style="margin-top:16px;">
+    <div class="stat"><div class="n" style="color:var(--green)">RF</div><div class="l">Mejor accuracy promedio en datos tabulares industriales (Kaggle studies)</div></div>
+    <div class="stat"><div class="n" style="color:var(--cyan)">XGB</div><div class="l">Ganador de la mayoría de competencias de ML con datos estructurados</div></div>
+    <div class="stat"><div class="n" style="color:var(--orange)">SVM</div><div class="l">Excelente con datos de alta dimensión y pocos ejemplos de entrenamiento</div></div>
+  </div>
+</div>
+
+<div class="slide" data-s="2">
+  <h2>Random Forest: El Caballo de Batalla Industrial</h2>
+  <div class="cg c2">
+    <div class="card g">
+      <h3>Implementación y Tuning</h3>
+      <pre">from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import classification_report, confusion_matrix
+import seaborn as sns
+
+# Modelo base
+rf = RandomForestClassifier(
+    n_estimators=200,
+    max_depth=None,
+    min_samples_split=5,
+    class_weight='balanced',  # para clases desbalanceadas
+    random_state=42,
+    n_jobs=-1)  # usar todos los CPUs
+
+rf.fit(X_train, y_train)
+y_pred = rf.predict(X_test)
+
+# Reporte completo
+print(classification_report(y_test, y_pred,
+    target_names=['Normal', 'Falla_A', 'Falla_B']))
+
+# Feature importance
+importancias = pd.Series(rf.feature_importances_,
+    index=feature_names).sort_values(ascending=False)
+importancias[:15].plot(kind='barh')</pre>
+    </div>
+    <div class="card c">
+      <h3>Métricas para Clasificación</h3>
+      <table>
+        <tr><th>Métrica</th><th>Fórmula</th><th>Cuándo usarla</th></tr>
+        <tr><td>Accuracy</td><td>TP+TN / Total</td><td>Clases balanceadas</td></tr>
+        <tr><td>Precision</td><td>TP / (TP+FP)</td><td>Costo alto de falsos positivos</td></tr>
+        <tr><td>Recall</td><td>TP / (TP+FN)</td><td>Costo alto de falsos negativos (fallas no detectadas)</td></tr>
+        <tr><td>F1-Score</td><td>2×P×R/(P+R)</td><td>Balance precision-recall</td></tr>
+        <tr><td>ROC-AUC</td><td>Área bajo curva ROC</td><td>Comparar modelos, clases desbalanceadas</td></tr>
+      </table>
+      <div class="box bd" style="margin-top:8px;"><div class="bt">💡 DATO CLAVE</div>
+        <p>En detección de fallas industriales, el <strong>recall es crítico</strong>: preferimos alertar de más (FP) que no detectar una falla real (FN) que causa parada de planta.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="2">
+  <h2>SVM y MLP: Cuándo y Cómo Usarlos</h2>
+  <div class="cg c2">
+    <div class="card v">
+      <h3>Support Vector Machine (SVM)</h3>
+      <pre">from sklearn.svm import SVC
+from sklearn.pipeline import Pipeline
+
+# Pipeline con escalado (obligatorio para SVM)
+svm_pipeline = Pipeline([
+    ('scaler', StandardScaler()),
+    ('svm', SVC(
+        kernel='rbf',     # 'linear' para alta dim.
+        C=10,             # regularización
+        gamma='scale',    # 'scale' o 'auto'
+        probability=True, # para predict_proba
+        class_weight='balanced'))
+])
+svm_pipeline.fit(X_train, y_train)
+probs = svm_pipeline.predict_proba(X_test)
+
+# Cuándo usar SVM:
+# - Datos de alta dimensión (texto, espectroscopia)
+# - Pocos ejemplos de entrenamiento
+# - Frontera de decisión no lineal</pre>
+    </div>
+    <div class="card o">
+      <h3>Red Neuronal (MLP)</h3>
+      <pre">from sklearn.neural_network import MLPClassifier
+
+mlp = MLPClassifier(
+    hidden_layer_sizes=(128, 64, 32),
+    activation='relu',        # 'tanh', 'logistic'
+    solver='adam',
+    alpha=0.001,              # regularización L2
+    learning_rate='adaptive',
+    max_iter=500,
+    early_stopping=True,      # stop si no mejora
+    validation_fraction=0.1,
+    random_state=42)
+
+mlp.fit(X_train, y_train)
+
+# Cuándo usar MLP (scikit-learn):
+# - Relaciones no lineales complejas
+# - Datasets medianos (no masivos)
+# - Para masivos: usar PyTorch/TF (Bloque V)</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 14 ═══ -->
+<div class="slide" data-s="3">
+  <h2>Sesión 14 <span style="color:var(--pink)">— Flujo ML Completo: Validación, Desbalanceo y Producción</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Un modelo ML en producción es como un <strong>empleado nuevo que pasó todas las pruebas de entrevista</strong> pero nunca ha visto un cliente real. La validación rigurosa (cross-validation), el manejo del desbalanceo de clases (SMOTE) y el monitoreo continuo son los que determinan si este empleado tendrá éxito en el mundo real o solo en el simulacro.</p>
+  </div>
+  <div class="ld" style="margin-top:14px;">
+    <div class="lr" style="background:rgba(6,182,212,.1);border:1px solid var(--cyan);color:var(--cyan);">📊 PASO 1: EDA y formulación del problema — ¿Regresión o clasificación? ¿Cuál es el target real del negocio?</div>
+    <div class="lr" style="background:rgba(16,185,129,.1);border:1px solid var(--green);color:var(--green);">🔧 PASO 2: Preprocesamiento — Limpieza, imputación, encoding, escalado, feature engineering</div>
+    <div class="lr" style="background:rgba(245,158,11,.1);border:1px solid var(--orange);color:var(--orange);">🔀 PASO 3: Split estratificado + Cross-validation — Separar test set antes de cualquier decisión de modelo</div>
+    <div class="lr" style="background:rgba(124,58,237,.1);border:1px solid var(--violet);color:var(--violet);">🤖 PASO 4: Baseline → Modelos → Tuning — Comparar múltiples algoritmos con mismas métricas</div>
+    <div class="lr" style="background:rgba(236,72,153,.1);border:1px solid var(--pink);color:var(--pink);">🚀 PASO 5: Evaluación final + Deploy — Medir en test set, guardar modelo, monitorear en producción</div>
+  </div>
+</div>
+
+<div class="slide" data-s="3">
+  <h2>Datos Desbalanceados: El Problema Real de la Industria</h2>
+  <div class="cg c2">
+    <div class="card r">
+      <h3>¿Por qué el desbalanceo importa?</h3>
+      <p>En manufactura, las fallas son raras: 97% normal, 3% falla. Un modelo que predice siempre "normal" tiene 97% de accuracy pero <strong>0% de utilidad</strong>. Este es el truco más común que "infla" métricas en proyectos industriales.</p>
+      <ul style="margin-top:8px;">
+        <li>Fraude financiero: 0.1% fraudes</li>
+        <li>Defectos de calidad: 1-5% de piezas</li>
+        <li>Fallas de equipos: 2-8% del tiempo</li>
+        <li>Abandono de clientes: 5-20%</li>
+      </ul>
+    </div>
+    <div class="card g">
+      <h3>SMOTE: Solución con Código</h3>
+      <pre">from imblearn.over_sampling import SMOTE
+from imblearn.pipeline import Pipeline as ImbPipeline
+from collections import Counter
+
+print(f"Antes: {Counter(y_train)}")
+# {0: 9700, 1: 300}
+
+# SMOTE crea ejemplos sintéticos de la clase minoritaria
+# interpolando entre vecinos reales
+smote = SMOTE(sampling_strategy=0.5, # 1 minoritaria por 2 mayoritarias
+              k_neighbors=5,
+              random_state=42)
+X_res, y_res = smote.fit_resample(X_train, y_train)
+print(f"Después: {Counter(y_res)}")
+# {0: 9700, 1: 4850}
+
+# Mejor: dentro de un Pipeline
+pipe = ImbPipeline([
+    ('smote', SMOTE(random_state=42)),
+    ('clf', RandomForestClassifier())
+])</pre>
+    </div>
+  </div>
+  <div class="box bd"><div class="bt">💡 DATO CLAVE — SMOTE vs otras técnicas</div>
+    <p>SMOTE solo en train, nunca en test (data leakage). Alternativas: <strong>class_weight='balanced'</strong> en sklearn (más simple), <strong>ADASYN</strong> (adaptive synthetic, foco en difíciles), <strong>undersampling</strong> con RandomUnderSampler (cuando hay muchísimos datos mayoritarios). Evaluar siempre con ROC-AUC, F1 y recall de clase minoritaria.</p>
+  </div>
+</div>
+
+<div class="slide" data-s="3">
+  <h2>Cross-Validation y Comparación de Modelos</h2>
+  <div class="cg c2">
+    <div class="card c">
+      <h3>Estrategias de Validación</h3>
+      <pre">from sklearn.model_selection import (
+    cross_val_score, StratifiedKFold,
+    TimeSeriesSplit)
+from sklearn.metrics import make_scorer, f1_score
+
+# K-Fold estratificado (datos tabulares)
+cv = StratifiedKFold(n_splits=5, shuffle=True,
+                     random_state=42)
+scorer = make_scorer(f1_score, average='macro')
+
+modelos = {
+    'Random Forest': RandomForestClassifier(...),
+    'XGBoost': XGBClassifier(...),
+    'SVM': SVC(...),
+    'MLP': MLPClassifier(...)
+}
+
+for nombre, modelo in modelos.items():
+    scores = cross_val_score(modelo, X, y,
+        cv=cv, scoring=scorer, n_jobs=-1)
+    print(f"{nombre}: {scores.mean():.3f} ± {scores.std():.3f}")
+
+# Para series de tiempo: TimeSeriesSplit
+ts_cv = TimeSeriesSplit(n_splits=5)</pre>
+    </div>
+    <div class="card v">
+      <h3>Guardar y Cargar el Modelo</h3>
+      <pre">import joblib
+import pickle
+
+# Guardar con joblib (mejor para sklearn)
+joblib.dump(modelo_final, 'modelo_fallas_v1.pkl')
+joblib.dump(scaler, 'scaler_v1.pkl')
+
+# Cargar en producción
+modelo = joblib.load('modelo_fallas_v1.pkl')
+scaler_prod = joblib.load('scaler_v1.pkl')
+
+# Predicción en producción
+nuevos_datos = pd.DataFrame([{
+    'temperatura': 91.2, 'vibracion': 3.8,
+    'presion': 105.1, 'turno': 'A'
+}])
+X_nuevo = scaler_prod.transform(nuevos_datos)
+prediccion = modelo.predict(X_nuevo)
+probabilidad = modelo.predict_proba(X_nuevo)
+print(f"Falla: {prediccion[0]} | Confianza: {probabilidad[0].max():.1%}")</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 15 ═══ -->
+<div class="slide" data-s="4">
+  <h2>Sesión 15 <span style="color:var(--yellow)">— AutoML y Metaheurísticas para Optimización Industrial</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p><strong>AutoML</strong> es como tener un <strong>equipo de científicos de datos automático</strong> que prueba cientos de combinaciones de modelos y parámetros mientras tú duermes, y te presenta el mejor resultado al despertar. Los <strong>algoritmos genéticos</strong> son como la evolución biológica acelerada: las soluciones más aptas "sobreviven" y se "reproducen" hasta encontrar la óptima.</p>
+  </div>
+  <div class="cg c3" style="margin-top:14px;">
+    <div class="card g"><h3>H2O AutoML</h3><p>Plataforma AutoML de código abierto. Entrena y stacking de múltiples modelos automáticamente: GBM, XGBoost, Deep Learning, Random Forest, GLM. Escala a datos grandes. Interfaz Python sencilla.</p></div>
+    <div class="card c"><h3>TPOT</h3><p>Tree-based Pipeline Optimization Tool. Usa programación genética para encontrar el mejor pipeline de ML (preprocesamiento + modelo). Exporta el código Python del pipeline ganador. Basado en scikit-learn.</p></div>
+    <div class="card o"><h3>Algoritmos Genéticos (DEAP)</h3><p>Metaheurísticas inspiradas en la evolución. Excelentes para optimización combinatoria: ruteo de vehículos (VRP), programación de producción, diseño de productos, distribución de almacén.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-s="4">
+  <h2>H2O AutoML: Implementación Rápida</h2>
+  <div class="cg c2">
+    <div class="card g">
+      <h3>Código H2O AutoML</h3>
+      <pre">import h2o
+from h2o.automl import H2OAutoML
+
+h2o.init()
+
+# Convertir DataFrame a H2OFrame
+train_h2o = h2o.H2OFrame(df_train)
+test_h2o = h2o.H2OFrame(df_test)
+
+# Definir variables
+target = 'falla'
+features = [c for c in df_train.columns if c != target]
+train_h2o[target] = train_h2o[target].asfactor()
+
+# AutoML — prueba y evalúa automáticamente
+aml = H2OAutoML(
+    max_runtime_secs=3600,  # 1 hora
+    max_models=50,
+    seed=42,
+    sort_metric='AUC',
+    exclude_algos=['DeepLearning']  # opcional
+)
+aml.train(x=features, y=target,
+          training_frame=train_h2o)
+
+# Ver tabla de líderes
+lb = aml.leaderboard
+print(lb.head(10))
+
+# Mejor modelo
+mejor = aml.leader
+perf = mejor.model_performance(test_h2o)
+print(f"AUC test: {perf.auc():.4f}")</pre>
+    </div>
+    <div class="card c">
+      <h3>Algoritmo Genético con DEAP: VRP Simplificado</h3>
+      <pre">import random
+from deap import base, creator, tools, algorithms
+
+# Problema: secuencia óptima de visitas a clientes
+CLIENTES = 20
+DISTANCIAS = [[random.randint(1,50)
+               for _ in range(CLIENTES)]
+              for _ in range(CLIENTES)]
+
+def evaluar(individuo):
+    """Calcula distancia total de ruta"""
+    distancia = sum(
+        DISTANCIAS[individuo[i]][individuo[i+1]]
+        for i in range(len(individuo)-1))
+    return (distancia,)  # tuple requerido por DEAP
+
+# Configurar AG
+creator.create("FitnessMin", base.Fitness,
+               weights=(-1.0,))
+creator.create("Individual", list,
+               fitness=creator.FitnessMin)
+
+toolbox = base.Toolbox()
+toolbox.register("indices", random.sample,
+    range(CLIENTES), CLIENTES)
+toolbox.register("individual",
+    tools.initIterate, creator.Individual,
+    toolbox.indices)
+toolbox.register("population",
+    tools.initRepeat, list, toolbox.individual)
+toolbox.register("evaluate", evaluar)
+toolbox.register("mate", tools.cxOrdered)
+toolbox.register("mutate", tools.mutShuffleIndexes,
+                 indpb=0.1)
+toolbox.register("select", tools.selTournament,
+                 tournsize=3)</pre>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="4">
+  <h2>Casos de Uso de Metaheurísticas en la Industria</h2>
+  <table>
+    <tr><th>Problema</th><th>Técnica</th><th>Variables</th><th>Resultado Típico</th></tr>
+    <tr><td><strong>Ruteo de Vehículos (VRP)</strong></td><td>Algoritmo Genético / Simulated Annealing</td><td>Distancias, capacidad, ventanas de tiempo</td><td>10-25% reducción en km recorridos</td></tr>
+    <tr><td><strong>Programación de Producción</strong></td><td>Algoritmos Genéticos / Búsqueda Tabú</td><td>Tiempos de setup, prioridades, máquinas</td><td>15-30% reducción en makespan</td></tr>
+    <tr><td><strong>Layout de Almacén</strong></td><td>Simulated Annealing</td><td>Posición de SKUs, frecuencia de acceso</td><td>Reducción 20% en tiempo de picking</td></tr>
+    <tr><td><strong>Mezcla de Materiales</strong></td><td>Programación Lineal + GA</td><td>Proporciones, costos, restricciones</td><td>5-15% reducción en costo de materia prima</td></tr>
+    <tr><td><strong>Hyperparameter Tuning</strong></td><td>Optuna (Bayesian Optimization)</td><td>Parámetros del modelo ML</td><td>2-5% mejora en métricas vs grid search</td></tr>
+  </table>
+  <div class="box bl"><div class="bt">🔬 PROYECTO INTEGRADOR BLOQUE III</div>
+    <p>Proyecto de mantenimiento predictivo completo: (1) EDA de telemetría de 20 máquinas, (2) Feature engineering industrial (lag features, rolling stats, OEE), (3) SMOTE para datos desbalanceados, (4) Comparar RF vs SVM vs MLP con cross-validation, (5) AutoML con H2O para confirmar el mejor pipeline, (6) Interpretar con SHAP, (7) Desplegar predicción en una función reutilizable.</p>
+  </div>
+</div>
+
+<!-- CIERRE -->
+<div class="slide cover" data-s="4">
+  <div class="badge">BLOQUE III — CIERRE</div>
+  <h1>Machine Learning:<br>Del Dato a la Decisión</h1>
+  <p style="max-width:600px;margin:16px auto;color:var(--muted);">Feature engineering, clustering, clasificación, manejo de desbalanceo y AutoML son las competencias que convierten datos industriales en modelos que predicen fallas, optimizan procesos y crean ventaja competitiva real.</p>
+  <div class="sr" style="justify-content:center;max-width:700px;margin:20px auto;">
+    <div class="stat"><div class="n" style="color:var(--green)">🔧</div><div class="l">Preprocesamiento avanzado</div></div>
+    <div class="stat"><div class="n" style="color:var(--cyan)">🔵</div><div class="l">K-Means, DBSCAN, t-SNE</div></div>
+    <div class="stat"><div class="n" style="color:var(--orange)">🌲</div><div class="l">RF, SVM, MLP</div></div>
+    <div class="stat"><div class="n" style="color:var(--pink)">⚖️</div><div class="l">SMOTE y validación</div></div>
+    <div class="stat"><div class="n" style="color:var(--yellow)">🤖</div><div class="l">AutoML + AG</div></div>
+  </div>
+  <div style="margin-top:16px;font-size:.8rem;color:var(--muted);">
+    <strong style="color:var(--green);">Referencias:</strong> Géron (2022) Hands-On ML with Scikit-Learn · Provost &amp; Fawcett (2013) Data Science for Business · VanderPlas (2022) Python Data Science Handbook
+  </div>
+</div>
+
+</div>
+<div id="footer">
+  <button onclick="prev()">← Anterior</button>
+  <span class="hint">← → · Espacio</span>
+  <button onclick="next()">Siguiente →</button>
+</div>
+<script>
+const slides=document.querySelectorAll('.slide'),total=slides.length;let cur=0;
+const ss=[];slides.forEach((s,i)=>{const v=parseInt(s.dataset.s);if(ss[v]===undefined)ss[v]=i;});
+function go(n){if(n<0||n>=total)return;slides[cur].classList.remove('active');cur=n;slides[cur].classList.add('active');document.getElementById('ctr').textContent=(cur+1)+' / '+total;document.getElementById('pb').style.width=((cur+1)/total*100)+'%';ut();slides[cur].scrollTop=0;}
+function next(){go(cur+1);}function prev(){go(cur-1);}function gts(i){go(ss[i]);}
+function ut(){const v=parseInt(slides[cur].dataset.s);for(let i=0;i<5;i++){const b=document.getElementById('t'+i);if(b)b.classList.toggle('active',i===v);}}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();}if(e.key==='ArrowLeft'){e.preventDefault();prev();}});
+ut();
+</script>
+</body>
+</html>

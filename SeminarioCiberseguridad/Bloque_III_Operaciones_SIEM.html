@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloque III — Operaciones de Seguridad, SIEM y Respuesta a Incidentes</title>
+<style>
+  :root {
+    --bg: #050a14;
+    --card: #0d1a2e;
+    --card2: #0a1525;
+    --border: #1a3050;
+    --cyan: #00d4ff;
+    --green: #00ff88;
+    --orange: #ff8c42;
+    --red: #ff3366;
+    --purple: #bb86fc;
+    --yellow: #ffd60a;
+    --text: #e0eaf8;
+    --muted: #7a9bbf;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; overflow: hidden; height: 100vh; }
+
+  /* ── NAV BAR ── */
+  #navbar {
+    position: fixed; top: 0; left: 0; right: 0; height: 54px;
+    background: rgba(5,10,20,0.95); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px; z-index: 100; backdrop-filter: blur(8px);
+  }
+  #navbar .brand { color: var(--cyan); font-weight: 700; font-size: 0.85rem; letter-spacing: 1px; }
+  #navbar .brand span { color: var(--orange); }
+  .session-tabs { display: flex; gap: 6px; }
+  .session-tabs button {
+    background: transparent; border: 1px solid var(--border); color: var(--muted);
+    padding: 4px 12px; border-radius: 20px; cursor: pointer; font-size: 0.75rem;
+    transition: all 0.2s;
+  }
+  .session-tabs button.active { background: var(--cyan); border-color: var(--cyan); color: #000; font-weight: 700; }
+  .session-tabs button:hover:not(.active) { border-color: var(--cyan); color: var(--cyan); }
+  #slide-counter { color: var(--muted); font-size: 0.8rem; min-width: 80px; text-align: right; }
+
+  /* ── PROGRESS BAR ── */
+  #progress-bar {
+    position: fixed; top: 54px; left: 0; height: 3px;
+    background: linear-gradient(90deg, var(--cyan), var(--purple));
+    transition: width 0.3s ease; z-index: 100;
+  }
+
+  /* ── SLIDES ── */
+  #slides-container { position: fixed; top: 57px; left: 0; right: 0; bottom: 40px; overflow: hidden; }
+  .slide {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    padding: 28px 48px; display: none; overflow-y: auto;
+    animation: fadeIn 0.35s ease;
+  }
+  .slide.active { display: flex; flex-direction: column; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+
+  /* ── FOOTER NAV ── */
+  #footer {
+    position: fixed; bottom: 0; left: 0; right: 0; height: 40px;
+    background: rgba(5,10,20,0.95); border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center; gap: 16px; z-index: 100;
+  }
+  #footer button {
+    background: var(--card); border: 1px solid var(--border); color: var(--text);
+    padding: 5px 20px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;
+    transition: all 0.2s;
+  }
+  #footer button:hover { border-color: var(--cyan); color: var(--cyan); }
+  #footer .hint { color: var(--muted); font-size: 0.72rem; }
+
+  /* ── TYPOGRAPHY ── */
+  h1 { font-size: 2rem; font-weight: 800; line-height: 1.2; margin-bottom: 10px; }
+  h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 14px; }
+  h3 { font-size: 1.1rem; font-weight: 600; color: var(--cyan); margin-bottom: 8px; margin-top: 14px; }
+  p  { font-size: 0.92rem; line-height: 1.65; color: var(--text); margin-bottom: 8px; }
+  ul, ol { padding-left: 20px; font-size: 0.9rem; line-height: 1.8; }
+  li { margin-bottom: 4px; }
+  .subtitle { color: var(--muted); font-size: 1rem; margin-bottom: 6px; }
+  .tag { display: inline-block; background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 2px 10px; font-size: 0.75rem; color: var(--muted); margin-right: 6px; }
+
+  /* ── COVER ── */
+  .cover { align-items: center; justify-content: center; text-align: center; }
+  .cover h1 { font-size: 2.4rem; background: linear-gradient(135deg, var(--cyan), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 16px; }
+  .cover .block-badge { display: inline-block; background: linear-gradient(135deg, #0a2040, #0d1a2e); border: 1px solid var(--cyan); border-radius: 8px; padding: 8px 24px; color: var(--cyan); font-size: 0.9rem; font-weight: 700; letter-spacing: 2px; margin-bottom: 20px; }
+  .cover .sessions-grid { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+  .cover .sess-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; width: 160px; text-align: left; }
+  .cover .sess-card .num { color: var(--orange); font-size: 0.7rem; font-weight: 700; }
+  .cover .sess-card .name { font-size: 0.8rem; margin-top: 4px; }
+
+  /* ── CARDS ── */
+  .card-grid { display: grid; gap: 14px; margin-top: 8px; }
+  .card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+  .card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px; position: relative; overflow: hidden;
+  }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .card.cyan::before { background: var(--cyan); }
+  .card.green::before { background: var(--green); }
+  .card.orange::before { background: var(--orange); }
+  .card.red::before { background: var(--red); }
+  .card.purple::before { background: var(--purple); }
+  .card h3 { margin-top: 0; font-size: 0.95rem; }
+  .card p, .card ul, .card li { font-size: 0.85rem; }
+
+  /* ── SPECIAL BOXES ── */
+  .box { border-radius: 10px; padding: 14px 18px; margin: 10px 0; }
+  .box-meta   { background: rgba(187,134,252,0.08); border: 1px solid rgba(187,134,252,0.4); }
+  .box-caso   { background: rgba(255,140,66,0.08);  border: 1px solid rgba(255,140,66,0.4); }
+  .box-lab    { background: rgba(0,255,136,0.08);   border: 1px solid rgba(0,255,136,0.4); }
+  .box-dato   { background: rgba(0,212,255,0.08);   border: 1px solid rgba(0,212,255,0.4); }
+  .box-quiz   { background: rgba(255,214,10,0.08);  border: 1px solid rgba(255,214,10,0.4); cursor: pointer; }
+  .box-title  { font-weight: 700; font-size: 0.8rem; margin-bottom: 6px; letter-spacing: 0.5px; }
+  .box-meta .box-title   { color: var(--purple); }
+  .box-caso .box-title   { color: var(--orange); }
+  .box-lab .box-title    { color: var(--green); }
+  .box-dato .box-title   { color: var(--cyan); }
+  .box-quiz .box-title   { color: var(--yellow); }
+  .box p, .box li, .box ul { font-size: 0.87rem; }
+  .quiz-answer { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,214,10,0.3); color: var(--green); font-size: 0.85rem; }
+  .box-quiz.revealed .quiz-answer { display: block; }
+
+  /* ── TABLES ── */
+  table { width: 100%; border-collapse: collapse; font-size: 0.83rem; margin-top: 8px; }
+  th { background: #0a1a30; color: var(--cyan); text-align: left; padding: 8px 12px; border: 1px solid var(--border); }
+  td { padding: 7px 12px; border: 1px solid var(--border); vertical-align: top; }
+  tr:nth-child(even) td { background: rgba(13,26,46,0.6); }
+
+  /* ── TIMELINE ── */
+  .timeline { list-style: none; padding: 0; margin-top: 8px; }
+  .timeline li { display: flex; gap: 14px; margin-bottom: 12px; align-items: flex-start; }
+  .timeline .step { min-width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; flex-shrink: 0; }
+  .timeline .step.cyan   { background: rgba(0,212,255,0.15); border: 2px solid var(--cyan); color: var(--cyan); }
+  .timeline .step.green  { background: rgba(0,255,136,0.15); border: 2px solid var(--green); color: var(--green); }
+  .timeline .step.orange { background: rgba(255,140,66,0.15); border: 2px solid var(--orange); color: var(--orange); }
+  .timeline .step.red    { background: rgba(255,51,102,0.15); border: 2px solid var(--red); color: var(--red); }
+  .timeline .step.purple { background: rgba(187,134,252,0.15); border: 2px solid var(--purple); color: var(--purple); }
+  .timeline .content h4  { font-size: 0.9rem; color: var(--text); }
+  .timeline .content p   { font-size: 0.83rem; color: var(--muted); margin: 0; }
+
+  /* ── HIGHLIGHT ── */
+  .highlight { color: var(--cyan); font-weight: 600; }
+  .hl-green  { color: var(--green); font-weight: 600; }
+  .hl-orange { color: var(--orange); font-weight: 600; }
+  .hl-red    { color: var(--red); font-weight: 600; }
+  .hl-purple { color: var(--purple); font-weight: 600; }
+
+  /* ── PILL ── */
+  .pill { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; margin: 2px; }
+  .pill-cyan   { background: rgba(0,212,255,0.15); border: 1px solid var(--cyan); color: var(--cyan); }
+  .pill-green  { background: rgba(0,255,136,0.15); border: 1px solid var(--green); color: var(--green); }
+  .pill-orange { background: rgba(255,140,66,0.15); border: 1px solid var(--orange); color: var(--orange); }
+  .pill-red    { background: rgba(255,51,102,0.15); border: 1px solid var(--red); color: var(--red); }
+  .pill-purple { background: rgba(187,134,252,0.15); border: 1px solid var(--purple); color: var(--purple); }
+
+  /* ── BIG STAT ── */
+  .stat-row { display: flex; gap: 16px; flex-wrap: wrap; margin: 10px 0; }
+  .stat { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; flex: 1; min-width: 120px; text-align: center; }
+  .stat .num { font-size: 1.8rem; font-weight: 800; line-height: 1; }
+  .stat .lbl { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
+
+  /* ── DIAGRAM ── */
+  .layer-diagram { display: flex; flex-direction: column; gap: 6px; margin: 10px 0; }
+  .layer { border-radius: 6px; padding: 8px 16px; font-size: 0.82rem; font-weight: 600; text-align: center; }
+
+  /* ── scrollbar ── */
+  .slide::-webkit-scrollbar { width: 4px; }
+  .slide::-webkit-scrollbar-track { background: transparent; }
+  .slide::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- NAV BAR -->
+<div id="navbar">
+  <div class="brand">🛡️ CIBER<span>SEG</span> · BLOQUE III</div>
+  <div class="session-tabs">
+    <button onclick="goToSession(0)" id="tab-0">S11</button>
+    <button onclick="goToSession(1)" id="tab-1">S12</button>
+    <button onclick="goToSession(2)" id="tab-2">S13</button>
+    <button onclick="goToSession(3)" id="tab-3">S14</button>
+    <button onclick="goToSession(4)" id="tab-4">S15</button>
+  </div>
+  <div id="slide-counter">1 / 60</div>
+</div>
+<div id="progress-bar" style="width:1.67%"></div>
+
+<div id="slides-container">
+
+<!-- ═══════════════════════════════════════════════
+     SLIDE 1 — PORTADA BLOQUE III
+═══════════════════════════════════════════════ -->
+<div class="slide active cover" data-session="0">
+  <div class="block-badge">BLOQUE III · SESIONES 11 – 15</div>
+  <h1>Operaciones de Seguridad,<br>SIEM y Respuesta a Incidentes</h1>
+  <p class="subtitle">Ciberseguridad Empresarial · Seminario de Titulación · 30 horas</p>
+  <div class="sessions-grid">
+    <div class="sess-card"><div class="num">SESIÓN 11</div><div class="name">SOC y SIEM</div></div>
+    <div class="sess-card"><div class="num">SESIÓN 12</div><div class="name">Threat Intelligence</div></div>
+    <div class="sess-card"><div class="num">SESIÓN 13</div><div class="name">Respuesta a Incidentes</div></div>
+    <div class="sess-card"><div class="num">SESIÓN 14</div><div class="name">Cómputo Forense</div></div>
+    <div class="sess-card"><div class="num">SESIÓN 15</div><div class="name">Concientización y Cultura</div></div>
+  </div>
+  <p style="margin-top:24px; color:var(--muted); font-size:0.82rem;">Usa ← → o barra espaciadora para navegar · Click en S11–S15 para ir a cada sesión</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SESIÓN 11 — SOC Y SIEM
+═══════════════════════════════════════════════ -->
+<div class="slide" data-session="0">
+  <h2>Sesión 11 <span style="color:var(--cyan)">— Centro de Operaciones de Seguridad (SOC) y SIEM</span></h2>
+  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
+    <p>El <strong>SOC es el 911 de la ciberseguridad</strong>. Como una central de emergencias que recibe llamadas 24/7, el SOC monitorea miles de eventos simultáneos, decide cuáles son emergencias reales y coordina la respuesta. Sin él, los incidentes pasan desapercibidos hasta que el daño ya es catastrófico.</p>
+  </div>
+  <div class="card-grid cols-3" style="margin-top:14px;">
+    <div class="card cyan"><h3>¿Qué es un SOC?</h3>
+      <p>Unidad funcional responsable de <strong>monitorear, detectar, analizar y responder</strong> a incidentes de seguridad en tiempo real, 24×7×365.</p>
+    </div>
+    <div class="card orange"><h3>Modelos Operativos</h3>
+      <ul><li>Interno (in-house)</li><li>Outsourcing a MSSP</li><li>Híbrido (coordinado)</li><li>Virtual/cloud-native</li></ul>
+    </div>
+    <div class="card purple"><h3>SIEM como Cerebro</h3>
+      <p><strong>Security Information &amp; Event Management</strong>: agrega, correlaciona y analiza logs de toda la organización en tiempo real.</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-session="0">
+  <h2>Estructura del SOC: Niveles y Roles</h2>
+  <div class="card-grid cols-2">
+    <div>
+      <div class="card red" style="margin-bottom:12px;">
+        <h3>Tier 1 — Analista de Alerta</h3>
+        <ul><li>Triaje de alertas del SIEM</li><li>Clasificación: verdadero/falso positivo</li><li>Escalamiento a Tier 2</li><li>Turno 24×7, alta rotación</li></ul>
+      </div>
+      <div class="card orange">
+        <h3>Tier 2 — Analista Senior</h3>
+        <ul><li>Investigación profunda de incidentes</li><li>Correlación de eventos complejos</li><li>Threat hunting activo</li><li>Tuning de reglas SIEM</li></ul>
+      </div>
+    </div>
+    <div>
+      <div class="card purple" style="margin-bottom:12px;">
+        <h3>Tier 3 — Especialista / Threat Hunter</h3>
+        <ul><li>Análisis forense avanzado</li><li>Inteligencia de amenazas</li><li>Desarrollo de detecciones</li><li>Red team / adversarial simulation</li></ul>
+      </div>
+      <div class="card cyan">
+        <h3>SOC Manager</h3>
+        <ul><li>Gestión del equipo y turnos</li><li>KPIs y reportes ejecutivos</li><li>Relación con CISO</li><li>Mejora continua del proceso</li></ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-session="0">
+  <h2>Arquitectura SIEM: ¿Cómo Funciona?</h2>
+  <div class="layer-diagram">
+    <div class="layer" style="background:rgba(255,51,102,0.15);border:1px solid var(--red);color:var(--red);">⬆ FUENTES: Firewalls · IDS/IPS · Active Directory · Servidores · Endpoints · Cloud · Apps</div>
+    <div class="layer" style="background:rgba(255,140,66,0.12);border:1px solid var(--orange);color:var(--orange);">📥 COLECCIÓN: Agents / Syslog / API / Connectors — Normalización de logs (CEF/LEEF)</div>
+    <div class="layer" style="background:rgba(0,212,255,0.12);border:1px solid var(--cyan);color:var(--cyan);">🔍 MOTOR CORRELACIÓN: Reglas · Baselining · ML Anomalías · Threat Intel Feeds</div>
+    <div class="layer" style="background:rgba(0,255,136,0.12);border:1px solid var(--green);color:var(--green);">🚨 ALERTAS &amp; CASOS: Priorización · Ticketing · Workflow de Respuesta (SOAR)</div>
+    <div class="layer" style="background:rgba(187,134,252,0.12);border:1px solid var(--purple);color:var(--purple);">📊 REPORTES: Dashboards SOC · Compliance · Métricas Ejecutivas · Retención legal</div>
+  </div>
+  <div class="box box-dato"><div class="box-title">💡 DATO CLAVE</div>
+    <p>Un SIEM empresarial puede procesar <strong>100,000+ eventos por segundo (EPS)</strong>. Sin reglas de correlación bien diseñadas, genera miles de falsos positivos que paralizan al equipo. El tuning es trabajo continuo.</p>
+  </div>
+</div>
+
+<div class="slide" data-session="0">
+  <h2>Plataformas SIEM Líderes</h2>
+  <table>
+    <tr><th>SIEM</th><th>Fortaleza</th><th>Uso Típico</th><th>Costo</th></tr>
+    <tr><td><strong>Splunk Enterprise</strong></td><td>Búsqueda ultrarrápida, ecosistema amplio</td><td>Grandes empresas, banca</td><td>$$$$</td></tr>
+    <tr><td><strong>Microsoft Sentinel</strong></td><td>Nativo cloud Azure, IA integrada</td><td>Empresas Microsoft-heavy</td><td>$$$</td></tr>
+    <tr><td><strong>AlienVault (AT&amp;T)</strong></td><td>SIEM + IDS + asset discovery todo-en-uno</td><td>PYMES y mediana empresa</td><td>$$</td></tr>
+    <tr><td><strong>Security Onion</strong></td><td>Open source, IDS+SIEM integrado</td><td>Laboratorio / gobierno</td><td>Gratis</td></tr>
+    <tr><td><strong>IBM QRadar</strong></td><td>Correlación avanzada, UBA</td><td>Banca, telecoms</td><td>$$$$</td></tr>
+    <tr><td><strong>Elastic SIEM</strong></td><td>Open source, escalable</td><td>DevSecOps, startups</td><td>Freemium</td></tr>
+  </table>
+  <div class="box box-lab" style="margin-top:12px;"><div class="box-title">🔬 LABORATORIO</div>
+    <p><strong>AlienVault SIEM (práctica)</strong>: Configurar agentes en máquinas virtuales → Generar eventos (nmap scan, login fallido) → Crear regla de correlación → Analizar alerta generada. Observar cadena completa desde log hasta alerta.</p>
+  </div>
+</div>
+
+<div class="slide" data-session="0">
+  <h2>SOAR: La Automatización del SOC</h2>
+  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
+    <p>Si el SIEM es el 911, el <strong>SOAR es el despachador automático</strong>: recibe la alerta, clasifica la emergencia, manda automáticamente a la unidad correcta y registra todo sin que un humano tenga que hacer click en 20 pantallas distintas.</p>
+  </div>
+  <div class="card-grid cols-2" style="margin-top:14px;">
+    <div class="card cyan">
+      <h3>SOAR = Orchestration + Automation + Response</h3>
+      <ul>
+        <li><strong>Playbooks</strong>: flujos automatizados para casos repetitivos</li>
+        <li><strong>Integración</strong>: SIEM + ticketing + firewall + EDR + correo</li>
+        <li><strong>Enriquecimiento</strong>: IP lookup, hash check, user context</li>
+        <li><strong>Reducción MTTR</strong>: de horas a minutos</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h3>KPIs del SOC que el CISO reporta</h3>
+      <ul>
+        <li><strong>MTTD</strong>: Mean Time to Detect</li>
+        <li><strong>MTTR</strong>: Mean Time to Respond</li>
+        <li><strong>MTTC</strong>: Mean Time to Contain</li>
+        <li>Tasa de falsos positivos (%)</li>
+        <li>Alertas procesadas / turnos</li>
+        <li>Incidentes críticos por mes</li>
+      </ul>
+    </div>
+  </div>
+  <div class="stat-row">
+    <div class="stat"><div class="num" style="color:var(--red)">280</div><div class="lbl">Días promedio para detectar brecha (IBM 2023)</div></div>
+    <div class="stat"><div class="num" style="color:var(--orange)">91</div><div class="lbl">Días promedio para contener</div></div>
+    <div class="stat"><div class="num" style="color:var(--green)">4.45M</div><div class="lbl">USD costo promedio brecha (IBM 2023)</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SESIÓN 12 — THREAT INTELLIGENCE
+═══════════════════════════════════════════════ -->
+<div class="slide" data-session="1">
+  <h2>Sesión 12 <span style="color:var(--orange)">— Inteligencia sobre Amenazas (Threat Intelligence)</span></h2>
+  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
+    <p>La <strong>threat intelligence es el área de investigación criminal del mundo digital</strong>. No basta con instalar candados (controles); necesitas saber <em>quién</em> quiere entrar a tu casa, <em>qué herramientas</em> usa y <em>cuándo</em> suele atacar. Con esa información, puedes anticiparte en lugar de solo reaccionar.</p>
+  </div>
+  <div class="card-grid cols-3" style="margin-top:14px;">
+    <div class="card cyan"><h3>Inteligencia Estratégica</h3><p>Para la dirección: tendencias, actores de amenaza, riesgo sectorial. Orienta inversiones.</p></div>
+    <div class="card orange"><h3>Inteligencia Táctica</h3><p>Para el equipo técnico: TTPs (Tactics, Techniques &amp; Procedures) de grupos específicos.</p></div>
+    <div class="card green"><h3>Inteligencia Operacional</h3><p>Para el SOC: IoCs activos (IPs, hashes, dominios) para bloquear ahora mismo.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-session="1">
+  <h2>Ciclo de Vida de la Inteligencia sobre Amenazas</h2>
+  <ul class="timeline">
+    <li><div class="step cyan">1</div><div class="content"><h4>Planeación y Dirección</h4><p>Definir Key Intelligence Questions (KIQ): ¿qué necesita saber el negocio? ¿qué actores nos amenazan?</p></div></li>
+    <li><div class="step orange">2</div><div class="content"><h4>Recolección</h4><p>OSINT (open source), HUMINT, threat feeds comerciales, comunidades ISAC/ISAO</p></div></li>
+    <li><div class="step purple">3</div><div class="content"><h4>Procesamiento</h4><p>Normalizar, filtrar, desduplicar y formatear la información (STIX/TAXII standard)</p></div></li>
+    <li><div class="step green">4</div><div class="content"><h4>Análisis</h4><p>Contextualizar IoCs, mapear al framework MITRE ATT&CK, evaluar confianza y relevancia</p></div></li>
+    <li><div class="step cyan">5</div><div class="content"><h4>Diseminación</h4><p>Distribuir al SOC, SIEM, firewalls, stakeholders. Formato adecuado por audiencia</p></div></li>
+    <li><div class="step orange">6</div><div class="content"><h4>Retroalimentación</h4><p>¿Fue útil la inteligencia? Ajustar KIQs y fuentes según efectividad</p></div></li>
+  </ul>
+</div>
+
+<div class="slide" data-session="1">
+  <h2>MITRE ATT&CK: El Mapa del Atacante</h2>
+  <div class="box box-dato"><div class="box-title">💡 DATO CLAVE</div>
+    <p><strong>MITRE ATT&amp;CK</strong> es una base de conocimiento de tácticas y técnicas de ataque documentadas a partir de incidentes reales. No es un framework de defensa, sino un <em>léxico compartido</em> para hablar del comportamiento del adversario. Permite mapear ataques, priorizar defensas y medir cobertura de detección.</p>
+  </div>
+  <table style="margin-top:12px;">
+    <tr><th>Táctica ATT&CK</th><th>¿Qué busca el atacante?</th><th>Ejemplo técnico</th></tr>
+    <tr><td>Reconocimiento</td><td>Información del objetivo</td><td>Shodan, LinkedIn, WHOIS</td></tr>
+    <tr><td>Acceso inicial</td><td>Primer punto de entrada</td><td>Spear phishing, exploit público</td></tr>
+    <tr><td>Ejecución</td><td>Correr código malicioso</td><td>PowerShell, macro Word</td></tr>
+    <tr><td>Persistencia</td><td>Mantener acceso tras reinicio</td><td>Registry run key, scheduled task</td></tr>
+    <tr><td>Escalada de privilegios</td><td>Obtener admin/root</td><td>Token impersonation, kernel exploit</td></tr>
+    <tr><td>Movimiento lateral</td><td>Expandirse en la red</td><td>Pass-the-hash, RDP, SMB</td></tr>
+    <tr><td>Exfiltración</td><td>Sacar datos</td><td>DNS tunneling, HTTPS a C2</td></tr>
+  </table>
+</div>
+
+<div class="slide" data-session="1">
+  <h2>Fuentes OSINT y Herramientas de Threat Intel</h2>
+  <div class="card-grid cols-2">
+    <div class="card cyan">
+      <h3>Fuentes OSINT Clave</h3>
+      <ul>
+        <li><strong>Shodan</strong>: buscador de dispositivos expuestos en internet</li>
+        <li><strong>VirusTotal</strong>: análisis de hashes, IPs, dominios</li>
+        <li><strong>Have I Been Pwned</strong>: credenciales comprometidas</li>
+        <li><strong>Pastebin / Dark Web</strong>: datos filtrados, credenciales</li>
+        <li><strong>CISA / US-CERT advisories</strong>: alertas oficiales</li>
+        <li><strong>AlienVault OTX</strong>: threat feeds comunitarios</li>
+      </ul>
+    </div>
+    <div class="card orange">
+      <h3>Herramientas de Análisis</h3>
+      <ul>
+        <li><strong>Maltego</strong>: visualización de relaciones (personas, IPs, dominios, redes sociales)</li>
+        <li><strong>theHarvester</strong>: recolección automatizada (emails, dominios, IPs)</li>
+        <li><strong>Recon-ng</strong>: framework OSINT modular</li>
+        <li><strong>MISP</strong>: plataforma compartición de IoCs</li>
+        <li><strong>OpenCTI</strong>: plataforma TI open source</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box box-caso"><div class="box-title">📰 CASO REAL — Grupo Lazarus (Corea del Norte)</div>
+    <p>El grupo APT Lazarus ha robado más de <strong>$1,200 millones en criptomonedas</strong> desde 2017. Su TTP incluye spear phishing a empleados de exchanges, uso de LinkedIn para targeting y exfiltración a través de mixers. Las empresas que consumen TI sobre Lazarus bloquean proactivamente sus IoCs.</p>
+  </div>
+</div>
+
+<div class="slide" data-session="1">
+  <h2>Threat Hunting: Cazar Antes de que el Atacante Actúe</h2>
+  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
+    <p>El monitoreo reactivo espera que la alarma suene. El <strong>threat hunting es el cazador que rastrean huellas en el bosque</strong> antes de que el depredador llegue al campamento. Busca activamente señales de compromiso que los sistemas automáticos no detectaron.</p>
+  </div>
+  <div class="card-grid cols-3" style="margin-top:14px;">
+    <div class="card purple">
+      <h3>Hipótesis-driven</h3>
+      <p>"Dado que el sector automotriz tiene amenazas de ransomware, ¿hay comportamiento de cifrado masivo en nuestros endpoints?"</p>
+    </div>
+    <div class="card green">
+      <h3>IoC-driven</h3>
+      <p>Tomar IoCs de un reporte TI reciente y buscar retroactivamente en logs del SIEM si ya existía esa amenaza.</p>
+    </div>
+    <div class="card cyan">
+      <h3>TTP-driven</h3>
+      <p>Mapear una técnica MITRE ATT&CK (ej. T1059 - Scripting) y buscar uso anómalo de PowerShell en la red.</p>
+    </div>
+  </div>
+  <div class="box box-quiz" onclick="this.classList.toggle('revealed')"><div class="box-title">❓ QUIZ — Click para ver respuesta</div>
+    <p>¿Cuál es la diferencia entre un <strong>IoC</strong> (Indicator of Compromise) y un <strong>IoA</strong> (Indicator of Attack)?</p>
+    <div class="quiz-answer">Un <strong>IoC</strong> evidencia que el compromiso YA ocurrió (hash de malware, IP de C2, archivo creado). Un <strong>IoA</strong> indica que el ataque ESTÁ EN PROGRESO (comportamiento anómalo: proceso creando subprocesos sospechosos, volumen inusual de requests). Los IoA permiten detección más temprana.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SESIÓN 13 — RESPUESTA A INCIDENTES
+═══════════════════════════════════════════════ -->
+<div class="slide" data-session="2">
+  <h2>Sesión 13 <span style="color:var(--green)">— Respuesta a Incidentes de Ciberseguridad</span></h2>
+  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
+    <p>Responder a un incidente sin un plan es como <strong>tratar de apagar un incendio decidiendo sobre la marcha quién agarra la manguera</strong>. El CSIRT es el cuerpo de bomberos entrenado: cada persona sabe su rol, se comunica en un código compartido y ejecuta el plan bajo presión extrema.</p>
+  </div>
+  <div class="card-grid cols-2" style="margin-top:14px;">
+    <div class="card cyan">
+      <h3>Estándares de Referencia</h3>
+      <ul>
+        <li><strong>NIST SP 800-61 Rev. 2</strong>: guía completa de manejo de incidentes</li>
+        <li><strong>ISO/IEC 27035</strong>: gestión de incidentes de seguridad</li>
+        <li><strong>SANS IH Process</strong>: 6 fases prácticas ampliamente adoptadas</li>
+        <li><strong>CISA CIRCIA</strong>: requisitos de reporte en sectores críticos (EE.UU.)</li>
+      </ul>
+    </div>
+    <div class="card orange">
+      <h3>¿Qué es un Incidente?</h3>
+      <p>NIST define incidente como: "una violación o amenaza inminente de violación de políticas de seguridad, de uso aceptable o de prácticas de seguridad estándar."</p>
+      <p style="margin-top:8px;">Ejemplos: ransomware activo, brecha de datos, acceso no autorizado, DDoS, insider theft.</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-session="2">
+  <h2>Las 6 Fases del Proceso de Respuesta a Incidentes</h2>
+  <ul class="timeline">
+    <li><div class="step cyan">1</div><div class="content"><h4>Preparación</h4><p>Políticas, herramientas, equipo CSIRT formado, runbooks listos, ejercicios previos, contactos de autoridades</p></div></li>
+    <li><div class="step green">2</div><div class="content"><h4>Detección &amp; Análisis</h4><p>Alerta SIEM / usuario / externo → triage → clasificación de severidad → apertura de caso</p></div></li>
+    <li><div class="step orange">3</div><div class="content"><h4>Contención</h4><p><strong>Corto plazo</strong>: aislar sistema afectado. <strong>Largo plazo</strong>: eliminar vector, recuperar sistema limpio. Objetivo: evitar propagación.</p></div></li>
+    <li><div class="step red">4</div><div class="content"><h4>Erradicación</h4><p>Eliminar malware, cerrar puertas traseras, reparar vulnerabilidad explotada, cambiar credenciales comprometidas</p></div></li>
+    <li><div class="step purple">5</div><div class="content"><h4>Recuperación</h4><p>Restaurar sistemas, validar integridad, monitorear por recurrencia durante período de observación</p></div></li>
+    <li><div class="step cyan">6</div><div class="content"><h4>Lecciones Aprendidas</h4><p>Post-mortem (sin culpas): cronología, causa raíz, qué falló, mejoras al proceso, actualizar runbook</p></div></li>
+  </ul>
+</div>
+
+<div class="slide" data-session="2">
+  <h2>CSIRT: Equipo de Respuesta a Incidentes</h2>
+  <div class="card-grid cols-3">
+    <div class="card cyan">
+      <h3>Lider de Incidente</h3>
+      <p>Coordina todo el proceso, toma decisiones críticas bajo presión, comunica con la dirección y stakeholders externos.</p>
+    </div>
+    <div class="card orange">
+      <h3>Analista Técnico</h3>
+      <p>Investiga el vector de ataque, analiza logs, contiene el sistema comprometido, preserva evidencia.</p>
+    </div>
+    <div class="card green">
+      <h3>Comunicaciones</h3>
+      <p>Gestiona mensajes internos y externos: empleados, clientes, prensa, autoridades regulatorias, abogados.</p>
+    </div>
+    <div class="card purple">
+      <h3>Legal / Compliance</h3>
+      <p>Evalúa obligaciones de notificación (LFPDPPP: 72h), documentación para posibles litigios, relación con autoridades.</p>
+    </div>
+    <div class="card red">
+      <h3>IT / Operaciones</h3>
+      <p>Ejecuta la contención técnica: aisla redes, desconecta sistemas, activa backups, restaura servicios.</p>
+    </div>
+    <div class="card cyan">
+      <h3>Dirección General</h3>
+      <p>Autoriza decisiones de alto impacto: apagar producción, notificar autoridades, contratar forenses externos.</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-session="2">
+  <h2>Triage de Incidentes: Clasificación y Priorización</h2>
+  <table>
+    <tr><th>Categoría</th><th>Criterios</th><th>Tiempo de respuesta</th><th>Ejemplo</th></tr>
+    <tr><td><span class="pill pill-red">CRÍTICO</span></td><td>Datos sensibles exfiltrados, producción comprometida, ransom activo</td><td>&lt; 15 minutos</td><td>Ransomware en planta</td></tr>
+    <tr><td><span class="pill pill-orange">ALTO</span></td><td>Sistemas críticos afectados, credenciales admin comprometidas</td><td>&lt; 1 hora</td><td>Acceso no autorizado a ERP</td></tr>
+    <tr><td><span class="pill pill-cyan">MEDIO</span></td><td>Sistema no crítico comprometido, malware en endpoint aislado</td><td>&lt; 4 horas</td><td>Virus en equipo de usuario</td></tr>
+    <tr><td><span class="pill pill-green">BAJO</span></td><td>Evento sospechoso sin confirmación, policy violation</td><td>&lt; 24 horas</td><td>Login fuera de horario</td></tr>
+  </table>
+  <div class="box box-caso" style="margin-top:12px;"><div class="box-title">📰 CASO REAL — Ransomware en PEMEX (2019)</div>
+    <p>En noviembre 2019, PEMEX sufrió un ataque de ransomware DoppelPaymer que cifró equipos administrativos. Se exigió rescate de $4.9M USD. La respuesta incluyó aislamiento de redes, trabajo manual y desconexión de sistemas no críticos por días. El manejo de la crisis fue criticado por la falta de comunicación oficial.</p>
+  </div>
+</div>
+
+<div class="slide" data-session="2">
+  <h2>Tabletop Exercise: El Simulacro que Salva Vidas Digitales</h2>
+  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
+    <p>Un <strong>tabletop exercise es el simulacro de evacuación de la ciberseguridad</strong>. Nadie espera a que haya un incendio real para saber dónde están las salidas. Se practica el plan, se descubren los huecos y se corrigen <em>antes</em> de la crisis real.</p>
+  </div>
+  <div class="card-grid cols-2" style="margin-top:14px;">
+    <div class="card green">
+      <h3>Tipos de Ejercicios</h3>
+      <ul>
+        <li><strong>Tabletop</strong>: discusión de escenario en sala, sin TI real</li>
+        <li><strong>Walkthrough</strong>: cada equipo revisa su runbook paso a paso</li>
+        <li><strong>Functional</strong>: activa procesos pero no sistemas reales</li>
+        <li><strong>Full interruption</strong>: simula apagado real de producción</li>
+        <li><strong>Red team exercise</strong>: ataque real ejecutado por equipo externo</li>
+      </ul>
+    </div>
+    <div class="card orange">
+      <h3>Práctica: Ransomware en Planta Industrial</h3>
+      <p><strong>Escenario</strong>: Son las 02:00. El operador de turno nota que las HMIs están mostrando mensajes de ransomware. Los PLCs siguen funcionando. El SIEM muestra movimiento lateral masivo en la red OT.</p>
+      <p style="margin-top:8px;">Preguntas clave: ¿Desconectas los PLCs? ¿A quién llamas primero? ¿Pagas el rescate?</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SESIÓN 14 — CÓMPUTO FORENSE
+═══════════════════════════════════════════════ -->
+<div class="slide" data-session="3">
+  <h2>Sesión 14 <span style="color:var(--purple)">— Cómputo Forense Digital</span></h2>
+  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
+    <p>El forense digital es el <strong>detective de la escena del crimen digital</strong>. Como un CSI, no puede tocar nada sin guantes (cadena de custodia), necesita preservar la escena antes de analizarla y debe poder presentar en juicio lo que encontró. Un error de procedimiento invalida toda la evidencia.</p>
+  </div>
+  <div class="card-grid cols-3" style="margin-top:14px;">
+    <div class="card cyan"><h3>Principio de Locard</h3><p>"Todo contacto deja una huella." El atacante siempre deja rastros en logs, memoria, registro, archivos temporales. El forense los busca.</p></div>
+    <div class="card orange"><h3>Inmutabilidad</h3><p>NUNCA analices la evidencia original. Trabaja siempre sobre <strong>imágenes forenses</strong> (copia bit-a-bit verificada con hash MD5/SHA256).</p></div>
+    <div class="card green"><h3>Admisibilidad Legal</h3><p>La evidencia recolectada sin cadena de custodia no es admisible en juicio. El proceso importa tanto como los hallazgos.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-session="3">
+  <h2>Proceso Forense Digital: Las 4 Fases</h2>
+  <ul class="timeline">
+    <li><div class="step cyan">1</div><div class="content">
+      <h4>Identificación</h4>
+      <p>Localizar y documentar todas las fuentes potenciales de evidencia: disco duro, RAM, logs de red, correos, dispositivos móviles, USBs, cloud storage, backups.</p>
+    </div></li>
+    <li><div class="step orange">2</div><div class="content">
+      <h4>Adquisición (Imagen Forense)</h4>
+      <p>Crear copia bit-a-bit del medio usando FTK Imager o dd. Verificar hash SHA256 antes y después. Documentar número de serie, hora, quien realizó la copia.</p>
+    </div></li>
+    <li><div class="step purple">3</div><div class="content">
+      <h4>Análisis</h4>
+      <p>Examinar la imagen en Autopsy: archivos eliminados, historial web, artifacts de Windows (prefetch, LNK, registry), logs, metadatos EXIF, timeline de actividad.</p>
+    </div></li>
+    <li><div class="step green">4</div><div class="content">
+      <h4>Presentación</h4>
+      <p>Reporte forense: metodología, hallazgos, evidencia, conclusiones. Lenguaje preciso, neutral. Listo para auditoría técnica y para el juez.</p>
+    </div></li>
+  </ul>
+</div>
+
+<div class="slide" data-session="3">
+  <h2>Análisis de Artefactos Forenses</h2>
+  <div class="card-grid cols-2">
+    <div class="card cyan">
+      <h3>Artefactos de Disco (Windows)</h3>
+      <ul>
+        <li><strong>Prefetch</strong>: programas ejecutados (últimas 128 ejecuciones)</li>
+        <li><strong>Registry NTUSER.DAT</strong>: historial de apertura de archivos, USB insertados</li>
+        <li><strong>LNK files</strong>: accesos recientes, rutas de red accedidas</li>
+        <li><strong>$MFT (Master File Table)</strong>: todos los archivos, incluso eliminados</li>
+        <li><strong>Browser artifacts</strong>: historial, caché, cookies, sesiones</li>
+        <li><strong>Event Logs</strong>: 4624 (login), 4688 (proceso creado), 4663 (acceso archivo)</li>
+      </ul>
+    </div>
+    <div class="card purple">
+      <h3>Análisis de Memoria RAM (Volatility)</h3>
+      <ul>
+        <li><strong>Procesos activos</strong>: detectar malware inyectado o disfrazado</li>
+        <li><strong>Conexiones de red</strong>: C2 activos, IPs de destino</li>
+        <li><strong>Credenciales en memoria</strong>: hashes NTLM, contraseñas en texto (Mimikatz)</li>
+        <li><strong>DLLs cargadas</strong>: inyección en procesos legítimos (svchost, explorer)</li>
+        <li><strong>Claves de cifrado</strong>: descifrar discos o comunicaciones</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box box-lab"><div class="box-title">🔬 LABORATORIO</div>
+    <p><strong>Autopsy + imagen de disco</strong>: Cargar imagen .dd → Timeline Analysis → Keyword Search "password" → Recover Deleted Files → documentar hallazgos. Reconstruir la actividad del atacante en la máquina comprometida.</p>
+  </div>
+</div>
+
+<div class="slide" data-session="3">
+  <h2>Marco Legal Forense en México</h2>
+  <div class="card-grid cols-2">
+    <div class="card orange">
+      <h3>Delitos Informáticos en México</h3>
+      <ul>
+        <li><strong>Art. 211 bis CPF</strong>: acceso ilícito a sistemas (hasta 2 años)</li>
+        <li><strong>Art. 211 bis 5 CPF</strong>: datos protegidos del Estado (hasta 6 años)</li>
+        <li><strong>Art. 362 CPF</strong>: sabotaje informático</li>
+        <li><strong>Art. 386 CPF</strong>: fraude electrónico</li>
+        <li><strong>LFPDPPP</strong>: violaciones a privacidad → multas INAI</li>
+        <li><strong>CNBV</strong>: sanciones en sector financiero</li>
+      </ul>
+    </div>
+    <div class="card red">
+      <h3>Consideraciones Legales Clave</h3>
+      <ul>
+        <li>La evidencia sin cadena de custodia es inadmisible</li>
+        <li>Perito informático certificado es necesario para peritar en juicio</li>
+        <li>El denunciante debe ser la empresa, no el área de TI</li>
+        <li>Conservar logs mínimo 6 meses (CNBV: 5 años en financiero)</li>
+        <li>Notificar al INAI en &lt;72h si hay datos personales comprometidos</li>
+        <li>Coordinación con la FGJI (antes PGJ) en CDMX o Fiscalía Federal</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box box-dato"><div class="box-title">💡 DATO CLAVE</div>
+    <p>México ocupa el <strong>lugar 7 en el mundo en ciberataques recibidos</strong> (ESET 2023). La UGCI (Unidad de Guardia Cibernética e Inteligencia) de la GN tiene competencia en delitos informáticos federales. La coordinación oportuna con autoridades preserva el derecho de acción legal.</p>
+  </div>
+</div>
+
+<div class="slide" data-session="3">
+  <h2>Herramientas Forenses Esenciales</h2>
+  <table>
+    <tr><th>Herramienta</th><th>Función principal</th><th>Tipo</th></tr>
+    <tr><td><strong>Autopsy</strong></td><td>GUI forense completa: timeline, keyword, recovery</td><td>Open source</td></tr>
+    <tr><td><strong>FTK Imager</strong></td><td>Adquisición y previsualización de imágenes forenses</td><td>Gratis (limitado)</td></tr>
+    <tr><td><strong>Volatility</strong></td><td>Análisis de volcados de memoria RAM</td><td>Open source</td></tr>
+    <tr><td><strong>Sleuth Kit</strong></td><td>Framework CLI para análisis de sistemas de archivos</td><td>Open source</td></tr>
+    <tr><td><strong>Wireshark</strong></td><td>Análisis de capturas de tráfico de red (.pcap)</td><td>Open source</td></tr>
+    <tr><td><strong>Cellebrite UFED</strong></td><td>Extracción forense de dispositivos móviles</td><td>Comercial</td></tr>
+    <tr><td><strong>EnCase</strong></td><td>Suite forense corporativa (estándar judicial)</td><td>Comercial</td></tr>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SESIÓN 15 — CONCIENTIZACIÓN Y CULTURA
+═══════════════════════════════════════════════ -->
+<div class="slide" data-session="4">
+  <h2>Sesión 15 <span style="color:var(--yellow)">— Concientización, Cultura de Seguridad e Ingeniería Social</span></h2>
+  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
+    <p>Puedes construir la fortaleza más segura del mundo —muros de acero, cámaras, guardias— pero si el guardia le abre la puerta al atacante porque este llegó disfrazado de técnico de mantenimiento, todo fue en vano. El <strong>factor humano es el único control que no se puede parchear con software</strong>. Solo se actualiza con educación.</p>
+  </div>
+  <div class="stat-row" style="margin-top:20px;">
+    <div class="stat"><div class="num" style="color:var(--red)">82%</div><div class="lbl">de brechas involucran el factor humano (Verizon DBIR 2023)</div></div>
+    <div class="stat"><div class="num" style="color:var(--orange)">3.4B</div><div class="lbl">emails de phishing enviados diariamente</div></div>
+    <div class="stat"><div class="num" style="color:var(--purple)">97%</div><div class="lbl">de ataques requieren que el usuario "haga click"</div></div>
+  </div>
+</div>
+
+<div class="slide" data-session="4">
+  <h2>Ingeniería Social: El Arte del Engaño</h2>
+  <div class="card-grid cols-2">
+    <div>
+      <div class="card red" style="margin-bottom:12px;">
+        <h3>Phishing</h3>
+        <p>Email masivo falso imitando banco, servicio o empresa. Objetivo: robar credenciales o instalar malware.</p>
+      </div>
+      <div class="card orange" style="margin-bottom:12px;">
+        <h3>Spear Phishing</h3>
+        <p>Dirigido a persona específica, altamente personalizado. El atacante investigó a la víctima en LinkedIn/redes sociales. Tasa de éxito mucho mayor.</p>
+      </div>
+      <div class="card purple">
+        <h3>Whaling</h3>
+        <p>Spear phishing dirigido a C-level (CEO, CFO). Objetivo: Business Email Compromise (BEC) para transferencias fraudulentas de millones.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card cyan" style="margin-bottom:12px;">
+        <h3>Vishing</h3>
+        <p>Ingeniería social por teléfono. El atacante finge ser soporte de TI, banco o auditor. Solicita contraseñas "para resetear tu acceso".</p>
+      </div>
+      <div class="card green" style="margin-bottom:12px;">
+        <h3>Baiting</h3>
+        <p>USB infectado "encontrado" en el estacionamiento. La curiosidad humana es el vector. El 60% de USBs abandonados son conectados por empleados.</p>
+      </div>
+      <div class="card red">
+        <h3>Pretexting</h3>
+        <p>Crear una historia creíble para obtener información: "Soy del equipo de auditoría interna, necesito acceso a la base de datos de clientes para el informe."</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-session="4">
+  <h2>Ransomware: La Pandemia Digital</h2>
+  <div class="box box-caso"><div class="box-title">📰 CASO REAL — WannaCry (2017)</div>
+    <p>WannaCry infectó <strong>230,000 computadoras en 150 países en 24 horas</strong>. Usó EternalBlue (exploit NSA filtrado) + DoublePulsar backdoor. Hospitales del NHS UK suspendieron cirugías. Renault paró líneas de producción. Telefónica sacó a empleados de sus oficinas. Daño total: +$4B USD. La lección: el parche MS17-010 llevaba 2 meses disponible y nadie lo había aplicado.</p>
+  </div>
+  <div class="card-grid cols-3" style="margin-top:14px;">
+    <div class="card red"><h3>Vector de Entrada</h3><ul><li>Phishing (70%)</li><li>RDP expuesto</li><li>Vulnerabilidades sin parchar</li><li>Credenciales robadas</li></ul></div>
+    <div class="card orange"><h3>Modo de Operación</h3><ul><li>Reconocimiento interno</li><li>Movimiento lateral</li><li>Exfiltración de datos</li><li>Cifrado masivo</li><li>Nota de rescate</li></ul></div>
+    <div class="card green"><h3>Protección Efectiva</h3><ul><li>Backups offline (3-2-1)</li><li>Parches al día</li><li>Segmentación de red</li><li>EDR + behavior analysis</li><li>Principio mínimo privilegio</li></ul></div>
+  </div>
+</div>
+
+<div class="slide" data-session="4">
+  <h2>Diseño de Programa de Concientización</h2>
+  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
+    <p>Un programa de awareness es como <strong>hacer marketing interno</strong>. No basta con mandar un correo anual diciendo "no hagas click en links sospechosos". Necesitas segmentar la audiencia, diseñar mensajes atractivos, usar canales diversos y medir el cambio de comportamiento, igual que una campaña publicitaria.</p>
+  </div>
+  <div class="card-grid cols-2" style="margin-top:14px;">
+    <div class="card purple">
+      <h3>Metodología SARA (Simplificada)</h3>
+      <ul>
+        <li><strong>Segmentar</strong>: recepcionistas ≠ ingenieros ≠ directivos. Riesgo y lenguaje distinto.</li>
+        <li><strong>Atacar</strong>: phishing simulado → mide vulnerabilidad actual</li>
+        <li><strong>Remediar</strong>: capacitación dirigida a quienes fallaron</li>
+        <li><strong>Auditar</strong>: repite phishing simulado → mide mejora</li>
+      </ul>
+    </div>
+    <div class="card cyan">
+      <h3>Canales Efectivos</h3>
+      <ul>
+        <li>Phishing simulado (KnowBe4, Proofpoint)</li>
+        <li>Microlearning: videos de 3 min mensualmente</li>
+        <li>Screensavers y posters con mensajes clave</li>
+        <li>Gamificación: puntos por reportar incidentes</li>
+        <li>Inducción de nuevos empleados</li>
+        <li>Boletín mensual "Amenaza del mes"</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-session="4">
+  <h2>Métricas del Programa de Concientización</h2>
+  <table>
+    <tr><th>Métrica</th><th>Cómo medirla</th><th>Meta recomendada</th></tr>
+    <tr><td>Tasa de click en phishing simulado</td><td>Campañas periódicas automatizadas</td><td>Reducir a &lt; 5% anual</td></tr>
+    <tr><td>Tasa de reporte de phishing real</td><td>Botón "Reportar phishing" en correo</td><td>Aumentar cada trimestre</td></tr>
+    <tr><td>% empleados capacitados</td><td>LMS (Learning Management System)</td><td>&gt; 95% completaron módulo anual</td></tr>
+    <tr><td>Incidentes por factor humano</td><td>Registro del SIEM / CSIRT</td><td>Reducción YoY</td></tr>
+    <tr><td>Tiempo de reporte de incidente</td><td>Tickets del help desk de seguridad</td><td>&lt; 30 minutos desde detección</td></tr>
+  </table>
+  <div class="box box-quiz" onclick="this.classList.toggle('revealed')" style="margin-top:14px;"><div class="box-title">❓ QUIZ FINAL — Click para ver respuesta</div>
+    <p>Tu empresa recibe un correo del "CEO" a las 11pm pidiendo urgentemente transferir $50,000 USD a una cuenta nueva porque "hay una auditoría mañana". ¿Qué tipo de ataque es este y cómo lo detectas?</p>
+    <div class="quiz-answer"><strong>Business Email Compromise (BEC) / Whaling</strong>. Señales de alerta: urgencia artificial, fuera de horario, cuenta nueva, evita proceso normal. Defensa: verificación por llamada directa al CEO (nunca por correo), política de doble autorización para transferencias, filtros anti-spoofing (DMARC/DKIM/SPF).</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SLIDE CIERRE BLOQUE III
+═══════════════════════════════════════════════ -->
+<div class="slide cover" data-session="4">
+  <div class="block-badge">BLOQUE III — CIERRE</div>
+  <h1>Lo que el Atacante Teme</h1>
+  <p style="max-width:600px;margin:16px auto;color:var(--muted);">No teme a los firewalls. Teme a los equipos que detectan rápido, responden coordinadamente y aprenden de cada incidente.</p>
+  <div class="stat-row" style="justify-content:center;max-width:700px;margin:20px auto;">
+    <div class="stat"><div class="num" style="color:var(--cyan)">SOC</div><div class="lbl">Vigilia continua 24×7</div></div>
+    <div class="stat"><div class="num" style="color:var(--orange)">TI</div><div class="lbl">Anticipa, no solo reacciona</div></div>
+    <div class="stat"><div class="num" style="color:var(--green)">IR</div><div class="lbl">Minimiza impacto y recupera</div></div>
+    <div class="stat"><div class="num" style="color:var(--purple)">Forense</div><div class="lbl">Aprende y persigue</div></div>
+    <div class="stat"><div class="num" style="color:var(--yellow)">Cultura</div><div class="lbl">Elimina el vector humano</div></div>
+  </div>
+  <div class="box box-dato" style="max-width:600px;margin:0 auto;"><div class="box-title">💡 SIGUIENTE</div>
+    <p>Bloque IV: <strong>Cumplimiento, Gobierno y Continuidad del Negocio</strong> — cómo el CISO habla el idioma de la junta directiva, cumple con la ley y garantiza que la empresa sobreviva cualquier incidente.</p>
+  </div>
+  <div style="margin-top:20px;">
+    <span class="tag">ISO/IEC 27035</span><span class="tag">NIST SP 800-61</span><span class="tag">MITRE ATT&CK</span>
+    <span class="tag">Autopsy</span><span class="tag">AlienVault SIEM</span><span class="tag">SOAR</span>
+    <span class="tag">LFPDPPP</span>
+  </div>
+</div>
+
+</div><!-- /slides-container -->
+
+<!-- FOOTER -->
+<div id="footer">
+  <button onclick="prevSlide()">← Anterior</button>
+  <span class="hint">← → · Espacio</span>
+  <button onclick="nextSlide()">Siguiente →</button>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let current = 0;
+
+// Map session index → first slide index
+const sessionStarts = [];
+slides.forEach((s, i) => {
+  const sess = parseInt(s.dataset.session);
+  if (sessionStarts[sess] === undefined) sessionStarts[sess] = i;
+});
+
+function goTo(n) {
+  if (n < 0 || n >= total) return;
+  slides[current].classList.remove('active');
+  current = n;
+  slides[current].classList.add('active');
+  document.getElementById('slide-counter').textContent = (current + 1) + ' / ' + total;
+  document.getElementById('progress-bar').style.width = ((current + 1) / total * 100) + '%';
+  updateTabs();
+  slides[current].scrollTop = 0;
+}
+function nextSlide() { goTo(current + 1); }
+function prevSlide() { goTo(current - 1); }
+function goToSession(idx) { goTo(sessionStarts[idx]); }
+
+function updateTabs() {
+  const sess = parseInt(slides[current].dataset.session);
+  for (let i = 0; i < 5; i++) {
+    const btn = document.getElementById('tab-' + i);
+    if (btn) btn.classList.toggle('active', i === sess);
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+});
+
+updateTabs();
+</script>
+</body>
+</html>
