@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloque IV — Tecnología, Infraestructura y Calidad</title>
+<style>
+  :root{--bg:#03060f;--card:#0a1628;--border:#1e3a5f;--blue:#2563eb;--teal:#0891b2;--gold:#d97706;--green:#059669;--red:#dc2626;--violet:#7c3aed;--pink:#db2777;--text:#e2e8f0;--muted:#64748b;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden;height:100vh;}
+  #navbar{position:fixed;top:0;left:0;right:0;height:54px;background:rgba(3,6,15,.96);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:100;backdrop-filter:blur(8px);}
+  .brand{color:var(--violet);font-weight:700;font-size:.85rem;letter-spacing:1px;}
+  .brand span{color:var(--teal);}
+  .stabs{display:flex;gap:6px;}
+  .stabs button{background:transparent;border:1px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:20px;cursor:pointer;font-size:.75rem;transition:all .2s;}
+  .stabs button.active{background:var(--violet);border-color:var(--violet);color:#fff;font-weight:700;}
+  .stabs button:hover:not(.active){border-color:var(--violet);color:var(--violet);}
+  #ctr{color:var(--muted);font-size:.8rem;min-width:80px;text-align:right;}
+  #pb{position:fixed;top:54px;left:0;height:3px;background:linear-gradient(90deg,var(--violet),var(--teal));transition:width .3s;z-index:100;}
+  #sc{position:fixed;top:57px;left:0;right:0;bottom:40px;overflow:hidden;}
+  .slide{position:absolute;top:0;left:0;right:0;bottom:0;padding:28px 48px;display:none;overflow-y:auto;animation:fi .35s ease;}
+  .slide.active{display:flex;flex-direction:column;}
+  @keyframes fi{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+  #footer{position:fixed;bottom:0;left:0;right:0;height:40px;background:rgba(3,6,15,.96);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:16px;z-index:100;}
+  #footer button{background:var(--card);border:1px solid var(--border);color:var(--text);padding:5px 20px;border-radius:6px;cursor:pointer;font-size:.8rem;transition:all .2s;}
+  #footer button:hover{border-color:var(--violet);color:var(--violet);}
+  #footer .hint{color:var(--muted);font-size:.72rem;}
+  h1{font-size:2rem;font-weight:800;line-height:1.2;margin-bottom:10px;}
+  h2{font-size:1.45rem;font-weight:700;margin-bottom:14px;}
+  h3{font-size:1rem;font-weight:600;color:var(--violet);margin-bottom:8px;margin-top:10px;}
+  p{font-size:.9rem;line-height:1.65;margin-bottom:8px;}
+  ul,ol{padding-left:20px;font-size:.88rem;line-height:1.8;}
+  li{margin-bottom:3px;}
+  .cover{align-items:center;justify-content:center;text-align:center;}
+  .cover h1{font-size:2.2rem;background:linear-gradient(135deg,var(--violet),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;}
+  .badge{display:inline-block;border:1px solid var(--violet);border-radius:8px;padding:8px 24px;color:var(--violet);font-size:.9rem;font-weight:700;letter-spacing:2px;margin-bottom:20px;background:rgba(124,58,237,.08);}
+  .sg{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px;}
+  .sc2{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 14px;width:168px;text-align:left;}
+  .sc2 .num{color:var(--violet);font-size:.7rem;font-weight:700;}
+  .sc2 .nm{font-size:.78rem;margin-top:4px;}
+  .sub{color:var(--muted);font-size:1rem;}
+  .cg{display:grid;gap:12px;margin-top:10px;}
+  .cg.c2{grid-template-columns:1fr 1fr;}
+  .cg.c3{grid-template-columns:1fr 1fr 1fr;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:15px;position:relative;overflow:hidden;}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+  .card.b::before{background:var(--blue);}
+  .card.t::before{background:var(--teal);}
+  .card.g::before{background:var(--green);}
+  .card.o::before{background:var(--gold);}
+  .card.r::before{background:var(--red);}
+  .card.p::before{background:var(--pink);}
+  .card.v::before{background:var(--violet);}
+  .card h3{margin-top:0;font-size:.9rem;}
+  .card p,.card ul,.card li{font-size:.84rem;}
+  .box{border-radius:10px;padding:13px 17px;margin:9px 0;}
+  .bm{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.4);}
+  .bc{background:rgba(217,119,6,.08);border:1px solid rgba(217,119,6,.4);}
+  .bl{background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.4);}
+  .bd{background:rgba(8,145,178,.08);border:1px solid rgba(8,145,178,.4);}
+  .bq{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.4);cursor:pointer;}
+  .bt{font-weight:700;font-size:.8rem;margin-bottom:5px;letter-spacing:.5px;}
+  .bm .bt{color:#a78bfa;}
+  .bc .bt{color:var(--gold);}
+  .bl .bt{color:#34d399;}
+  .bd .bt{color:var(--teal);}
+  .bq .bt{color:#fbbf24;}
+  .box p,.box li{font-size:.86rem;}
+  .qa{display:none;margin-top:7px;padding-top:7px;border-top:1px solid rgba(251,191,36,.3);color:#34d399;font-size:.84rem;}
+  .bq.revealed .qa{display:block;}
+  table{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:8px;}
+  th{background:#071020;color:var(--violet);text-align:left;padding:7px 11px;border:1px solid var(--border);}
+  td{padding:6px 11px;border:1px solid var(--border);vertical-align:top;}
+  tr:nth-child(even) td{background:rgba(10,22,40,.6);}
+  .tl{list-style:none;padding:0;margin-top:8px;}
+  .tl li{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start;}
+  .tl .st{min-width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.78rem;flex-shrink:0;}
+  .tl .st.b{background:rgba(37,99,235,.15);border:2px solid var(--blue);color:var(--blue);}
+  .tl .st.t{background:rgba(8,145,178,.15);border:2px solid var(--teal);color:var(--teal);}
+  .tl .st.g{background:rgba(5,150,105,.15);border:2px solid var(--green);color:var(--green);}
+  .tl .st.o{background:rgba(217,119,6,.15);border:2px solid var(--gold);color:var(--gold);}
+  .tl .st.v{background:rgba(124,58,237,.15);border:2px solid var(--violet);color:var(--violet);}
+  .tl .content h4{font-size:.88rem;font-weight:600;}
+  .tl .content p{font-size:.82rem;color:var(--muted);margin:0;}
+  .sr{display:flex;gap:12px;flex-wrap:wrap;margin:10px 0;}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:13px 16px;flex:1;min-width:110px;text-align:center;}
+  .stat .n{font-size:1.7rem;font-weight:800;line-height:1;}
+  .stat .l{font-size:.7rem;color:var(--muted);margin-top:4px;}
+  .ld{display:flex;flex-direction:column;gap:5px;margin:10px 0;}
+  .lr{border-radius:6px;padding:7px 14px;font-size:.81rem;font-weight:600;text-align:center;}
+  .tag{display:inline-block;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:2px 9px;font-size:.74rem;color:var(--muted);margin-right:5px;margin-bottom:4px;}
+  .slide::-webkit-scrollbar{width:4px;}
+  .slide::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+</style>
+</head>
+<body>
+<div id="navbar">
+  <div class="brand">🔧 TECNOLOGÍA <span>CALIDAD</span> · BLOQUE IV</div>
+  <div class="stabs">
+    <button onclick="gts(0)" id="t0">S16</button>
+    <button onclick="gts(1)" id="t1">S17</button>
+    <button onclick="gts(2)" id="t2">S18</button>
+    <button onclick="gts(3)" id="t3">S19</button>
+    <button onclick="gts(4)" id="t4">S20</button>
+  </div>
+  <div id="ctr">1 / 58</div>
+</div>
+<div id="pb" style="width:1.72%"></div>
+<div id="sc">
+
+<!-- PORTADA -->
+<div class="slide active cover" data-s="0">
+  <div class="badge">BLOQUE IV · SESIONES 16 – 20</div>
+  <h1>Tecnología, Infraestructura<br>y Calidad</h1>
+  <p class="sub">ITIL, Continuidad, Calidad, Industria 4.0 y Agilidad Escalada · 30 horas</p>
+  <div class="sg">
+    <div class="sc2"><div class="num">SESIÓN 16</div><div class="nm">ITIL — Gestión Servicios TI</div></div>
+    <div class="sc2"><div class="num">SESIÓN 17</div><div class="nm">Continuidad y Capacidad TI</div></div>
+    <div class="sc2"><div class="num">SESIÓN 18</div><div class="nm">Calidad y Cumplimiento</div></div>
+    <div class="sc2"><div class="num">SESIÓN 19</div><div class="nm">Industria 4.0 y Tech. Emergentes</div></div>
+    <div class="sc2"><div class="num">SESIÓN 20</div><div class="nm">Agilidad Escalada — SAFe</div></div>
+  </div>
+  <p style="margin-top:24px;color:var(--muted);font-size:.8rem;">← → o barra espaciadora · Click en S16–S20 para saltar sesión</p>
+</div>
+
+<!-- ═══ SESIÓN 16 ═══ -->
+<div class="slide" data-s="0">
+  <h2>Sesión 16 <span style="color:var(--violet)">— ITIL 4: Gestión de Servicios de TI</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>ITIL es como el <strong>reglamento de tránsito para los servicios de TI</strong>. Sin él, cada área de TI inventaría sus propias reglas: incidentes atendidos a discreción, cambios desplegados sin autorización, configuraciones desconocidas. Con ITIL, hay semáforos, señales de tránsito y reglas claras que todos respetan. El resultado: servicios predecibles, confiables y alineados con lo que el negocio necesita.</p>
+  </div>
+  <div class="sr" style="margin-top:14px;">
+    <div class="stat"><div class="n" style="color:var(--violet)">ITIL 4</div><div class="l">Versión actual (2019) — integra Agile, DevOps y Lean con la gestión de servicios tradicional</div></div>
+    <div class="stat"><div class="n" style="color:var(--teal)">SLA</div><div class="l">Service Level Agreement: el "contrato" entre TI y el negocio sobre disponibilidad y calidad del servicio</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">CMDB</div><div class="l">Configuration Management Database: el inventario inteligente de todos los activos de TI y sus relaciones</div></div>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Los Procesos ITIL Más Críticos para la Industria</h2>
+  <div class="cg c2">
+    <div class="card v">
+      <h3>Service Desk — La Cara de TI ante el Negocio</h3>
+      <p>Punto único de contacto (SPOC) entre usuarios y TI. <strong>Funciones:</strong></p>
+      <ul style="font-size:.83rem;">
+        <li>Registro y clasificación de incidentes y solicitudes</li>
+        <li>Resolución de incidentes de primer nivel</li>
+        <li>Escalación a segundo/tercer nivel cuando necesario</li>
+        <li>Comunicación proactiva al usuario sobre el estado</li>
+        <li>Cierre y encuesta de satisfacción</li>
+      </ul>
+      <div class="box bd" style="margin-top:8px;"><div class="bt">💡 KPIs del Service Desk</div>
+        <p style="font-size:.8rem;">CSAT (satisfacción del usuario), FCR (First Call Resolution), AHT (Average Handle Time), TTR (Time to Resolve), SLA compliance rate. Objetivo: mínimo 90% de SLA compliance.</p>
+      </div>
+    </div>
+    <div class="card t">
+      <h3>Gestión de Incidentes: Del Caos al Control</h3>
+      <ul class="tl" style="margin-top:6px;">
+        <li><div class="st v">1</div><div class="content"><h4>Registro y clasificación</h4><p>Categoría, prioridad (impacto × urgencia), asignación automática por reglas.</p></div></li>
+        <li><div class="st t">2</div><div class="content"><h4>Diagnóstico y resolución</h4><p>Buscar en base de conocimiento. Solución temporal (workaround) si necesario.</p></div></li>
+        <li><div class="st g">3</div><div class="content"><h4>Escalación</h4><p>Funcional (expertise) o jerárquica (tiempo o impacto). Con criterios claros.</p></div></li>
+        <li><div class="st o">4</div><div class="content"><h4>Cierre</h4><p>Confirmar resolución con usuario. Actualizar CMDB. Documentar solución en KB.</p></div></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Gestión de Problemas y CMDB</h2>
+  <div class="cg c2">
+    <div class="card r">
+      <h3>Incidente vs Problema: La Distinción Clave</h3>
+      <table>
+        <tr><th></th><th>Incidente</th><th>Problema</th></tr>
+        <tr><td>Definición</td><td>Interrupción no planeada del servicio</td><td>Causa raíz de uno o varios incidentes</td></tr>
+        <tr><td>Objetivo</td><td>Restaurar el servicio LO MÁS RÁPIDO posible</td><td>Eliminar la causa raíz permanentemente</td></tr>
+        <tr><td>Tiempo</td><td>Minutos a horas</td><td>Días a semanas</td></tr>
+        <tr><td>Herramienta</td><td>Workaround rápido</td><td>RCA (Análisis de Causa Raíz): 5 Whys, Ishikawa</td></tr>
+        <tr><td>Ejemplo</td><td>"El sistema de nómina está caído"</td><td>"¿Por qué el sistema cae cada tercer lunes?"</td></tr>
+      </table>
+    </div>
+    <div class="card g">
+      <h3>CMDB: El Mapa del Universo de TI</h3>
+      <p>La CMDB registra todos los <strong>Configuration Items (CIs)</strong> y sus relaciones:</p>
+      <ul style="font-size:.83rem;">
+        <li>Servidores, bases de datos, aplicaciones, redes</li>
+        <li>Licencias de software y contratos</li>
+        <li>Relaciones entre CIs: "App X corre en Servidor Y usa Base de Datos Z"</li>
+        <li>Impacto de cambios: si cambio el Servidor Y, ¿qué aplicaciones se afectan?</li>
+      </ul>
+      <div class="box bc" style="margin-top:8px;"><div class="bt">📰 CASO REAL — Empresa sin CMDB</div>
+        <p>Una empresa de transporte decidió actualizar un router "sin importancia". Sin CMDB, no sabían que ese router conectaba 3 almacenes con el sistema de rastreo de vehículos. El sistema de rastreo cayó 4 horas durante el turno más crítico del día. Con una CMDB actualizada, el análisis de impacto habría mostrado el riesgo en 5 minutos.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 17 ═══ -->
+<div class="slide" data-s="1">
+  <h2>Sesión 17 <span style="color:var(--teal)">— Continuidad, Capacidad y Gestión Financiera de TI</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Un Plan de Continuidad del Negocio (BCP) es como el <strong>paracaídas de reserva de un paracaidista</strong>. No lo usas en el 99.9% de los saltos — pero en ese 0.1% donde el paracaídas principal falla, es la diferencia entre la vida y la muerte del negocio. Las empresas que no tienen BCP no "se ahorran el costo" — están apostando la supervivencia del negocio a que nunca habrá una crisis.</p>
+  </div>
+  <div class="cg c2" style="margin-top:12px;">
+    <div class="card t">
+      <h3>Métricas de Disponibilidad: Los "Nueves"</h3>
+      <table>
+        <tr><th>Nivel</th><th>Disponibilidad</th><th>Down time/año</th></tr>
+        <tr><td>2 nueves</td><td>99%</td><td>87.6 horas</td></tr>
+        <tr><td>3 nueves</td><td>99.9%</td><td>8.76 horas</td></tr>
+        <tr><td>4 nueves</td><td>99.99%</td><td>52.6 minutos</td></tr>
+        <tr><td>5 nueves</td><td>99.999%</td><td>5.26 minutos</td></tr>
+      </table>
+      <p style="font-size:.8rem;color:var(--muted);margin-top:6px;"><strong>MTBF</strong> (Mean Time Between Failures): tiempo promedio entre fallos. Mayor = más confiable. <strong>MTTR</strong> (Mean Time to Repair): tiempo promedio para restaurar. Menor = más ágil en recuperación.</p>
+    </div>
+    <div class="card v">
+      <h3>DRP y BCP — La Diferencia</h3>
+      <table>
+        <tr><th></th><th>DRP (IT)</th><th>BCP (Negocio)</th></tr>
+        <tr><td>Alcance</td><td>Sistemas y datos de TI</td><td>Toda la organización</td></tr>
+        <tr><td>Objetivo</td><td>Recuperar la infraestructura TI</td><td>Mantener operaciones críticas del negocio</td></tr>
+        <tr><td>Métricas</td><td>RTO, RPO técnicos</td><td>RTO, RPO del proceso de negocio</td></tr>
+        <tr><td>Activa</td><td>Desastre TI (hardware, ciberataque)</td><td>Cualquier desastre (pandemia, incendio, terremoto)</td></tr>
+      </table>
+      <p style="font-size:.8rem;color:var(--muted);margin-top:6px;"><strong>RTO</strong>: tiempo máximo aceptable sin el servicio. <strong>RPO</strong>: pérdida máxima aceptable de datos (¿hasta cuándo antes del desastre?)</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>Gestión Financiera de TI: TCO y Chargeback</h2>
+  <div class="cg c2">
+    <div class="card o">
+      <h3>TCO — Total Cost of Ownership</h3>
+      <p>El costo real de una tecnología va mucho más allá del precio de compra:</p>
+      <div class="ld" style="margin-top:8px;">
+        <div class="lr" style="background:rgba(220,38,38,.1);border:1px solid var(--red);font-size:.78rem;color:var(--red);">💰 ADQUISICIÓN: Licencias, hardware, infraestructura, migración de datos</div>
+        <div class="lr" style="background:rgba(217,119,6,.1);border:1px solid var(--gold);font-size:.78rem;color:var(--gold);">⚙️ OPERACIÓN: Mantenimiento, soporte, actualizaciones, consumo energético</div>
+        <div class="lr" style="background:rgba(8,145,178,.1);border:1px solid var(--teal);font-size:.78rem;color:var(--teal);">👥 PERSONAL: Administradores, capacitación, tiempo de gestión interna</div>
+        <div class="lr" style="background:rgba(124,58,237,.1);border:1px solid var(--violet);font-size:.78rem;color:var(--violet);">📉 OPORTUNIDAD: Tiempo de inactividad, oportunidades de negocio perdidas</div>
+        <div class="lr" style="background:rgba(100,116,139,.1);border:1px solid var(--muted);font-size:.78rem;color:var(--muted);">🔚 DISPOSICIÓN: Retiro, migración, decommission al final de vida</div>
+      </div>
+    </div>
+    <div class="card g">
+      <h3>Chargeback y Showback</h3>
+      <p><strong>Chargeback</strong>: cobrar a las áreas de negocio por los servicios de TI que consumen. TI se convierte en un proveedor interno con precios.</p>
+      <p style="margin-top:8px;"><strong>Showback</strong>: mostrar a las áreas cuánto "costarían" sus servicios de TI sin cobrarles realmente. Crea consciencia de consumo.</p>
+      <div class="box bl" style="margin-top:8px;"><div class="bt">🔬 CASO DE APLICACIÓN</div>
+        <p>Una empresa de manufactura implementó chargeback de cloud: área de producción veía su factura mensual de AWS. Resultado: reducción del 34% en consumo innecesario de servidores sobredimensionados en 3 meses. "Si no lo pagan, no lo cuidan; si lo pagan, lo optimizan."</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 18 ═══ -->
+<div class="slide" data-s="2">
+  <h2>Sesión 18 <span style="color:var(--green)">— Calidad, CMMI y Cumplimiento en Proyectos de TI</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>CMMI es como el <strong>sistema de cinturón en las artes marciales</strong>. No cambia el objetivo (ganar la pelea / entregar proyectos), pero define etapas de madurez con criterios claros. Un cinturón negro (CMMI nivel 5) no improvisa — sus movimientos son tan repetibles y predecibles que los ejecuta perfectamente bajo cualquier condición. La madurez no es burocracia, es capacidad de ejecución confiable.</p>
+  </div>
+  <div class="cg c3" style="margin-top:12px;">
+    <div class="card g"><h3>Gestión de Calidad en Proyectos</h3><p><strong>Planificar</strong>: definir estándares de calidad aplicables. <strong>Asegurar</strong>: auditorías de proceso durante la ejecución. <strong>Controlar</strong>: inspección de entregables vs. criterios de aceptación. El costo de prevención es 10x menor que el costo de corrección.</p></div>
+    <div class="card t"><h3>CMMI — 5 Niveles de Madurez</h3><p><strong>L1 Inicial</strong>: caótico. <strong>L2 Gestionado</strong>: procesos definidos por proyecto. <strong>L3 Definido</strong>: procesos organizacionales. <strong>L4 Cuantitativamente Gestionado</strong>: métricas y control estadístico. <strong>L5 Optimizando</strong>: mejora continua.</p></div>
+    <div class="card v"><h3>Métricas de Calidad de Software</h3><p><strong>Defect Density</strong>: bugs por KLOC (mil líneas de código). <strong>Test Coverage</strong>: % de código ejecutado por pruebas. <strong>Cyclomatic Complexity</strong>: complejidad del código. <strong>Technical Debt</strong>: costo de arreglar shortcuts hechos en el desarrollo.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-s="2">
+  <h2>Tipos de Contratos en Proyectos de TI</h2>
+  <table>
+    <tr><th>Tipo de Contrato</th><th>Estructura</th><th>Riesgo del cliente</th><th>Cuándo usarlo</th></tr>
+    <tr><td><strong>Precio Fijo (FFP)</strong></td><td>Precio total predeterminado</td><td>Bajo (el proveedor absorbe variaciones)</td><td>Alcance completamente definido, proveedor maduro</td></tr>
+    <tr><td><strong>Precio Fijo + Incentivos (FPI)</strong></td><td>Precio base + bono por objetivos</td><td>Bajo-Medio</td><td>Alcance definido pero quieres motivar desempeño superior</td></tr>
+    <tr><td><strong>Tiempo y Materiales (T&amp;M)</strong></td><td>Tarifa por hora + materiales</td><td>Alto (cliente paga todo)</td><td>Alcance incierto, trabajo de consultoría o innovación</td></tr>
+    <tr><td><strong>Costos Reembolsables + % fee (CPPC)</strong></td><td>Costo real + % del costo</td><td>Muy alto (proveedor no tiene incentivo de eficiencia)</td><td>Prácticamente no recomendado en TI</td></tr>
+    <tr><td><strong>SaaS / Suscripción</strong></td><td>Cuota fija mensual/anual</td><td>Bajo-Medio (riesgo de lock-in)</td><td>Software en la nube, commodity technology</td></tr>
+  </table>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Click para ver respuesta</div>
+    <p>Una empresa quiere contratar el desarrollo de una app de logística. Los requisitos están bien documentados y el proveedor tiene experiencia en apps similares. ¿Qué tipo de contrato recomiendas y qué cláusulas clave incluirías?</p>
+    <div class="qa"><strong>Precio Fijo (FFP)</strong> con cláusulas de: (1) Definición exacta del alcance y criterios de aceptación medibles, (2) Proceso formal de control de cambios (cualquier cambio de alcance = renegociación de precio), (3) Penalidades por retraso (% del contrato por semana de retraso), (4) Garantía post-go-live (90 días de corrección de bugs sin costo), (5) Acceso al código fuente / custodia de código (escrow), (6) Transferencia de propiedad intelectual. El riesgo del cliente es bajo solo si el alcance está VERDADERAMENTE bien definido — si no, el proveedor presionará para cambios que aumentarán el precio.</div>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 19 ═══ -->
+<div class="slide" data-s="3">
+  <h2>Sesión 19 <span style="color:var(--gold)">— Industria 4.0 y Tecnologías Emergentes</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>La Industria 4.0 es la <strong>cuarta revolución industrial</strong>. Las primeras tres fueron: (1) vapor y mecanización, (2) electricidad y producción en masa, (3) automatización y computadoras. La cuarta es la fusión del mundo físico con el digital: máquinas que piensan, se comunican y se auto-optimizan. El profesional que no entiende este ecosistema diseñará proyectos que se quedarán obsoletos antes de terminar.</p>
+  </div>
+  <div class="cg c3" style="margin-top:12px;">
+    <div class="card o"><h3>IoT Industrial (IIoT)</h3><p>Sensores en máquinas, vehículos y equipos que transmiten datos en tiempo real. Arquitectura: Sensores → Edge Computing → Gateway → Cloud → Analytics → Acción. Aplicaciones: mantenimiento predictivo, track &amp; trace, control de calidad.</p></div>
+    <div class="card t"><h3>IA y ML en Operaciones</h3><p>Mantenimiento predictivo (ML con telemetría de sensores), optimización de rutas (algoritmos genéticos), detección de defectos (computer vision), pronóstico de demanda (series de tiempo), asistentes conversacionales para operadores.</p></div>
+    <div class="card v"><h3>RPA — Automatización Robótica</h3><p>Robots de software que automatizan tareas repetitivas en sistemas existentes sin necesidad de API ni integración: copiar datos entre sistemas, procesar correos, generar reportes. ROI típico: 3-9 meses. Limitación: frágil ante cambios de interfaz.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-s="3">
+  <h2>Digital Twin y Evaluación de Tecnologías Emergentes</h2>
+  <div class="cg c2">
+    <div class="card v">
+      <h3>Gemelo Digital (Digital Twin)</h3>
+      <p>Réplica virtual de un activo físico que se actualiza en tiempo real con datos de sensores. Permite simular escenarios sin riesgo en el activo real.</p>
+      <table style="margin-top:8px;">
+        <tr><th>Sector</th><th>Aplicación</th></tr>
+        <tr><td>Manufactura</td><td>Twin de línea de producción: simular cambios de layout sin parar planta</td></tr>
+        <tr><td>Logística</td><td>Twin de centro distribución: optimizar flujo de picking con simulación</td></tr>
+        <tr><td>Automotriz</td><td>Twin del vehículo: diagnóstico remoto, predicción de fallas</td></tr>
+        <tr><td>Infraestructura</td><td>Twin de datacenter: optimizar refrigeración y consumo energético (caso Google)</td></tr>
+      </table>
+    </div>
+    <div class="card o">
+      <h3>Hype Cycle de Gartner: Cómo Evaluar Tecnologías</h3>
+      <ul class="tl" style="margin-top:6px;">
+        <li><div class="st b">1</div><div class="content"><h4>Innovación Disparador</h4><p>Tecnología nueva, gran expectativa, pocos casos reales. Arriesgado adoptar.</p></div></li>
+        <li><div class="st o">2</div><div class="content"><h4>Pico de Expectativas</h4><p>Sobreexpectación, casos de fracaso y éxito. Prensa sobre-habla de ella.</p></div></li>
+        <li><div class="st r">3</div><div class="content"><h4>Valle de la Desilusión</h4><p>Los fracasos dominan las noticias. Inversión cae. Tecnología madura silenciosamente.</p></div></li>
+        <li><div class="st g">4</div><div class="content"><h4>Pendiente de Iluminación</h4><p>Mejores prácticas emergen. ROI demostrado en casos reales. Proveedores maduros.</p></div></li>
+        <li><div class="st t">5</div><div class="content"><h4>Meseta de Productividad</h4><p>Adopción masiva. Estándar de la industria. Casos de negocio claros.</p></div></li>
+      </ul>
+    </div>
+  </div>
+  <div class="box bl"><div class="bt">🔬 PRÁCTICA — Diseño de Iniciativa de Transformación Digital</div>
+    <p>Cada participante diseña una iniciativa de transformación digital para un proceso de su sector: (1) Tecnología a implementar (IoT, RPA, IA, Digital Twin), (2) Proceso transformado (AS-IS vs TO-BE), (3) Estimación de beneficios y KPIs, (4) Roadmap de implementación (6-18 meses), (5) Análisis de riesgos tecnológicos principales, (6) Inversión estimada y ROI esperado.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 20 ═══ -->
+<div class="slide" data-s="4">
+  <h2>Sesión 20 <span style="color:var(--pink)">— Agilidad Escalada: SAFe, Nexus y LeSS</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Escalar Scrum a múltiples equipos sin un marco es como <strong>armar una orquesta donde cada músico toca su propio ritmo</strong>. 10 excelentes violinistas tocando en tiempos distintos producen cacofonía. SAFe es el director de orquesta + la partitura + los ensayos coordinados que transforman músicos individuales en una sinfonía. Sin coordinación explícita, la agilidad multi-equipo crea caos más rápido que el predictivo.</p>
+  </div>
+  <div class="cg c3" style="margin-top:12px;">
+    <div class="card t"><h3>¿Cuándo Escalar?</h3><p>Un solo equipo Scrum (3-9 personas) tiene límites. Necesitas escalar cuando el producto requiere: más de 9 personas, múltiples componentes interdependientes, integración con otros sistemas, entrega coordinada con otras áreas o equipos externos.</p></div>
+    <div class="card p"><h3>Nexus / Scrum@Scale</h3><p>Extensión mínima de Scrum para 3-9 equipos. Agrega: Nexus Integration Team (coordina la integración), Nexus Sprint Planning (coordinado), Nexus Sprint Review unificada. Simple pero requiere disciplina de integración continua.</p></div>
+    <div class="card v"><h3>LeSS — Large-Scale Scrum</h3><p>Maximaliza la simpleza: el mismo Scrum, aplicado a muchos equipos con mínimas reglas adicionales. Un solo Product Backlog, un solo Product Owner, Sprint compartido. Escalable con menos overhead. Requiere reorganización organizacional significativa.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-s="4">
+  <h2>SAFe 5.0: El Marco de Escalado más Adoptado</h2>
+  <div class="cg c2">
+    <div class="card p">
+      <h3>Los 4 Niveles de SAFe</h3>
+      <div class="ld" style="margin-top:8px;">
+        <div class="lr" style="background:rgba(219,39,119,.1);border:1px solid var(--pink);font-size:.79rem;color:var(--pink);">🚀 PORTFOLIO — Estrategia, financiación de epics, Lean Portfolio Management. Conecta estrategia con ejecución.</div>
+        <div class="lr" style="background:rgba(124,58,237,.1);border:1px solid var(--violet);font-size:.79rem;color:var(--violet);">🏢 LARGE SOLUTION — Coordinación de múltiples Agile Release Trains para soluciones complejas. Solution Train.</div>
+        <div class="lr" style="background:rgba(8,145,178,.1);border:1px solid var(--teal);font-size:.79rem;color:var(--teal);">🚂 PROGRAM — Agile Release Train (ART): 5-12 equipos Scrum coordinados. PI Planning cada 10-12 semanas.</div>
+        <div class="lr" style="background:rgba(5,150,105,.1);border:1px solid var(--green);font-size:.79rem;color:var(--green);">👥 TEAM — Equipos Scrum/Kanban individuales. Sprints de 2 semanas dentro del PI.</div>
+      </div>
+    </div>
+    <div class="card v">
+      <h3>PI Planning: El Evento más Importante de SAFe</h3>
+      <p><strong>Program Increment (PI) Planning</strong>: evento de 2 días cada 10-12 semanas donde todos los equipos del ART se reúnen para planear el PI completo.</p>
+      <ul style="font-size:.83rem;margin-top:8px;">
+        <li>Todos los equipos (presencial o virtual) en el mismo espacio</li>
+        <li>Business Owners presentan objetivos del PI (visión de negocio)</li>
+        <li>Equipos planean sus sprints y commitments del PI</li>
+        <li>Se identifican dependencias entre equipos visualmente</li>
+        <li>Resultado: PI Plan con objetivos comprometidos por equipo</li>
+      </ul>
+      <div class="box bc" style="margin-top:8px;"><div class="bt">📰 CASO REAL — Spotify abandona SAFe</div>
+        <p>En 2020, Spotify dejó SAFe por considerarlo demasiado prescriptivo para su cultura. Lección: SAFe es poderoso para organizaciones grandes con múltiples equipos y productos interdependientes, pero no es la única opción. La selección del marco debe considerar la cultura y madurez organizacional.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CIERRE -->
+<div class="slide cover" data-s="4">
+  <div class="badge">BLOQUE IV — CIERRE</div>
+  <h1>Tecnología con Propósito:<br>Infraestructura, Calidad y Escala</h1>
+  <p style="max-width:600px;margin:16px auto;color:var(--muted);">ITIL para servicios confiables, continuidad garantizada, calidad como proceso sistemático, Industria 4.0 como horizonte estratégico y SAFe para escalar la agilidad: el profesional que domina estos temas lidera la transformación digital, no solo la ejecuta.</p>
+  <div class="sr" style="justify-content:center;max-width:700px;margin:20px auto;">
+    <div class="stat"><div class="n" style="color:var(--violet)">🛎️</div><div class="l">ITIL — servicios TI</div></div>
+    <div class="stat"><div class="n" style="color:var(--teal)">♾️</div><div class="l">Continuidad y disponibilidad</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">⭐</div><div class="l">CMMI y calidad</div></div>
+    <div class="stat"><div class="n" style="color:var(--gold)">🏭</div><div class="l">Industria 4.0</div></div>
+    <div class="stat"><div class="n" style="color:var(--pink)">🚂</div><div class="l">SAFe y escala ágil</div></div>
+  </div>
+  <div style="margin-top:16px;font-size:.78rem;color:var(--muted);">
+    <strong style="color:var(--violet);">Referencias:</strong> Axelos (2019) ITIL Foundation ITIL 4 · CMMI Institute (2018) CMMI Dev V2.0 · Leffingwell (2018) SAFe 5.0 Distilled · ISO/IEC 20000-1:2018
+  </div>
+</div>
+
+</div>
+<div id="footer">
+  <button onclick="prev()">← Anterior</button>
+  <span class="hint">← → · Espacio</span>
+  <button onclick="next()">Siguiente →</button>
+</div>
+<script>
+const slides=document.querySelectorAll('.slide'),total=slides.length;let cur=0;
+const ss=[];slides.forEach((s,i)=>{const v=parseInt(s.dataset.s);if(ss[v]===undefined)ss[v]=i;});
+function go(n){if(n<0||n>=total)return;slides[cur].classList.remove('active');cur=n;slides[cur].classList.add('active');document.getElementById('ctr').textContent=(cur+1)+' / '+total;document.getElementById('pb').style.width=((cur+1)/total*100)+'%';ut();slides[cur].scrollTop=0;}
+function next(){go(cur+1);}function prev(){go(cur-1);}function gts(i){go(ss[i]);}
+function ut(){const v=parseInt(slides[cur].dataset.s);for(let i=0;i<5;i++){const b=document.getElementById('t'+i);if(b)b.classList.toggle('active',i===v);}}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();}if(e.key==='ArrowLeft'){e.preventDefault();prev();}});
+ut();
+</script>
+</body>
+</html>

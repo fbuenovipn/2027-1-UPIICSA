@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloque II — Metodologías Ágiles, Lean y DevOps</title>
+<style>
+  :root{--bg:#03060f;--card:#0a1628;--border:#1e3a5f;--blue:#2563eb;--teal:#0891b2;--gold:#d97706;--green:#059669;--red:#dc2626;--violet:#7c3aed;--pink:#db2777;--text:#e2e8f0;--muted:#64748b;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden;height:100vh;}
+  #navbar{position:fixed;top:0;left:0;right:0;height:54px;background:rgba(3,6,15,.96);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:100;backdrop-filter:blur(8px);}
+  .brand{color:var(--teal);font-weight:700;font-size:.85rem;letter-spacing:1px;}
+  .brand span{color:var(--pink);}
+  .stabs{display:flex;gap:6px;}
+  .stabs button{background:transparent;border:1px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:20px;cursor:pointer;font-size:.75rem;transition:all .2s;}
+  .stabs button.active{background:var(--teal);border-color:var(--teal);color:#fff;font-weight:700;}
+  .stabs button:hover:not(.active){border-color:var(--teal);color:var(--teal);}
+  #ctr{color:var(--muted);font-size:.8rem;min-width:80px;text-align:right;}
+  #pb{position:fixed;top:54px;left:0;height:3px;background:linear-gradient(90deg,var(--teal),var(--pink));transition:width .3s;z-index:100;}
+  #sc{position:fixed;top:57px;left:0;right:0;bottom:40px;overflow:hidden;}
+  .slide{position:absolute;top:0;left:0;right:0;bottom:0;padding:28px 48px;display:none;overflow-y:auto;animation:fi .35s ease;}
+  .slide.active{display:flex;flex-direction:column;}
+  @keyframes fi{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+  #footer{position:fixed;bottom:0;left:0;right:0;height:40px;background:rgba(3,6,15,.96);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:16px;z-index:100;}
+  #footer button{background:var(--card);border:1px solid var(--border);color:var(--text);padding:5px 20px;border-radius:6px;cursor:pointer;font-size:.8rem;transition:all .2s;}
+  #footer button:hover{border-color:var(--teal);color:var(--teal);}
+  #footer .hint{color:var(--muted);font-size:.72rem;}
+  h1{font-size:2rem;font-weight:800;line-height:1.2;margin-bottom:10px;}
+  h2{font-size:1.45rem;font-weight:700;margin-bottom:14px;}
+  h3{font-size:1rem;font-weight:600;color:var(--teal);margin-bottom:8px;margin-top:10px;}
+  p{font-size:.9rem;line-height:1.65;margin-bottom:8px;}
+  ul,ol{padding-left:20px;font-size:.88rem;line-height:1.8;}
+  li{margin-bottom:3px;}
+  .cover{align-items:center;justify-content:center;text-align:center;}
+  .cover h1{font-size:2.2rem;background:linear-gradient(135deg,var(--teal),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;}
+  .badge{display:inline-block;border:1px solid var(--teal);border-radius:8px;padding:8px 24px;color:var(--teal);font-size:.9rem;font-weight:700;letter-spacing:2px;margin-bottom:20px;background:rgba(8,145,178,.08);}
+  .sg{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px;}
+  .sc2{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 14px;width:165px;text-align:left;}
+  .sc2 .num{color:var(--teal);font-size:.7rem;font-weight:700;}
+  .sc2 .nm{font-size:.78rem;margin-top:4px;}
+  .sub{color:var(--muted);font-size:1rem;}
+  .cg{display:grid;gap:12px;margin-top:10px;}
+  .cg.c2{grid-template-columns:1fr 1fr;}
+  .cg.c3{grid-template-columns:1fr 1fr 1fr;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:15px;position:relative;overflow:hidden;}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+  .card.b::before{background:var(--blue);}
+  .card.t::before{background:var(--teal);}
+  .card.g::before{background:var(--green);}
+  .card.o::before{background:var(--gold);}
+  .card.r::before{background:var(--red);}
+  .card.p::before{background:var(--pink);}
+  .card.v::before{background:var(--violet);}
+  .card h3{margin-top:0;font-size:.9rem;}
+  .card p,.card ul,.card li{font-size:.84rem;}
+  .box{border-radius:10px;padding:13px 17px;margin:9px 0;}
+  .bm{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.4);}
+  .bc{background:rgba(217,119,6,.08);border:1px solid rgba(217,119,6,.4);}
+  .bl{background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.4);}
+  .bd{background:rgba(8,145,178,.08);border:1px solid rgba(8,145,178,.4);}
+  .bq{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.4);cursor:pointer;}
+  .bt{font-weight:700;font-size:.8rem;margin-bottom:5px;letter-spacing:.5px;}
+  .bm .bt{color:#a78bfa;}
+  .bc .bt{color:var(--gold);}
+  .bl .bt{color:#34d399;}
+  .bd .bt{color:var(--teal);}
+  .bq .bt{color:#fbbf24;}
+  .box p,.box li{font-size:.86rem;}
+  .qa{display:none;margin-top:7px;padding-top:7px;border-top:1px solid rgba(251,191,36,.3);color:#34d399;font-size:.84rem;}
+  .bq.revealed .qa{display:block;}
+  table{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:8px;}
+  th{background:#071020;color:var(--teal);text-align:left;padding:7px 11px;border:1px solid var(--border);}
+  td{padding:6px 11px;border:1px solid var(--border);vertical-align:top;}
+  tr:nth-child(even) td{background:rgba(10,22,40,.6);}
+  .tl{list-style:none;padding:0;margin-top:8px;}
+  .tl li{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start;}
+  .tl .st{min-width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.78rem;flex-shrink:0;}
+  .tl .st.b{background:rgba(37,99,235,.15);border:2px solid var(--blue);color:var(--blue);}
+  .tl .st.t{background:rgba(8,145,178,.15);border:2px solid var(--teal);color:var(--teal);}
+  .tl .st.g{background:rgba(5,150,105,.15);border:2px solid var(--green);color:var(--green);}
+  .tl .st.o{background:rgba(217,119,6,.15);border:2px solid var(--gold);color:var(--gold);}
+  .tl .st.p{background:rgba(219,39,119,.15);border:2px solid var(--pink);color:var(--pink);}
+  .tl .content h4{font-size:.88rem;font-weight:600;}
+  .tl .content p{font-size:.82rem;color:var(--muted);margin:0;}
+  .sr{display:flex;gap:12px;flex-wrap:wrap;margin:10px 0;}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:13px 16px;flex:1;min-width:110px;text-align:center;}
+  .stat .n{font-size:1.7rem;font-weight:800;line-height:1;}
+  .stat .l{font-size:.7rem;color:var(--muted);margin-top:4px;}
+  pre{background:#071020;border:1px solid var(--border);border-radius:6px;padding:11px;font-size:.78rem;color:#34d399;overflow-x:auto;margin:7px 0;font-family:'Courier New',monospace;line-height:1.5;}
+  .ld{display:flex;flex-direction:column;gap:5px;margin:10px 0;}
+  .lr{border-radius:6px;padding:7px 14px;font-size:.81rem;font-weight:600;text-align:center;}
+  .tag{display:inline-block;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:2px 9px;font-size:.74rem;color:var(--muted);margin-right:5px;margin-bottom:4px;}
+  .scrum-board{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-top:10px;}
+  .col-header{background:rgba(8,145,178,.15);border:1px solid var(--teal);border-radius:6px;padding:6px 10px;text-align:center;font-weight:700;font-size:.8rem;color:var(--teal);}
+  .task-card{background:#071a2e;border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:.75rem;margin-top:5px;}
+  .slide::-webkit-scrollbar{width:4px;}
+  .slide::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+</style>
+</head>
+<body>
+<div id="navbar">
+  <div class="brand">⚡ ÁGIL <span>DEVOPS</span> · BLOQUE II</div>
+  <div class="stabs">
+    <button onclick="gts(0)" id="t0">S6</button>
+    <button onclick="gts(1)" id="t1">S7</button>
+    <button onclick="gts(2)" id="t2">S8</button>
+    <button onclick="gts(3)" id="t3">S9</button>
+    <button onclick="gts(4)" id="t4">S10</button>
+  </div>
+  <div id="ctr">1 / 58</div>
+</div>
+<div id="pb" style="width:1.72%"></div>
+<div id="sc">
+
+<!-- PORTADA -->
+<div class="slide active cover" data-s="0">
+  <div class="badge">BLOQUE II · SESIONES 6 – 10</div>
+  <h1>Metodologías Ágiles,<br>Lean y DevOps</h1>
+  <p class="sub">Entrega de valor incremental, flujo continuo y despliegue ágil · 30 horas</p>
+  <div class="sg">
+    <div class="sc2"><div class="num">SESIÓN 6</div><div class="nm">Scrum — Proyectos Complejos</div></div>
+    <div class="sc2"><div class="num">SESIÓN 7</div><div class="nm">Lean y Kanban</div></div>
+    <div class="sc2"><div class="num">SESIÓN 8</div><div class="nm">DevOps y CI/CD</div></div>
+    <div class="sc2"><div class="num">SESIÓN 9</div><div class="nm">Planeación Híbrida</div></div>
+    <div class="sc2"><div class="num">SESIÓN 10</div><div class="nm">Métricas y Reporting</div></div>
+  </div>
+  <p style="margin-top:24px;color:var(--muted);font-size:.8rem;">← → o barra espaciadora · Click en S6–S10 para saltar sesión</p>
+</div>
+
+<!-- ═══ SESIÓN 6 ═══ -->
+<div class="slide" data-s="0">
+  <h2>Sesión 6 <span style="color:var(--teal)">— Scrum: Marco de Trabajo para Proyectos Complejos</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Scrum toma su nombre del rugby: el <strong>scrum</strong> es la formación donde el equipo empuja unido hacia adelante como una unidad compacta. En proyectos, el equipo Scrum avanza en <em>sprints</em> — carreras cortas de máximo esfuerzo — entregando valor real al final de cada una. No hay "casi listo": o se entrega software funcionando o no se cuenta.</p>
+  </div>
+  <div class="sr" style="margin-top:14px;">
+    <div class="stat"><div class="n" style="color:var(--teal)">87%</div><div class="l">de los equipos ágiles usan Scrum o variante (State of Agile 2023)</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">64%</div><div class="l">mejora en entrega a tiempo con Scrum vs cascada (PMI 2023)</div></div>
+    <div class="stat"><div class="n" style="color:var(--gold)">2-4</div><div class="l">semanas: duración óptima de un Sprint para máxima productividad</div></div>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Los 4 Valores del Manifiesto Ágil (2001)</h2>
+  <div class="cg c2">
+    <div class="card t">
+      <h3>Los 4 Valores</h3>
+      <div class="ld" style="margin-top:8px;">
+        <div class="lr" style="background:rgba(8,145,178,.1);border:1px solid var(--teal);color:var(--teal);">👥 Individuos e interacciones &gt; Procesos y herramientas</div>
+        <div class="lr" style="background:rgba(5,150,105,.1);border:1px solid var(--green);color:var(--green);">💻 Software funcionando &gt; Documentación exhaustiva</div>
+        <div class="lr" style="background:rgba(217,119,6,.1);border:1px solid var(--gold);color:var(--gold);">🤝 Colaboración con el cliente &gt; Negociación de contratos</div>
+        <div class="lr" style="background:rgba(219,39,119,.1);border:1px solid var(--pink);color:var(--pink);">🔄 Respuesta al cambio &gt; Seguir un plan</div>
+      </div>
+      <p style="font-size:.8rem;color:var(--muted);margin-top:6px;">Nota: los elementos de la derecha SÍ tienen valor — simplemente los de la izquierda se valoran MÁS.</p>
+    </div>
+    <div class="card p">
+      <h3>Los 12 Principios Ágiles (esenciales)</h3>
+      <ol style="font-size:.8rem;">
+        <li>Satisfacer al cliente con entrega continua de software valioso</li>
+        <li>Bienvenidos los cambios, incluso tardíos — como ventaja competitiva</li>
+        <li>Entregar software funcionando frecuentemente (semanas, no meses)</li>
+        <li>El negocio y los desarrolladores trabajan juntos diariamente</li>
+        <li>Construir proyectos alrededor de individuos motivados y confiados</li>
+        <li>Conversación cara a cara = comunicación más eficiente y efectiva</li>
+        <li>Software funcionando es la medida principal de progreso</li>
+        <li>El desarrollo ágil promueve el ritmo sostenible indefinidamente</li>
+        <li>Excelencia técnica y buen diseño aumentan la agilidad</li>
+        <li>Simplicidad: maximizar el trabajo no realizado</li>
+        <li>Los mejores diseños emergen de equipos auto-organizados</li>
+        <li>El equipo reflexiona y ajusta su comportamiento regularmente</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Scrum: Roles, Artefactos y Eventos</h2>
+  <div class="cg c3">
+    <div class="card t">
+      <h3>3 Roles</h3>
+      <ul style="font-size:.83rem;">
+        <li><strong>Product Owner (PO)</strong>: maximiza el valor del producto. Dueño del Product Backlog. Prioriza. Interface con el negocio. UNO solo.</li>
+        <li><strong>Scrum Master (SM)</strong>: facilita el proceso, elimina impedimentos, protege al equipo. Coach ágil, no jefe.</li>
+        <li><strong>Development Team</strong>: auto-organizado, multifuncional. 3-9 personas. Son los que construyen.</li>
+      </ul>
+    </div>
+    <div class="card g">
+      <h3>3 Artefactos</h3>
+      <ul style="font-size:.83rem;">
+        <li><strong>Product Backlog</strong>: lista priorizada de todo lo que el producto necesita. Vive y evoluciona. INVEST: Independent, Negotiable, Valuable, Estimable, Small, Testable.</li>
+        <li><strong>Sprint Backlog</strong>: subset del Product Backlog comprometido para el Sprint + plan de entrega.</li>
+        <li><strong>Incremento</strong>: suma de todo lo completado en el Sprint. Debe ser "Done" según Definition of Done.</li>
+      </ul>
+    </div>
+    <div class="card o">
+      <h3>5 Eventos</h3>
+      <ul style="font-size:.83rem;">
+        <li><strong>Sprint</strong>: 1-4 semanas. Corazón de Scrum.</li>
+        <li><strong>Sprint Planning</strong>: ¿qué hacer y cómo? (8h max para Sprint de 1 mes)</li>
+        <li><strong>Daily Scrum</strong>: 15 min diarios. ¿Qué hice? ¿Qué haré? ¿Impedimentos?</li>
+        <li><strong>Sprint Review</strong>: demostración del incremento a stakeholders. Feedback real.</li>
+        <li><strong>Retrospectiva</strong>: mejora continua del equipo. ¿Qué hacemos diferente?</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Tablero Scrum — Sprint Activo</h2>
+  <div class="scrum-board">
+    <div><div class="col-header">📋 BACKLOG</div>
+      <div class="task-card">US-12: Login con 2FA</div>
+      <div class="task-card">US-15: Reporte exportable</div>
+      <div class="task-card">US-18: Notificaciones push</div>
+    </div>
+    <div><div class="col-header">🔄 EN PROGRESO</div>
+      <div class="task-card" style="border-color:var(--teal);">US-09: Dashboard KPIs (Juan)</div>
+      <div class="task-card" style="border-color:var(--teal);">US-10: API REST pedidos (Ana)</div>
+    </div>
+    <div><div class="col-header">🔍 EN REVISIÓN</div>
+      <div class="task-card" style="border-color:var(--gold);">US-07: Catálogo productos</div>
+      <div class="task-card" style="border-color:var(--gold);">US-08: Búsqueda filtrada</div>
+    </div>
+    <div><div class="col-header">✅ COMPLETADO</div>
+      <div class="task-card" style="border-color:var(--green);">US-01: Autenticación ✓</div>
+      <div class="task-card" style="border-color:var(--green);">US-02: Perfil usuario ✓</div>
+      <div class="task-card" style="border-color:var(--green);">US-03: CRUD productos ✓</div>
+    </div>
+  </div>
+  <div class="cg c2" style="margin-top:12px;">
+    <div class="box bc"><div class="bt">📰 CASO REAL — Spotify y Scrum</div>
+      <p>Spotify evolucionó Scrum hacia el "Spotify Model": <strong>Squads</strong> (equipos Scrum autónomos con misión específica), <strong>Tribes</strong> (grupos de Squads relacionados), <strong>Chapters</strong> (roles similares across squads) y <strong>Guilds</strong> (comunidades de práctica). Permite escalar la agilidad manteniendo autonomía de equipo.</p>
+    </div>
+    <div class="box bl"><div class="bt">🔬 PRÁCTICA — Simulación Sprint Completo</div>
+      <p>En equipos de 5-6 personas: definir Product Backlog de 15 User Stories para app de gestión de inventario. Sprint Planning (1 Sprint de 2 semanas, 40h). Daily Scrum simulado. Sprint Review con demo al "cliente" (facilitador). Retrospectiva con Start/Stop/Continue.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 7 ═══ -->
+<div class="slide" data-s="1">
+  <h2>Sesión 7 <span style="color:var(--gold)">— Lean y Kanban: Eliminar Desperdicios, Maximizar Flujo</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Lean en TI viene del <strong>Sistema Toyota de Producción</strong>: imagina una línea de ensamble donde cada operación agrega valor al producto. Cualquier movimiento, espera o proceso que no agrega valor directamente es <em>muda</em> (desperdicio) y debe eliminarse. En proyectos de software: ¿cuántas horas se pierden en reuniones sin agenda, reportes que nadie lee, código que nunca se usa o esperas de aprobación?</p>
+  </div>
+  <div class="cg c2" style="margin-top:12px;">
+    <div class="card o">
+      <h3>Los 8 Desperdicios en Proyectos TI (TIMWOODS)</h3>
+      <table>
+        <tr><th>Letra</th><th>Desperdicio</th><th>Ejemplo en TI</th></tr>
+        <tr><td>T</td><td>Transporte</td><td>Mover código entre 5 ambientes sin CI/CD</td></tr>
+        <tr><td>I</td><td>Inventario</td><td>100 User Stories sin priorizar acumuladas</td></tr>
+        <tr><td>M</td><td>Movimiento</td><td>Buscar documentación en 6 sistemas distintos</td></tr>
+        <tr><td>W</td><td>Espera</td><td>Esperar 3 días aprobación de un cambio urgente</td></tr>
+        <tr><td>O</td><td>Sobreproducción</td><td>Documentar features que nadie usará</td></tr>
+        <tr><td>O</td><td>Sobreproceso</td><td>5 niveles de aprobación para bug fix trivial</td></tr>
+        <tr><td>D</td><td>Defectos</td><td>Bugs que pasan a producción por falta de pruebas</td></tr>
+        <tr><td>S</td><td>Habilidades</td><td>Experto senior haciendo tareas administrativas</td></tr>
+      </table>
+    </div>
+    <div class="card g">
+      <h3>Value Stream Map (VSM) en TI</h3>
+      <p>Mapea el flujo completo desde que un requisito entra (idea/backlog) hasta que llega a producción (valor para el cliente). Identifica:</p>
+      <ul style="font-size:.83rem;">
+        <li><strong>Lead Time</strong>: tiempo total desde solicitud hasta entrega</li>
+        <li><strong>Process Time</strong>: tiempo de trabajo real sin esperas</li>
+        <li><strong>Eficiencia de flujo</strong>: Process Time / Lead Time × 100</li>
+      </ul>
+      <div class="box bd" style="margin-top:8px;"><div class="bt">💡 DATO REAL</div>
+        <p>En organizaciones típicas, la eficiencia de flujo en TI es del <strong>5-15%</strong>. El 85-95% del tiempo es <em>espera</em>. Lean busca elevar esto al 30-50%.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>Kanban: Visualizar y Optimizar el Flujo de Trabajo</h2>
+  <div class="cg c2">
+    <div class="card t">
+      <h3>Los 4 Principios de Kanban</h3>
+      <ol style="font-size:.84rem;">
+        <li><strong>Empezar con lo que tienes</strong>: no reinvenciar el proceso, mejorarlo</li>
+        <li><strong>Comprometerse a mejorar incrementalmente</strong>: evolución, no revolución</li>
+        <li><strong>Respetar los procesos y roles actuales</strong>: reducir resistencia al cambio</li>
+        <li><strong>Fomentar el liderazgo en todos los niveles</strong></li>
+      </ol>
+      <h3 style="margin-top:10px;">Las 6 Prácticas Core</h3>
+      <ol style="font-size:.84rem;">
+        <li>Visualizar el flujo de trabajo</li>
+        <li>Limitar el WIP (Work In Progress)</li>
+        <li>Gestionar el flujo activamente</li>
+        <li>Hacer las políticas explícitas</li>
+        <li>Implementar ciclos de retroalimentación</li>
+        <li>Mejorar colaborativa y experimentalmente</li>
+      </ol>
+    </div>
+    <div class="card p">
+      <h3>WIP Limits: La Práctica más Poderosa</h3>
+      <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+        <p>El WIP limit es como el <strong>límite de autos en una autopista</strong>. Sin límite, todos entran a la vez, hay embotellamiento y nadie llega rápido. Con un límite óptimo, el tráfico fluye constantemente a alta velocidad. En trabajo cognitivo, el multitasking excesivo es el embotellamiento que mata la productividad.</p>
+      </div>
+      <h3>Métricas Kanban</h3>
+      <ul style="font-size:.83rem;">
+        <li><strong>Lead Time</strong>: tiempo desde que el ítem entra al board hasta que sale</li>
+        <li><strong>Cycle Time</strong>: tiempo de trabajo activo (sin esperas)</li>
+        <li><strong>Throughput</strong>: ítems completados por período</li>
+        <li><strong>CFD</strong>: Cumulative Flow Diagram — detecta cuellos de botella visualmente</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 8 ═══ -->
+<div class="slide" data-s="2">
+  <h2>Sesión 8 <span style="color:var(--pink)">— DevOps: Cultura, Automatización y Entrega Continua</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>DevOps resuelve la <strong>guerra fría entre desarrollo y operaciones</strong>. Desarrollo quiere cambiar las cosas rápido; Operaciones quiere estabilidad. Sin DevOps, el código "cae por un muro" de producción y cada despliegue es una crisis. Con DevOps, el mismo equipo es responsable de construir Y de operar — nadie tira el código por el muro porque son ellos quienes lo tienen que sostener.</p>
+  </div>
+  <div class="cg c3" style="margin-top:12px;">
+    <div class="card p"><h3>Los 3 Caminos DevOps</h3><p><strong>Flujo</strong>: optimizar el flujo de trabajo de izq a der (dev → ops). <strong>Retroalimentación</strong>: ciclos de feedback rápidos de der a izq. <strong>Aprendizaje continuo</strong>: cultura de experimentación y mejora.</p></div>
+    <div class="card t"><h3>Cultura DevOps (CALMS)</h3><p><strong>Culture</strong>: responsabilidad compartida. <strong>Automation</strong>: eliminar trabajo manual repetitivo. <strong>Lean</strong>: flujo continuo, eliminar desperdicios. <strong>Measurement</strong>: métricas de todo. <strong>Sharing</strong>: conocimiento compartido.</p></div>
+    <div class="card g"><h3>Las 4 Métricas DORA</h3><p>Miden la salud del proceso de entrega: <strong>Deployment Frequency</strong> (qué tan seguido se despliega), <strong>Lead Time for Changes</strong>, <strong>Change Failure Rate</strong>, <strong>Mean Time to Recovery</strong>.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-s="2">
+  <h2>Pipeline CI/CD: Automatizando la Entrega de Valor</h2>
+  <div class="ld">
+    <div class="lr" style="background:rgba(37,99,235,.1);border:1px solid var(--blue);color:var(--blue);">💻 1. CODE — Desarrollador hace commit en Git. Pull Request activa el pipeline automáticamente.</div>
+    <div class="lr" style="background:rgba(8,145,178,.1);border:1px solid var(--teal);color:var(--teal);">🔨 2. BUILD — Compilación automática del código. Si falla el build, se notifica al desarrollador inmediatamente.</div>
+    <div class="lr" style="background:rgba(5,150,105,.1);border:1px solid var(--green);color:var(--green);">🧪 3. TEST — Pruebas unitarias, de integración, de seguridad (SAST) y de calidad de código (SonarQube) automáticas.</div>
+    <div class="lr" style="background:rgba(217,119,6,.1);border:1px solid var(--gold);color:var(--gold);">📦 4. PACKAGE — Crear imagen Docker o artefacto de despliegue. Subir al registry de contenedores.</div>
+    <div class="lr" style="background:rgba(124,58,237,.1);border:1px solid var(--violet);color:var(--violet);">🚀 5. DEPLOY — Despliegue automático a ambiente de QA → Staging → Producción con aprobaciones controladas.</div>
+    <div class="lr" style="background:rgba(219,39,119,.1);border:1px solid var(--pink);color:var(--pink);">📊 6. MONITOR — Observabilidad: logs (ELK Stack), métricas (Prometheus/Grafana), alertas automáticas, rollback automático si hay degradación.</div>
+  </div>
+  <div class="box bc"><div class="bt">📰 CASO REAL — Amazon: 23,000 despliegues al día</div>
+    <p>Amazon tiene una cadencia de despliegues de aproximadamente <strong>23,000 por día</strong> en producción. Esto solo es posible con un pipeline CI/CD completamente automatizado, donde cada cambio pasa por cientos de pruebas automáticas antes de llegar a producción. Si algo falla, el sistema hace rollback automático en minutos. La clave: equipos pequeños con full ownership de su servicio.</p>
+  </div>
+</div>
+
+<div class="slide" data-s="2">
+  <h2>Modelado UML para DevOps y Diseño de Software</h2>
+  <div class="cg c2">
+    <div class="card t">
+      <h3>Diagramas UML Esenciales</h3>
+      <ul style="font-size:.84rem;">
+        <li><strong>Diagrama de Casos de Uso</strong>: interacciones entre actores y el sistema. Base de los requisitos funcionales. El "qué" hace el sistema.</li>
+        <li><strong>Diagrama de Clases</strong>: estructura estática del sistema. Entidades, atributos y relaciones. Guía el diseño de base de datos y código.</li>
+        <li><strong>Diagrama de Secuencia</strong>: interacciones entre objetos en el tiempo. Documenta flujos de API y microservicios.</li>
+        <li><strong>Diagrama de Despliegue</strong>: arquitectura física del sistema. Servidores, contenedores, redes, balanceadores de carga. Esencial para DevOps.</li>
+        <li><strong>Diagrama de Actividad</strong>: flujo de proceso. Alternativa técnica al BPMN para flujos internos del sistema.</li>
+      </ul>
+    </div>
+    <div class="card p">
+      <h3>IaC — Infraestructura como Código</h3>
+      <div class="box bd"><div class="bt">💡 CONCEPTO</div>
+        <p>La infraestructura (servidores, redes, bases de datos) se define en archivos de código versionables en Git, no en clics manuales en una consola.</p>
+      </div>
+      <pre>## Ejemplo: Terraform (IaC)
+resource "aws_instance" "app_server" {
+  ami           = "ami-0c02fb55956c7d316"
+  instance_type = "t2.micro"
+  tags = {
+    Name = "AppServer-Produccion"
+    Proyecto = "ERP-Manufactura"
+  }
+}
+
+## Ventajas:
+# - Reproducible: mismo infra en dev/QA/prod
+# - Versionado: quién cambió qué y cuándo
+# - Revisable: code review de cambios de infra
+# - Automatizable: parte del pipeline CI/CD</pre>
+    </div>
+  </div>
+  <div class="box bl"><div class="bt">🔬 PRÁCTICA — Diseño Pipeline CI/CD</div>
+    <p>En equipos: diseñar el pipeline CI/CD para un microservicio de gestión de inventario (NodeJS + PostgreSQL). Definir: herramientas en cada etapa (GitLab CI, Docker, SonarQube, Kubernetes), criterios de gate (% cobertura, 0 bugs críticos), ambientes (dev → QA → staging → prod), estrategia de rollback. Documentar como diagrama de flujo.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 9 ═══ -->
+<div class="slide" data-s="3">
+  <h2>Sesión 9 <span style="color:var(--violet)">— Planeación Adaptativa y Metodologías Híbridas</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>La planeación híbrida es como <strong>construir una autopista mientras el tráfico sigue circulando</strong>. Tienes un plan maestro de la ruta completa (predictivo: dónde irá la autopista, cuántos carriles, ingeniería estructural), pero el diseño interior de cada tramo se va refinando conforme se construye (ágil: materiales disponibles, condiciones del terreno, cambios en el código de construcción). Los dos enfoques conviven porque el problema lo requiere.</p>
+  </div>
+  <div class="cg c2" style="margin-top:12px;">
+    <div class="card v">
+      <h3>¿Cuándo el Híbrido es la Respuesta?</h3>
+      <ul style="font-size:.84rem;">
+        <li>Proyecto con <strong>componentes estables</strong> (infraestructura, integración) Y <strong>componentes cambiantes</strong> (UI, reglas de negocio)</li>
+        <li>Contrato de precio fijo (predictivo) con entrega incremental de funcionalidades (ágil)</li>
+        <li>Múltiples equipos: algunos técnicos (ágil) + proveedores externos (predictivo)</li>
+        <li>Empresa en transición hacia agilidad: no todo el equipo está maduro en Scrum</li>
+        <li>Regulación exige documentación exhaustiva (predictivo) pero el desarrollo debe ser rápido (ágil)</li>
+      </ul>
+    </div>
+    <div class="card o">
+      <h3>Rolling Wave Planning — Planeación por Olas</h3>
+      <p>Planear en detalle <strong>lo que está próximo</strong> (1-2 sprints) y en alto nivel lo que está lejos (fases futuras). El nivel de detalle aumenta conforme te acercas a cada hito.</p>
+      <div class="ld" style="margin-top:6px;">
+        <div class="lr" style="background:rgba(8,145,178,.1);border:1px solid var(--teal);font-size:.78rem;color:var(--teal);">🔍 SPRINT 1-2 (próximas 4 sem): tareas individuales, duraciones exactas, recursos asignados</div>
+        <div class="lr" style="background:rgba(217,119,6,.1);border:1px solid var(--gold);font-size:.78rem;color:var(--gold);">📋 FASE 2 (próximos 3 meses): paquetes de trabajo, estimaciones ±20%, equipo tentativo</div>
+        <div class="lr" style="background:rgba(100,116,139,.1);border:1px solid var(--muted);font-size:.78rem;color:var(--muted);">🌊 FASE 3+ (futuro): hitos de alto nivel, estimaciones ±50%, supuestos clave</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="3">
+  <h2>Disciplined Agile (DA) y Casos de Aplicación Industrial</h2>
+  <div class="cg c2">
+    <div class="card b">
+      <h3>Disciplined Agile: El Way of Working Adaptable</h3>
+      <p>Creado por Scott Ambler, adquirido por PMI en 2019. DA no prescribe un único proceso — te da un <strong>toolkit de opciones</strong> para elegir el Way of Working (WoW) apropiado para tu contexto.</p>
+      <ul style="font-size:.83rem;margin-top:8px;">
+        <li><strong>DA Scrum</strong>: para la mayoría de equipos ágiles</li>
+        <li><strong>DA Kanban</strong>: para equipos de soporte / mantenimiento</li>
+        <li><strong>DA SAFe</strong>: para programas y portafolios grandes</li>
+        <li><strong>DA LeanStartup</strong>: para innovación y productos nuevos</li>
+        <li><strong>DA Continual</strong>: para operaciones de TI / DevOps</li>
+      </ul>
+    </div>
+    <div class="card g">
+      <h3>Casos por Sector Industrial</h3>
+      <table>
+        <tr><th>Sector</th><th>Componente predictivo</th><th>Componente ágil</th></tr>
+        <tr><td>Manufactura</td><td>Integración con PLC/SCADA, infraestructura OT</td><td>Módulo de reportes, dashboard de planta</td></tr>
+        <tr><td>Logística</td><td>Integración con ERP, hardware de tracking</td><td>App móvil de repartidores, alertas en tiempo real</td></tr>
+        <tr><td>Automotriz</td><td>Sistema de diagnóstico embebido (FMEA, validación)</td><td>App de dealer para ventas y CRM</td></tr>
+        <tr><td>Financiero</td><td>Core bancario, cumplimiento regulatorio</td><td>Canales digitales, chatbot, scoring crediticio</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Click para ver respuesta</div>
+    <p>Un proyecto de implementación de sistema MES en planta tiene: presupuesto fijo de $2M, fecha de arranque comprometida para arranque de nueva línea de producción en 9 meses, integración con 3 PLCs y 1 ERP ya definida, módulo de análisis de calidad con requisitos que "evolucionarán con el cliente". ¿Qué enfoque recomiendas y por qué?</p>
+    <div class="qa"><strong>Híbrido</strong>: Predictivo para la fase de integración con PLCs y ERP (requisitos técnicos bien definidos, presupuesto y fecha fija, componente de infraestructura). Ágil (Scrum, Sprints de 2 semanas) para el módulo de análisis de calidad (requisitos evolucionan). Unificados en un cronograma maestro predictivo con hitos de fases. Rolling Wave Planning para que los sprints del módulo ágil se planeen detalladamente cada 2 semanas mientras el componente técnico avanza en paralelo con su propio plan.</div>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 10 ═══ -->
+<div class="slide" data-s="4">
+  <h2>Sesión 10 <span style="color:var(--green)">— Métricas Ágiles y Reporting Ejecutivo</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Las métricas sin propósito son como el velocímetro en un avión: una velocidad de 300 km/h es excelente en la autopista pero mortal si estás aterrizando. Las métricas deben responder una pregunta de negocio específica. El método GQM (Goal-Question-Metric) obliga a preguntarte <em>por qué mides</em> antes de decidir <em>qué mides</em>.</p>
+  </div>
+  <div class="cg c3" style="margin-top:12px;">
+    <div class="card g"><h3>Métricas de Velocidad</h3><p><strong>Velocity</strong>: puntos de historia completados por sprint. Solo útil para planear futuros sprints del mismo equipo. NO comparar entre equipos. <strong>Story Points</strong>: medida relativa de esfuerzo. No son horas.</p></div>
+    <div class="card t"><h3>Métricas de Flujo</h3><p><strong>Lead Time</strong>: tiempo desde que se crea el ítem hasta que se entrega. <strong>Cycle Time</strong>: tiempo de trabajo activo. <strong>WIP</strong>: ítems activos simultáneamente. <strong>Throughput</strong>: ítems completados/semana.</p></div>
+    <div class="card p"><h3>Métricas de Calidad</h3><p><strong>Defect Density</strong>: bugs por punto de historia. <strong>Test Coverage</strong>: % de código con pruebas automáticas. <strong>Technical Debt Ratio</strong>: coste de arreglar el código vs costo de desarrollarlo (SonarQube).</p></div>
+  </div>
+</div>
+
+<div class="slide" data-s="4">
+  <h2>Burndown, Burnup y Diagrama de Flujo Acumulativo</h2>
+  <div class="cg c3">
+    <div class="card g">
+      <h3>Burndown Chart</h3>
+      <p style="font-size:.83rem;">Muestra el trabajo que <strong>QUEDA</strong> por hacer en el Sprint. La línea ideal es diagonal descendente desde el primer día hasta cero. Si la línea real está <em>arriba</em> de la ideal: vamos retrasados. Si está <em>abajo</em>: vamos adelantados.</p>
+      <div style="background:#071020;border:1px solid var(--border);border-radius:6px;padding:10px;margin-top:8px;font-family:monospace;font-size:.75rem;">
+        <div style="color:var(--muted);">Puntos | Día 1   5   10</div>
+        <div style="color:var(--teal);">  100  |●</div>
+        <div style="color:var(--teal);">   80  |  ✕ ← ideal</div>
+        <div style="color:var(--teal);">   60  |    ●  </div>
+        <div style="color:var(--teal);">   40  |      ✕ ← ideal</div>
+        <div style="color:var(--red);">        Retraso visible ↑</div>
+      </div>
+    </div>
+    <div class="card b">
+      <h3>Burnup Chart</h3>
+      <p style="font-size:.83rem;">Muestra el trabajo <strong>COMPLETADO</strong> vs el alcance total. Ventaja sobre burndown: si el scope cambia, se ve claramente. La línea de completado sube; la línea de scope puede subir si se agregan ítems.</p>
+      <div class="box bd" style="margin-top:8px;"><div class="bt">💡 BURNDOWN vs BURNUP</div>
+        <p style="font-size:.8rem;">Burndown: simple, muestra urgencia. Burnup: más informativo, visible el scope creep cuando el alcance total crece. Para directivos: burnup. Para el equipo: burndown.</p>
+      </div>
+    </div>
+    <div class="card o">
+      <h3>OKRs — Métricas de Valor de Negocio</h3>
+      <p style="font-size:.83rem;"><strong>Objectives and Key Results</strong>: conecta el trabajo del equipo ágil con los objetivos estratégicos.</p>
+      <ul style="font-size:.82rem;margin-top:6px;">
+        <li><strong>Objective</strong>: ambicioso, cualitativo, inspirador</li>
+        <li><strong>Key Results</strong>: 3-5 métricas cuantitativas que demuestran el avance</li>
+      </ul>
+      <div style="background:#071020;border:1px solid var(--border);border-radius:6px;padding:8px;margin-top:8px;font-size:.78rem;">
+        <div style="color:var(--gold);font-weight:700;">O: Digitalizar la gestión de inventario</div>
+        <div style="color:var(--green);">KR1: 100% de almacenes con sistema en tiempo real (vs 30% actual)</div>
+        <div style="color:var(--green);">KR2: Tiempo de ciclo de picking reducido de 45min a 15min</div>
+        <div style="color:var(--green);">KR3: Exactitud de inventario del 99.5% (vs 91% actual)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CIERRE BLOQUE II -->
+<div class="slide cover" data-s="4">
+  <div class="badge">BLOQUE II — CIERRE</div>
+  <h1>Ágil, Lean y DevOps:<br>La Trinidad de la Velocidad</h1>
+  <p style="max-width:600px;margin:16px auto;color:var(--muted);">Scrum para entregas incrementales, Lean para eliminar desperdicios, DevOps para automatizar y acelerar: combinados, transforman organizaciones lentas en motores de valor continuo. El enfoque híbrido hace todo esto compatible con la realidad industrial.</p>
+  <div class="sr" style="justify-content:center;max-width:700px;margin:20px auto;">
+    <div class="stat"><div class="n" style="color:var(--teal)">🏉</div><div class="l">Scrum y el ciclo de sprints</div></div>
+    <div class="stat"><div class="n" style="color:var(--gold)">🗑️</div><div class="l">Lean y Kanban — flujo</div></div>
+    <div class="stat"><div class="n" style="color:var(--pink)">🚀</div><div class="l">DevOps y CI/CD</div></div>
+    <div class="stat"><div class="n" style="color:var(--violet)">🌊</div><div class="l">Planeación híbrida</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">📈</div><div class="l">Métricas y OKRs</div></div>
+  </div>
+  <div style="margin-top:16px;font-size:.78rem;color:var(--muted);">
+    <strong style="color:var(--teal);">Referencias:</strong> Schwaber &amp; Sutherland (2020) Scrum Guide · Anderson (2010) Kanban · Kim et al. (2016) The DevOps Handbook · Leffingwell (2018) SAFe 5.0 Distilled
+  </div>
+</div>
+
+</div>
+<div id="footer">
+  <button onclick="prev()">← Anterior</button>
+  <span class="hint">← → · Espacio</span>
+  <button onclick="next()">Siguiente →</button>
+</div>
+<script>
+const slides=document.querySelectorAll('.slide'),total=slides.length;let cur=0;
+const ss=[];slides.forEach((s,i)=>{const v=parseInt(s.dataset.s);if(ss[v]===undefined)ss[v]=i;});
+function go(n){if(n<0||n>=total)return;slides[cur].classList.remove('active');cur=n;slides[cur].classList.add('active');document.getElementById('ctr').textContent=(cur+1)+' / '+total;document.getElementById('pb').style.width=((cur+1)/total*100)+'%';ut();slides[cur].scrollTop=0;}
+function next(){go(cur+1);}function prev(){go(cur-1);}function gts(i){go(ss[i]);}
+function ut(){const v=parseInt(slides[cur].dataset.s);for(let i=0;i<5;i++){const b=document.getElementById('t'+i);if(b)b.classList.toggle('active',i===v);}}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();}if(e.key==='ArrowLeft'){e.preventDefault();prev();}});
+ut();
+</script>
+</body>
+</html>

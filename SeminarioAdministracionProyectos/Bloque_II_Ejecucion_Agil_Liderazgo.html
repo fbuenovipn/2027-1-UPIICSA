@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloque II — Ejecución Ágil y Liderazgo de Equipos</title>
+<style>
+:root{--bg:#03060f;--card:#0a1628;--border:#1e3a5f;--teal:#0d9488;--amber:#f59e0b;--indigo:#6366f1;--green:#10b981;--red:#ef4444;--blue:#3b82f6;--pink:#ec4899;--violet:#7c3aed;--muted:#64748b;--text:#e2e8f0;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden;height:100vh;}
+#navbar{position:fixed;top:0;left:0;right:0;height:54px;background:rgba(3,6,15,.96);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:100;backdrop-filter:blur(8px);}
+.brand{color:var(--teal);font-weight:700;font-size:.85rem;letter-spacing:1px;}
+.brand span{color:var(--amber);}
+.stabs{display:flex;gap:6px;}
+.stabs button{background:transparent;border:1px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:20px;cursor:pointer;font-size:.75rem;transition:all .2s;}
+.stabs button.active{background:var(--teal);border-color:var(--teal);color:#fff;font-weight:700;}
+.stabs button:hover:not(.active){border-color:var(--teal);color:var(--teal);}
+#ctr{color:var(--muted);font-size:.8rem;min-width:80px;text-align:right;}
+#pb{position:fixed;top:54px;left:0;height:3px;background:linear-gradient(90deg,var(--teal),var(--amber));transition:width .3s;z-index:100;}
+#sc{position:fixed;top:57px;left:0;right:0;bottom:40px;overflow:hidden;}
+.slide{position:absolute;top:0;left:0;right:0;bottom:0;padding:28px 48px;display:none;overflow-y:auto;animation:fi .35s ease;}
+.slide.active{display:flex;flex-direction:column;}
+@keyframes fi{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+#footer{position:fixed;bottom:0;left:0;right:0;height:40px;background:rgba(3,6,15,.96);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:16px;z-index:100;}
+#footer button{background:var(--card);border:1px solid var(--border);color:var(--text);padding:5px 20px;border-radius:6px;cursor:pointer;font-size:.8rem;transition:all .2s;}
+#footer button:hover{border-color:var(--teal);color:var(--teal);}
+.hint{color:var(--muted);font-size:.72rem;}
+h1{font-size:2rem;font-weight:800;line-height:1.2;margin-bottom:10px;}
+h2{font-size:1.45rem;font-weight:700;margin-bottom:14px;}
+h3{font-size:1rem;font-weight:600;color:var(--teal);margin-bottom:8px;margin-top:8px;}
+p{font-size:.9rem;line-height:1.65;margin-bottom:8px;}
+ul,ol{padding-left:20px;font-size:.88rem;line-height:1.8;}
+li{margin-bottom:3px;}
+.cover{align-items:center;justify-content:center;text-align:center;}
+.cover h1{font-size:2.2rem;background:linear-gradient(135deg,var(--teal),var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;}
+.badge{display:inline-block;border:1px solid var(--teal);border-radius:8px;padding:8px 24px;color:var(--teal);font-size:.9rem;font-weight:700;letter-spacing:2px;margin-bottom:20px;background:rgba(13,148,136,.08);}
+.sg{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px;}
+.sc2{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 14px;width:168px;text-align:left;}
+.sc2 .num{color:var(--teal);font-size:.7rem;font-weight:700;}
+.sc2 .nm{font-size:.78rem;margin-top:4px;}
+.sub{color:var(--muted);font-size:1rem;}
+.cg{display:grid;gap:12px;margin-top:10px;}
+.cg.c2{grid-template-columns:1fr 1fr;}
+.cg.c3{grid-template-columns:1fr 1fr 1fr;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:15px;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.card.ct::before{background:var(--teal);}
+.card.ca::before{background:var(--amber);}
+.card.cg2::before{background:var(--green);}
+.card.ci::before{background:var(--indigo);}
+.card.cr::before{background:var(--red);}
+.card.cb::before{background:var(--blue);}
+.card.cv::before{background:var(--violet);}
+.card.cp::before{background:var(--pink);}
+.card h3{margin-top:0;font-size:.9rem;}
+.card p,.card ul,.card li{font-size:.84rem;}
+.box{border-radius:10px;padding:13px 17px;margin:9px 0;}
+.bm{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.4);}
+.bc{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.4);}
+.bl{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.4);}
+.bd{background:rgba(13,148,136,.08);border:1px solid rgba(13,148,136,.4);}
+.bq{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.4);cursor:pointer;}
+.bt{font-weight:700;font-size:.8rem;margin-bottom:5px;letter-spacing:.5px;}
+.bm .bt{color:#a78bfa;}
+.bc .bt{color:var(--amber);}
+.bl .bt{color:#34d399;}
+.bd .bt{color:var(--teal);}
+.bq .bt{color:#fbbf24;}
+.box p,.box li,.box ul{font-size:.86rem;}
+.qa{display:none;margin-top:7px;padding-top:7px;border-top:1px solid rgba(251,191,36,.3);color:#34d399;font-size:.84rem;}
+.bq.revealed .qa{display:block;}
+table{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:8px;}
+th{background:#071020;color:var(--teal);text-align:left;padding:7px 11px;border:1px solid var(--border);}
+td{padding:6px 11px;border:1px solid var(--border);vertical-align:top;}
+tr:nth-child(even) td{background:rgba(10,22,40,.6);}
+.tl{list-style:none;padding:0;margin-top:8px;}
+.tl li{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start;}
+.tl .st{min-width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.78rem;flex-shrink:0;}
+.tl .st.t{background:rgba(13,148,136,.15);border:2px solid var(--teal);color:var(--teal);}
+.tl .st.a{background:rgba(245,158,11,.15);border:2px solid var(--amber);color:var(--amber);}
+.tl .st.g{background:rgba(16,185,129,.15);border:2px solid var(--green);color:var(--green);}
+.tl .st.i{background:rgba(99,102,241,.15);border:2px solid var(--indigo);color:var(--indigo);}
+.tl .st.r{background:rgba(239,68,68,.15);border:2px solid var(--red);color:var(--red);}
+.tl .st.v{background:rgba(124,58,237,.15);border:2px solid var(--violet);color:var(--violet);}
+.tl .content h4{font-size:.88rem;font-weight:600;}
+.tl .content p{font-size:.82rem;color:var(--muted);margin:0;}
+.sr{display:flex;gap:12px;flex-wrap:wrap;margin:10px 0;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:13px 16px;flex:1;min-width:110px;text-align:center;}
+.stat .n{font-size:1.7rem;font-weight:800;line-height:1;}
+.stat .l{font-size:.7rem;color:var(--muted);margin-top:4px;}
+.ld{display:flex;flex-direction:column;gap:5px;margin:10px 0;}
+.lr{border-radius:6px;padding:7px 14px;font-size:.81rem;font-weight:600;}
+.tag{display:inline-block;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:2px 9px;font-size:.74rem;color:var(--muted);margin:2px;}
+.kb{background:var(--card);border:1px solid var(--teal);border-radius:8px;padding:12px;text-align:center;font-size:1.2rem;font-weight:800;color:var(--teal);}
+.slide::-webkit-scrollbar{width:4px;}
+.slide::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+</style>
+</head>
+<body>
+<div id="navbar">
+  <div class="brand">⚡ EJECUCIÓN <span>ÁGIL</span> · BLOQUE II</div>
+  <div class="stabs">
+    <button onclick="gts(0)" id="t0">S6</button>
+    <button onclick="gts(1)" id="t1">S7</button>
+    <button onclick="gts(2)" id="t2">S8</button>
+    <button onclick="gts(3)" id="t3">S9</button>
+    <button onclick="gts(4)" id="t4">S10</button>
+  </div>
+  <div id="ctr">1 / 1</div>
+</div>
+<div id="pb" style="width:0%"></div>
+<div id="sc">
+
+<!-- PORTADA -->
+<div class="slide active cover" data-s="0">
+  <div class="badge">BLOQUE II · SESIONES 6 – 10</div>
+  <h1>Ejecución Ágil y<br>Liderazgo de Equipos</h1>
+  <p class="sub">Scrum · Lean-Kanban · Mejora Continua · Equipos · Comunicación · 30 horas</p>
+  <div class="sg">
+    <div class="sc2"><div class="num">SESIÓN 6</div><div class="nm">Scrum Framework</div></div>
+    <div class="sc2"><div class="num">SESIÓN 7</div><div class="nm">Lean &amp; Kanban</div></div>
+    <div class="sc2"><div class="num">SESIÓN 8</div><div class="nm">Planeación Adaptativa</div></div>
+    <div class="sc2"><div class="num">SESIÓN 9</div><div class="nm">Equipos Alto Desempeño</div></div>
+    <div class="sc2"><div class="num">SESIÓN 10</div><div class="nm">Comunicación Estratégica</div></div>
+  </div>
+  <p style="margin-top:24px;color:var(--muted);font-size:.8rem;">← → Espacio · Tabs S6–S10 para saltar sesión</p>
+</div>
+
+<!-- ═══ SESIÓN 6: SCRUM ═══ -->
+<div class="slide" data-s="0">
+  <h2>Sesión 6 — <span style="color:var(--teal)">Scrum: Framework Completo para la Gestión Ágil</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Scrum viene del rugby: el equipo avanza <strong>junto, compacto, coordinado</strong>. No hay héroes individuales — si uno falla, todos caen. El <strong>Product Owner</strong> es el capitán que decide la estrategia; el <strong>Scrum Master</strong> es el árbitro que garantiza las reglas; los <strong>Developers</strong> son los jugadores que ejecutan. Y el Sprint es cada "jugada" de 2 semanas: definida, ejecutada y evaluada antes de la siguiente.</p>
+  </div>
+  <div class="cg c3" style="margin-top:12px;">
+    <div class="card ct"><h3>3 Pilares</h3><ul><li><strong>Transparencia</strong> — todo visible para todos</li><li><strong>Inspección</strong> — revisar frecuentemente</li><li><strong>Adaptación</strong> — corregir cuando se detecta desviación</li></ul></div>
+    <div class="card ca"><h3>5 Valores</h3><ul><li>Compromiso</li><li>Coraje</li><li>Foco</li><li>Apertura</li><li>Respeto</li></ul></div>
+    <div class="card cg2"><h3>El Sprint</h3><p>Corazón de Scrum. Duración: <strong>1–4 semanas</strong> (típico: 2). Inmutable durante la ejecución. Al final: Incremento potencialmente entregable con la Definition of Done cumplida.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Los 3 Roles del Equipo Scrum</h2>
+  <div class="cg c3">
+    <div class="card ci">
+      <h3>Product Owner</h3>
+      <p style="color:var(--amber);font-size:.8rem;font-weight:700;">¿QUÉ construir y POR QUÉ?</p>
+      <ul><li>Dueño del Product Backlog</li><li>Prioriza según valor de negocio</li><li>Representa la voz del cliente</li><li>Acepta o rechaza el Incremento</li><li>Define la Visión del Producto</li></ul>
+      <p style="font-size:.78rem;color:var(--muted);margin-top:6px;">⚠️ Error común: PO que aprueba todo lo que el equipo pide sin priorizar.</p>
+    </div>
+    <div class="card ct">
+      <h3>Scrum Master</h3>
+      <p style="color:var(--teal);font-size:.8rem;font-weight:700;">CÓMO trabajar bien</p>
+      <ul><li>Sirve al equipo Scrum</li><li>Elimina impedimentos</li><li>Facilita eventos Scrum</li><li>Coach de agilidad</li><li>Protege al equipo de interrupciones</li></ul>
+      <p style="font-size:.78rem;color:var(--muted);margin-top:6px;">⚠️ No es el jefe de proyecto tradicional. Su autoridad es de servicio.</p>
+    </div>
+    <div class="card cg2">
+      <h3>Developers</h3>
+      <p style="color:var(--green);font-size:.8rem;font-weight:700;">CONSTRUIR el Incremento</p>
+      <ul><li>Cross-funcionales (todas las habilidades)</li><li>Autoorganizados — deciden cómo</li><li>Responsabilidad colectiva</li><li>5–9 personas (óptimo: 7±2)</li><li>Estiman y se comprometen al Sprint</li></ul>
+      <p style="font-size:.78rem;color:var(--muted);margin-top:6px;">No son solo programadores: incluyen QA, UX, analistas, según el proyecto.</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Los 5 Eventos Scrum y los 3 Artefactos</h2>
+  <div class="cg c2">
+    <div class="card ca">
+      <h3>5 Eventos (todos con timebox)</h3>
+      <table>
+        <tr><th>Evento</th><th>Duración</th><th>Propósito</th></tr>
+        <tr><td>Sprint</td><td>1–4 semanas</td><td>Contenedor de los demás eventos</td></tr>
+        <tr><td>Sprint Planning</td><td>≤8h (4h)</td><td>¿Qué haremos y cómo?</td></tr>
+        <tr><td>Daily Scrum</td><td>15 min</td><td>Sincronización diaria del equipo</td></tr>
+        <tr><td>Sprint Review</td><td>≤4h (2h)</td><td>Inspeccionar el Incremento con stakeholders</td></tr>
+        <tr><td>Retrospectiva</td><td>≤3h (1.5h)</td><td>Mejorar la forma de trabajar</td></tr>
+      </table>
+    </div>
+    <div class="card ci">
+      <h3>3 Artefactos y sus Compromisos</h3>
+      <ul class="tl">
+        <li><div class="st t">PB</div><div class="content"><h4>Product Backlog → Meta del Producto</h4><p>Lista ordenada de todo lo que podría necesitar el producto. Nunca está "terminado".</p></div></li>
+        <li><div class="st a">SB</div><div class="content"><h4>Sprint Backlog → Meta del Sprint</h4><p>Ítems seleccionados del PB + plan de cómo construir el Incremento.</p></div></li>
+        <li><div class="st g">IN</div><div class="content"><h4>Incremento → Definition of Done</h4><p>Suma de todos los PBIs completados. Debe ser utilizable cada Sprint.</p></div></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Burndown Chart, Velocity y Planning Poker</h2>
+  <div class="cg c2">
+    <div class="card cg2">
+      <h3>Burndown Chart</h3>
+      <p>Muestra el trabajo restante vs el tiempo. La línea ideal baja linealmente de 100% a 0% al final del Sprint. La línea real muestra el progreso actual.</p>
+      <div style="background:#071020;border-radius:6px;padding:12px;margin-top:8px;font-family:monospace;font-size:.78rem;">
+        <div style="color:var(--muted);">SP restantes</div>
+        <div style="color:var(--amber);">50 |• </div>
+        <div style="color:var(--amber);">40 |  •</div>
+        <div style="color:var(--green);">30 |  ✦ •</div>
+        <div style="color:var(--amber);">20 |      •</div>
+        <div style="color:var(--amber);">10 |       •</div>
+        <div style="color:var(--amber);"> 0 |_________→ días</div>
+        <div style="color:var(--muted);font-size:.7rem;">• Real  ✦ Ideal</div>
+      </div>
+      <p style="font-size:.8rem;margin-top:8px;"><strong>Velocity</strong> = Story Points completados por Sprint. Sirve para predecir cuántos sprints tomará terminar el backlog.</p>
+    </div>
+    <div class="card cv">
+      <h3>Planning Poker — Estimación por Consenso</h3>
+      <p>Técnica para estimar Story Points sin anclar a la opinión del más senior:</p>
+      <ol style="font-size:.84rem;">
+        <li>El PO describe el ítem</li>
+        <li>Cada Developer elige una carta (Fibonacci: 1,2,3,5,8,13,21,?)</li>
+        <li>Todos muestran simultáneamente</li>
+        <li>Si hay divergencia, el más alto y más bajo argumentan</li>
+        <li>Nueva ronda hasta consenso</li>
+      </ol>
+      <div class="box bd"><div class="bt">💡 DATO CLAVE</div>
+        <p>Los Story Points miden <strong>esfuerzo relativo</strong>, no horas. "Esta historia es el doble de difícil que la anterior" — eso es todo lo que necesitas.</p>
+      </div>
+    </div>
+  </div>
+  <div class="box bl"><div class="bt">🔬 LABORATORIO — Simulación Sprint</div>
+    <p>Dividirse en equipos de 4–6. PO presenta 10 User Stories de un proyecto real. Equipo hace Planning Poker para estimar. Seleccionar las historias para un Sprint de 2 semanas con capacidad de 40 SP. Ejecutar el "día 3 del Sprint" con Daily Scrum de 15 min.</p>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Scrum en Industrias No-TI: Más Allá del Software</h2>
+  <table>
+    <tr><th>Sector</th><th>Product Backlog</th><th>Sprint Goal</th><th>Incremento</th></tr>
+    <tr><td><strong>Manufactura</strong></td><td>Lista de mejoras de proceso productivo (reducir scrap, cambio de herramental)</td><td>Reducir tiempo de cambio de línea de 45 a 30 min</td><td>Nuevo procedimiento documentado y validado</td></tr>
+    <tr><td><strong>Administración</strong></td><td>Iniciativas de mejora: digitalizar proceso, reducir aprobaciones, nuevos reportes</td><td>Eliminar 3 pasos manuales del proceso de compras</td><td>Proceso rediseñado y piloteado con 2 usuarios</td></tr>
+    <tr><td><strong>Transporte/Logística</strong></td><td>Optimizaciones: rutas, carga, tiempos de entrega, documentación</td><td>Reducir tiempo de carga en patio Norte 20%</td><td>Nuevo layout de patio validado en operación real</td></tr>
+    <tr><td><strong>Automotriz</strong></td><td>Features de vehículo, mejoras de proceso de ensamble, actualizaciones de software embebido</td><td>Integrar módulo de diagnóstico OBD-III en plataforma</td><td>Módulo integrado y probado en 3 vehículos piloto</td></tr>
+  </table>
+  <div class="box bc"><div class="bt">📰 CASO REAL — Bosch Manufacturing</div>
+    <p>Bosch implementó Scrum en sus plantas de manufactura para gestionar proyectos de mejora continua. Resultado: <strong>tiempo de ciclo de mejoras reducido 60%</strong>, de 6 meses promedio a 2.4 meses. Los "Sprints de Mejora" de 2 semanas permitieron iterar y ajustar sin esperar al plan anual.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 7: LEAN & KANBAN ═══ -->
+<div class="slide" data-s="1">
+  <h2>Sesión 7 — <span style="color:var(--amber)">Lean &amp; Kanban: Flujo de Valor y Eliminación de Desperdicios</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Imagina un restaurante donde el mesero toma la orden, camina 100 metros a la cocina, espera 20 minutos, lleva la comida a la mesa equivocada, regresa, pide disculpas, y lo hace de nuevo. Eso son los <strong>desperdicios en los procesos</strong>. Lean dice: <em>elimina todo lo que no agrega valor directo al cliente</em>. Si el cliente no pagaría extra por eso, es desperdicio. Punto.</p>
+  </div>
+  <div class="sr">
+    <div class="stat"><div class="n" style="color:var(--amber)">8</div><div class="l">Desperdicios TIMWOODS que destruyen valor</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">1950</div><div class="l">Toyota Production System — origen del pensamiento Lean</div></div>
+    <div class="stat"><div class="n" style="color:var(--teal)">30%</div><div class="l">Del tiempo promedio en proyectos es desperdicio puro</div></div>
+  </div>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>Los 8 Desperdicios TIMWOODS en Proyectos</h2>
+  <table>
+    <tr><th>Letra</th><th>Desperdicio</th><th>En Proyectos de TI</th><th>En Manufactura/Logística</th></tr>
+    <tr><td><strong>T</strong></td><td>Transporte</td><td>Mover archivos entre 5 servidores innecesariamente</td><td>Mover materiales entre almacenes sin agregar valor</td></tr>
+    <tr><td><strong>I</strong></td><td>Inventario</td><td>Backlog de 300 historias que nunca se priorizan</td><td>Materia prima acumulada esperando producción</td></tr>
+    <tr><td><strong>M</strong></td><td>Movimiento</td><td>Buscar información en 10 herramientas distintas</td><td>Operarios que caminan excesivamente en la planta</td></tr>
+    <tr><td><strong>W</strong></td><td>Espera</td><td>Ticket esperando aprobación 3 semanas</td><td>Línea parada esperando proveedor de componente</td></tr>
+    <tr><td><strong>O</strong></td><td>Sobreproducción</td><td>Features que nadie pidió implementadas "por si acaso"</td><td>Producir más de lo que demanda el cliente</td></tr>
+    <tr><td><strong>O</strong></td><td>Sobreprocesamiento</td><td>7 niveles de aprobación para un cambio de 2 horas</td><td>Inspecciones redundantes del mismo lote</td></tr>
+    <tr><td><strong>D</strong></td><td>Defectos</td><td>Bugs en producción que requieren retrabajo</td><td>Piezas fuera de especificación que se retrabaján</td></tr>
+    <tr><td><strong>S</strong></td><td>Skills no aprovechados</td><td>Programador senior haciendo reportes manuales</td><td>Ingeniero industrial haciendo trabajo administrativo</td></tr>
+  </table>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>Value Stream Map (VSM): Ver para Mejorar</h2>
+  <div class="cg c2">
+    <div class="card ca">
+      <h3>¿Qué es el VSM?</h3>
+      <p>Mapa visual que muestra <strong>todos los pasos</strong> desde la solicitud del cliente hasta la entrega, incluyendo flujo de materiales e información, tiempos de proceso y tiempos de espera.</p>
+      <h3 style="margin-top:10px;">Elementos clave</h3>
+      <ul style="font-size:.83rem;">
+        <li><strong>Cajas de proceso</strong>: actividades que agregan valor</li>
+        <li><strong>Triángulos de inventario</strong>: trabajo acumulado entre pasos</li>
+        <li><strong>Flechas "push"</strong>: empuje sin demanda real</li>
+        <li><strong>Flechas "pull"</strong>: jalar según demanda real (ideal)</li>
+        <li><strong>Línea de tiempo</strong>: tiempo de valor agregado vs tiempo total</li>
+        <li><strong>Lead Time total</strong>: de solicitud a entrega</li>
+      </ul>
+    </div>
+    <div class="card cg2">
+      <h3>AS-IS → TO-BE: El Poder del VSM</h3>
+      <p>Ejemplo: Proceso de aprobación de compras</p>
+      <table style="font-size:.78rem;">
+        <tr><th>Paso</th><th>AS-IS</th><th>TO-BE</th></tr>
+        <tr><td>Solicitud</td><td>Papel + email: 2 días</td><td>Sistema: 1 hora</td></tr>
+        <tr><td>Espera aprobación</td><td>5 días hábiles</td><td>Automatizado &lt;4h</td></tr>
+        <tr><td>Cotización</td><td>3 proveedores: 1 semana</td><td>Portal: 24h</td></tr>
+        <tr><td>Orden de compra</td><td>Impresa + firmada: 2 días</td><td>Digital: 30 min</td></tr>
+        <tr><td><strong>Total Lead Time</strong></td><td><strong>18 días</strong></td><td><strong>2 días</strong></td></tr>
+      </table>
+      <div class="box bl" style="margin-top:8px;"><div class="bt">🔬 LABORATORIO</div>
+        <p style="font-size:.82rem;">Mapear el proceso de solicitud de un recurso para tu proyecto. Identificar los 3 mayores desperdicios. Proponer el TO-BE con mejoras concretas.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>Kanban: Visualizar, Limitar, Fluir</h2>
+  <div class="cg c2">
+    <div class="card ci">
+      <h3>Los 4 Principios y 6 Prácticas de Kanban</h3>
+      <p style="color:var(--indigo);font-size:.8rem;font-weight:700;margin-bottom:6px;">4 PRINCIPIOS</p>
+      <ol style="font-size:.83rem;">
+        <li>Empezar con lo que haces ahora</li>
+        <li>Acordar mejorar incrementalmente</li>
+        <li>Respetar los roles y procesos actuales</li>
+        <li>Alentar liderazgo en todos los niveles</li>
+      </ol>
+      <p style="color:var(--indigo);font-size:.8rem;font-weight:700;margin:10px 0 6px;">6 PRÁCTICAS</p>
+      <ol style="font-size:.83rem;">
+        <li>Visualizar el flujo</li>
+        <li>Limitar el WIP (Work in Progress)</li>
+        <li>Gestionar el flujo</li>
+        <li>Hacer explícitas las políticas</li>
+        <li>Implementar ciclos de feedback</li>
+        <li>Mejorar colaborativamente</li>
+      </ol>
+    </div>
+    <div class="card ct">
+      <h3>WIP Limits: Por qué "Start Finishing"</h3>
+      <div class="box bd"><div class="bt">💡 DATO CLAVE</div>
+        <p>Tener 10 tareas "en proceso" simultáneamente no es productividad — es ilusión de productividad. El multitasking reduce la eficiencia hasta un <strong>40%</strong> (estudio APA). Cada cambio de contexto cuesta 23 minutos de refocalización.</p>
+      </div>
+      <p style="margin-top:8px;font-size:.85rem;">Un tablero Kanban con WIP limits:</p>
+      <div style="display:flex;gap:6px;margin-top:8px;font-size:.75rem;">
+        <div style="flex:1;background:#071020;border-radius:6px;padding:8px;border:1px solid var(--border);">
+          <div style="color:var(--muted);font-size:.68rem;margin-bottom:4px;">BACKLOG</div>
+          <div style="color:var(--text);">• Item A</div><div style="color:var(--text);">• Item B</div><div style="color:var(--text);">• Item C</div>
+        </div>
+        <div style="flex:1;background:#071020;border-radius:6px;padding:8px;border:1px solid var(--amber);">
+          <div style="color:var(--amber);font-size:.68rem;margin-bottom:4px;">EN PROCESO (WIP≤3)</div>
+          <div style="color:var(--green);">✓ Item D</div><div style="color:var(--green);">✓ Item E</div><div style="color:var(--green);">✓ Item F</div>
+        </div>
+        <div style="flex:1;background:#071020;border-radius:6px;padding:8px;border:1px solid var(--border);">
+          <div style="color:var(--muted);font-size:.68rem;margin-bottom:4px;">REVISIÓN (WIP≤2)</div>
+          <div style="color:var(--text);">• Item G</div>
+        </div>
+        <div style="flex:1;background:#071020;border-radius:6px;padding:8px;border:1px solid var(--green);">
+          <div style="color:var(--green);font-size:.68rem;margin-bottom:4px;">LISTO ✓</div>
+          <div style="color:var(--muted);">Item H</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>Métricas Kanban y Lean vs Scrum</h2>
+  <div class="cg c2">
+    <div class="card cg2">
+      <h3>Métricas de Flujo Kanban</h3>
+      <table>
+        <tr><th>Métrica</th><th>Definición</th><th>Uso práctico</th></tr>
+        <tr><td><strong>Lead Time</strong></td><td>Desde que el cliente solicita hasta que recibe</td><td>Promesa al cliente</td></tr>
+        <tr><td><strong>Cycle Time</strong></td><td>Desde que el equipo empieza a trabajar hasta que entrega</td><td>Eficiencia interna</td></tr>
+        <tr><td><strong>Throughput</strong></td><td>Ítems completados por semana</td><td>Capacidad del equipo</td></tr>
+        <tr><td><strong>CFD</strong></td><td>Cumulative Flow Diagram — acumulado de ítems por columna</td><td>Detectar cuellos de botella</td></tr>
+      </table>
+    </div>
+    <div class="card ca">
+      <h3>Lean vs Scrum: ¿Cuándo Usar Cada Uno?</h3>
+      <table>
+        <tr><th>Criterio</th><th>Scrum</th><th>Kanban</th></tr>
+        <tr><td>Tipo de trabajo</td><td>Iterativo, nuevas features</td><td>Flujo continuo, soporte</td></tr>
+        <tr><td>Prioridad</td><td>Cambia cada Sprint</td><td>Cambia en cualquier momento</td></tr>
+        <tr><td>Roles definidos</td><td>Sí (PO, SM, Dev)</td><td>No prescribe roles</td></tr>
+        <tr><td>Timeboxes</td><td>Sprints fijos</td><td>Sin timeboxes</td></tr>
+        <tr><td>Mejor para</td><td>Desarrollo de producto, proyectos</td><td>Operaciones, soporte, mantenimiento</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="bq box" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Click para ver respuesta</div>
+    <p>Tu equipo de soporte TI recibe tickets de incidentes todo el día, sin ciclos fijos. Los tickets tienen distintas urgencias y no se pueden "congelar" el backlog por 2 semanas. ¿Scrum o Kanban? ¿Por qué?</p>
+    <div class="qa">Kanban es la respuesta correcta. El flujo continuo e impredecible de incidentes no se adapta a Sprints con compromisos fijos. Kanban permite priorizar tickets por urgencia en cualquier momento, sin esperar al inicio de un Sprint. Los WIP limits evitan que el equipo se sature y el tablero visual da visibilidad inmediata del estado de todos los incidentes.</div>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 8: PLANEACIÓN ADAPTATIVA ═══ -->
+<div class="slide" data-s="2">
+  <h2>Sesión 8 — <span style="color:var(--indigo)">Planeación Adaptativa y Mejora Continua</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Planear un proyecto de 12 meses en detalle desde el día 1 es como <strong>crear el menú de una boda para dentro de un año</strong>: el presupuesto cambiará, el número de invitados también, el chef renunciará, y el restaurante cerrará. La planeación adaptativa dice: <em>planea en detalle solo lo que vas a hacer esta semana, y a grandes rasgos el resto</em>. Navega con brújula, no con mapa fijo.</p>
+  </div>
+  <div class="cg c2" style="margin-top:12px;">
+    <div class="card ci">
+      <h3>El Cono de la Incertidumbre</h3>
+      <p>Al inicio de un proyecto, la estimación puede variar <strong>±400%</strong>. Conforme avanza, la incertidumbre se reduce. Esto justifica la planeación en olas:</p>
+      <ul><li><strong>Próximas 2 semanas</strong>: plan detallado (nivel tarea)</li><li><strong>Próximo mes</strong>: plan medio (nivel historia/entregable)</li><li><strong>Próximos 3 meses</strong>: plan grueso (nivel hito)</li><li><strong>Más allá</strong>: visión y dirección estratégica</li></ul>
+    </div>
+    <div class="card cg2">
+      <h3>Rolling Wave Planning</h3>
+      <p>Metodología de planeación por olas: elaborar en detalle solo el trabajo próximo, refinando continuamente conforme el proyecto avanza y se reduce la incertidumbre.</p>
+      <p style="margin-top:8px;font-size:.85rem;">En Scrum: el <strong>Backlog Refinement</strong> (o Grooming) es la implementación de Rolling Wave. El equipo pasa ~10% del tiempo refinando historias futuras para que estén "listas para el siguiente Sprint".</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="2">
+  <h2>Retrospectivas Efectivas: Motor de la Mejora Continua</h2>
+  <div class="cg c2">
+    <div class="card ca">
+      <h3>Técnicas de Retrospectiva</h3>
+      <ul class="tl">
+        <li><div class="st g">SSC</div><div class="content"><h4>Start / Stop / Continue</h4><p>¿Qué deberíamos EMPEZAR a hacer? ¿DEJAR de hacer? ¿CONTINUAR haciendo? Simple y efectivo.</p></div></li>
+        <li><div class="st t">4L</div><div class="content"><h4>4L: Liked / Learned / Lacked / Longed For</h4><p>¿Qué nos gustó? ¿Qué aprendimos? ¿Qué faltó? ¿Qué hubiera sido ideal?</p></div></li>
+        <li><div class="st i">MSS</div><div class="content"><h4>Mad / Sad / Glad</h4><p>¿Qué nos frustró (Mad)? ¿Qué nos entristeció (Sad)? ¿Qué celebramos (Glad)?</p></div></li>
+        <li><div class="st v">SH</div><div class="content"><h4>Sailboat (Barco de Vela)</h4><p>Viento (lo que nos impulsa), Anclas (lo que nos frena), Arrecifes (riesgos), Sol (el objetivo).</p></div></li>
+      </ul>
+    </div>
+    <div class="card ct">
+      <h3>Reglas de Oro de la Retro</h3>
+      <ol style="font-size:.84rem;">
+        <li><strong>Regla Prime Directive</strong>: "Todos hicieron su mejor trabajo con los conocimientos y recursos disponibles en ese momento." — Sin culpas.</li>
+        <li>Máximo 3 acciones de mejora por retrospectiva (con dueño y fecha).</li>
+        <li>Revisar el progreso de las acciones de la retro anterior ANTES de la nueva.</li>
+        <li>La retrospectiva es del EQUIPO, no del Scrum Master. El SM facilita.</li>
+        <li>Lo que pasa en la retro, se queda en la retro (ambiente de confianza).</li>
+      </ol>
+      <div class="box bd"><div class="bt">💡 DATO CLAVE</div>
+        <p>Equipos que hacen retrospectivas efectivas mejoran su velocidad <strong>+40% en 6 meses</strong> vs equipos que las omiten. La retro es la inversión con mayor ROI en agilidad.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="2">
+  <h2>PDCA, Kaizen y Disciplined Agile (DA)</h2>
+  <div class="cg c3">
+    <div class="card ci">
+      <h3>Ciclo PDCA</h3>
+      <div class="ld">
+        <div class="lr" style="background:rgba(99,102,241,.1);border:1px solid var(--indigo);color:var(--indigo);">PLAN — Identificar el problema y planear la mejora</div>
+        <div class="lr" style="background:rgba(16,185,129,.1);border:1px solid var(--green);color:var(--green);">DO — Implementar en pequeña escala (piloto)</div>
+        <div class="lr" style="background:rgba(245,158,11,.1);border:1px solid var(--amber);color:var(--amber);">CHECK — Medir resultados vs. hipótesis</div>
+        <div class="lr" style="background:rgba(13,148,136,.1);border:1px solid var(--teal);color:var(--teal);">ACT — Estandarizar si funciona, ajustar si no</div>
+      </div>
+    </div>
+    <div class="card cg2">
+      <h3>Kaizen: Pequeñas Mejoras, Gran Impacto</h3>
+      <p>Del japonés: <em>kai</em> (cambio) + <em>zen</em> (bueno). Filosofía de mejora continua incremental. <strong>No esperar la gran solución</strong>: hacer pequeñas mejoras todos los días.</p>
+      <div class="box bd"><div class="bt">💡</div><p>Toyota hace 1 millón de mejoras Kaizen al año. No son grandes innovaciones — son micro-mejoras que acumulan un impacto enorme.</p></div>
+    </div>
+    <div class="card ca">
+      <h3>Disciplined Agile (DA) y el WoW</h3>
+      <p>DA (adquirido por PMI) es una <strong>caja de herramientas ágil</strong>: no prescribe un único proceso. Su principio central: <em>"elige tu Way of Working (WoW) según tu contexto"</em>.</p>
+      <p style="margin-top:8px;font-size:.84rem;">DA reconoce que no hay un proceso único que funcione para todos. Ofrece un menú de técnicas y permite al equipo elegir la combinación correcta para su situación específica.</p>
+    </div>
+  </div>
+  <div class="box bl"><div class="bt">🔬 LABORATORIO — Retrospectiva en Vivo</div>
+    <p>Facilitar una retrospectiva con técnica Start/Stop/Continue para el proyecto integrador del equipo. 30 minutos de sesión, resultado: máximo 3 acciones de mejora con dueño y fecha. El Scrum Master asignado facilita; el resto del equipo participa.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 9: EQUIPOS ═══ -->
+<div class="slide" data-s="3">
+  <h2>Sesión 9 — <span style="color:var(--violet)">Equipos de Alto Desempeño y Liderazgo Colaborativo</span></h2>
+  <div class="sr">
+    <div class="stat"><div class="n" style="color:var(--red)">70%</div><div class="l">de los proyectos fallan por problemas de personas, no de técnica (PMI)</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">5x</div><div class="l">más productivos los equipos con alta seguridad psicológica (Google, Project Aristotle)</div></div>
+    <div class="stat"><div class="n" style="color:var(--amber)">30-50%</div><div class="l">más productividad con liderazgo de alto desempeño vs. gestión tradicional</div></div>
+  </div>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Un PM que solo controla tareas es como un entrenador de fútbol que <strong>solo lleva la estadística del marcador pero nunca entrena a los jugadores</strong>. Los proyectos no los ejecutan los cronogramas — los ejecutan las personas. El líder de proyectos moderno invierte tanto en el desarrollo del equipo como en la técnica de gestión.</p>
+  </div>
+</div>
+
+<div class="slide" data-s="3">
+  <h2>PMI Talent Triangle 2.0 y Seguridad Psicológica</h2>
+  <div class="cg c2">
+    <div class="card cv">
+      <h3>PMI Talent Triangle 2.0</h3>
+      <p>Tres dimensiones del profesional de proyectos completo:</p>
+      <div class="ld" style="margin-top:8px;">
+        <div class="lr" style="background:rgba(99,102,241,.1);border:1px solid var(--indigo);color:var(--indigo);">🔧 WAY OF WORKING — Métodos y procesos: predictivo, ágil, híbrido, herramientas</div>
+        <div class="lr" style="background:rgba(124,58,237,.1);border:1px solid var(--violet);color:var(--violet);">💡 POWER SKILLS — Liderazgo, comunicación, negociación, IE, resolución de conflictos</div>
+        <div class="lr" style="background:rgba(245,158,11,.1);border:1px solid var(--amber);color:var(--amber);">📊 BUSINESS ACUMEN — Estrategia, finanzas, valor para el negocio, contexto sectorial</div>
+      </div>
+      <p style="font-size:.8rem;color:var(--muted);margin-top:8px;">Los PMs que dominan solo el primer vértice son técnicamente sólidos pero estratégicamente limitados.</p>
+    </div>
+    <div class="card cg2">
+      <h3>Seguridad Psicológica — Google Project Aristotle</h3>
+      <p>Google estudió 180 equipos durante 2 años. El <strong>factor #1 de éxito</strong> no fue la inteligencia de los miembros ni su experiencia: fue la <strong>seguridad psicológica</strong>.</p>
+      <p style="font-size:.85rem;margin-top:8px;">Seguridad psicológica = los miembros del equipo se sienten seguros para tomar riesgos interpersonales: hacer preguntas "tontas", admitir errores, desafiar al líder, proponer ideas locas.</p>
+      <p style="font-size:.85rem;margin-top:6px;">Sin seguridad psicológica, el talento se <strong>autocensura</strong> — y el proyecto pierde acceso a las mejores ideas del equipo.</p>
+      <div class="box bl"><div class="bt">🔬 CÓMO CREARLA</div>
+        <p style="font-size:.82rem;">El PM debe: modelar la vulnerabilidad ("yo tampoco sé esto"), celebrar el "fallo inteligente", hacer preguntas en vez de dar respuestas, y nunca castigar el error honesto.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="3">
+  <h2>Modelo Tuckman y Las 5 Disfunciones de Lencioni</h2>
+  <div class="cg c2">
+    <div class="card ct">
+      <h3>Modelo Tuckman: Fases de Desarrollo del Equipo</h3>
+      <ul class="tl">
+        <li><div class="st t">F</div><div class="content"><h4>Forming — Formación</h4><p>Cortesía, roles poco claros, dependencia del líder. PM: da estructura y dirección clara.</p></div></li>
+        <li><div class="st r">S</div><div class="content"><h4>Storming — Conflicto</h4><p>Choques de ego y estilo. Resistencia. PM: facilita resolución, no suprime el conflicto.</p></div></li>
+        <li><div class="st a">N</div><div class="content"><h4>Norming — Normalización</h4><p>Se establecen acuerdos, cohesión. PM: refuerza normas, delega más.</p></div></li>
+        <li><div class="st g">P</div><div class="content"><h4>Performing — Alto Desempeño</h4><p>Máxima productividad, autonomía. PM: facilita y elimina obstáculos.</p></div></li>
+        <li><div class="st v">A</div><div class="content"><h4>Adjourning — Disolución</h4><p>Cierre del proyecto. PM: celebra, documenta, libera al equipo con dignidad.</p></div></li>
+      </ul>
+    </div>
+    <div class="card cv">
+      <h3>Las 5 Disfunciones de Lencioni — De Abajo Hacia Arriba</h3>
+      <div class="ld">
+        <div class="lr" style="background:rgba(239,68,68,.1);border:1px solid var(--red);color:var(--red);">5️⃣ Falta de atención a resultados — el ego individual > el objetivo colectivo</div>
+        <div class="lr" style="background:rgba(245,158,11,.1);border:1px solid var(--amber);color:var(--amber);">4️⃣ Evasión de responsabilidad — nadie confronta el bajo desempeño</div>
+        <div class="lr" style="background:rgba(99,102,241,.1);border:1px solid var(--indigo);color:var(--indigo);">3️⃣ Falta de compromiso — decisiones sin convicción real</div>
+        <div class="lr" style="background:rgba(124,58,237,.1);border:1px solid var(--violet);color:var(--violet);">2️⃣ Miedo al conflicto — debate artificial, acuerdo falso</div>
+        <div class="lr" style="background:rgba(13,148,136,.1);border:1px solid var(--teal);color:var(--teal);">1️⃣ Ausencia de confianza — base de todo. Sin confianza, nada funciona</div>
+      </div>
+      <p style="font-size:.8rem;color:var(--muted);margin-top:8px;">Construir desde abajo: primero confianza, después todo lo demás.</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="3">
+  <h2>Coaching, Delegación y el Líder-Coach</h2>
+  <div class="cg c2">
+    <div class="card ca">
+      <h3>Training vs Coaching vs Mentoring</h3>
+      <table>
+        <tr><th>Modalidad</th><th>¿Qué hace?</th><th>¿Cuándo usar?</th></tr>
+        <tr><td><strong>Training</strong></td><td>Transfiere conocimiento o habilidad específica</td><td>Habilidad nueva, técnica, proceso</td></tr>
+        <tr><td><strong>Coaching</strong></td><td>Hace preguntas para que el coachee encuentre sus propias respuestas</td><td>Resolver bloqueos, desarrollar autonomía</td></tr>
+        <tr><td><strong>Mentoring</strong></td><td>Comparte experiencia y guía el desarrollo profesional</td><td>Desarrollo de carrera, situaciones complejas</td></tr>
+      </table>
+    </div>
+    <div class="card ct">
+      <h3>Niveles de Delegación (del 1 al 7)</h3>
+      <ol style="font-size:.84rem;">
+        <li><strong>Tell</strong> — El líder decide y comunica</li>
+        <li><strong>Sell</strong> — El líder decide y convence</li>
+        <li><strong>Consult</strong> — El líder consulta antes de decidir</li>
+        <li><strong>Agree</strong> — Decisión conjunta (consenso)</li>
+        <li><strong>Advise</strong> — El equipo decide, el líder asesora</li>
+        <li><strong>Inquire</strong> — El equipo decide, el líder pregunta después</li>
+        <li><strong>Delegate</strong> — El equipo decide completamente</li>
+      </ol>
+      <p style="font-size:.8rem;color:var(--muted);margin-top:6px;">El PM efectivo varía entre niveles 3-6 según la madurez del colaborador y la criticidad de la decisión.</p>
+    </div>
+  </div>
+  <div class="box bl"><div class="bt">🔬 LABORATORIO — Role-Play Coaching</div>
+    <p>En parejas: uno hace de PM, otro de desarrollador con bajo desempeño (causas: fatiga, conflicto con colega, falta de claridad en la tarea). El PM conduce una sesión de 10 minutos usando solo PREGUNTAS. Prohibido dar respuestas directas. Luego intercambiar roles.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 10: COMUNICACIÓN ═══ -->
+<div class="slide" data-s="4">
+  <h2>Sesión 10 — <span style="color:var(--pink)">Comunicación Estratégica y Visión Compartida</span></h2>
+  <div class="sr">
+    <div class="stat"><div class="n" style="color:var(--red)">56%</div><div class="l">del presupuesto está en riesgo por comunicación inefectiva (PMI, 2023)</div></div>
+    <div class="stat"><div class="n" style="color:var(--amber)">90%</div><div class="l">del tiempo del PM se gasta comunicando</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">5x</div><div class="l">más éxito en proyectos con comunicación estructurada y frecuente</div></div>
+  </div>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>El dashboard del proyecto es como el <strong>tablero de instrumentos de un avión</strong>: el piloto (PM) tiene visibilidad en tiempo real de altitud (alcance), velocidad (cronograma), combustible (presupuesto), temperatura de motores (riesgos) y GPS (rumbo estratégico). Sin ese tablero, volar a ciegas. Y nadie quiere un vuelo con el PM mirando por la ventanilla adivinando.</p>
+  </div>
+</div>
+
+<div class="slide" data-s="4">
+  <h2>Plan de Comunicaciones: El Quién, Qué, Cuándo, Cómo</h2>
+  <table>
+    <tr><th>Audiencia</th><th>Información</th><th>Frecuencia</th><th>Canal</th><th>Formato</th></tr>
+    <tr><td>Sponsor/Dirección</td><td>Estado ejecutivo: EVM, riesgos top 3, decisiones requeridas</td><td>Quincenal</td><td>Reunión + email</td><td>1 página, semáforo</td></tr>
+    <tr><td>PMO</td><td>KPIs del proyecto: CPI, SPI, % avance, issues</td><td>Semanal</td><td>Dashboard digital</td><td>Power BI automático</td></tr>
+    <tr><td>Equipo del proyecto</td><td>Tareas actuales, impedimentos, decisiones técnicas</td><td>Diario</td><td>Daily Scrum + Teams</td><td>Tablero Jira/Trello</td></tr>
+    <tr><td>Stakeholders clave</td><td>Avance de entregables, cambios que les afectan</td><td>Mensual</td><td>Reunión de revisión</td><td>Presentación ejecutiva</td></tr>
+    <tr><td>Usuarios finales</td><td>Fechas de entrega, cambios en proceso, capacitación</td><td>Por hito</td><td>Newsletter + Teams</td><td>Comunicado amigable</td></tr>
+    <tr><td>Proveedores</td><td>Requisitos técnicos, fechas, cambios de alcance</td><td>Por entregable</td><td>Email formal + reunión</td><td>Minuta formal</td></tr>
+  </table>
+  <div class="box bd"><div class="bt">💡 DATO CLAVE</div>
+    <p>El <strong>canal importa tanto como el mensaje</strong>. Dar malas noticias por email (en vez de en persona) reduce la confianza del stakeholder. Las decisiones importantes se toman en reunión, nunca por chat.</p>
+  </div>
+</div>
+
+<div class="slide" data-s="4">
+  <h2>Dashboard Ejecutivo y Reuniones Efectivas</h2>
+  <div class="cg c2">
+    <div class="card cp">
+      <h3>Componentes del Dashboard Ejecutivo del Proyecto</h3>
+      <div class="ld">
+        <div class="lr" style="background:rgba(16,185,129,.1);border:1px solid var(--green);color:var(--green);">🟢 SEMÁFORO TRIPLE: Alcance/Tiempo/Costo — Verde/Amarillo/Rojo + 1 línea de justificación</div>
+        <div class="lr" style="background:rgba(13,148,136,.1);border:1px solid var(--teal);color:var(--teal);">📊 KPIs FINANCIEROS: CPI, SPI, EAC, % completado vs planeado</div>
+        <div class="lr" style="background:rgba(245,158,11,.1);border:1px solid var(--amber);color:var(--amber);">✅ HITOS: Últimos 3 completados + Próximos 3 por completar con fecha</div>
+        <div class="lr" style="background:rgba(239,68,68,.1);border:1px solid var(--red);color:var(--red);">⚠️ RIESGOS TOP 3: Con estado, probabilidad, impacto y acción de mitigación</div>
+        <div class="lr" style="background:rgba(124,58,237,.1);border:1px solid var(--violet);color:var(--violet);">🔑 DECISIONES REQUERIDAS: Lo que necesita autorización urgente del Sponsor</div>
+      </div>
+    </div>
+    <div class="card ct">
+      <h3>Reglas de Oro: Reuniones Efectivas</h3>
+      <ol style="font-size:.84rem;">
+        <li><strong>Sin agenda = sin reunión</strong>. La agenda va 24h antes.</li>
+        <li>Timebox estricto. Si termina antes, se cierra antes.</li>
+        <li>Solo invitar a quienes agregan o necesitan la información.</li>
+        <li>Decisiones documentadas antes de terminar.</li>
+        <li>Acciones con dueño y fecha — nunca "lo haremos pronto".</li>
+        <li>Minuta en 24 horas. Si no está escrito, no pasó.</li>
+      </ol>
+      <div class="box bc"><div class="bt">📰 CASO REAL</div>
+        <p style="font-size:.82rem;">Amazon usa el protocolo de <strong>"memo de 6 páginas"</strong>: cada reunión empieza con 10 minutos de lectura silenciosa del memo. Jeff Bezos eliminó las presentaciones de PowerPoint porque generaban ilusión de comunicación sin comunicación real.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="4">
+  <h2>Herramientas Digitales y Equipos Distribuidos</h2>
+  <div class="cg c3">
+    <div class="card ci">
+      <h3>MS Teams / Slack</h3>
+      <p>Comunicación en tiempo real. Canales por proyecto, equipo y tema. Integración con Jira, GitHub, calendar. Videollamadas con grabación.</p>
+      <p style="font-size:.8rem;color:var(--muted);margin-top:6px;">Regla de oro: un canal por propósito. Evitar el "Teams de todo" donde se pierde contexto.</p>
+    </div>
+    <div class="card cg2">
+      <h3>Confluence / Notion</h3>
+      <p>Documentación del proyecto: decisiones, actas, runbooks, lecciones aprendidas. La "memoria escrita" del proyecto. Searchable y versionable.</p>
+      <p style="font-size:.8rem;color:var(--muted);margin-top:6px;">Si algo no está documentado en Confluence, no existe para el equipo que venga después.</p>
+    </div>
+    <div class="card cp">
+      <h3>Power BI / Tableau</h3>
+      <p>Dashboards ejecutivos en tiempo real. Conectar con MS Project, Jira, Excel. Reportes automáticos para dirección. Alertas cuando KPIs se desvían.</p>
+      <p style="font-size:.8rem;color:var(--muted);margin-top:6px;">Automatizar el reporte ejecutivo elimina el tiempo dedicado a "preparar la presentación" y enfoca en analizar y decidir.</p>
+    </div>
+  </div>
+  <div class="box bl"><div class="bt">🔬 LABORATORIO — Plan de Comunicaciones</div>
+    <p>Elaborar el Plan de Comunicaciones del proyecto integrador: identificar todas las audiencias, definir qué información necesita cada una, con qué frecuencia y por qué canal. Resultado: tabla de comunicaciones completa lista para uso real en el proyecto.</p>
+  </div>
+  <div class="bq box" onclick="this.classList.toggle('revealed')" style="margin-top:10px;"><div class="bt">❓ QUIZ FINAL — Sesión 10</div>
+    <p>El Sponsor de tu proyecto te pide un reporte de estado cada semana por email con todos los detalles técnicos. El equipo ya tiene Jira con toda la información actualizada. ¿Qué le recomiendas al Sponsor y por qué?</p>
+    <div class="qa">Recomendar un dashboard ejecutivo en Power BI conectado a Jira que el Sponsor pueda ver en tiempo real cuando quiera. Dos razones: (1) elimina trabajo manual de generar el reporte semanal, (2) el Sponsor ve datos actualizados en el momento en que los necesita, no datos de hace una semana. El reporte semanal se reserva para los temas que requieren decisión o contexto narrativo que el dashboard no provee.</div>
+  </div>
+</div>
+
+<!-- REFERENCIAS BLOQUE II -->
+<div class="slide cover" data-s="4">
+  <div class="badge">BLOQUE II — REFERENCIAS Y CIERRE</div>
+  <h1 style="font-size:1.8rem;background:linear-gradient(135deg,var(--teal),var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Fuentes Bibliográficas del Bloque II</h1>
+  <div class="cg c2" style="max-width:800px;margin:20px auto;text-align:left;">
+    <div class="card ct">
+      <h3>Metodologías Ágiles</h3>
+      <ul style="font-size:.84rem;">
+        <li>Schwaber, K. &amp; Sutherland, J. (2020). <em>The Scrum Guide</em>. Scrum.org.</li>
+        <li>Anderson, D.J. (2010). <em>Kanban: Successful Evolutionary Change</em>. Blue Hole Press.</li>
+        <li>Beck, K. et al. (2001). <em>Manifesto for Agile Software Development</em>. agilemanifesto.org.</li>
+      </ul>
+    </div>
+    <div class="card ca">
+      <h3>Lean y Mejora Continua</h3>
+      <ul style="font-size:.84rem;">
+        <li>Liker, J.K. (2021). <em>The Toyota Way</em>, 2nd Ed. McGraw-Hill.</li>
+        <li>Rother, M. &amp; Shook, J. (2003). <em>Learning to See: VSM</em>. Lean Enterprise Institute.</li>
+        <li>PMI (2023). <em>Disciplined Agile Toolkit</em>. pmi.org/disciplined-agile.</li>
+      </ul>
+    </div>
+    <div class="card cv">
+      <h3>Liderazgo y Equipos</h3>
+      <ul style="font-size:.84rem;">
+        <li>Lencioni, P. (2002). <em>The Five Dysfunctions of a Team</em>. Jossey-Bass.</li>
+        <li>PMI (2023). <em>PMI Talent Triangle 2.0</em>. pmi.org.</li>
+        <li>Edmondson, A. (2018). <em>The Fearless Organization</em>. Wiley.</li>
+      </ul>
+    </div>
+    <div class="card cp">
+      <h3>Comunicación</h3>
+      <ul style="font-size:.84rem;">
+        <li>PMI (2021). <em>PMBOK® Guide 7th Ed.</em> — Dominio de Interesados y Comunicación.</li>
+        <li>PMI (2023). <em>Pulse of the Profession</em>. pmi.org/pulse.</li>
+      </ul>
+    </div>
+  </div>
+  <div style="margin-top:14px;">
+    <span class="tag">Scrum</span><span class="tag">Kanban</span><span class="tag">Lean</span>
+    <span class="tag">VSM</span><span class="tag">Tuckman</span><span class="tag">Lencioni</span>
+    <span class="tag">Power BI</span><span class="tag">Jira</span><span class="tag">Miro</span>
+  </div>
+</div>
+
+</div><!-- fin #sc -->
+<div id="footer">
+  <button onclick="prev()">← Anterior</button>
+  <span class="hint">← → · Espacio</span>
+  <button onclick="next()">Siguiente →</button>
+</div>
+<script>
+const slides=document.querySelectorAll('.slide'),total=slides.length;let cur=0;
+const ss=[];slides.forEach((s,i)=>{const v=parseInt(s.dataset.s);if(ss[v]===undefined)ss[v]=i;});
+function go(n){if(n<0||n>=total)return;slides[cur].classList.remove('active');cur=n;slides[cur].classList.add('active');document.getElementById('ctr').textContent=(cur+1)+' / '+total;document.getElementById('pb').style.width=((cur+1)/total*100)+'%';ut();slides[cur].scrollTop=0;}
+function next(){go(cur+1);}function prev(){go(cur-1);}function gts(i){go(ss[i]);}
+function ut(){const v=parseInt(slides[cur].dataset.s);for(let i=0;i<5;i++){const b=document.getElementById('t'+i);if(b)b.classList.toggle('active',i===v);}}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();}if(e.key==='ArrowLeft'){e.preventDefault();prev();}});
+ut();
+</script>
+</body>
+</html>

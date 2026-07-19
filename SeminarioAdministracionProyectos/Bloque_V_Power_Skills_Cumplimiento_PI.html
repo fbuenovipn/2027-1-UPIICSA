@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloque V — Power Skills, Cumplimiento y Proyecto Integrador</title>
+<style>
+:root{--bg:#03060f;--card:#0a1628;--border:#1e3a5f;--teal:#0d9488;--amber:#f59e0b;--indigo:#6366f1;--green:#10b981;--red:#ef4444;--blue:#3b82f6;--pink:#ec4899;--violet:#7c3aed;--muted:#64748b;--text:#e2e8f0;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden;height:100vh;}
+#navbar{position:fixed;top:0;left:0;right:0;height:54px;background:rgba(3,6,15,.96);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:100;backdrop-filter:blur(8px);}
+.brand{color:var(--pink);font-weight:700;font-size:.85rem;letter-spacing:1px;}
+.brand span{color:var(--amber);}
+.stabs{display:flex;gap:6px;}
+.stabs button{background:transparent;border:1px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:20px;cursor:pointer;font-size:.75rem;transition:all .2s;}
+.stabs button.active{background:var(--pink);border-color:var(--pink);color:#fff;font-weight:700;}
+.stabs button:hover:not(.active){border-color:var(--pink);color:var(--pink);}
+#ctr{color:var(--muted);font-size:.8rem;min-width:80px;text-align:right;}
+#pb{position:fixed;top:54px;left:0;height:3px;background:linear-gradient(90deg,var(--pink),var(--amber));transition:width .3s;z-index:100;}
+#sc{position:fixed;top:57px;left:0;right:0;bottom:40px;overflow:hidden;}
+.slide{position:absolute;top:0;left:0;right:0;bottom:0;padding:28px 48px;display:none;overflow-y:auto;animation:fi .35s ease;}
+.slide.active{display:flex;flex-direction:column;}
+@keyframes fi{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+#footer{position:fixed;bottom:0;left:0;right:0;height:40px;background:rgba(3,6,15,.96);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:16px;z-index:100;}
+#footer button{background:var(--card);border:1px solid var(--border);color:var(--text);padding:5px 20px;border-radius:6px;cursor:pointer;font-size:.8rem;transition:all .2s;}
+#footer button:hover{border-color:var(--pink);color:var(--pink);}
+.hint{color:var(--muted);font-size:.72rem;}
+h1{font-size:2rem;font-weight:800;line-height:1.2;margin-bottom:10px;}
+h2{font-size:1.45rem;font-weight:700;margin-bottom:14px;}
+h3{font-size:1rem;font-weight:600;color:var(--pink);margin-bottom:8px;margin-top:8px;}
+p{font-size:.9rem;line-height:1.65;margin-bottom:8px;}
+ul,ol{padding-left:20px;font-size:.88rem;line-height:1.8;}
+li{margin-bottom:3px;}
+.cover{align-items:center;justify-content:center;text-align:center;}
+.cover h1{font-size:2.2rem;background:linear-gradient(135deg,var(--pink),var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;}
+.badge{display:inline-block;border:1px solid var(--pink);border-radius:8px;padding:8px 24px;color:var(--pink);font-size:.9rem;font-weight:700;letter-spacing:2px;margin-bottom:20px;background:rgba(236,72,153,.08);}
+.sg{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px;}
+.sc2{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 14px;width:168px;text-align:left;}
+.sc2 .num{color:var(--pink);font-size:.7rem;font-weight:700;}
+.sc2 .nm{font-size:.78rem;margin-top:4px;}
+.sub{color:var(--muted);font-size:1rem;}
+.cg{display:grid;gap:12px;margin-top:10px;}
+.cg.c2{grid-template-columns:1fr 1fr;}
+.cg.c3{grid-template-columns:1fr 1fr 1fr;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:15px;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.card.cp::before{background:var(--pink);}
+.card.cv::before{background:var(--violet);}
+.card.ca::before{background:var(--amber);}
+.card.ct::before{background:var(--teal);}
+.card.cg2::before{background:var(--green);}
+.card.cr::before{background:var(--red);}
+.card.ci::before{background:var(--indigo);}
+.card.cb::before{background:var(--blue);}
+.card h3{margin-top:0;font-size:.9rem;}
+.card p,.card ul,.card li{font-size:.84rem;}
+.box{border-radius:10px;padding:13px 17px;margin:9px 0;}
+.bm{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.4);}
+.bc{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.4);}
+.bl{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.4);}
+.bd{background:rgba(13,148,136,.08);border:1px solid rgba(13,148,136,.4);}
+.bq{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.4);cursor:pointer;}
+.bt{font-weight:700;font-size:.8rem;margin-bottom:5px;letter-spacing:.5px;}
+.bm .bt{color:#a78bfa;}
+.bc .bt{color:var(--amber);}
+.bl .bt{color:#34d399;}
+.bd .bt{color:var(--teal);}
+.bq .bt{color:#fbbf24;}
+.box p,.box li,.box ul{font-size:.86rem;}
+.qa{display:none;margin-top:7px;padding-top:7px;border-top:1px solid rgba(251,191,36,.3);color:#34d399;font-size:.84rem;}
+.bq.revealed .qa{display:block;}
+table{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:8px;}
+th{background:#071020;color:var(--pink);text-align:left;padding:7px 11px;border:1px solid var(--border);}
+td{padding:6px 11px;border:1px solid var(--border);vertical-align:top;}
+tr:nth-child(even) td{background:rgba(10,22,40,.6);}
+.tl{list-style:none;padding:0;margin-top:8px;}
+.tl li{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start;}
+.tl .st{min-width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.78rem;flex-shrink:0;}
+.tl .st.p{background:rgba(236,72,153,.15);border:2px solid var(--pink);color:var(--pink);}
+.tl .st.v{background:rgba(124,58,237,.15);border:2px solid var(--violet);color:var(--violet);}
+.tl .st.a{background:rgba(245,158,11,.15);border:2px solid var(--amber);color:var(--amber);}
+.tl .st.g{background:rgba(16,185,129,.15);border:2px solid var(--green);color:var(--green);}
+.tl .st.t{background:rgba(13,148,136,.15);border:2px solid var(--teal);color:var(--teal);}
+.tl .st.r{background:rgba(239,68,68,.15);border:2px solid var(--red);color:var(--red);}
+.tl .content h4{font-size:.88rem;font-weight:600;}
+.tl .content p{font-size:.82rem;color:var(--muted);margin:0;}
+.sr{display:flex;gap:12px;flex-wrap:wrap;margin:10px 0;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:13px 16px;flex:1;min-width:110px;text-align:center;}
+.stat .n{font-size:1.7rem;font-weight:800;line-height:1;}
+.stat .l{font-size:.7rem;color:var(--muted);margin-top:4px;}
+.ld{display:flex;flex-direction:column;gap:5px;margin:10px 0;}
+.lr{border-radius:6px;padding:7px 14px;font-size:.81rem;font-weight:600;}
+.tag{display:inline-block;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:2px 9px;font-size:.74rem;color:var(--muted);margin:2px;}
+.slide::-webkit-scrollbar{width:4px;}
+.slide::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+</style>
+</head>
+<body>
+<div id="navbar">
+  <div class="brand">🏆 POWER SKILLS <span>&amp; PI</span> · BLOQUE V</div>
+  <div class="stabs">
+    <button onclick="gts(0)" id="t0">S21</button>
+    <button onclick="gts(1)" id="t1">S22</button>
+    <button onclick="gts(2)" id="t2">S23</button>
+    <button onclick="gts(3)" id="t3">S24</button>
+    <button onclick="gts(4)" id="t4">S25</button>
+  </div>
+  <div id="ctr">1 / 1</div>
+</div>
+<div id="pb" style="width:0%"></div>
+<div id="sc">
+
+<!-- PORTADA -->
+<div class="slide active cover" data-s="0">
+  <div class="badge">BLOQUE V · CIERRE DEL SEMINARIO · S21–S25</div>
+  <h1>Power Skills, Cumplimiento<br>y Proyecto Integrador</h1>
+  <p class="sub">IE · Negociación · Cambio Organizacional · Stakeholders · Legal · Defensa Final · 30 horas</p>
+  <div class="sg">
+    <div class="sc2"><div class="num">SESIÓN 21</div><div class="nm">Power Skills &amp; IE</div></div>
+    <div class="sc2"><div class="num">SESIÓN 22</div><div class="nm">Gestión del Cambio</div></div>
+    <div class="sc2"><div class="num">SESIÓN 23</div><div class="nm">Stakeholders</div></div>
+    <div class="sc2"><div class="num">SESIÓN 24</div><div class="nm">Legal y Contractual</div></div>
+    <div class="sc2"><div class="num">SESIÓN 25</div><div class="nm">Defensa y Cierre</div></div>
+  </div>
+  <p style="margin-top:24px;color:var(--muted);font-size:.8rem;">← → Espacio · Tabs S21–S25 para saltar sesión</p>
+</div>
+
+<!-- ═══ S21: POWER SKILLS ═══ -->
+<div class="slide" data-s="0">
+  <h2>Sesión 21 — <span style="color:var(--pink)">Power Skills: IE, Liderazgo y Negociación</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>El PM es como el <strong>director de una orquesta</strong>: no toca ningún instrumento durante el concierto, pero sin su dirección cada músico tocaría en su propio tempo. Su poder no viene de la partitura técnica (metodología) — viene de la <strong>batuta emocional</strong>: la capacidad de inspirar, coordinar, resolver tensiones y llevar al equipo a un crescendo final que emocione al público (los stakeholders). Sin Power Skills, el director más técnico del mundo dirige un caos.</p>
+  </div>
+  <div class="sr" style="margin-top:12px;">
+    <div class="stat"><div class="n" style="color:var(--red)">75%</div><div class="l">de los PMs fallan por déficit de Power Skills, no de técnica (Gartner)</div></div>
+    <div class="stat"><div class="n" style="color:var(--pink)">2x</div><div class="l">más salario para PMs con IE alta vs IE baja (TalentSmart, 2023)</div></div>
+    <div class="stat"><div class="n" style="color:var(--amber)">58%</div><div class="l">del desempeño laboral es explicado por IE (Daniel Goleman)</div></div>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Inteligencia Emocional (Goleman) y Liderazgo Situacional</h2>
+  <div class="cg c2">
+    <div class="card cp">
+      <h3>4 Dominios de la IE — Goleman</h3>
+      <table>
+        <tr><th>Dominio</th><th>Pregunta clave</th><th>En el proyecto</th></tr>
+        <tr><td><strong>Autoconciencia</strong></td><td>¿Qué siento ahora mismo?</td><td>Reconocer cuándo el estrés del proyecto afecta tus decisiones</td></tr>
+        <tr><td><strong>Autogestión</strong></td><td>¿Cómo reacciono ante esto?</td><td>Mantener la calma en crisis del proyecto; no perder el norte</td></tr>
+        <tr><td><strong>Conciencia Social</strong></td><td>¿Qué siente el otro?</td><td>Detectar cuándo un stakeholder está molesto antes de que explote</td></tr>
+        <tr><td><strong>Gestión de Relaciones</strong></td><td>¿Cómo influyo positivamente?</td><td>Motivar al equipo en los momentos más duros del proyecto</td></tr>
+      </table>
+    </div>
+    <div class="card cv">
+      <h3>Liderazgo Situacional (Hersey-Blanchard)</h3>
+      <table>
+        <tr><th>Estilo</th><th>Nivel del colaborador</th><th>Qué hace el PM</th></tr>
+        <tr><td><strong>Dirigir (S1)</strong></td><td>D1: Baja competencia, alto compromiso</td><td>Instrucciones claras, supervisa de cerca</td></tr>
+        <tr><td><strong>Coaching (S2)</strong></td><td>D2: Algo de competencia, bajo compromiso</td><td>Explica el porqué, involucra, sigue supervisando</td></tr>
+        <tr><td><strong>Apoyo (S3)</strong></td><td>D3: Alta competencia, compromiso variable</td><td>Escucha, anima, decide junto</td></tr>
+        <tr><td><strong>Delegar (S4)</strong></td><td>D4: Alta competencia, alto compromiso</td><td>Define el resultado, confía el proceso</td></tr>
+      </table>
+      <p style="font-size:.8rem;color:var(--muted);margin-top:6px;">El error más común: usar el mismo estilo con todos. La tarea del PM es diagnosticar el nivel de desarrollo de cada persona en cada tarea.</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Negociación y Resolución de Conflictos</h2>
+  <div class="cg c2">
+    <div class="card ca">
+      <h3>Negociación con Técnica Harvard</h3>
+      <p style="font-weight:700;color:var(--amber);font-size:.85rem;">4 Principios de la Negociación Basada en Intereses:</p>
+      <ol style="font-size:.84rem;">
+        <li><strong>Separar personas de problemas</strong>: el conflicto es con la situación, no con la persona</li>
+        <li><strong>Enfocarse en intereses, no posiciones</strong>: ¿qué necesita realmente cada parte?</li>
+        <li><strong>Generar opciones de beneficio mutuo</strong>: expandir el pastel antes de dividirlo</li>
+        <li><strong>Usar criterios objetivos</strong>: precios de mercado, estándares, precedentes</li>
+      </ol>
+      <div class="box bc"><div class="bt">📰 BATNA y ZOPA</div>
+        <p style="font-size:.82rem;"><strong>BATNA</strong> (Best Alternative to Negotiated Agreement): ¿qué harás si no hay acuerdo? Quien tiene mejor BATNA tiene más poder de negociación.<br><strong>ZOPA</strong> (Zone of Possible Agreement): rango donde ambas partes están dispuestas a cerrar trato.</p>
+      </div>
+    </div>
+    <div class="card cv">
+      <h3>Los 5 Modos Thomas-Kilmann</h3>
+      <table>
+        <tr><th>Modo</th><th>Cuándo usar</th><th>Resultado</th></tr>
+        <tr><td><strong>Colaborar</strong></td><td>Cuando el tiempo lo permite y la relación importa</td><td>Ganar-Ganar (ideal)</td></tr>
+        <tr><td><strong>Comprometer</strong></td><td>Partes con igual poder, tiempo limitado</td><td>Perder-Perder parcial</td></tr>
+        <tr><td><strong>Acomodar</strong></td><td>El asunto importa más al otro; preservar relación</td><td>Perder-Ganar</td></tr>
+        <tr><td><strong>Confrontar</strong></td><td>Urgente, claramente tienes razón, con datos</td><td>Ganar-Perder</td></tr>
+        <tr><td><strong>Evitar</strong></td><td>Trivial o mal momento; temporal</td><td>No hay resultado</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="box bl"><div class="bt">🔬 LABORATORIO — Role-Play Negociación</div>
+    <p>Escenario: como PM necesitas el 60% del tiempo de un desarrollador senior que tiene 3 jefes funcionales pidiéndolo simultáneamente. Negociar con los 3 departamentos para obtener el recurso necesario sin dañar las relaciones. Usar técnica Harvard. Identificar tu BATNA antes de iniciar.</p>
+  </div>
+</div>
+
+<!-- ═══ S22: CAMBIO ORGANIZACIONAL ═══ -->
+<div class="slide" data-s="1">
+  <h2>Sesión 22 — <span style="color:var(--violet)">Gestión del Cambio Organizacional</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Un proyecto de transformación sin gestión del cambio es como <strong>trasplantar un árbol sin cuidar las raíces</strong>. Puedes mover el árbol (el proceso, el sistema, la tecnología) de un lugar a otro perfectamente. Pero si las raíces (las personas, sus hábitos, sus creencias) no reciben el cuidado adecuado durante la transición, el árbol se seca. El 70% de las iniciativas de cambio fracasan — no por la tecnología, sino por las personas (McKinsey, 2023).</p>
+  </div>
+  <div class="cg c3" style="margin-top:12px;">
+    <div class="card cv"><h3>El Sistema de Creencias</h3><p>Las creencias individuales y colectivas determinan cómo las personas responden al cambio. Un cambio que amenaza la identidad profesional ("ya no voy a ser útil") genera resistencia máxima. El PM debe identificar y gestionar estas amenazas percibidas.</p></div>
+    <div class="card cp"><h3>Curva de Kübler-Ross en Cambio</h3><p>Negación → Ira → Negociación → Depresión → Aceptación. El PM actúa diferente en cada fase: no puedes "saltarte" las fases, pero sí acelerar la transición con comunicación, empatía y victorias tempranas.</p></div>
+    <div class="card ca"><h3>Agentes de Cambio</h3><p>Identificar y desarrollar <strong>champions</strong> del cambio dentro de la organización — personas influyentes que adoptan temprano y contagian al resto. El PM no puede ser el único agente de cambio.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>Modelos de Gestión del Cambio</h2>
+  <div class="cg c2">
+    <div class="card cv">
+      <h3>ADKAR (Prosci) — El Modelo Más Práctico para Proyectos</h3>
+      <ul class="tl">
+        <li><div class="st v">A</div><div class="content"><h4>Awareness — Conciencia del POR QUÉ</h4><p>¿Todos saben por qué el cambio es necesario? ¿Y qué pasa si NO cambiamos?</p></div></li>
+        <li><div class="st p">D</div><div class="content"><h4>Desire — QUERER cambiar</h4><p>Diferente de saber. La persona decide activamente apoyar el cambio. Es motivacional.</p></div></li>
+        <li><div class="st t">K</div><div class="content"><h4>Knowledge — Saber CÓMO cambiar</h4><p>Capacitación, manuales, acompañamiento. Las personas saben qué hacer diferente.</p></div></li>
+        <li><div class="st a">A</div><div class="content"><h4>Ability — PODER hacerlo</h4><p>Habilidad de implementar el cambio en el día a día. Practice makes permanent.</p></div></li>
+        <li><div class="st g">R</div><div class="content"><h4>Reinforcement — SOSTENERLO en el tiempo</h4><p>Reconocimiento, métricas, corrección. Sin refuerzo, la gente regresa al viejo comportamiento.</p></div></li>
+      </ul>
+    </div>
+    <div class="card ca">
+      <h3>Kotter: 8 Pasos del Cambio</h3>
+      <div class="ld">
+        <div class="lr" style="background:rgba(239,68,68,.1);border:1px solid var(--red);color:var(--red);font-size:.79rem;">1. Crear sentido de urgencia — ¿por qué AHORA?</div>
+        <div class="lr" style="background:rgba(245,158,11,.1);border:1px solid var(--amber);color:var(--amber);font-size:.79rem;">2. Formar coalición guía — líderes que respaldan el cambio</div>
+        <div class="lr" style="background:rgba(245,158,11,.1);border:1px solid var(--amber);color:var(--amber);font-size:.79rem;">3. Crear visión y estrategia del cambio</div>
+        <div class="lr" style="background:rgba(99,102,241,.1);border:1px solid var(--indigo);color:var(--indigo);font-size:.79rem;">4. Comunicar la visión del cambio masivamente</div>
+        <div class="lr" style="background:rgba(99,102,241,.1);border:1px solid var(--indigo);color:var(--indigo);font-size:.79rem;">5. Eliminar obstáculos — estructuras, sistemas, personas</div>
+        <div class="lr" style="background:rgba(16,185,129,.1);border:1px solid var(--green);color:var(--green);font-size:.79rem;">6. Generar victorias a corto plazo — resultados visibles</div>
+        <div class="lr" style="background:rgba(16,185,129,.1);border:1px solid var(--green);color:var(--green);font-size:.79rem;">7. Consolidar mejoras y seguir cambiando</div>
+        <div class="lr" style="background:rgba(13,148,136,.1);border:1px solid var(--teal);color:var(--teal);font-size:.79rem;">8. Institucionalizar — "así es como hacemos las cosas aquí"</div>
+      </div>
+    </div>
+  </div>
+  <div class="box bl"><div class="bt">🔬 LABORATORIO — Plan ADKAR del Proyecto Integrador</div>
+    <p>Diagnosticar el nivel actual de cada letra ADKAR para el grupo objetivo del cambio en tu proyecto integrador. Identificar cuál es el bloqueo principal (la mayoría falla en D o A, no en K). Diseñar 3 acciones concretas para avanzar en el elemento más débil.</p>
+  </div>
+</div>
+
+<!-- ═══ S23: STAKEHOLDERS ═══ -->
+<div class="slide" data-s="2">
+  <h2>Sesión 23 — <span style="color:var(--teal)">Gestión de Stakeholders: Identificación, Estrategia y Compromiso</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Los stakeholders son como el <strong>viento para un velero</strong>: no puedes controlarlo, pero puedes orientar las velas para usarlo a tu favor. Un stakeholder clave que se convierte en opositor activo puede hundir el proyecto más sólido. Uno indiferente que te apoya activamente puede abrirte puertas que parecían cerradas. El PM que ignora los stakeholders es el marinero que navega sin mirar el cielo.</p>
+  </div>
+  <div class="cg c2" style="margin-top:12px;">
+    <div class="card ct">
+      <h3>Registro de Stakeholders</h3>
+      <table>
+        <tr><th>Campo</th><th>Descripción</th></tr>
+        <tr><td>Nombre y rol</td><td>Quién es y qué función tiene en la organización</td></tr>
+        <tr><td>Interés en el proyecto</td><td>¿Qué gana o pierde con el proyecto?</td></tr>
+        <tr><td>Nivel de influencia</td><td>Alto/Medio/Bajo — ¿puede parar el proyecto?</td></tr>
+        <tr><td>Compromiso actual</td><td>Desconocedor/Resistente/Neutral/Apoyo/Líder</td></tr>
+        <tr><td>Compromiso deseado</td><td>¿Dónde necesito que esté?</td></tr>
+        <tr><td>Estrategia</td><td>Acción específica para moverlo al nivel deseado</td></tr>
+      </table>
+    </div>
+    <div class="card cp">
+      <h3>Matriz Poder / Interés</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;font-size:.8rem;">
+        <div style="background:rgba(239,68,68,.1);border:1px solid var(--red);border-radius:6px;padding:10px;"><strong style="color:var(--red);">Alto poder / Alto interés</strong><br>👑 Gestionar de cerca<br>Comunicación frecuente y personalizada</div>
+        <div style="background:rgba(245,158,11,.1);border:1px solid var(--amber);border-radius:6px;padding:10px;"><strong style="color:var(--amber);">Alto poder / Bajo interés</strong><br>😴 Mantener satisfecho<br>Informar en hitos clave, no saturar</div>
+        <div style="background:rgba(13,148,136,.1);border:1px solid var(--teal);border-radius:6px;padding:10px;"><strong style="color:var(--teal);">Bajo poder / Alto interés</strong><br>📢 Mantener informado<br>Comunicación regular, incluir en demos</div>
+        <div style="background:rgba(100,116,139,.1);border:1px solid var(--muted);border-radius:6px;padding:10px;"><strong style="color:var(--muted);">Bajo poder / Bajo interés</strong><br>👁️ Monitorear<br>Comunicación mínima, atento a cambios</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="2">
+  <h2>Manejo de Stakeholders Difíciles y Engagement Ágil</h2>
+  <div class="cg c2">
+    <div class="card cr">
+      <h3>Tipos de Stakeholders Difíciles</h3>
+      <table>
+        <tr><th>Tipo</th><th>Comportamiento</th><th>Estrategia del PM</th></tr>
+        <tr><td><strong>Opositor activo</strong></td><td>Bloquea activamente, influye negativamente a otros</td><td>Reunión privada: entender sus intereses reales. Ofrecerle un rol protagónico positivo.</td></tr>
+        <tr><td><strong>Saboteador pasivo</strong></td><td>Dice que sí pero no cumple. Ralentiza sin confrontar.</td><td>Acuerdos escritos con fechas. Involucrar a su jefe si persiste.</td></tr>
+        <tr><td><strong>Indiferente</strong></td><td>No apoya ni bloquea. Su recurso o aprobación es crítica.</td><td>Conectar el proyecto con sus intereses personales y objetivos de desempeño.</td></tr>
+        <tr><td><strong>Excesivamente entusiasta</strong></td><td>Scope creep humano: siempre quiere "una cosa más"</td><td>Gestión formal de cambios. Explicar el impacto de cada solicitud adicional.</td></tr>
+      </table>
+    </div>
+    <div class="card ct">
+      <h3>Agile Stakeholder Engagement</h3>
+      <p>En proyectos ágiles, los stakeholders no son solo "receptores de reportes" — son <strong>co-creadores del valor</strong>:</p>
+      <ul style="font-size:.84rem;">
+        <li><strong>Sprint Reviews</strong>: demos frecuentes del incremento — feedback real en tiempo real</li>
+        <li><strong>Product Backlog co-creado</strong>: el PO trabaja con stakeholders para priorizar</li>
+        <li><strong>Feedback loops</strong> de 2 semanas vs. 6 meses</li>
+        <li>La transparencia del tablero Kanban/Scrum como herramienta de comunicación pasiva</li>
+      </ul>
+      <div class="box bd"><div class="bt">💡 DATO CLAVE</div>
+        <p>El involucramiento activo de stakeholders clave en el proceso ágil reduce los cambios de alcance tardíos en un <strong>65%</strong> vs proyectos predictivos con stakeholders pasivos.</p>
+      </div>
+    </div>
+  </div>
+  <div class="bq box" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Stakeholders</div>
+    <p>El Director de Finanzas (alto poder, alto interés) se ha vuelto opositor activo de tu proyecto tras el recorte presupuestal de la empresa. Antes era neutral. ¿Cuáles son tus 3 primeras acciones?</p>
+    <div class="qa">(1) Reunión privada con el Director de Finanzas para entender sus intereses reales — ¿qué le preocupa concretamente? ¿el presupuesto total, el timing, la visibilidad del ROI? (2) Presentarle el Business Case actualizado con el análisis de qué pasa si se cancela el proyecto vs si se reduce su alcance — poner los números sobre la mesa. (3) Ofrecerle un rol activo positivo: invitarlo al Comité de Seguimiento como responsable de la validación financiera. Las personas que se sienten "parte de" raramente sabotean lo que co-construyeron.</div>
+  </div>
+</div>
+
+<!-- ═══ S24: LEGAL Y CONTRACTUAL ═══ -->
+<div class="slide" data-s="3">
+  <h2>Sesión 24 — <span style="color:var(--amber)">Cumplimiento Legal, Contractual y Regulatorio</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>El PM es como el <strong>capitán de un barco internacional</strong>: debe conocer las leyes marítimas de cada puerto al que llega (normativas del sector), los contratos con la tripulación y los pasajeros (contratos con proveedores y clientes), y las regulaciones de seguridad internacionales (ISO, NOM, OSHA). Ignorar una sola normativa puede resultar en multas, retrasos, o en el peor caso, que te hundan el barco (cierren el proyecto por incumplimiento legal).</p>
+  </div>
+  <div class="cg c3" style="margin-top:12px;">
+    <div class="card ca"><h3>Entorno Normativo del Proyecto</h3>
+      <ul style="font-size:.84rem;">
+        <li><strong>Macro</strong>: leyes federales, tratados internacionales</li>
+        <li><strong>Meso</strong>: normas sectoriales (NOM, ISO, OSHA)</li>
+        <li><strong>Micro</strong>: políticas internas, contratos específicos</li>
+      </ul>
+    </div>
+    <div class="card cr"><h3>Consecuencias del Incumplimiento</h3>
+      <ul style="font-size:.84rem;">
+        <li>Multas administrativas y penalizaciones contractuales</li>
+        <li>Suspensión de operaciones o del proyecto</li>
+        <li>Daño reputacional irreparable</li>
+        <li>Responsabilidad civil y penal del PM</li>
+        <li>Pérdida de certificaciones y contratos futuros</li>
+      </ul>
+    </div>
+    <div class="card cv"><h3>Compliance Register</h3>
+      <p>Documento que registra todos los requisitos regulatorios del proyecto: normativa aplicable, responsable de cumplimiento, fecha límite, estado actual y evidencia de cumplimiento.</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="3">
+  <h2>Tipos de Contratos y Normativas por Sector</h2>
+  <div class="cg c2">
+    <div class="card ca">
+      <h3>Tipos de Contratos en PM</h3>
+      <table>
+        <tr><th>Tipo</th><th>Riesgo para</th><th>Cuándo usar</th><th>Ejemplo</th></tr>
+        <tr><td><strong>Precio Fijo (FFP)</strong></td><td>Proveedor asume riesgo</td><td>Alcance bien definido, estable</td><td>Construcción de módulo de software con specs fijas</td></tr>
+        <tr><td><strong>Time &amp; Materials</strong></td><td>Cliente asume riesgo</td><td>Alcance incierto, variable</td><td>Consultoría de arquitectura de sistemas</td></tr>
+        <tr><td><strong>Costo Reembolsable (CR)</strong></td><td>Cliente asume + incentivo</td><td>Proyectos de investigación, alta incertidumbre</td><td>I+D automotriz, prototipo nuevo componente</td></tr>
+      </table>
+    </div>
+    <div class="card cr">
+      <h3>Normativas Clave por Sector</h3>
+      <table>
+        <tr><th>Sector</th><th>Normativas Principales</th></tr>
+        <tr><td><strong>Manufactura</strong></td><td>NOM-001-STPS (seguridad eléctrica), ISO 9001, ISO 14001, OSHA 1910</td></tr>
+        <tr><td><strong>Automotriz</strong></td><td>NOM-138-SEMARNAT, IATF 16949, FMEA, VDA 6.3</td></tr>
+        <tr><td><strong>TI / Informática</strong></td><td>LFPDPPP (datos personales), ISO 27001, GDPR (UE), NOM-151</td></tr>
+        <tr><td><strong>Transporte</strong></td><td>SCT, NOM-068-SCT (transporte federal), reglamentos de tráfico internacional</td></tr>
+        <tr><td><strong>Adm. Industrial</strong></td><td>LFT (laboral), SAT (fiscal), IMSS, Ley de Sociedades Mercantiles</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="box bc"><div class="bt">📰 CASO REAL — Volkswagen Dieselgate</div>
+    <p>En 2015, VW manipuló software de emisiones para pasar pruebas ambientales (NOM equivalente a EPA de EEUU). Multas: <strong>$30 billones USD</strong>. El CEO renunció. El proyecto de "solución técnica" costó más que todo el programa original. La lección: el cumplimiento regulatorio no es opcional — es una restricción no negociable del proyecto.</p>
+  </div>
+  <div class="box bl"><div class="bt">🔬 LABORATORIO — Compliance Register del Proyecto Integrador</div>
+    <p>Identificar las 5 normativas más relevantes para el sector y tipo de proyecto integrador. Construir el Compliance Register con: normativa, artículo aplicable, requisito específico, responsable, fecha de verificación. Evaluar el riesgo de incumplimiento de cada una.</p>
+  </div>
+</div>
+
+<!-- ═══ S25: DEFENSA FINAL ═══ -->
+<div class="slide" data-s="4">
+  <h2>Sesión 25 — <span style="color:var(--green)">Proyecto Integrador: Defensa y Cierre Profesional</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>La defensa del proyecto integrador es tu <strong>audición de director de orquesta ante el gran teatro</strong>. No están evaluando si sabes las notas (la teoría ya la aprendiste) — están evaluando si puedes <strong>dirigir</strong>: coordinar todas las voces, mantener el tempo bajo presión, y entregar una experiencia que el público (el panel) recuerde como profesional y transformadora. Prepara, ensaya, y confía en lo que aprendiste en estas 150 horas.</p>
+  </div>
+  <div class="cg c3" style="margin-top:12px;">
+    <div class="card cg2"><h3>10 Entregables Requeridos</h3>
+      <ol style="font-size:.82rem;">
+        <li>Project Charter</li>
+        <li>Plan de Proyecto (EDT + Gantt + Presupuesto)</li>
+        <li>Plan de Riesgos (≥15 riesgos con respuesta)</li>
+        <li>Plan de Calidad</li>
+        <li>Reporte EVM (CPI, SPI, proyecciones)</li>
+        <li>Business Case (ROI, VPN, TIR)</li>
+        <li>Plan de Comunicaciones</li>
+        <li>Plan de Gestión del Cambio (ADKAR)</li>
+        <li>Plan de Stakeholders</li>
+        <li>Presentación Ejecutiva (15 min)</li>
+      </ol>
+    </div>
+    <div class="card ca"><h3>Estructura de los 15 minutos</h3>
+      <ol style="font-size:.82rem;">
+        <li>Contexto y problema (2 min)</li>
+        <li>Solución y alcance (2 min)</li>
+        <li>Plan + cronograma (2 min)</li>
+        <li>Análisis financiero ROI/VPN (2 min)</li>
+        <li>Riesgos y mitigación (2 min)</li>
+        <li>Cambio y stakeholders (2 min)</li>
+        <li>Próximos pasos + solicitud aprobación (1 min)</li>
+      </ol>
+    </div>
+    <div class="card cp"><h3>Top 5 Preguntas del Panel</h3>
+      <ol style="font-size:.82rem;">
+        <li>"¿Qué pasa si el ROI es 20% menor al proyectado?"</li>
+        <li>"¿Por qué esta solución y no la alternativa X?"</li>
+        <li>"¿Cómo garantizas la adopción de los usuarios finales?"</li>
+        <li>"Si el CPI actual es 0.82, ¿qué acciones tomarías HOY?"</li>
+        <li>"¿Cuál es el peor escenario de riesgo y cómo lo manejan?"</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="4">
+  <h2>Rúbrica de Evaluación y Cierre Formal del Proyecto</h2>
+  <table>
+    <tr><th>Criterio</th><th>Excelente (90-100)</th><th>Bueno (75-89)</th><th>Suficiente (70-74)</th><th>Peso</th></tr>
+    <tr><td><strong>Charter, WBS y Cronograma</strong></td><td>Charter completo, WBS con diccionario, CPM con holguras calculadas</td><td>Charter y WBS correctos, cronograma con ruta crítica</td><td>Charter básico, WBS sin diccionario</td><td>20%</td></tr>
+    <tr><td><strong>EVM y Control de Costos</strong></td><td>EVM completo con proyecciones, gráfica S-curve, análisis ejecutivo</td><td>CPI y SPI calculados, presupuesto base correcto</td><td>Presupuesto sin EVM</td><td>20%</td></tr>
+    <tr><td><strong>Riesgos y Calidad</strong></td><td>≥15 riesgos, análisis P×I, planes de respuesta detallados, DoD</td><td>≥10 riesgos con estrategias, plan de calidad con métricas</td><td>Riesgos identificados sin plan de respuesta</td><td>20%</td></tr>
+    <tr><td><strong>Business Case y Estrategia</strong></td><td>VPN/TIR/ROI con análisis de sensibilidad, conectado a estrategia</td><td>Indicadores financieros calculados, Business Case completo</td><td>Solo ROI básico, sin análisis de sensibilidad</td><td>20%</td></tr>
+    <tr><td><strong>Presentación y Defensa</strong></td><td>Presentación ejecutiva, respuestas precisas y fundamentadas, storytelling</td><td>Presentación clara, respuestas correctas</td><td>Exceso de tecnicismos, respuestas imprecisas</td><td>20%</td></tr>
+  </table>
+</div>
+
+<div class="slide" data-s="4">
+  <h2>Cierre del Proyecto y Lecciones Aprendidas</h2>
+  <div class="cg c2">
+    <div class="card cg2">
+      <h3>Proceso Formal de Cierre PMI</h3>
+      <ul class="tl">
+        <li><div class="st g">1</div><div class="content"><h4>Verificar entregables aceptados</h4><p>Confirmación formal del cliente/sponsor de que todos los entregables cumplen los criterios de aceptación.</p></div></li>
+        <li><div class="st t">2</div><div class="content"><h4>Cerrar contratos y acuerdos</h4><p>Liberación formal de todos los contratos con proveedores y subcontratistas.</p></div></li>
+        <li><div class="st a">3</div><div class="content"><h4>Liberar recursos del equipo</h4><p>El equipo queda disponible para nuevos proyectos. Evaluar el desempeño individual.</p></div></li>
+        <li><div class="st p">4</div><div class="content"><h4>Archivar documentos del proyecto</h4><p>El repositorio del proyecto queda accesible para futuros proyectos similares.</p></div></li>
+        <li><div class="st v">5</div><div class="content"><h4>Sesión de lecciones aprendidas</h4><p>¿Qué salió bien? ¿Qué mejorarías? ¿Qué no repetirías? Documento final al repositorio.</p></div></li>
+      </ul>
+    </div>
+    <div class="card cp">
+      <h3>Plan de Desarrollo Profesional Post-Seminario</h3>
+      <table>
+        <tr><th>Certificación</th><th>Prerequisito</th><th>Valor en el mercado</th></tr>
+        <tr><td><strong>CAPM</strong></td><td>23h educación PM</td><td>Entrada al mundo PM</td></tr>
+        <tr><td><strong>PMP</strong></td><td>3 años exp. + 35h educación</td><td>+25% salario promedio (PMI)</td></tr>
+        <tr><td><strong>PMI-ACP</strong></td><td>21h educación ágil</td><td>Alta demanda en TI y manufactura</td></tr>
+        <tr><td><strong>Prosci ADKAR</strong></td><td>Este seminario</td><td>Especialización en cambio org.</td></tr>
+        <tr><td><strong>PgMP</strong></td><td>4 años exp. programa</td><td>Gestión de portafolios, dirección</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE FINAL — CIERRE DEL SEMINARIO COMPLETO -->
+<div class="slide cover" data-s="4">
+  <div class="badge">🎓 FIN DEL SEMINARIO · 150 HORAS · 25 SESIONES</div>
+  <h1 style="font-size:1.9rem;background:linear-gradient(135deg,var(--teal),var(--pink),var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">De Profesionista a Director de Proyectos:<br>El Camino Continúa</h1>
+  <div class="sr" style="justify-content:center;max-width:750px;margin:16px auto;">
+    <div class="stat"><div class="n" style="color:var(--teal)">150h</div><div class="l">de formación intensiva</div></div>
+    <div class="stat"><div class="n" style="color:var(--amber)">25</div><div class="l">sesiones de 6 horas</div></div>
+    <div class="stat"><div class="n" style="color:var(--pink)">10</div><div class="l">competencias dominadas</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">1</div><div class="l">proyecto integrador real</div></div>
+  </div>
+  <div class="cg c2" style="max-width:800px;margin:16px auto;text-align:left;">
+    <div class="card ct">
+      <h3>Referencias Finales — Bloque V</h3>
+      <ul style="font-size:.82rem;">
+        <li>Goleman, D. (1995). <em>Emotional Intelligence</em>. Bantam Books.</li>
+        <li>Fisher, R., Ury, W. &amp; Patton, B. (2011). <em>Getting to Yes</em>. Penguin Books.</li>
+        <li>Kotter, J.P. (2012). <em>Leading Change</em>. Harvard Business Press.</li>
+        <li>Hiatt, J. (2006). <em>ADKAR: A Model for Change</em>. Prosci.</li>
+        <li>PMI (2022). <em>Code of Ethics and Professional Conduct</em>.</li>
+        <li>PMI (2021). <em>PMBOK® Guide 7th Ed.</em> — Dominio de Interesados.</li>
+      </ul>
+    </div>
+    <div class="card cp">
+      <h3>Referencias del Seminario Completo</h3>
+      <ul style="font-size:.82rem;">
+        <li>PMI (2021). <em>PMBOK® Guide 7th Ed. + Process Groups</em>.</li>
+        <li>Schwaber &amp; Sutherland (2020). <em>The Scrum Guide</em>.</li>
+        <li>Fleming &amp; Koppelman (2010). <em>Earned Value PM</em>. PMI.</li>
+        <li>Leffingwell, D. (2020). <em>SAFe® 5.0 Distilled</em>. Addison-Wesley.</li>
+        <li>Lencioni, P. (2002). <em>The Five Dysfunctions of a Team</em>.</li>
+        <li>Liker, J.K. (2021). <em>The Toyota Way</em>. 2nd Ed.</li>
+        <li>Kerzner, H. (2022). <em>Project Management</em>. 13th Ed. Wiley.</li>
+      </ul>
+    </div>
+  </div>
+  <div style="margin-top:12px;">
+    <span class="tag">PMP</span><span class="tag">PMI-ACP</span><span class="tag">ADKAR</span>
+    <span class="tag">Scrum</span><span class="tag">SAFe</span><span class="tag">EVM</span>
+    <span class="tag">PMO</span><span class="tag">Power Skills</span><span class="tag">TecNM</span>
+  </div>
+  <p style="margin-top:18px;color:var(--muted);font-size:.84rem;font-style:italic;max-width:600px;">"El project manager excepcional no es el que nunca enfrenta problemas — es el que los convierte en oportunidades de demostrar competencia." — PMI</p>
+</div>
+
+</div><!-- fin #sc -->
+<div id="footer">
+  <button onclick="prev()">← Anterior</button>
+  <span class="hint">← → · Espacio</span>
+  <button onclick="next()">Siguiente →</button>
+</div>
+<script>
+const slides=document.querySelectorAll('.slide'),total=slides.length;let cur=0;
+const ss=[];slides.forEach((s,i)=>{const v=parseInt(s.dataset.s);if(ss[v]===undefined)ss[v]=i;});
+function go(n){if(n<0||n>=total)return;slides[cur].classList.remove('active');cur=n;slides[cur].classList.add('active');document.getElementById('ctr').textContent=(cur+1)+' / '+total;document.getElementById('pb').style.width=((cur+1)/total*100)+'%';ut();slides[cur].scrollTop=0;}
+function next(){go(cur+1);}function prev(){go(cur-1);}function gts(i){go(ss[i]);}
+function ut(){const v=parseInt(slides[cur].dataset.s);for(let i=0;i<5;i++){const b=document.getElementById('t'+i);if(b)b.classList.toggle('active',i===v);}}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();}if(e.key==='ArrowLeft'){e.preventDefault();prev();}});
+ut();
+</script>
+</body>
+</html>

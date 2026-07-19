@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloque I — Fundamentos y Ciclos de Vida en PM</title>
+<style>
+:root{--bg:#03060f;--card:#0a1628;--border:#1e3a5f;--teal:#0d9488;--amber:#f59e0b;--indigo:#6366f1;--green:#10b981;--red:#ef4444;--blue:#3b82f6;--pink:#ec4899;--violet:#7c3aed;--muted:#64748b;--text:#e2e8f0;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden;height:100vh;}
+#navbar{position:fixed;top:0;left:0;right:0;height:54px;background:rgba(3,6,15,.96);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:100;backdrop-filter:blur(8px);}
+.brand{color:var(--teal);font-weight:700;font-size:.85rem;letter-spacing:1px;}
+.brand span{color:var(--amber);}
+.stabs{display:flex;gap:6px;}
+.stabs button{background:transparent;border:1px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:20px;cursor:pointer;font-size:.75rem;transition:all .2s;}
+.stabs button.active{background:var(--teal);border-color:var(--teal);color:#fff;font-weight:700;}
+.stabs button:hover:not(.active){border-color:var(--teal);color:var(--teal);}
+#ctr{color:var(--muted);font-size:.8rem;min-width:80px;text-align:right;}
+#pb{position:fixed;top:54px;left:0;height:3px;background:linear-gradient(90deg,var(--teal),var(--amber));transition:width .3s;z-index:100;}
+#sc{position:fixed;top:57px;left:0;right:0;bottom:40px;overflow:hidden;}
+.slide{position:absolute;top:0;left:0;right:0;bottom:0;padding:28px 48px;display:none;overflow-y:auto;animation:fi .35s ease;}
+.slide.active{display:flex;flex-direction:column;}
+@keyframes fi{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+#footer{position:fixed;bottom:0;left:0;right:0;height:40px;background:rgba(3,6,15,.96);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:16px;z-index:100;}
+#footer button{background:var(--card);border:1px solid var(--border);color:var(--text);padding:5px 20px;border-radius:6px;cursor:pointer;font-size:.8rem;transition:all .2s;}
+#footer button:hover{border-color:var(--teal);color:var(--teal);}
+.hint{color:var(--muted);font-size:.72rem;}
+h1{font-size:2rem;font-weight:800;line-height:1.2;margin-bottom:10px;}
+h2{font-size:1.45rem;font-weight:700;margin-bottom:14px;}
+h3{font-size:1rem;font-weight:600;color:var(--teal);margin-bottom:8px;margin-top:8px;}
+p{font-size:.9rem;line-height:1.65;margin-bottom:8px;}
+ul,ol{padding-left:20px;font-size:.88rem;line-height:1.8;}
+li{margin-bottom:3px;}
+.cover{align-items:center;justify-content:center;text-align:center;}
+.cover h1{font-size:2.2rem;background:linear-gradient(135deg,var(--teal),var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;}
+.badge{display:inline-block;border:1px solid var(--teal);border-radius:8px;padding:8px 24px;color:var(--teal);font-size:.9rem;font-weight:700;letter-spacing:2px;margin-bottom:20px;background:rgba(13,148,136,.08);}
+.sg{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px;}
+.sc2{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 14px;width:168px;text-align:left;}
+.sc2 .num{color:var(--teal);font-size:.7rem;font-weight:700;}
+.sc2 .nm{font-size:.78rem;margin-top:4px;}
+.sub{color:var(--muted);font-size:1rem;}
+.cg{display:grid;gap:12px;margin-top:10px;}
+.cg.c2{grid-template-columns:1fr 1fr;}
+.cg.c3{grid-template-columns:1fr 1fr 1fr;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:15px;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.card.ct::before{background:var(--teal);}
+.card.ca::before{background:var(--amber);}
+.card.cg2::before{background:var(--green);}
+.card.ci::before{background:var(--indigo);}
+.card.cr::before{background:var(--red);}
+.card.cb::before{background:var(--blue);}
+.card.cv::before{background:var(--violet);}
+.card.cp::before{background:var(--pink);}
+.card h3{margin-top:0;font-size:.9rem;}
+.card p,.card ul,.card li{font-size:.84rem;}
+.box{border-radius:10px;padding:13px 17px;margin:9px 0;}
+.bm{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.4);}
+.bc{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.4);}
+.bl{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.4);}
+.bd{background:rgba(13,148,136,.08);border:1px solid rgba(13,148,136,.4);}
+.bq{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.4);cursor:pointer;}
+.bt{font-weight:700;font-size:.8rem;margin-bottom:5px;letter-spacing:.5px;}
+.bm .bt{color:#a78bfa;}
+.bc .bt{color:var(--amber);}
+.bl .bt{color:#34d399;}
+.bd .bt{color:var(--teal);}
+.bq .bt{color:#fbbf24;}
+.box p,.box li,.box ul{font-size:.86rem;}
+.qa{display:none;margin-top:7px;padding-top:7px;border-top:1px solid rgba(251,191,36,.3);color:#34d399;font-size:.84rem;}
+.bq.revealed .qa{display:block;}
+table{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:8px;}
+th{background:#071020;color:var(--teal);text-align:left;padding:7px 11px;border:1px solid var(--border);}
+td{padding:6px 11px;border:1px solid var(--border);vertical-align:top;}
+tr:nth-child(even) td{background:rgba(10,22,40,.6);}
+.tl{list-style:none;padding:0;margin-top:8px;}
+.tl li{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start;}
+.tl .st{min-width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.78rem;flex-shrink:0;}
+.tl .st.t{background:rgba(13,148,136,.15);border:2px solid var(--teal);color:var(--teal);}
+.tl .st.a{background:rgba(245,158,11,.15);border:2px solid var(--amber);color:var(--amber);}
+.tl .st.g{background:rgba(16,185,129,.15);border:2px solid var(--green);color:var(--green);}
+.tl .st.i{background:rgba(99,102,241,.15);border:2px solid var(--indigo);color:var(--indigo);}
+.tl .st.r{background:rgba(239,68,68,.15);border:2px solid var(--red);color:var(--red);}
+.tl .content h4{font-size:.88rem;font-weight:600;}
+.tl .content p{font-size:.82rem;color:var(--muted);margin:0;}
+.sr{display:flex;gap:12px;flex-wrap:wrap;margin:10px 0;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:13px 16px;flex:1;min-width:110px;text-align:center;}
+.stat .n{font-size:1.7rem;font-weight:800;line-height:1;}
+.stat .l{font-size:.7rem;color:var(--muted);margin-top:4px;}
+.ld{display:flex;flex-direction:column;gap:5px;margin:10px 0;}
+.lr{border-radius:6px;padding:7px 14px;font-size:.81rem;font-weight:600;}
+.tag{display:inline-block;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:2px 9px;font-size:.74rem;color:var(--muted);margin:2px;}
+.slide::-webkit-scrollbar{width:4px;}
+.slide::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+</style>
+</head>
+<body>
+<div id="navbar">
+  <div class="brand">📐 DIRECCIÓN DE <span>PROYECTOS</span> · BLOQUE I</div>
+  <div class="stabs">
+    <button onclick="gts(0)" id="t0">S1</button>
+    <button onclick="gts(1)" id="t1">S2</button>
+    <button onclick="gts(2)" id="t2">S3</button>
+    <button onclick="gts(3)" id="t3">S4</button>
+    <button onclick="gts(4)" id="t4">S5</button>
+  </div>
+  <div id="ctr">1 / 1</div>
+</div>
+<div id="pb" style="width:0%"></div>
+<div id="sc">
+
+<!-- PORTADA -->
+<div class="slide active cover" data-s="0">
+  <div class="badge">BLOQUE I · SESIONES 1 – 5</div>
+  <h1>Fundamentos y Ciclos<br>de Vida en PM</h1>
+  <p class="sub">PMBOK 7 · Estándares PMI · Ciclos de Vida · Charter · WBS · CPM · EVM · 30 horas</p>
+  <div class="sg">
+    <div class="sc2"><div class="num">SESIÓN 1</div><div class="nm">Historia y Estándares</div></div>
+    <div class="sc2"><div class="num">SESIÓN 2</div><div class="nm">Ciclos de Vida</div></div>
+    <div class="sc2"><div class="num">SESIÓN 3</div><div class="nm">Charter, Alcance y WBS</div></div>
+    <div class="sc2"><div class="num">SESIÓN 4</div><div class="nm">Tiempo y Ruta Crítica</div></div>
+    <div class="sc2"><div class="num">SESIÓN 5</div><div class="nm">Costos y Presupuesto</div></div>
+  </div>
+  <p style="margin-top:24px;color:var(--muted);font-size:.8rem;">← → Espacio · Tabs S1–S5 para saltar sesión</p>
+</div>
+
+<!-- ═══ S1: HISTORIA Y ESTÁNDARES ═══ -->
+<div class="slide" data-s="0">
+  <h2>Sesión 1 — <span style="color:var(--teal)">Historia, Estándares y Fundamentos de PM</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>La gestión de proyectos es tan antigua como la civilización: las pirámides de Egipto, la Gran Muralla China y los acueductos romanos fueron proyectos de ingeniería a gran escala. Pero la diferencia entre aquellos proyectos y los de hoy es que ahora tenemos <strong>metodología sistematizada</strong>: lo que antes tomaba décadas y miles de vidas aprendiendo por ensayo y error, hoy está codificado en estándares como el PMBOK que cualquier PM puede aplicar desde el primer día. Los hombros de gigantes que nos permiten ver más lejos.</p>
+  </div>
+  <div class="sr" style="margin-top:12px;">
+    <div class="stat"><div class="n" style="color:var(--red)">70%</div><div class="l">de proyectos que fracasan por falta de metodología (Standish Report, 2023)</div></div>
+    <div class="stat"><div class="n" style="color:var(--amber)">$2.5T</div><div class="l">dólares desperdiciados anualmente en proyectos fallidos a nivel global</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">+25%</div><div class="l">más probabilidad de éxito con PM certificado al frente del proyecto</div></div>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Evolución Histórica de la Gestión de Proyectos</h2>
+  <ul class="tl">
+    <li><div class="st t">1910</div><div class="content"><h4>Henry Gantt — El diagrama que cambió todo</h4><p>Gantt crea su famoso diagrama de barras para visualizar cronogramas de producción. Primera herramienta formal de PM.</p></div></li>
+    <li><div class="st a">1957</div><div class="content"><h4>DuPont/Remington Rand — El nacimiento del CPM</h4><p>El método del camino crítico (CPM) nace para gestionar el mantenimiento de plantas químicas. La ruta crítica se convierte en el corazón de la planeación.</p></div></li>
+    <li><div class="st i">1969</div><div class="content"><h4>Fundación del PMI — El gremio global</h4><p>Project Management Institute fundado en Pennsylvania. Misión: estandarizar la profesión. Hoy: 700,000+ miembros en 185 países.</p></div></li>
+    <li><div class="st g">1996</div><div class="content"><h4>PMBOK 1ª Ed. — El estándar se publica</h4><p>Primera versión del Guide to the Project Management Body of Knowledge. Las "9 áreas del conocimiento" se vuelven el lenguaje común global.</p></div></li>
+    <li><div class="st r">2001</div><div class="content"><h4>Manifiesto Ágil — La revolución adaptativa</h4><p>17 desarrolladores en Utah firman el Manifiesto Ágil. El mundo de PM nunca vuelve a ser igual.</p></div></li>
+    <li><div class="st t">2021</div><div class="content"><h4>PMBOK 7ª Ed. — El cambio de paradigma</h4><p>De procesos prescritos a principios y dominios de desempeño. PM se vuelve contextual, no recetario.</p></div></li>
+  </ul>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>PMBOK 7: Los 12 Principios y 8 Dominios de Desempeño</h2>
+  <div class="cg c2">
+    <div class="card ct">
+      <h3>12 Principios del PMBOK 7</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:.78rem;">
+        <div style="background:rgba(13,148,136,.1);border-radius:4px;padding:5px;">1. Ser un administrador diligente</div>
+        <div style="background:rgba(13,148,136,.1);border-radius:4px;padding:5px;">2. Crear un ambiente colaborativo</div>
+        <div style="background:rgba(13,148,136,.1);border-radius:4px;padding:5px;">3. Involucrarse efectivamente con stakeholders</div>
+        <div style="background:rgba(13,148,136,.1);border-radius:4px;padding:5px;">4. Enfocarse en el valor</div>
+        <div style="background:rgba(13,148,136,.1);border-radius:4px;padding:5px;">5. Reconocer las interacciones del sistema</div>
+        <div style="background:rgba(13,148,136,.1);border-radius:4px;padding:5px;">6. Demostrar comportamientos de liderazgo</div>
+        <div style="background:rgba(13,148,136,.1);border-radius:4px;padding:5px;">7. Adaptar según el contexto</div>
+        <div style="background:rgba(13,148,136,.1);border-radius:4px;padding:5px;">8. Integrar calidad en los procesos</div>
+        <div style="background:rgba(13,148,136,.1);border-radius:4px;padding:5px;">9. Navegar la complejidad</div>
+        <div style="background:rgba(13,148,136,.1);border-radius:4px;padding:5px;">10. Optimizar respuestas a riesgos</div>
+        <div style="background:rgba(13,148,136,.1);border-radius:4px;padding:5px;">11. Adoptar adaptabilidad y resiliencia</div>
+        <div style="background:rgba(13,148,136,.1);border-radius:4px;padding:5px;">12. Habilitar el cambio para el valor futuro</div>
+      </div>
+    </div>
+    <div class="card ca">
+      <h3>8 Dominios de Desempeño</h3>
+      <ul style="font-size:.84rem;">
+        <li>👥 <strong>Interesados</strong> — gestión del compromiso</li>
+        <li>🤝 <strong>Equipo</strong> — liderazgo y colaboración</li>
+        <li>🔄 <strong>Enfoque de desarrollo y ciclo de vida</strong></li>
+        <li>📋 <strong>Planeación</strong> — estratégica y adaptativa</li>
+        <li>⚙️ <strong>Trabajo del proyecto</strong> — ejecución cotidiana</li>
+        <li>📦 <strong>Entrega</strong> — calidad y aceptación</li>
+        <li>📊 <strong>Medición</strong> — métricas y desempeño</li>
+        <li>🏢 <strong>Incertidumbre</strong> — riesgos y ambigüedad</li>
+      </ul>
+      <div class="box bd"><div class="bt">💡 PMBOK 7 vs PMBOK 6</div>
+        <p>PMBOK 6 era un manual de procesos (49 procesos, 10 áreas). PMBOK 7 es un estándar de principios (12 principios, 8 dominios). El cambio: de "cómo hacerlo" a "qué lograr".</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Tipos de Organizaciones y Certificaciones PMI</h2>
+  <div class="cg c2">
+    <div class="card ci">
+      <h3>Tipos de Organizaciones y su Impacto en el PM</h3>
+      <table>
+        <tr><th>Tipo</th><th>Autoridad del PM</th><th>Recursos</th><th>Ejemplo</th></tr>
+        <tr><td><strong>Funcional</strong></td><td>Muy baja (coordinador)</td><td>Compartidos con jefes funcionales</td><td>Hospital, universidad, gobierno</td></tr>
+        <tr><td><strong>Matricial débil</strong></td><td>Baja (facilitador)</td><td>Negociados con funcional</td><td>Empresa manufacturera con proyectos esporádicos</td></tr>
+        <tr><td><strong>Matricial balanceada</strong></td><td>Media (PM real)</td><td>Compartidos, tiempo asignado</td><td>Empresa TI mediana con PMO</td></tr>
+        <tr><td><strong>Matricial fuerte</strong></td><td>Alta</td><td>Asignados full-time al proyecto</td><td>Empresa automotriz con proyectos de plataforma</td></tr>
+        <tr><td><strong>Proyectizada</strong></td><td>Total</td><td>Dedicados exclusivamente</td><td>Constructoras, consultoras de proyectos</td></tr>
+      </table>
+    </div>
+    <div class="card cg2">
+      <h3>El Mercado de Certificaciones PMI</h3>
+      <table>
+        <tr><th>Certificación</th><th>Requisito clave</th><th>Valor en el mercado</th></tr>
+        <tr><td><strong>CAPM</strong></td><td>23h educación PM</td><td>Entrada + validación básica</td></tr>
+        <tr><td><strong>PMP</strong></td><td>3 años exp. + 35h educación</td><td>+25% salario promedio global</td></tr>
+        <tr><td><strong>PMI-ACP</strong></td><td>21h agile + 8 meses exp.</td><td>Alta demanda TI y manufactura</td></tr>
+        <tr><td><strong>PgMP</strong></td><td>4 años en program management</td><td>Dirección de portafolios</td></tr>
+        <tr><td><strong>PfMP</strong></td><td>8 años exp. + 4 en portafolio</td><td>C-Level de proyectos</td></tr>
+      </table>
+      <div class="box bc"><div class="bt">📰 DATO DE MERCADO 2024</div>
+        <p>Salario promedio de un PMP certificado en México: $85,000–$180,000 MXN/mes según sector. En EEUU: $120,000–$165,000 USD/año. La certificación PMP es el ROI más alto en educación continua para ingenieros y administradores.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ S2: CICLOS DE VIDA ═══ -->
+<div class="slide" data-s="1">
+  <h2>Sesión 2 — <span style="color:var(--amber)">Ciclos de Vida: Predictivo, Ágil e Híbrido</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Elegir el ciclo de vida correcto es como elegir el vehículo adecuado para el viaje: si conoces exactamente la ruta (destino claro, camino definido), tomas el <strong>tren rápido (predictivo)</strong> — eficiente, puntual, sin desviaciones. Si no sabes exactamente a dónde vas pero sabrás cuando llegues, mejor tomar el <strong>jeep todoterreno (ágil)</strong> — flexible, adaptable, puede cambiar de dirección. Y si el viaje tiene tramos definidos y tramos inciertos, el <strong>coche convertible híbrido</strong> es tu mejor apuesta.</p>
+  </div>
+  <div class="cg c3" style="margin-top:12px;">
+    <div class="card ct"><h3>Predictivo (en Cascada)</h3><p>Fases secuenciales: Inicio → Planeación → Ejecución → Cierre. El alcance se define al inicio y permanece estable. Ideal cuando los requisitos son conocidos, el riesgo es bajo y los cambios son costosos. Ejemplo: construcción de puente, manufactura de producto certificado.</p></div>
+    <div class="card ca"><h3>Ágil/Adaptativo</h3><p>Iteraciones cortas (sprints) con entrega incremental. El alcance evoluciona. Ideal cuando los requisitos cambian, hay alta incertidumbre o el cliente necesita retroalimentación frecuente. Ejemplo: desarrollo de software, marketing digital, I+D.</p></div>
+    <div class="card cg2"><h3>Híbrido</h3><p>Combina predictivo y ágil. Típicamente: planeación inicial sólida (predictivo) + ejecución iterativa (ágil). Ejemplo: implementar un ERP (arquitectura predefinida + módulos en sprints), proyecto de transformación digital con componentes de infraestructura y componentes de usuario.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>El Continuum de Stacey y el Manifiesto Ágil</h2>
+  <div class="cg c2">
+    <div class="card ci">
+      <h3>El Continuum de Stacey: ¿Cuándo Usar Qué?</h3>
+      <p>Dos ejes: <strong>certeza sobre el QUÉ</strong> (requisitos) y <strong>certeza sobre el CÓMO</strong> (tecnología/método):</p>
+      <table style="margin-top:8px;">
+        <tr><th>Zona</th><th>Qué pasa</th><th>Enfoque</th></tr>
+        <tr><td><strong>Simple</strong></td><td>Qué y Cómo conocidos</td><td>Predictivo (best practices)</td></tr>
+        <tr><td><strong>Complicado</strong></td><td>Qué conocido, Cómo incierto</td><td>Predictivo + análisis experto</td></tr>
+        <tr><td><strong>Complejo</strong></td><td>Ambos inciertos</td><td>Ágil (emerge + aprende)</td></tr>
+        <tr><td><strong>Caótico</strong></td><td>Sin patrones</td><td>Actuar primero, analizar después</td></tr>
+      </table>
+      <div class="box bd"><div class="bt">💡 DATO CLAVE</div>
+        <p>La mayoría de los proyectos modernos caen en zona "compleja". Por eso el ágil se ha expandido más allá del software: manufactura, logística, administración, marketing.</p>
+      </div>
+    </div>
+    <div class="card ca">
+      <h3>Manifiesto Ágil: 4 Valores</h3>
+      <div class="ld" style="margin-top:6px;">
+        <div class="lr" style="background:rgba(245,158,11,.1);border:1px solid var(--amber);color:var(--amber);">Individuos e interacciones SOBRE procesos y herramientas</div>
+        <div class="lr" style="background:rgba(245,158,11,.1);border:1px solid var(--amber);color:var(--amber);">Software/producto funcionando SOBRE documentación exhaustiva</div>
+        <div class="lr" style="background:rgba(245,158,11,.1);border:1px solid var(--amber);color:var(--amber);">Colaboración con el cliente SOBRE negociación contractual</div>
+        <div class="lr" style="background:rgba(245,158,11,.1);border:1px solid var(--amber);color:var(--amber);">Responder al cambio SOBRE seguir un plan</div>
+      </div>
+      <p style="font-size:.8rem;color:var(--muted);margin-top:8px;">Ojo: el lado derecho SÍ tiene valor, pero valoramos más el lado izquierdo. Ágil ≠ sin documentación ni plan.</p>
+    </div>
+  </div>
+  <div class="box bl"><div class="bt">🔬 LABORATORIO — Selección de Enfoque</div>
+    <p>Para los siguientes 5 proyectos, determinar el enfoque óptimo (predictivo/ágil/híbrido) y justificar: (1) Construcción de nueva línea de ensamble automotriz, (2) Desarrollo de app de trazabilidad de flota, (3) Implementación de ERP en empresa de transporte, (4) Campaña de transformación cultural 18 meses, (5) Diseño de nuevo componente vehicular con certificación NOM.</p>
+  </div>
+</div>
+
+<!-- ═══ S3: CHARTER Y WBS ═══ -->
+<div class="slide" data-s="2">
+  <h2>Sesión 3 — <span style="color:var(--indigo)">Inicio: Charter, Alcance y WBS</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>El Project Charter es el <strong>acta de nacimiento del proyecto</strong>: le da existencia formal, nombra al responsable y define los límites de lo que se autoriza. Sin acta de nacimiento, el proyecto no "existe" oficialmente — cualquiera puede decir que no está autorizado. Sin Charter, el PM no tiene autoridad. Y sin autoridad, no hay PM: hay solo un voluntario muy ocupado.</p>
+  </div>
+  <div class="cg c2" style="margin-top:12px;">
+    <div class="card ci">
+      <h3>Project Charter — 10 Componentes Clave</h3>
+      <ol style="font-size:.84rem;">
+        <li><strong>Propósito del proyecto</strong>: ¿por qué hacemos esto?</li>
+        <li><strong>Objetivos medibles</strong>: criterios de éxito SMART</li>
+        <li><strong>Requisitos de alto nivel</strong>: qué debe incluir el proyecto</li>
+        <li><strong>Descripción del alcance</strong>: qué está IN y qué está OUT</li>
+        <li><strong>Riesgos de alto nivel</strong>: las 3 amenazas principales</li>
+        <li><strong>Cronograma de hitos</strong>: fechas clave del proyecto</li>
+        <li><strong>Presupuesto resumido</strong>: inversión total aprobada</li>
+        <li><strong>Lista de stakeholders</strong>: quiénes tienen interés</li>
+        <li><strong>Requisitos de aprobación</strong>: quién acepta qué</li>
+        <li><strong>PM designado</strong>: nombre y nivel de autoridad</li>
+      </ol>
+    </div>
+    <div class="card cg2">
+      <h3>Scope Statement y Prevención del Scope Creep</h3>
+      <p>La declaración del alcance define explícitamente:</p>
+      <ul style="font-size:.84rem;">
+        <li><strong>Entregables incluidos</strong>: qué se entregará</li>
+        <li><strong>Criterios de aceptación</strong>: cómo sabremos que está listo</li>
+        <li><strong>Exclusiones explícitas</strong>: qué NO está incluido (crucial)</li>
+        <li><strong>Supuestos</strong>: qué damos por cierto sin evidencia plena</li>
+        <li><strong>Restricciones</strong>: límites de tiempo, costo, calidad</li>
+      </ul>
+      <div class="box bc"><div class="bt">📰 SCOPE CREEP — La Amenaza Silenciosa</div>
+        <p style="font-size:.82rem;">El 52% de los proyectos experimentan scope creep (PMI). Cada cambio no controlado afecta el cronograma (+15% promedio) y el presupuesto (+20% promedio). El Scope Statement y el proceso de control de cambios son las únicas vacunas.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="2">
+  <h2>WBS — La Estructura que lo Organiza Todo</h2>
+  <div class="cg c2">
+    <div class="card ca">
+      <h3>WBS: Reglas de Construcción</h3>
+      <ul style="font-size:.84rem;">
+        <li><strong>Regla del 100%</strong>: el nivel superior debe contener el 100% del trabajo del nivel inferior. Ni más, ni menos.</li>
+        <li><strong>Descomposición top-down</strong>: del entregable mayor a los paquetes de trabajo manejables</li>
+        <li><strong>Paquetes de trabajo</strong>: el nivel más bajo. Tiene dueño, duración estimable, costo estimable y criterio de aceptación.</li>
+        <li><strong>Orientado a entregables</strong>, no a actividades. "Sistema de login terminado", no "Programar login"</li>
+        <li><strong>Diccionario WBS</strong>: documento que describe cada componente (qué incluye, qué excluye, criterio de aceptación)</li>
+      </ul>
+    </div>
+    <div class="card ct">
+      <h3>Ejemplo WBS: Proyecto de Trazabilidad de Flota</h3>
+      <div style="font-size:.78rem;background:#071020;border-radius:8px;padding:12px;">
+        <div style="color:var(--teal);font-weight:700;">📦 Sistema de Trazabilidad de Flota (100%)</div>
+        <div style="margin-left:16px;margin-top:6px;">
+          <div style="color:var(--amber);">├── 1.0 Gestión del Proyecto</div>
+          <div style="margin-left:16px;color:var(--muted);">├── 1.1 Plan del Proyecto</div>
+          <div style="margin-left:16px;color:var(--muted);">└── 1.2 Informes y Cierre</div>
+          <div style="color:var(--indigo);margin-top:4px;">├── 2.0 Infraestructura GPS</div>
+          <div style="margin-left:16px;color:var(--muted);">├── 2.1 Dispositivos GPS instalados</div>
+          <div style="margin-left:16px;color:var(--muted);">└── 2.2 Conectividad 4G/5G configurada</div>
+          <div style="color:var(--green);margin-top:4px;">├── 3.0 Plataforma Software</div>
+          <div style="margin-left:16px;color:var(--muted);">├── 3.1 Backend API desarrollado</div>
+          <div style="margin-left:16px;color:var(--muted);">├── 3.2 Dashboard web operativo</div>
+          <div style="margin-left:16px;color:var(--muted);">└── 3.3 App móvil publicada</div>
+          <div style="color:var(--pink);margin-top:4px;">└── 4.0 Capacitación y Lanzamiento</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="box bl"><div class="bt">🔬 LABORATORIO — Charter + WBS del Proyecto Integrador</div>
+    <p>Elaborar el Project Charter completo del proyecto integrador (10 componentes). Luego construir la WBS de primer y segundo nivel en Miro o papel. Revisión cruzada: intercambiar el Charter con otro equipo y dar 3 observaciones de mejora.</p>
+  </div>
+</div>
+
+<!-- ═══ S4: TIEMPO Y RUTA CRÍTICA ═══ -->
+<div class="slide" data-s="3">
+  <h2>Sesión 4 — <span style="color:var(--green)">Planeación del Tiempo y Ruta Crítica</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>La ruta crítica es como el <strong>camino en la montaña donde no hay desvíos</strong>: si te demoras en cualquier punto de ese camino, toda la caravana llega tarde. Pero hay caminos paralelos con cierto "juego" (holgura) — si te detienes un momento ahí, la caravana puede seguir. El CPM te dice exactamente qué caminos no tienen margen de error y cuáles sí. Eso es invaluable para concentrar tu atención de PM donde verdaderamente importa.</p>
+  </div>
+  <div class="cg c2" style="margin-top:12px;">
+    <div class="card cg2">
+      <h3>Estimación de Duraciones — 3 Métodos</h3>
+      <table>
+        <tr><th>Método</th><th>Cómo funciona</th><th>Mejor para</th></tr>
+        <tr><td><strong>Análoga</strong></td><td>Basada en proyectos similares históricos</td><td>Estimación rápida en fases tempranas</td></tr>
+        <tr><td><strong>Paramétrica</strong></td><td>Fórmula: unidades × tiempo por unidad</td><td>Trabajo repetitivo y medible</td></tr>
+        <tr><td><strong>PERT (3 puntos)</strong></td><td>E = (O + 4M + P) / 6; σ = (P-O)/6</td><td>Alta incertidumbre, trabajo único</td></tr>
+      </table>
+      <p style="font-size:.82rem;margin-top:8px;"><strong>Ejemplo PERT</strong>: Optimista O=3 días, Más probable M=5, Pesimista P=9.<br>E = (3 + 4×5 + 9) / 6 = 32/6 = <strong>5.33 días</strong>. σ = (9-3)/6 = 1 día.</p>
+    </div>
+    <div class="card ct">
+      <h3>Ruta Crítica CPM — Paso a Paso</h3>
+      <p>Método: Forward pass (ES/EF) + Backward pass (LS/LF) + Float</p>
+      <table>
+        <tr><th>Act.</th><th>Dur.</th><th>ES</th><th>EF</th><th>LS</th><th>LF</th><th>Float</th><th>¿Crítica?</th></tr>
+        <tr><td>A</td><td>3</td><td>0</td><td>3</td><td>0</td><td>3</td><td>0</td><td><strong style="color:var(--red);">SÍ</strong></td></tr>
+        <tr><td>B</td><td>4</td><td>3</td><td>7</td><td>3</td><td>7</td><td>0</td><td><strong style="color:var(--red);">SÍ</strong></td></tr>
+        <tr><td>C</td><td>2</td><td>3</td><td>5</td><td>5</td><td>7</td><td>2</td><td>No</td></tr>
+        <tr><td>D</td><td>5</td><td>7</td><td>12</td><td>7</td><td>12</td><td>0</td><td><strong style="color:var(--red);">SÍ</strong></td></tr>
+      </table>
+      <p style="font-size:.8rem;color:var(--red);margin-top:6px;">Ruta crítica: A→B→D (12 días). C tiene 2 días de holgura.</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="3">
+  <h2>Compresión del Cronograma y MS Project</h2>
+  <div class="cg c2">
+    <div class="card ca">
+      <h3>Fast-Tracking vs Crashing</h3>
+      <table>
+        <tr><th>Técnica</th><th>Cómo funciona</th><th>Costo</th><th>Riesgo</th></tr>
+        <tr><td><strong>Fast-Tracking</strong></td><td>Ejecutar actividades en paralelo que normalmente serían secuenciales</td><td>Sin costo adicional directo</td><td>Alto (reproceso si hay dependencias)</td></tr>
+        <tr><td><strong>Crashing</strong></td><td>Agregar recursos (personas, equipos, turnos) a actividades de la ruta crítica</td><td>Alto (recursos adicionales)</td><td>Medio (más coordinación)</td></tr>
+      </table>
+      <div class="box bd"><div class="bt">💡 DATO CLAVE</div>
+        <p>Ambas técnicas solo funcionan en actividades de la <strong>ruta crítica</strong>. Comprimir actividades con holgura es trabajo inútil — no reduce la duración total del proyecto.</p>
+      </div>
+    </div>
+    <div class="card cg2">
+      <h3>Cronograma en MS Project</h3>
+      <ul style="font-size:.84rem;">
+        <li><strong>Definir tareas</strong> desde la WBS (importar o crear)</li>
+        <li><strong>Asignar duraciones</strong> y dependencias (FS/FF/SS/SF)</li>
+        <li><strong>Asignar recursos</strong>: personas, equipos, materiales</li>
+        <li><strong>Verificar la ruta crítica</strong>: MS Project la calcula automáticamente</li>
+        <li><strong>Guardar la Línea Base</strong>: foto del plan original para comparar vs real</li>
+        <li><strong>Tracking Gantt</strong>: ver desvíos del cronograma en tiempo real</li>
+      </ul>
+    </div>
+  </div>
+  <div class="bq box" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Ruta Crítica</div>
+    <p>Un proyecto tiene la ruta crítica A→C→F con 18 días de duración. El cliente quiere entrega en 15 días. El costo de agregar un recurso a la actividad C (4 días) es $5,000/día. El costo de paralelizar A y B (B no está en la ruta crítica) es $0. ¿Qué haces y cuánto cuesta la reducción a 15 días?</p>
+    <div class="qa">No se puede reducir el proyecto paralelizando A y B porque B no está en la ruta crítica — eso no cambia la duración total. Para reducir 3 días (de 18 a 15), la única opción es comprimir actividades en la ruta crítica A→C→F. Usando Crashing en la actividad C: reducir 3 días cuesta $5,000 × 3 = $15,000. Alternativamente, Fast-Tracking podría paralelizar parte de C y F (si hay dependencias lógicas rompibles), con costo menor pero mayor riesgo de retrabajo.</div>
+  </div>
+</div>
+
+<!-- ═══ S5: COSTOS ═══ -->
+<div class="slide" data-s="4">
+  <h2>Sesión 5 — <span style="color:var(--violet)">Gestión de Costos: Estimación, Presupuesto y Control</span></h2>
+  <div class="sr">
+    <div class="stat"><div class="n" style="color:var(--red)">28%</div><div class="l">de proyectos terminan con sobrecosto promedio (PMI, 2023)</div></div>
+    <div class="stat"><div class="n" style="color:var(--amber)">$122B</div><div class="l">perdidos solo en proyectos de TI por sobrecostos en 2023</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">67%</div><div class="l">de proyectos con gestión formal de costos terminan dentro del presupuesto</div></div>
+  </div>
+  <div class="cg c3" style="margin-top:12px;">
+    <div class="card cv"><h3>Estimación Bottom-Up</h3><p>Descomponer el trabajo (WBS) al nivel más bajo (paquetes de trabajo) y estimar cada uno. Sumar de abajo hacia arriba. <strong>Más preciso pero más tardado</strong>. Error típico: ±5-10%.</p></div>
+    <div class="card ca"><h3>Estimación Análoga</h3><p>Usar el costo real de un proyecto similar histórico como base. Ajustar por factores de complejidad y tamaño. <strong>Rápido pero menos preciso</strong>. Error típico: ±25-50%. Ideal para fases tempranas.</p></div>
+    <div class="card cg2"><h3>Estimación Paramétrica</h3><p>Usar una relación estadística entre variables históricas y parámetros del proyecto actual. Ejemplo: $800/m² para construcción de oficinas. <strong>Precisión media: ±10-25%</strong>.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-s="4">
+  <h2>Línea Base de Costos y Evaluación Financiera</h2>
+  <div class="cg c2">
+    <div class="card ca">
+      <h3>Línea Base de Costos (Cost Baseline)</h3>
+      <p>La curva S del presupuesto acumulado. Suma de todos los costos planeados a lo largo del tiempo.</p>
+      <p style="font-size:.85rem;margin-top:8px;">Componentes del Presupuesto Total (Budget at Completion):</p>
+      <div class="ld" style="margin-top:6px;">
+        <div class="lr" style="background:rgba(13,148,136,.1);border:1px solid var(--teal);color:var(--teal);">COSTO BASE (Estimación bottom-up de todos los paquetes de trabajo)</div>
+        <div class="lr" style="background:rgba(245,158,11,.1);border:1px solid var(--amber);color:var(--amber);">+ RESERVAS DE CONTINGENCIA (para riesgos identificados: 10-15%)</div>
+        <div class="lr" style="background:rgba(99,102,241,.1);border:1px solid var(--indigo);color:var(--indigo);">= LÍNEA BASE DE COSTOS (lo que controla el PM)</div>
+        <div class="lr" style="background:rgba(124,58,237,.1);border:1px solid var(--violet);color:var(--violet);">+ RESERVA DE GESTIÓN (para riesgos desconocidos: 5-10%)</div>
+        <div class="lr" style="background:rgba(16,185,129,.1);border:1px solid var(--green);color:var(--green);">= PRESUPUESTO TOTAL (BAC — lo que controla el Sponsor)</div>
+      </div>
+    </div>
+    <div class="card ci">
+      <h3>Indicadores Financieros del Proyecto</h3>
+      <table>
+        <tr><th>Indicador</th><th>Fórmula</th><th>Interpretación</th></tr>
+        <tr><td><strong>VPN</strong></td><td>=NPV(tasa,flujos)-inversión</td><td>&gt;0: el proyecto agrega valor</td></tr>
+        <tr><td><strong>TIR</strong></td><td>=IRR(flujos)</td><td>&gt; costo capital: viable</td></tr>
+        <tr><td><strong>ROI</strong></td><td>(Beneficios-Costo)/Costo×100</td><td>&gt;0%: rentable; &gt;20%: atractivo</td></tr>
+        <tr><td><strong>Payback</strong></td><td>Inversión / Beneficio anual</td><td>Años para recuperar inversión</td></tr>
+        <tr><td><strong>CAPEX vs OPEX</strong></td><td>—</td><td>CAPEX: activo; OPEX: gasto recurrente</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="box bl"><div class="bt">🔬 LABORATORIO — Presupuesto del Proyecto Integrador</div>
+    <p>Construir la estimación bottom-up del proyecto integrador desde la WBS. Añadir reservas de contingencia (10%). Construir la línea base de costos mensual (distribución temporal). Calcular VPN y ROI en Excel. Presentar: "por qué este proyecto es financieramente viable".</p>
+  </div>
+</div>
+
+<!-- REFERENCIAS BLOQUE I -->
+<div class="slide cover" data-s="4">
+  <div class="badge">BLOQUE I — REFERENCIAS Y CIERRE</div>
+  <h1 style="font-size:1.8rem;background:linear-gradient(135deg,var(--teal),var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Fuentes Bibliográficas del Bloque I</h1>
+  <div class="cg c2" style="max-width:800px;margin:20px auto;text-align:left;">
+    <div class="card ct">
+      <h3>Estándares PMI</h3>
+      <ul style="font-size:.84rem;">
+        <li>PMI (2021). <em>A Guide to the Project Management Body of Knowledge — PMBOK® Guide</em>, 7th Ed.</li>
+        <li>PMI (2021). <em>Process Groups: A Practice Guide</em>. PMI.</li>
+        <li>PMI (2023). <em>Pulse of the Profession 2023</em>. pmi.org.</li>
+      </ul>
+    </div>
+    <div class="card ca">
+      <h3>Textos de Referencia</h3>
+      <ul style="font-size:.84rem;">
+        <li>Kerzner, H. (2022). <em>Project Management: A Systems Approach</em>, 13th Ed. Wiley.</li>
+        <li>Meredith, J. &amp; Mantel, S. (2019). <em>Project Management: A Managerial Approach</em>, 10th Ed.</li>
+        <li>Wysocki, R.K. (2019). <em>Effective Project Management</em>, 8th Ed. Wiley.</li>
+      </ul>
+    </div>
+    <div class="card cg2">
+      <h3>Metodologías Ágiles</h3>
+      <ul style="font-size:.84rem;">
+        <li>Schwaber, K. &amp; Sutherland, J. (2020). <em>The Scrum Guide</em>. scrum.org.</li>
+        <li>Beck, K. et al. (2001). <em>Manifesto for Agile Software Development</em>.</li>
+        <li>PMI (2023). <em>Disciplined Agile Toolkit</em>. pmi.org/disciplined-agile.</li>
+      </ul>
+    </div>
+    <div class="card ci">
+      <h3>Costos y Finanzas</h3>
+      <ul style="font-size:.84rem;">
+        <li>Fleming, Q. &amp; Koppelman, J. (2010). <em>Earned Value Project Management</em>, 4th Ed. PMI.</li>
+        <li>The Standish Group (2023). <em>CHAOS Report 2023</em>.</li>
+      </ul>
+    </div>
+  </div>
+  <div style="margin-top:14px;">
+    <span class="tag">PMBOK 7</span><span class="tag">PMI</span><span class="tag">WBS</span>
+    <span class="tag">CPM/PERT</span><span class="tag">MS Project</span><span class="tag">VPN/TIR</span>
+    <span class="tag">Continuum Stacey</span><span class="tag">Manifiesto Ágil</span>
+  </div>
+</div>
+
+</div><!-- fin #sc -->
+<div id="footer">
+  <button onclick="prev()">← Anterior</button>
+  <span class="hint">← → · Espacio</span>
+  <button onclick="next()">Siguiente →</button>
+</div>
+<script>
+const slides=document.querySelectorAll('.slide'),total=slides.length;let cur=0;
+const ss=[];slides.forEach((s,i)=>{const v=parseInt(s.dataset.s);if(ss[v]===undefined)ss[v]=i;});
+function go(n){if(n<0||n>=total)return;slides[cur].classList.remove('active');cur=n;slides[cur].classList.add('active');document.getElementById('ctr').textContent=(cur+1)+' / '+total;document.getElementById('pb').style.width=((cur+1)/total*100)+'%';ut();slides[cur].scrollTop=0;}
+function next(){go(cur+1);}function prev(){go(cur-1);}function gts(i){go(ss[i]);}
+function ut(){const v=parseInt(slides[cur].dataset.s);for(let i=0;i<5;i++){const b=document.getElementById('t'+i);if(b)b.classList.toggle('active',i===v);}}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();}if(e.key==='ArrowLeft'){e.preventDefault();prev();}});
+ut();
+</script>
+</body>
+</html>

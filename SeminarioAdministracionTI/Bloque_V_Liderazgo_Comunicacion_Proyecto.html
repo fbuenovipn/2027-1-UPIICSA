@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloque V — Liderazgo, Comunicación y Proyecto Integrador</title>
+<style>
+  :root{--bg:#03060f;--card:#0a1628;--border:#1e3a5f;--blue:#2563eb;--teal:#0891b2;--gold:#d97706;--green:#059669;--red:#dc2626;--violet:#7c3aed;--pink:#db2777;--text:#e2e8f0;--muted:#64748b;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden;height:100vh;}
+  #navbar{position:fixed;top:0;left:0;right:0;height:54px;background:rgba(3,6,15,.96);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:100;backdrop-filter:blur(8px);}
+  .brand{color:var(--pink);font-weight:700;font-size:.85rem;letter-spacing:1px;}
+  .brand span{color:var(--gold);}
+  .stabs{display:flex;gap:6px;}
+  .stabs button{background:transparent;border:1px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:20px;cursor:pointer;font-size:.75rem;transition:all .2s;}
+  .stabs button.active{background:var(--pink);border-color:var(--pink);color:#fff;font-weight:700;}
+  .stabs button:hover:not(.active){border-color:var(--pink);color:var(--pink);}
+  #ctr{color:var(--muted);font-size:.8rem;min-width:80px;text-align:right;}
+  #pb{position:fixed;top:54px;left:0;height:3px;background:linear-gradient(90deg,var(--pink),var(--gold));transition:width .3s;z-index:100;}
+  #sc{position:fixed;top:57px;left:0;right:0;bottom:40px;overflow:hidden;}
+  .slide{position:absolute;top:0;left:0;right:0;bottom:0;padding:28px 48px;display:none;overflow-y:auto;animation:fi .35s ease;}
+  .slide.active{display:flex;flex-direction:column;}
+  @keyframes fi{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+  #footer{position:fixed;bottom:0;left:0;right:0;height:40px;background:rgba(3,6,15,.96);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:16px;z-index:100;}
+  #footer button{background:var(--card);border:1px solid var(--border);color:var(--text);padding:5px 20px;border-radius:6px;cursor:pointer;font-size:.8rem;transition:all .2s;}
+  #footer button:hover{border-color:var(--pink);color:var(--pink);}
+  #footer .hint{color:var(--muted);font-size:.72rem;}
+  h1{font-size:2rem;font-weight:800;line-height:1.2;margin-bottom:10px;}
+  h2{font-size:1.45rem;font-weight:700;margin-bottom:14px;}
+  h3{font-size:1rem;font-weight:600;color:var(--pink);margin-bottom:8px;margin-top:10px;}
+  p{font-size:.9rem;line-height:1.65;margin-bottom:8px;}
+  ul,ol{padding-left:20px;font-size:.88rem;line-height:1.8;}
+  li{margin-bottom:3px;}
+  .cover{align-items:center;justify-content:center;text-align:center;}
+  .cover h1{font-size:2.2rem;background:linear-gradient(135deg,var(--pink),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;}
+  .badge{display:inline-block;border:1px solid var(--pink);border-radius:8px;padding:8px 24px;color:var(--pink);font-size:.9rem;font-weight:700;letter-spacing:2px;margin-bottom:20px;background:rgba(219,39,119,.08);}
+  .sg{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px;}
+  .sc2{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 14px;width:168px;text-align:left;}
+  .sc2 .num{color:var(--pink);font-size:.7rem;font-weight:700;}
+  .sc2 .nm{font-size:.78rem;margin-top:4px;}
+  .sub{color:var(--muted);font-size:1rem;}
+  .cg{display:grid;gap:12px;margin-top:10px;}
+  .cg.c2{grid-template-columns:1fr 1fr;}
+  .cg.c3{grid-template-columns:1fr 1fr 1fr;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:15px;position:relative;overflow:hidden;}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+  .card.b::before{background:var(--blue);}
+  .card.t::before{background:var(--teal);}
+  .card.g::before{background:var(--green);}
+  .card.o::before{background:var(--gold);}
+  .card.r::before{background:var(--red);}
+  .card.p::before{background:var(--pink);}
+  .card.v::before{background:var(--violet);}
+  .card h3{margin-top:0;font-size:.9rem;}
+  .card p,.card ul,.card li{font-size:.84rem;}
+  .box{border-radius:10px;padding:13px 17px;margin:9px 0;}
+  .bm{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.4);}
+  .bc{background:rgba(217,119,6,.08);border:1px solid rgba(217,119,6,.4);}
+  .bl{background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.4);}
+  .bd{background:rgba(8,145,178,.08);border:1px solid rgba(8,145,178,.4);}
+  .bq{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.4);cursor:pointer;}
+  .bt{font-weight:700;font-size:.8rem;margin-bottom:5px;letter-spacing:.5px;}
+  .bm .bt{color:#a78bfa;}
+  .bc .bt{color:var(--gold);}
+  .bl .bt{color:#34d399;}
+  .bd .bt{color:var(--teal);}
+  .bq .bt{color:#fbbf24;}
+  .box p,.box li{font-size:.86rem;}
+  .qa{display:none;margin-top:7px;padding-top:7px;border-top:1px solid rgba(251,191,36,.3);color:#34d399;font-size:.84rem;}
+  .bq.revealed .qa{display:block;}
+  table{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:8px;}
+  th{background:#071020;color:var(--pink);text-align:left;padding:7px 11px;border:1px solid var(--border);}
+  td{padding:6px 11px;border:1px solid var(--border);vertical-align:top;}
+  tr:nth-child(even) td{background:rgba(10,22,40,.6);}
+  .tl{list-style:none;padding:0;margin-top:8px;}
+  .tl li{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start;}
+  .tl .st{min-width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.78rem;flex-shrink:0;}
+  .tl .st.b{background:rgba(37,99,235,.15);border:2px solid var(--blue);color:var(--blue);}
+  .tl .st.t{background:rgba(8,145,178,.15);border:2px solid var(--teal);color:var(--teal);}
+  .tl .st.g{background:rgba(5,150,105,.15);border:2px solid var(--green);color:var(--green);}
+  .tl .st.o{background:rgba(217,119,6,.15);border:2px solid var(--gold);color:var(--gold);}
+  .tl .st.p{background:rgba(219,39,119,.15);border:2px solid var(--pink);color:var(--pink);}
+  .tl .st.v{background:rgba(124,58,237,.15);border:2px solid var(--violet);color:var(--violet);}
+  .tl .content h4{font-size:.88rem;font-weight:600;}
+  .tl .content p{font-size:.82rem;color:var(--muted);margin:0;}
+  .sr{display:flex;gap:12px;flex-wrap:wrap;margin:10px 0;}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:13px 16px;flex:1;min-width:110px;text-align:center;}
+  .stat .n{font-size:1.7rem;font-weight:800;line-height:1;}
+  .stat .l{font-size:.7rem;color:var(--muted);margin-top:4px;}
+  .ld{display:flex;flex-direction:column;gap:5px;margin:10px 0;}
+  .lr{border-radius:6px;padding:7px 14px;font-size:.81rem;font-weight:600;text-align:center;}
+  .tag{display:inline-block;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:2px 9px;font-size:.74rem;color:var(--muted);margin-right:5px;margin-bottom:4px;}
+  .slide::-webkit-scrollbar{width:4px;}
+  .slide::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+</style>
+</head>
+<body>
+<div id="navbar">
+  <div class="brand">🏆 LIDERAZGO <span>PROYECTO</span> · BLOQUE V</div>
+  <div class="stabs">
+    <button onclick="gts(0)" id="t0">S21</button>
+    <button onclick="gts(1)" id="t1">S22</button>
+    <button onclick="gts(2)" id="t2">S23</button>
+    <button onclick="gts(3)" id="t3">S24</button>
+    <button onclick="gts(4)" id="t4">S25</button>
+  </div>
+  <div id="ctr">1 / 60</div>
+</div>
+<div id="pb" style="width:1.67%"></div>
+<div id="sc">
+
+<!-- PORTADA -->
+<div class="slide active cover" data-s="0">
+  <div class="badge">BLOQUE V · SESIONES 21 – 25</div>
+  <h1>Liderazgo, Comunicación<br>y Proyecto Integrador</h1>
+  <p class="sub">Equipos de alto desempeño, stakeholders, cierre y defensa final · 30 horas</p>
+  <div class="sg">
+    <div class="sc2"><div class="num">SESIÓN 21</div><div class="nm">Liderazgo Colaborativo</div></div>
+    <div class="sc2"><div class="num">SESIÓN 22</div><div class="nm">Stakeholders y Comunicación</div></div>
+    <div class="sc2"><div class="num">SESIÓN 23</div><div class="nm">Recursos y Cierre</div></div>
+    <div class="sc2"><div class="num">SESIÓN 24</div><div class="nm">Taller Proyecto Integrador</div></div>
+    <div class="sc2"><div class="num">SESIÓN 25</div><div class="nm">Defensa Final</div></div>
+  </div>
+  <p style="margin-top:24px;color:var(--muted);font-size:.8rem;">← → o barra espaciadora · Click en S21–S25 para saltar sesión</p>
+</div>
+
+<!-- ═══ SESIÓN 21 ═══ -->
+<div class="slide" data-s="0">
+  <h2>Sesión 21 <span style="color:var(--pink)">— Liderazgo Colaborativo y Equipos de Alto Desempeño</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Un gerente de proyectos que solo controla tareas es como un <strong>árbitro que solo cobra faltas</strong>. No hace ganar al equipo. El líder de proyectos moderno es el <strong>entrenador</strong>: desarrolla el talento individual, crea condiciones para que el equipo se supere, toma las decisiones difíciles en el momento justo y celebra las victorias colectivas. La autoridad formal abre puertas; la autoridad real viene de la confianza ganada.</p>
+  </div>
+  <div class="sr" style="margin-top:14px;">
+    <div class="stat"><div class="n" style="color:var(--pink)">70%</div><div class="l">del desempeño del equipo depende del estilo de liderazgo del PM (Gallup)</div></div>
+    <div class="stat"><div class="n" style="color:var(--gold)">IQ+EQ</div><div class="l">Líderes efectivos necesitan inteligencia técnica Y emocional en igual medida</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">5x</div><div class="l">más probable que un equipo psicológicamente seguro innove (Google Project Aristotle)</div></div>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Liderazgo Situacional: El Modelo Hersey-Blanchard</h2>
+  <div class="cg c2">
+    <div class="card p">
+      <h3>Los 4 Estilos Situacionales</h3>
+      <table>
+        <tr><th>Estilo</th><th>Cuándo aplicar</th><th>Comportamiento del líder</th></tr>
+        <tr><td><strong>S1 — Dirigir</strong></td><td>Persona nueva, tarea nueva. Motivación alta, competencia baja.</td><td>Da instrucciones claras, supervisa de cerca, mucha dirección.</td></tr>
+        <tr><td><strong>S2 — Entrenar</strong></td><td>Aprendiendo. Algo de habilidad, pero todavía inseguro.</td><td>Explica el porqué, involucra en decisiones, sigue supervisando.</td></tr>
+        <tr><td><strong>S3 — Apoyar</strong></td><td>Competente pero inseguro o desmotivado.</td><td>Escucha, facilita, anima. El colaborador decide cómo.</td></tr>
+        <tr><td><strong>S4 — Delegar</strong></td><td>Competente Y motivado. Experto con autonomía.</td><td>Define el resultado, confía el proceso al colaborador.</td></tr>
+      </table>
+      <p style="font-size:.8rem;color:var(--muted);margin-top:6px;">El error más común: usar el mismo estilo con todos y para todo. La tarea del líder es diagnosticar el nivel de desarrollo del colaborador en CADA tarea específica.</p>
+    </div>
+    <div class="card o">
+      <h3>Modelo Tuckman: Evolución del Equipo</h3>
+      <ul class="tl" style="margin-top:6px;">
+        <li><div class="st b">F</div><div class="content"><h4>Forming (Formación)</h4><p>Cortesía, incertidumbre. El PM da estructura y dirección clara.</p></div></li>
+        <li><div class="st r">S</div><div class="content"><h4>Storming (Conflicto)</h4><p>Choques de personalidad, resistencia. El PM facilita resolución de conflictos.</p></div></li>
+        <li><div class="st t">N</div><div class="content"><h4>Norming (Normalización)</h4><p>Acuerdos, cohesión. El PM refuerza las normas y el trabajo en equipo.</p></div></li>
+        <li><div class="st g">P</div><div class="content"><h4>Performing (Desempeño)</h4><p>Alto rendimiento. El PM delega y facilita el crecimiento continuo.</p></div></li>
+        <li><div class="st o">A</div><div class="content"><h4>Adjourning (Disolución)</h4><p>Cierre del proyecto. El PM documenta lecciones y celebra los logros.</p></div></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Las 5 Disfunciones del Equipo (Lencioni) y Cómo Resolverlas</h2>
+  <div class="ld">
+    <div class="lr" style="background:rgba(220,38,38,.1);border:1px solid var(--red);color:var(--red);">⚠️ 1. AUSENCIA DE CONFIANZA — La base. Sin ella, nadie dice la verdad. Solución: vulnerabilidad del líder, herramientas de perfil (MBTI, DiSC), actividades de team building con propósito.</div>
+    <div class="lr" style="background:rgba(219,39,119,.1);border:1px solid var(--pink);color:var(--pink);">⚠️ 2. MIEDO AL CONFLICTO — Sin confianza, no hay debate real. Solo acuerdo fingido. Solución: minería de conflictos — el líder provoca el debate difícil y lo facilita productivamente.</div>
+    <div class="lr" style="background:rgba(217,119,6,.1);border:1px solid var(--gold);color:var(--gold);">⚠️ 3. FALTA DE COMPROMISO — Sin debate, las decisiones no se toman con convicción. Solución: claridad de acuerdos, fechas de decisión, método de cierre explícito.</div>
+    <div class="lr" style="background:rgba(124,58,237,.1);border:1px solid var(--violet);color:var(--violet);">⚠️ 4. EVASIÓN DE RESPONSABILIDAD — Nadie confronta el bajo desempeño. Solución: estándares claros, retroalimentación del equipo hacia sus pares (peer accountability).</div>
+    <div class="lr" style="background:rgba(5,150,105,.1);border:1px solid var(--green);color:var(--green);">⚠️ 5. FALTA DE ATENCIÓN A RESULTADOS — Los egos y el status personal por encima del objetivo colectivo. Solución: métricas de equipo visibles, celebrar resultados colectivos.</div>
+  </div>
+  <div class="box bl"><div class="bt">🔬 PRÁCTICA — Diagnóstico de Estilo de Liderazgo</div>
+    <p>Aplicar cuestionario de estilos de liderazgo situacional (20 escenarios). Identificar estilo dominante y estilo secundario. Analizar casos donde el estilo no coincide con el nivel de desarrollo del colaborador. Plan de desarrollo individual: ¿qué habilidad de liderazgo desarrollar en los próximos 90 días?</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 22 ═══ -->
+<div class="slide" data-s="1">
+  <h2>Sesión 22 <span style="color:var(--teal)">— Gestión de Interesados y Comunicación Estratégica</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Los stakeholders son como el <strong>ecosistema alrededor de un lago</strong>. El lago es el proyecto. Algunos son los árboles que lo nutren (sponsors, aliados). Otros son los ríos que pueden inundarlo si no se gestionan (opositores). Otros son los peces que viven en él (usuarios). Ignorar cualquier parte del ecosistema rompe el equilibrio. El plan de stakeholders es el mapa de ese ecosistema y la estrategia para mantenerlo en equilibrio.</p>
+  </div>
+  <div class="cg c2" style="margin-top:12px;">
+    <div class="card t">
+      <h3>Matriz Poder/Interés: El Mapa de Stakeholders</h3>
+      <table>
+        <tr><th>Cuadrante</th><th>Estrategia</th><th>Ejemplo</th></tr>
+        <tr><td>Alto poder / Alto interés</td><td><strong>Gestionar de cerca</strong>: involucramiento máximo</td><td>Sponsor, Director de Finanzas</td></tr>
+        <tr><td>Alto poder / Bajo interés</td><td><strong>Mantener satisfecho</strong>: informar en hitos clave</td><td>Director General, Consejo</td></tr>
+        <tr><td>Bajo poder / Alto interés</td><td><strong>Mantener informado</strong>: comunicación regular</td><td>Usuarios finales, equipo IT</td></tr>
+        <tr><td>Bajo poder / Bajo interés</td><td><strong>Monitorear</strong>: comunicación mínima</td><td>Proveedores secundarios</td></tr>
+      </table>
+      <p style="font-size:.8rem;color:var(--muted);margin-top:6px;">Los stakeholders pueden moverse entre cuadrantes durante el proyecto. Actualizar el análisis en cada fase.</p>
+    </div>
+    <div class="card v">
+      <h3>Plan de Comunicación: El "Quién, Qué, Cuándo, Cómo"</h3>
+      <table>
+        <tr><th>Audiencia</th><th>Contenido</th><th>Frecuencia</th><th>Canal</th></tr>
+        <tr><td>Sponsor / Dirección</td><td>Estado del proyecto, riesgos críticos, decisiones requeridas</td><td>Quincenal</td><td>Reunión + Dashboard</td></tr>
+        <tr><td>Equipo del proyecto</td><td>Tareas, impedimentos, progreso del sprint</td><td>Diario (Daily Scrum)</td><td>Reunión presencial/virtual</td></tr>
+        <tr><td>Usuarios finales</td><td>Avance, próximas entregas, solicitar feedback</td><td>Mensual</td><td>Newsletter + Demo</td></tr>
+        <tr><td>PMO / Portafolio</td><td>CPI, SPI, riesgos, hitos completados</td><td>Semanal</td><td>Reporte escrito</td></tr>
+        <tr><td>Proveedores</td><td>Especificaciones técnicas, fechas de entrega</td><td>Por hito</td><td>Email formal + reunión</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>Reportes Ejecutivos y Gestión de Conflictos</h2>
+  <div class="cg c2">
+    <div class="card p">
+      <h3>El Dashboard Ejecutivo del Proyecto</h3>
+      <p>La dirección no quiere leer 20 páginas. Quiere saber en 30 segundos: ¿el proyecto está bien? La estructura del "One-Pager" ejecutivo:</p>
+      <div class="ld" style="margin-top:8px;">
+        <div class="lr" style="background:rgba(5,150,105,.1);border:1px solid var(--green);font-size:.78rem;color:var(--green);">🟢 SEMÁFORO: Estado general (Verde/Amarillo/Rojo) con 1 línea de justificación</div>
+        <div class="lr" style="background:rgba(8,145,178,.1);border:1px solid var(--teal);font-size:.78rem;color:var(--teal);">📊 KPIs: CPI, SPI, % completado vs planeado. Gráfico de barras simple.</div>
+        <div class="lr" style="background:rgba(217,119,6,.1);border:1px solid var(--gold);font-size:.78rem;color:var(--gold);">✅ LOGROS: Los 3 hitos completados desde el último reporte</div>
+        <div class="lr" style="background:rgba(220,38,38,.1);border:1px solid var(--red);font-size:.78rem;color:var(--red);">⚠️ RIESGOS ACTIVOS: Los 2-3 riesgos más críticos con su estado</div>
+        <div class="lr" style="background:rgba(124,58,237,.1);border:1px solid var(--violet);font-size:.78rem;color:var(--violet);">🔑 DECISIONES REQUERIDAS: Lo que necesita aprobación urgente del Sponsor</div>
+      </div>
+    </div>
+    <div class="card o">
+      <h3>Resolución de Conflictos: Los 5 Modos (Thomas-Kilmann)</h3>
+      <table>
+        <tr><th>Modo</th><th>Cuándo usarlo</th></tr>
+        <tr><td><strong>Colaborar</strong></td><td>Tiempo suficiente, solución gana-gana posible. Más efectivo a largo plazo.</td></tr>
+        <tr><td><strong>Comprometer</strong></td><td>Partes con igual poder, acuerdo parcial aceptable. Pragmático.</td></tr>
+        <tr><td><strong>Acomodar</strong></td><td>El asunto importa más al otro. Preservar la relación tiene prioridad.</td></tr>
+        <tr><td><strong>Confrontar</strong></td><td>La otra parte claramente está equivocada. Usar con datos y hechos, no emociones.</td></tr>
+        <tr><td><strong>Evitar</strong></td><td>El conflicto es trivial o el momento es malo. Temporal — no permanente.</td></tr>
+      </table>
+      <div class="box bd" style="margin-top:8px;"><div class="bt">💡 DATO CLAVE</div>
+        <p style="font-size:.8rem;">El PM pasa el 20% de su tiempo gestionando conflictos (PMI). El conflicto gestionado bien produce mejores soluciones. El conflicto evitado se convierte en problema mayor.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 23 ═══ -->
+<div class="slide" data-s="2">
+  <h2>Sesión 23 <span style="color:var(--green)">— Optimización de Recursos y Cierre Formal del Proyecto</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>El cierre de un proyecto sin documentar lecciones aprendidas es como <strong>terminar un examen y no revisar las respuestas</strong>. ¿En qué fallé? ¿Qué funcionó? ¿Cómo mejoraría si lo repitiera? Las organizaciones que no documentan lecciones aprendidas están condenadas a repetir los mismos errores — project by project, año tras año. El conocimiento que no se captura se pierde con quien lo vivió.</p>
+  </div>
+  <div class="cg c3" style="margin-top:12px;">
+    <div class="card g"><h3>Histograma y Nivelación de Recursos</h3><p>El histograma muestra la carga de trabajo de cada recurso por período. La sobre-asignación (>100%) es una señal de riesgo. Nivelación: redistribuir trabajo para eliminar picos, posiblemente extendiendo duraciones pero protegiendo a las personas.</p></div>
+    <div class="card t"><h3>Desarrollo del Equipo</h3><p>Plan de capacitación basado en la brecha de habilidades del proyecto. Certifications: PMP, PSM, ITIL, AWS... son inversiones en el equipo que retornan con mayor productividad y retención del talento. Training formal + coaching + mentoring.</p></div>
+    <div class="card v"><h3>Proceso de Cierre Formal</h3><p>El cierre no es "acabamos y nos vamos". Es un proceso: verificar que todos los entregables fueron aceptados formalmente, liberar recursos, archivar documentos, hacer la retrospectiva final y actualizar el repositorio de lecciones aprendidas.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-s="2">
+  <h2>Lecciones Aprendidas: La Memoria Institucional</h2>
+  <div class="cg c2">
+    <div class="card g">
+      <h3>Estructura de una Sesión de Lecciones Aprendidas</h3>
+      <ul class="tl" style="margin-top:6px;">
+        <li><div class="st g">1</div><div class="content"><h4>¿Qué funcionó bien?</h4><p>Prácticas que deben repetirse en futuros proyectos. Documentar explícitamente.</p></div></li>
+        <li><div class="st o">2</div><div class="content"><h4>¿Qué podría mejorarse?</h4><p>Procesos, comunicación, herramientas que fallaron o fueron ineficientes.</p></div></li>
+        <li><div class="st r">3</div><div class="content"><h4>¿Qué evitaríamos repetir?</h4><p>Decisiones que resultaron en problemas. Sin culpables — solo aprendizaje.</p></div></li>
+        <li><div class="st t">4</div><div class="content"><h4>¿Qué haríamos diferente?</h4><p>Acciones concretas para el próximo proyecto similar.</p></div></li>
+        <li><div class="st v">5</div><div class="content"><h4>Actualizar el repositorio</h4><p>Clasificar, indexar y hacer accesible para futuros PMs. Esto es el activo organizacional.</p></div></li>
+      </ul>
+    </div>
+    <div class="card o">
+      <h3>Acta de Cierre del Proyecto</h3>
+      <p>Documento formal que oficializa el fin del proyecto:</p>
+      <ol style="font-size:.83rem;margin-top:8px;">
+        <li><strong>Descripción del proyecto</strong>: qué se hizo y por qué</li>
+        <li><strong>Comparativa plan vs real</strong>: costo, tiempo, alcance, calidad</li>
+        <li><strong>Entregables aceptados</strong>: con firma de aceptación del cliente/sponsor</li>
+        <li><strong>Variaciones y justificaciones</strong>: por qué se desviaron del plan</li>
+        <li><strong>Resumen de riesgos e issues</strong>: los más significativos y cómo se resolvieron</li>
+        <li><strong>Lecciones aprendidas</strong>: síntesis de lo documentado</li>
+        <li><strong>Liberación formal de recursos</strong>: el equipo es liberado de sus compromisos</li>
+        <li><strong>Firmas de aceptación</strong>: Sponsor, cliente, PM</li>
+      </ol>
+    </div>
+  </div>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Click para ver respuesta</div>
+    <p>El sistema fue entregado y funciona. El director de TI dice "listo, el proyecto terminó". El PM dice que falta el cierre formal. ¿Qué le argumentas al director y qué riesgos tiene cerrar sin el proceso formal?</p>
+    <div class="qa">Sin cierre formal: (1) el equipo sigue comprometido con el proyecto en papel — no se puede asignar a otros proyectos, (2) el proveedor puede reclamar pagos adicionales si no hay acta de aceptación firmada, (3) el cliente puede pedir funcionalidades "que estaban incluidas" sin que haya control, (4) las lecciones aprendidas se pierden, (5) los recursos del proyecto (presupuesto no ejecutado, activos) no se liberan formalmente. El cierre es la firma que certifica que el proyecto entregó lo que prometió. Sin firma, el proyecto siempre puede "no haber terminado".</div>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 24 ═══ -->
+<div class="slide" data-s="3">
+  <h2>Sesión 24 <span style="color:var(--gold)">— Taller del Proyecto Integrador</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>El proyecto integrador es el <strong>examen de conducir real</strong>: hasta ahora aprendiste el reglamento, practicaste en simuladores y manejaste en estacionamiento. Hoy sales a la ciudad con tráfico real. Un problema de gestión de proyectos tecnológicos de tu industria, con datos reales, restricciones reales y soluciones que deberías poder implementar en tu organización. No hay respuesta única correcta — hay soluciones bien fundamentadas y mal fundamentadas.</p>
+  </div>
+  <div class="cg c2" style="margin-top:12px;">
+    <div class="card o">
+      <h3>Entregables Requeridos del Proyecto Integrador</h3>
+      <ol style="font-size:.84rem;">
+        <li><strong>Project Charter</strong>: problema, objetivos SMART, alcance, stakeholders, presupuesto estimado</li>
+        <li><strong>WBS y Cronograma MS Project</strong>: 3 niveles de WBS, ruta crítica identificada</li>
+        <li><strong>Análisis de Riesgos</strong>: registro de ≥10 riesgos con matriz P×I y plan de respuesta</li>
+        <li><strong>Business Case</strong>: ROI, VPN, TIR, Payback en MS Excel con sensibilidad</li>
+        <li><strong>Modelo BPM en Bizagi</strong>: proceso AS-IS y TO-BE del proceso transformado</li>
+        <li><strong>Plan de Gestión del Cambio</strong>: stakeholders, estrategia, comunicaciones, capacitación</li>
+        <li><strong>Dashboard de Métricas</strong>: KPIs del proyecto en Power BI o Excel</li>
+        <li><strong>Presentación ejecutiva</strong>: 15-20 diapositivas para panel evaluador</li>
+      </ol>
+    </div>
+    <div class="card v">
+      <h3>Temas de Proyectos por Carrera</h3>
+      <table>
+        <tr><th>Carrera</th><th>Ejemplo de Proyecto Integrador</th></tr>
+        <tr><td>Adm. Industrial</td><td>Digitalización del proceso de compras: de aprobaciones en papel a portal web con workflow automático y KPIs en tiempo real</td></tr>
+        <tr><td>Ing. Informática</td><td>Migración de sistema legado on-premise a arquitectura cloud-native con cero downtime</td></tr>
+        <tr><td>Ing. Industrial</td><td>Implementación de MES con integración IoT para reducir tiempos de ciclo y aumentar OEE en línea de producción</td></tr>
+        <tr><td>Ing. Transporte</td><td>Plataforma de trazabilidad en tiempo real de flota con optimización de rutas y alertas predictivas</td></tr>
+        <tr><td>Ing. Automotriz</td><td>Sistema de diagnóstico remoto y mantenimiento predictivo para vehículos conectados de flotilla</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="3">
+  <h2>Feedback del Facilitador y Checklist de Calidad</h2>
+  <div class="cg c2">
+    <div class="card p">
+      <h3>Checklist Pre-Defensa</h3>
+      <ul style="font-size:.83rem;">
+        <li>☐ Project Charter firmado digitalmente por PM y Sponsor ficticio</li>
+        <li>☐ WBS con diccionario (al menos 5 paquetes de trabajo documentados)</li>
+        <li>☐ Cronograma MS Project con línea base guardada y ruta crítica marcada</li>
+        <li>☐ Registro de riesgos con ≥10 riesgos + plan de respuesta para los 3 críticos</li>
+        <li>☐ Business Case Excel: modelo financiero con VPN, TIR, Payback, análisis de sensibilidad (mínimo 2 escenarios)</li>
+        <li>☐ Diagrama BPM AS-IS y TO-BE en Bizagi (al menos 15 actividades)</li>
+        <li>☐ Plan de gestión del cambio: matriz de stakeholders + plan de comunicación + plan de capacitación</li>
+        <li>☐ Dashboard de proyecto con mínimo: CPI, SPI, % avance, riesgos activos, próximos hitos</li>
+        <li>☐ Presentación ejecutiva: máximo 20 slides, duración 15 min exactos</li>
+        <li>☐ Practica la demo: el panel hará al menos 5 preguntas difíciles</li>
+      </ul>
+    </div>
+    <div class="card g">
+      <h3>Errores Más Comunes a Evitar</h3>
+      <ul style="font-size:.83rem;">
+        <li><strong>WBS sin diccionario</strong>: un rectángulo sin descripción no sirve. ¿Quién hace qué? ¿Cuándo? ¿Cuál es el criterio de aceptación?</li>
+        <li><strong>Riesgos genéricos</strong>: "falta de recursos" no es un riesgo accionable. "El desarrollador senior asignado podría dejar la empresa en el mes 3" sí lo es.</li>
+        <li><strong>Business Case con beneficios inflados</strong>: el panel preguntará en qué dato se basa cada cifra. Necesitas fuente o justificación para cada número.</li>
+        <li><strong>Presentación técnica ante directivos</strong>: el panel simula ser el Consejo de Administración, no el equipo de IT. Sin jerga técnica sin explicar.</li>
+        <li><strong>No conectar con el valor de negocio</strong>: cada decisión técnica debe tener un "por qué" en términos del negocio.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 25 ═══ -->
+<div class="slide" data-s="4">
+  <h2>Sesión 25 <span style="color:var(--green)">— Defensa Final del Proyecto Integrador</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>La defensa ante el panel es como <strong>presentar una propuesta de inversión ante un consejo de directivos</strong>. Tienen poco tiempo, muchas preguntas y están buscando tres cosas: ¿el proyecto crea valor real?, ¿el equipo tiene capacidad de ejecutarlo?, ¿los riesgos están bajo control? Tu trabajo en 15 minutos es convencerlos de que la respuesta a las tres preguntas es "sí" — con evidencia, no con esperanza.</p>
+  </div>
+  <div class="cg c3" style="margin-top:12px;">
+    <div class="card g"><h3>Estructura de la Presentación (15 min)</h3><ol style="font-size:.83rem;"><li>Contexto y problema (2 min)</li><li>Objetivo y alcance (1 min)</li><li>Solución técnica simplificada (2 min)</li><li>Business Case: ROI/VPN (2 min)</li><li>Plan de implementación + riesgos (2 min)</li><li>BPM: AS-IS vs TO-BE (2 min)</li><li>Gestión del cambio (1 min)</li><li>Dashboard de métricas del proyecto (1 min)</li><li>Solicitud de aprobación (2 min)</li></ol></div>
+    <div class="card v"><h3>Cómo Responder Preguntas del Panel</h3><ul style="font-size:.83rem;"><li><strong>Regla PREP</strong>: Punto, Razón, Ejemplo, Punto. Respuestas estructuradas de 60-90 segundos.</li><li>Si no sabes: "Excelente pregunta. Tendré que investigar ese dato específico. Lo que sí puedo decir con confianza es..."</li><li>Si te desafían: escucha completamente, valida el punto, luego presenta tu evidencia.</li><li>Nunca improvises un número que no tienes — el panel detecta inmediatamente la inseguridad.</li></ul></div>
+    <div class="card o"><h3>Preguntas Difíciles Frecuentes del Panel</h3><ul style="font-size:.83rem;"><li>"¿Qué pasa si el proyecto se retrasa 3 meses? ¿Sigue siendo rentable?"</li><li>"¿Comparaste con otras alternativas tecnológicas? ¿Por qué esta y no la competencia?"</li><li>"Si el CPI actual es 0.83, ¿qué acciones correctivas tomarías hoy?"</li><li>"¿Cómo garantizas que los usuarios lo van a adoptar?"</li><li>"¿Cuál es el peor escenario de riesgo y cómo lo mitigan?"</li></ul></div>
+  </div>
+</div>
+
+<div class="slide" data-s="4">
+  <h2>Rúbrica de Evaluación del Proyecto Integrador</h2>
+  <table>
+    <tr><th>Criterio</th><th>Excelente (25-22)</th><th>Bueno (21-16)</th><th>Suficiente (15-10)</th></tr>
+    <tr><td><strong>Charter, WBS y Cronograma (25%)</strong></td><td>Charter completo, WBS con diccionario, cronograma con ruta crítica y análisis de compresi­ón</td><td>Charter y WBS correctos, cronograma con ruta crítica</td><td>Charter básico, WBS sin diccionario, cronograma sin análisis</td></tr>
+    <tr><td><strong>Business Case y Riesgos (25%)</strong></td><td>Análisis financiero completo con sensibilidad, registro de riesgos con planes de respuesta detallados</td><td>VPN/TIR calculados, registro de riesgos con estrategias</td><td>ROI calculado, riesgos identificados sin plan de respuesta</td></tr>
+    <tr><td><strong>BPM y Gestión del Cambio (25%)</strong></td><td>AS-IS y TO-BE completos en Bizagi, plan de cambio con estrategia por stakeholder y métricas de adopción</td><td>AS-IS y TO-BE correctos, plan de cambio con componentes principales</td><td>Solo AS-IS o TO-BE incompleto, plan de cambio genérico</td></tr>
+    <tr><td><strong>Presentación y Defensa (25%)</strong></td><td>Presentación ejecutiva clara, respuestas precisas y fundamentadas, lenguaje de negocio, tiempo exacto</td><td>Presentación clara, respuestas correctas, algunas divagaciones</td><td>Presentación con tecnicismos excesivos, respuestas imprecisas</td></tr>
+  </table>
+  <div class="box bc"><div class="bt">📰 LO QUE DIFERENCIA UN PROYECTO SOBRESALIENTE</div>
+    <p>Los proyectos que obtienen la calificación más alta tienen en común: (1) <strong>datos reales</strong> de la empresa del participante (no inventados), (2) <strong>conexión explícita</strong> entre cada decisión técnica y el impacto en KPIs del negocio, (3) <strong>análisis honesto</strong> de las limitaciones y riesgos, (4) <strong>plan de implementación realista</strong> — no optimista. La sofisticación técnica sin narrativa de valor no convence a ningún comité de dirección.</p>
+  </div>
+</div>
+
+<!-- CIERRE FINAL DEL SEMINARIO -->
+<div class="slide cover" data-s="4">
+  <div class="badge">BLOQUE V — CIERRE DEL SEMINARIO</div>
+  <h1>De Ejecutor a Estratega:<br>El PM que Crea Valor Empresarial</h1>
+  <p style="max-width:650px;margin:16px auto;color:var(--muted);">150 horas que transforman profesionales capaces en líderes de transformación digital. El seminario termina; la carrera comienza. Los proyectos que gestionarás a partir de ahora tienen el potencial de cambiar las organizaciones donde trabajas — si aplicas lo aprendido.</p>
+  <div class="sr" style="justify-content:center;max-width:750px;margin:20px auto;">
+    <div class="stat"><div class="n" style="color:var(--pink)">👥</div><div class="l">Liderazgo situacional y equipos</div></div>
+    <div class="stat"><div class="n" style="color:var(--teal)">🗺️</div><div class="l">Gestión de stakeholders</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">📚</div><div class="l">Cierre y lecciones aprendidas</div></div>
+    <div class="stat"><div class="n" style="color:var(--gold)">🛠️</div><div class="l">Proyecto integrador</div></div>
+    <div class="stat"><div class="n" style="color:var(--violet)">🏆</div><div class="l">Defensa ante panel</div></div>
+  </div>
+  <div class="box bd" style="max-width:650px;margin:16px auto;"><div class="bt">💡 EL VERDADERO OBJETIVO DE ESTE SEMINARIO</div>
+    <p>No es memorizarte el PMBOK ni pasar el examen PMP — eso es el medio. El objetivo es que seas el profesional en tu organización que puede <strong>tomar una iniciativa tecnológica ambiciosa</strong>, estructurarla como proyecto, justificarla financieramente, liderarla a través del cambio organizacional, y entregarla con el valor prometido. Eso transforma carreras y organizaciones.</p>
+  </div>
+  <div style="margin-top:16px;font-size:.78rem;color:var(--muted);max-width:650px;margin-left:auto;margin-right:auto;">
+    <strong style="color:var(--pink);">Referencias Finales:</strong> PMI (2021) PMBOK 7th Ed. · Schwaber &amp; Sutherland (2020) Scrum Guide · Axelos (2019) ITIL 4 · Kim et al. (2016) DevOps Handbook · Leffingwell (2018) SAFe 5.0 · CMMI Institute (2018)
+  </div>
+  <div style="margin-top:14px;">
+    <span class="tag">MS Project</span><span class="tag">MS Excel</span><span class="tag">Power BI</span>
+    <span class="tag">Bizagi</span><span class="tag">Jira / Azure DevOps</span><span class="tag">PMP / PSM I</span>
+  </div>
+</div>
+
+</div>
+<div id="footer">
+  <button onclick="prev()">← Anterior</button>
+  <span class="hint">← → · Espacio</span>
+  <button onclick="next()">Siguiente →</button>
+</div>
+<script>
+const slides=document.querySelectorAll('.slide'),total=slides.length;let cur=0;
+const ss=[];slides.forEach((s,i)=>{const v=parseInt(s.dataset.s);if(ss[v]===undefined)ss[v]=i;});
+function go(n){if(n<0||n>=total)return;slides[cur].classList.remove('active');cur=n;slides[cur].classList.add('active');document.getElementById('ctr').textContent=(cur+1)+' / '+total;document.getElementById('pb').style.width=((cur+1)/total*100)+'%';ut();slides[cur].scrollTop=0;}
+function next(){go(cur+1);}function prev(){go(cur-1);}function gts(i){go(ss[i]);}
+function ut(){const v=parseInt(slides[cur].dataset.s);for(let i=0;i<5;i++){const b=document.getElementById('t'+i);if(b)b.classList.toggle('active',i===v);}}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();}if(e.key==='ArrowLeft'){e.preventDefault();prev();}});
+ut();
+</script>
+</body>
+</html>

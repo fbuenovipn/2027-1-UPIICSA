@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloque III — Gestión Estratégica, Financiera y de Valor</title>
+<style>
+  :root{--bg:#03060f;--card:#0a1628;--border:#1e3a5f;--blue:#2563eb;--teal:#0891b2;--gold:#d97706;--green:#059669;--red:#dc2626;--violet:#7c3aed;--pink:#db2777;--text:#e2e8f0;--muted:#64748b;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden;height:100vh;}
+  #navbar{position:fixed;top:0;left:0;right:0;height:54px;background:rgba(3,6,15,.96);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:100;backdrop-filter:blur(8px);}
+  .brand{color:var(--gold);font-weight:700;font-size:.85rem;letter-spacing:1px;}
+  .brand span{color:var(--green);}
+  .stabs{display:flex;gap:6px;}
+  .stabs button{background:transparent;border:1px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:20px;cursor:pointer;font-size:.75rem;transition:all .2s;}
+  .stabs button.active{background:var(--gold);border-color:var(--gold);color:#000;font-weight:700;}
+  .stabs button:hover:not(.active){border-color:var(--gold);color:var(--gold);}
+  #ctr{color:var(--muted);font-size:.8rem;min-width:80px;text-align:right;}
+  #pb{position:fixed;top:54px;left:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--green));transition:width .3s;z-index:100;}
+  #sc{position:fixed;top:57px;left:0;right:0;bottom:40px;overflow:hidden;}
+  .slide{position:absolute;top:0;left:0;right:0;bottom:0;padding:28px 48px;display:none;overflow-y:auto;animation:fi .35s ease;}
+  .slide.active{display:flex;flex-direction:column;}
+  @keyframes fi{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+  #footer{position:fixed;bottom:0;left:0;right:0;height:40px;background:rgba(3,6,15,.96);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:16px;z-index:100;}
+  #footer button{background:var(--card);border:1px solid var(--border);color:var(--text);padding:5px 20px;border-radius:6px;cursor:pointer;font-size:.8rem;transition:all .2s;}
+  #footer button:hover{border-color:var(--gold);color:var(--gold);}
+  #footer .hint{color:var(--muted);font-size:.72rem;}
+  h1{font-size:2rem;font-weight:800;line-height:1.2;margin-bottom:10px;}
+  h2{font-size:1.45rem;font-weight:700;margin-bottom:14px;}
+  h3{font-size:1rem;font-weight:600;color:var(--gold);margin-bottom:8px;margin-top:10px;}
+  p{font-size:.9rem;line-height:1.65;margin-bottom:8px;}
+  ul,ol{padding-left:20px;font-size:.88rem;line-height:1.8;}
+  li{margin-bottom:3px;}
+  .cover{align-items:center;justify-content:center;text-align:center;}
+  .cover h1{font-size:2.2rem;background:linear-gradient(135deg,var(--gold),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;}
+  .badge{display:inline-block;border:1px solid var(--gold);border-radius:8px;padding:8px 24px;color:var(--gold);font-size:.9rem;font-weight:700;letter-spacing:2px;margin-bottom:20px;background:rgba(217,119,6,.08);}
+  .sg{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px;}
+  .sc2{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 14px;width:165px;text-align:left;}
+  .sc2 .num{color:var(--gold);font-size:.7rem;font-weight:700;}
+  .sc2 .nm{font-size:.78rem;margin-top:4px;}
+  .sub{color:var(--muted);font-size:1rem;}
+  .cg{display:grid;gap:12px;margin-top:10px;}
+  .cg.c2{grid-template-columns:1fr 1fr;}
+  .cg.c3{grid-template-columns:1fr 1fr 1fr;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:15px;position:relative;overflow:hidden;}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+  .card.b::before{background:var(--blue);}
+  .card.t::before{background:var(--teal);}
+  .card.g::before{background:var(--green);}
+  .card.o::before{background:var(--gold);}
+  .card.r::before{background:var(--red);}
+  .card.p::before{background:var(--pink);}
+  .card.v::before{background:var(--violet);}
+  .card h3{margin-top:0;font-size:.9rem;}
+  .card p,.card ul,.card li{font-size:.84rem;}
+  .box{border-radius:10px;padding:13px 17px;margin:9px 0;}
+  .bm{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.4);}
+  .bc{background:rgba(217,119,6,.08);border:1px solid rgba(217,119,6,.4);}
+  .bl{background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.4);}
+  .bd{background:rgba(8,145,178,.08);border:1px solid rgba(8,145,178,.4);}
+  .bq{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.4);cursor:pointer;}
+  .bt{font-weight:700;font-size:.8rem;margin-bottom:5px;letter-spacing:.5px;}
+  .bm .bt{color:#a78bfa;}
+  .bc .bt{color:var(--gold);}
+  .bl .bt{color:#34d399;}
+  .bd .bt{color:var(--teal);}
+  .bq .bt{color:#fbbf24;}
+  .box p,.box li{font-size:.86rem;}
+  .qa{display:none;margin-top:7px;padding-top:7px;border-top:1px solid rgba(251,191,36,.3);color:#34d399;font-size:.84rem;}
+  .bq.revealed .qa{display:block;}
+  table{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:8px;}
+  th{background:#071020;color:var(--gold);text-align:left;padding:7px 11px;border:1px solid var(--border);}
+  td{padding:6px 11px;border:1px solid var(--border);vertical-align:top;}
+  tr:nth-child(even) td{background:rgba(10,22,40,.6);}
+  .tl{list-style:none;padding:0;margin-top:8px;}
+  .tl li{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start;}
+  .tl .st{min-width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.78rem;flex-shrink:0;}
+  .tl .st.b{background:rgba(37,99,235,.15);border:2px solid var(--blue);color:var(--blue);}
+  .tl .st.t{background:rgba(8,145,178,.15);border:2px solid var(--teal);color:var(--teal);}
+  .tl .st.g{background:rgba(5,150,105,.15);border:2px solid var(--green);color:var(--green);}
+  .tl .st.o{background:rgba(217,119,6,.15);border:2px solid var(--gold);color:var(--gold);}
+  .tl .content h4{font-size:.88rem;font-weight:600;}
+  .tl .content p{font-size:.82rem;color:var(--muted);margin:0;}
+  .sr{display:flex;gap:12px;flex-wrap:wrap;margin:10px 0;}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:13px 16px;flex:1;min-width:110px;text-align:center;}
+  .stat .n{font-size:1.7rem;font-weight:800;line-height:1;}
+  .stat .l{font-size:.7rem;color:var(--muted);margin-top:4px;}
+  pre{background:#071020;border:1px solid var(--border);border-radius:6px;padding:11px;font-size:.78rem;color:#34d399;overflow-x:auto;margin:7px 0;font-family:'Courier New',monospace;line-height:1.5;}
+  .ld{display:flex;flex-direction:column;gap:5px;margin:10px 0;}
+  .lr{border-radius:6px;padding:7px 14px;font-size:.81rem;font-weight:600;text-align:center;}
+  .tag{display:inline-block;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:2px 9px;font-size:.74rem;color:var(--muted);margin-right:5px;margin-bottom:4px;}
+  .slide::-webkit-scrollbar{width:4px;}
+  .slide::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+</style>
+</head>
+<body>
+<div id="navbar">
+  <div class="brand">💰 ESTRATEGIA <span>FINANCIERA</span> · BLOQUE III</div>
+  <div class="stabs">
+    <button onclick="gts(0)" id="t0">S11</button>
+    <button onclick="gts(1)" id="t1">S12</button>
+    <button onclick="gts(2)" id="t2">S13</button>
+    <button onclick="gts(3)" id="t3">S14</button>
+    <button onclick="gts(4)" id="t4">S15</button>
+  </div>
+  <div id="ctr">1 / 58</div>
+</div>
+<div id="pb" style="width:1.72%"></div>
+<div id="sc">
+
+<!-- PORTADA -->
+<div class="slide active cover" data-s="0">
+  <div class="badge">BLOQUE III · SESIONES 11 – 15</div>
+  <h1>Gestión Estratégica,<br>Financiera y de Valor</h1>
+  <p class="sub">PMO, Riesgos, Evaluación Económica, Cambio y BPM · 30 horas</p>
+  <div class="sg">
+    <div class="sc2"><div class="num">SESIÓN 11</div><div class="nm">PMO y Portafolio</div></div>
+    <div class="sc2"><div class="num">SESIÓN 12</div><div class="nm">Gestión de Riesgos</div></div>
+    <div class="sc2"><div class="num">SESIÓN 13</div><div class="nm">Evaluación Económica</div></div>
+    <div class="sc2"><div class="num">SESIÓN 14</div><div class="nm">Cambio Organizacional</div></div>
+    <div class="sc2"><div class="num">SESIÓN 15</div><div class="nm">BPM y Bizagi</div></div>
+  </div>
+  <p style="margin-top:24px;color:var(--muted);font-size:.8rem;">← → o barra espaciadora · Click en S11–S15 para saltar sesión</p>
+</div>
+
+<!-- ═══ SESIÓN 11 ═══ -->
+<div class="slide" data-s="0">
+  <h2>Sesión 11 <span style="color:var(--gold)">— PMO: La Oficina de Proyectos como Área Estratégica</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>La PMO (Project Management Office) es como la <strong>torre de control de un aeropuerto</strong>. Los aviones (proyectos) pueden volar, pero sin torre de control habría colisiones (conflictos de recursos), aterrizajes en pistas equivocadas (proyectos sin alineación estratégica) y aviones circulando eternamente sin poder aterrizar (proyectos zombie que nunca terminan). La PMO da orden, visibilidad y control al portafolio completo.</p>
+  </div>
+  <div class="cg c3" style="margin-top:12px;">
+    <div class="card b"><h3>PMO de Apoyo</h3><p>Provee herramientas, plantillas, metodología y capacitación. Los PM hacen lo que quieren. Baja autoridad. Ideal para organizaciones que inician la madurez en GP.</p></div>
+    <div class="card o"><h3>PMO de Control</h3><p>Estandariza procesos, revisa cumplimiento, exige uso de metodología. Autoridad media. El tipo más común en empresas medianas que quieren consistencia sin perder autonomía.</p></div>
+    <div class="card g"><h3>PMO Directiva</h3><p>Dirige los proyectos directamente. El PM reporta a la PMO, no al área funcional. Alta autoridad. Típica en empresas de consultoría, constructoras o donde los proyectos SON el negocio.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Gestión Estratégica del Portafolio de Proyectos</h2>
+  <div class="cg c2">
+    <div class="card o">
+      <h3>Priorización de Portafolio: Criterios</h3>
+      <table>
+        <tr><th>Criterio</th><th>Peso</th><th>Escala</th></tr>
+        <tr><td>Alineación estratégica</td><td>30%</td><td>1-5 (5=crítico para estrategia)</td></tr>
+        <tr><td>Retorno sobre inversión (ROI)</td><td>25%</td><td>1-5 (5=ROI &gt; 200%)</td></tr>
+        <tr><td>Complejidad / Riesgo</td><td>20%</td><td>1-5 (5=muy bajo riesgo)</td></tr>
+        <tr><td>Tiempo de payback</td><td>15%</td><td>1-5 (5=&lt; 12 meses)</td></tr>
+        <tr><td>Dependencias técnicas</td><td>10%</td><td>1-5 (5=independiente)</td></tr>
+      </table>
+      <p style="font-size:.8rem;color:var(--muted);margin-top:6px;">Puntuación ponderada → ranking de proyectos. Aprobados los N proyectos de mayor puntuación que caben en el presupuesto y capacidad de recursos disponible.</p>
+    </div>
+    <div class="card g">
+      <h3>Modelo OPM3 — Madurez en GP</h3>
+      <ul class="tl" style="margin-top:6px;">
+        <li><div class="st b">1</div><div class="content"><h4>Inicial / Ad-hoc</h4><p>Sin procesos. Éxito depende de héroes individuales. Impredecible.</p></div></li>
+        <li><div class="st t">2</div><div class="content"><h4>Repetible</h4><p>Procesos básicos definidos. Consistencia limitada. Algunos proyectos exitosos.</p></div></li>
+        <li><div class="st g">3</div><div class="content"><h4>Definido</h4><p>Procesos organizacionales documentados. Metodología adoptada. PMO existente.</p></div></li>
+        <li><div class="st o">4</div><div class="content"><h4>Gestionado</h4><p>Métricas de desempeño. Decisiones basadas en datos. Control avanzado.</p></div></li>
+        <li><div class="st b">5</div><div class="content"><h4>Optimizando</h4><p>Mejora continua. Innovación en procesos. Benchmark con clase mundial.</p></div></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 12 ═══ -->
+<div class="slide" data-s="1">
+  <h2>Sesión 12 <span style="color:var(--red)">— Gestión de Riesgos en Proyectos de TI</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Gestionar riesgos sin registrarlos es como <strong>conducir de noche sin luces</strong>: los obstáculos existen aunque no los veas. El registro de riesgos NO crea los problemas — los hace visibles antes de que ocurran. Un riesgo gestionado proactivamente cuesta 10x menos que una crisis reactiva.</p>
+  </div>
+  <div class="cg c3" style="margin-top:12px;">
+    <div class="card r"><h3>Identificación de Riesgos</h3><p>Técnicas: <strong>Brainstorming</strong> con el equipo, <strong>Checklist</strong> de riesgos típicos por tipo de proyecto, <strong>Entrevistas</strong> con expertos, <strong>Análisis de causa raíz</strong> de proyectos anteriores. Resultado: Registro de Riesgos.</p></div>
+    <div class="card o"><h3>Análisis Cualitativo</h3><p>Matriz de Probabilidad × Impacto. Escala: 1-5 en cada dimensión. Prioridad = P × I. Riesgos en zona roja (≥12): atención inmediata. Zona amarilla (6-11): monitorear. Zona verde (&lt;6): aceptar.</p></div>
+    <div class="card v"><h3>Análisis Cuantitativo</h3><p>Simulación Montecarlo: ejecuta 10,000 escenarios del proyecto variando duraciones y costos. Resultado: distribución de probabilidad del costo/fecha final. Árbol de decisiones para riesgos con opciones de respuesta.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>Estrategias de Respuesta y Riesgos de TI</h2>
+  <div class="cg c2">
+    <div class="card r">
+      <h3>Las 4 Estrategias de Respuesta (Amenazas)</h3>
+      <ul class="tl" style="margin-top:6px;">
+        <li><div class="st b">EV</div><div class="content"><h4>Evitar</h4><p>Eliminar la causa del riesgo. Cambiar el enfoque del proyecto. La más efectiva pero no siempre posible.</p></div></li>
+        <li><div class="st o">TR</div><div class="content"><h4>Transferir</h4><p>Mover el impacto a un tercero: seguros, contratos precio fijo, outsourcing del componente riesgoso.</p></div></li>
+        <li><div class="st g">MT</div><div class="content"><h4>Mitigar</h4><p>Reducir la probabilidad o el impacto. Pruebas adicionales, capacitación, redundancia, prototipos tempranos.</p></div></li>
+        <li><div class="st t">AC</div><div class="content"><h4>Aceptar</h4><p>Activa (plan de contingencia listo) o Pasiva (reserva presupuestaria). Para riesgos de bajo impacto.</p></div></li>
+      </ul>
+    </div>
+    <div class="card v">
+      <h3>Riesgos Específicos de Proyectos de TI</h3>
+      <table>
+        <tr><th>Riesgo</th><th>Estrategia Típica</th></tr>
+        <tr><td>Obsolescencia tecnológica durante el proyecto</td><td>Mitigar: arquitectura modular y tecnología madura</td></tr>
+        <tr><td>Integración compleja con sistemas legados</td><td>Mitigar: spike técnico temprano, middleware</td></tr>
+        <tr><td>Ciberseguridad: brecha de datos</td><td>Transferir: ciberseguro + Mitigar: pentest</td></tr>
+        <tr><td>Proveedor clave abandona el proyecto</td><td>Evitar: cláusulas contractuales + Transferir</td></tr>
+        <tr><td>Resistencia al cambio de usuarios finales</td><td>Mitigar: plan de gestión del cambio, capacitación</td></tr>
+        <tr><td>Scope creep masivo</td><td>Evitar: proceso de control de cambios riguroso</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Click para ver respuesta</div>
+    <p>Un proyecto de migración a la nube tiene identificado el riesgo: "El proveedor de nube puede tener una caída de servicio durante las pruebas de aceptación, retrasando el Go-Live 2 semanas." Probabilidad=Media(3), Impacto=Alto(4). ¿Qué estrategia aplicas y cómo?</p>
+    <div class="qa">Prioridad = 3×4 = 12 (zona roja: atención). <strong>Mitigar + Aceptar activo</strong>: Mitigar la probabilidad: planear las pruebas de aceptación con buffer de tiempo suficiente y no en fecha de máxima carga del proveedor. Configurar ambiente de respaldo (multi-region o segundo proveedor de nube) para las pruebas críticas. Aceptar activamente: tener un plan de contingencia explícito — si ocurre la caída, ¿qué hacemos exactamente? — y reserva de tiempo en el cronograma (2 semanas de holgura). Documentar el riesgo, la respuesta y al propietario del riesgo (Risk Owner).</div>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 13 ═══ -->
+<div class="slide" data-s="2">
+  <h2>Sesión 13 <span style="color:var(--green)">— Evaluación Económica de Proyectos de TI</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Un Business Case sin análisis financiero es como <strong>pedir un préstamo al banco sin mostrar tu flujo de caja</strong>. La dirección no puede aprobar ciegamente. Los indicadores financieros (ROI, VPN, TIR) son el lenguaje que traduce "necesitamos un nuevo sistema" en "invertimos $500K y recuperamos $1.8M en 3 años con un VPN de $980K al 12% de descuento". Ese lenguaje abre presupuestos.</p>
+  </div>
+  <div class="cg c2" style="margin-top:12px;">
+    <div class="card o">
+      <h3>CAPEX vs OPEX en TI</h3>
+      <table>
+        <tr><th></th><th>CAPEX</th><th>OPEX</th></tr>
+        <tr><td>Definición</td><td>Inversión en activos de capital (infraestructura, licencias perpetuas)</td><td>Gasto operativo recurrente (suscripciones cloud, mantenimiento)</td></tr>
+        <tr><td>Impacto fiscal</td><td>Se deprecia en varios años</td><td>Deducible en el año del gasto</td></tr>
+        <tr><td>Ejemplo TI</td><td>Servidor físico, licencia SAP perpetua</td><td>Suscripción Azure, SaaS mensual</td></tr>
+        <tr><td>Tendencia</td><td>Disminuye con cloud</td><td>Aumenta con modelo cloud/SaaS</td></tr>
+        <tr><td>Ventaja</td><td>Control total, sin dependencia de proveedor</td><td>Flexibilidad, escalabilidad, bajo costo inicial</td></tr>
+      </table>
+    </div>
+    <div class="card g">
+      <h3>Tipos de Beneficios en TI</h3>
+      <p><strong>Beneficios Tangibles</strong> (cuantificables):</p>
+      <ul style="font-size:.83rem;">
+        <li>Reducción de horas hombre por automatización</li>
+        <li>Reducción de errores y retrabajos (costo de calidad)</li>
+        <li>Reducción de inventario o capital de trabajo</li>
+        <li>Incremento en ventas por mejor disponibilidad de producto</li>
+        <li>Reducción de multas regulatorias</li>
+      </ul>
+      <p style="margin-top:8px;"><strong>Beneficios Intangibles</strong> (difíciles de cuantificar):</p>
+      <ul style="font-size:.83rem;">
+        <li>Mejor toma de decisiones (información en tiempo real)</li>
+        <li>Satisfacción y retención de clientes</li>
+        <li>Reducción del riesgo reputacional</li>
+        <li>Cumplimiento normativo</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="2">
+  <h2>ROI, VPN, TIR y Payback: Los 4 Indicadores Que Importan</h2>
+  <div class="cg c2">
+    <div class="card g">
+      <h3>Los 4 Indicadores con Ejemplo</h3>
+      <p style="font-size:.8rem;color:var(--muted);">Proyecto: Sistema WMS (Almacén). Inversión: $600,000. Flujos: Año 1: $150K, Año 2: $280K, Año 3: $320K, Año 4: $280K, Año 5: $240K. Tasa descuento: 12%.</p>
+      <table style="margin-top:8px;">
+        <tr><th>Indicador</th><th>Cálculo</th><th>Resultado</th><th>Decisión</th></tr>
+        <tr><td><strong>ROI</strong></td><td>(Beneficios-Inversión)/Inversión</td><td style="color:var(--green);">120%</td><td>Por encima de 50% → Aprobar</td></tr>
+        <tr><td><strong>Payback</strong></td><td>Cuándo acumulas = inversión</td><td style="color:var(--green);">2.5 años</td><td>Menos de 3 años → Bueno</td></tr>
+        <tr><td><strong>VPN (NPV)</strong></td><td>Σ FlujoN/(1+r)^N - Inversión</td><td style="color:var(--green);">$382,000</td><td>VPN positivo → Crea valor</td></tr>
+        <tr><td><strong>TIR (IRR)</strong></td><td>Tasa donde VPN=0</td><td style="color:var(--green);">34%</td><td>TIR &gt; 12% → Rentable</td></tr>
+      </table>
+    </div>
+    <div class="card b">
+      <h3>Excel: Fórmulas para Business Case</h3>
+      <pre>=NPV(12%,C5:C9)-B4      ' VPN
+=IRR(B4:C9)              ' TIR
+=B4/PROMEDIO(C5:C9)      ' Payback simple
+=(SUMA(C5:C9)-B4)/B4     ' ROI simple
+
+' Análisis de sensibilidad:
+' ¿Qué pasa si los beneficios bajan 20%?
+=NPV(12%,C5:C9*0.8)-B4  ' VPN pesimista
+
+' ¿A qué costo máximo el proyecto sigue siendo viable?
+' (usar Solver de Excel o Goal Seek)
+' Objetivo: VPN = 0
+' Variable: celda de inversión</pre>
+      <div class="box bc" style="margin-top:8px;"><div class="bt">📰 CASO REAL — Justificando un ERP ante la Dirección</div>
+        <p>Una empresa de manufactura presentó Business Case para SAP S/4HANA: inversión $2.1M, VPN $3.4M a 5 años, TIR 38%, Payback 2.8 años. Beneficios: reducción 25% en costo de cierre contable mensual (de 5 días a 2), eliminación de 8 FTEs en captura manual de datos, reducción 15% en inventario por mejor visibilidad. El Consejo aprobó en 20 minutos.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 14 ═══ -->
+<div class="slide" data-s="3">
+  <h2>Sesión 14 <span style="color:var(--violet)">— Alineación Estratégica y Gestión del Cambio Organizacional</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Implementar tecnología sin gestionar el cambio humano es como <strong>comprar el mejor tractor del mundo y dejarlo en el campo sin que nadie sepa operarlo</strong>. El sistema puede ser perfecto técnicamente y fracasar completamente porque la gente no lo usa, lo usa mal, o lo sabotea activamente. El 70% de las transformaciones digitales fallan no por la tecnología, sino por las personas.</p>
+  </div>
+  <div class="cg c3" style="margin-top:12px;">
+    <div class="card b"><h3>VUCA y BANI</h3><p><strong>VUCA</strong>: Volátil, Incierto, Complejo, Ambiguo — el entorno pos-2020. <strong>BANI</strong>: Broken (quebrado), Anxious (ansioso), Non-linear (no lineal), Incomprehensible. Las organizaciones necesitan nuevas capacidades para operar en este entorno.</p></div>
+    <div class="card o"><h3>Modelo Kotter (8 Pasos)</h3><p>1. Crear sentido de urgencia. 2. Formar coalición guía. 3. Desarrollar visión y estrategia. 4. Comunicar la visión. 5. Empoderar acción. 6. Generar victorias tempranas. 7. Consolidar y generar más cambio. 8. Anclar en la cultura.</p></div>
+    <div class="card g"><h3>Modelo ADKAR (Prosci)</h3><p><strong>A</strong>wareness (conciencia del cambio), <strong>D</strong>esire (deseo de participar), <strong>K</strong>nowledge (conocimiento de cómo cambiar), <strong>A</strong>bility (habilidad para implementar), <strong>R</strong>einforcement (refuerzo para sostener). Para diagnóstico individual del cambio.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-s="3">
+  <h2>La Curva del Cambio y Gestión de la Resistencia</h2>
+  <div class="cg c2">
+    <div class="card v">
+      <h3>Las 5 Fases de Kübler-Ross Aplicadas al Cambio Tecnológico</h3>
+      <div class="ld" style="margin-top:8px;">
+        <div class="lr" style="background:rgba(220,38,38,.1);border:1px solid var(--red);font-size:.79rem;color:var(--red);">😱 NEGACIÓN: "Ese sistema nunca funcionará aquí." Intervención: información transparente + casos de éxito.</div>
+        <div class="lr" style="background:rgba(217,119,6,.1);border:1px solid var(--gold);font-size:.79rem;color:var(--gold);">😠 IRA: "¿Por qué nos cambian lo que funcionaba?" Intervención: escucha activa + involucrar en el diseño.</div>
+        <div class="lr" style="background:rgba(124,58,237,.1);border:1px solid var(--violet);font-size:.79rem;color:var(--violet);">🤝 NEGOCIACIÓN: "Está bien, pero solo si..." Intervención: compromisos reales, co-diseñar la solución.</div>
+        <div class="lr" style="background:rgba(100,116,139,.1);border:1px solid var(--muted);font-size:.79rem;color:var(--muted);">😔 DEPRESIÓN: Bajo rendimiento temporal. Normal. Intervención: apoyo, métricas de progreso, paciencia.</div>
+        <div class="lr" style="background:rgba(5,150,105,.1);border:1px solid var(--green);font-size:.79rem;color:var(--green);">✅ ACEPTACIÓN: Integran el cambio. Intervención: reconocimiento, embajadores del cambio.</div>
+      </div>
+    </div>
+    <div class="card o">
+      <h3>Plan de Gestión del Cambio — Estructura</h3>
+      <ol style="font-size:.83rem;">
+        <li><strong>Análisis de impacto del cambio</strong>: ¿qué cambia para quién? ¿cuánto?</li>
+        <li><strong>Evaluación de preparación</strong>: diagnóstico de resistencia por área</li>
+        <li><strong>Estrategia de patrocinio</strong>: líderes clave visibles y comprometidos</li>
+        <li><strong>Plan de comunicación</strong>: mensajes diferenciados por audiencia, por canal, por momento</li>
+        <li><strong>Plan de capacitación</strong>: quién necesita aprender qué y cuándo</li>
+        <li><strong>Red de campeones</strong>: embajadores del cambio en cada área</li>
+        <li><strong>Medición y ajuste</strong>: encuestas de adopción, KPIs de uso del sistema</li>
+      </ol>
+    </div>
+  </div>
+  <div class="box bc"><div class="bt">📰 CASO REAL — El Banco Que Perdió $3B en Transformación Digital</div>
+    <p>Un banco latinoamericano implementó un nuevo core bancario en 2019. Técnicamente exitoso. Pero no capacitaron a los ejecutivos de sucursal, quienes usaban workarounds en Excel para evitar el nuevo sistema. 2 años después, los datos estaban fragmentados: parte en el sistema nuevo, parte en Excel. El costo de la corrección superó el proyecto original. La gestión del cambio no fue un "nice to have" — fue lo que determinó el retorno de la inversión.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 15 ═══ -->
+<div class="slide" data-s="4">
+  <h2>Sesión 15 <span style="color:var(--teal)">— Gestión de Procesos de Negocio (BPM) y Bizagi</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Un proceso de negocio no documentado es como <strong>una receta de cocina que vive en la cabeza del cocinero estrella</strong>. Si este se va, el platillo desaparece. Y si quieres mejorar la receta, ni siquiera tienes un punto de partida documentado. BPM y BPMN son la receta escrita, normalizada y mejorable sistemáticamente. El modelo AS-IS es la receta actual; el TO-BE es la receta optimizada.</p>
+  </div>
+  <div class="cg c3" style="margin-top:12px;">
+    <div class="card t"><h3>¿Qué es BPM?</h3><p>Business Process Management: disciplina de gestión que mejora el desempeño organizacional optimizando y automatizando procesos de negocio. No es software — es una disciplina de gestión que puede apoyarse en software (Bizagi, Camunda, BPMS).</p></div>
+    <div class="card o"><h3>Ciclo BPM</h3><p>1. <strong>Diseño</strong>: modelar el proceso AS-IS. 2. <strong>Análisis</strong>: identificar ineficiencias. 3. <strong>Mejora</strong>: diseñar el TO-BE. 4. <strong>Implementación</strong>: automatizar/rediseñar. 5. <strong>Monitoreo</strong>: medir KPIs. 6. Volver a 1.</p></div>
+    <div class="card g"><h3>BPMN 2.0: El Estándar</h3><p>Business Process Model and Notation: notación gráfica estandarizada (ISO 19510). Legible tanto por personas de negocio como por desarrolladores que automatizarán el proceso. Pool, lanes, events, activities, gateways, flows.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-s="4">
+  <h2>BPMN 2.0: Elementos Esenciales</h2>
+  <div class="cg c2">
+    <div class="card t">
+      <h3>Elementos Principales de BPMN</h3>
+      <table>
+        <tr><th>Elemento</th><th>Símbolo</th><th>Descripción</th></tr>
+        <tr><td>Start Event</td><td>⬤ (círculo fino)</td><td>Inicia el proceso</td></tr>
+        <tr><td>End Event</td><td>⬤ (círculo grueso)</td><td>Termina el proceso</td></tr>
+        <tr><td>Task/Activity</td><td>⬛ (rectángulo redondeado)</td><td>Unidad de trabajo</td></tr>
+        <tr><td>XOR Gateway</td><td>◇ con X</td><td>Decisión exclusiva (solo un camino)</td></tr>
+        <tr><td>AND Gateway</td><td>◇ con +</td><td>Paralelismo (todos los caminos)</td></tr>
+        <tr><td>OR Gateway</td><td>◇ con O</td><td>Uno o más caminos activos</td></tr>
+        <tr><td>Pool / Lane</td><td>Rectángulo horizontal</td><td>Participante / Rol responsable</td></tr>
+        <tr><td>Message Flow</td><td>Flecha punteada</td><td>Comunicación entre pools</td></tr>
+      </table>
+    </div>
+    <div class="card g">
+      <h3>Proceso AS-IS → TO-BE: Ejemplo Logística</h3>
+      <div style="font-size:.82rem;">
+        <strong style="color:var(--red);">AS-IS (proceso actual — con desperdicios):</strong>
+        <p style="color:var(--muted);">Cliente solicita cotización → email a ventas → ventas pregunta a almacén → almacén revisa manualmente en Excel → responde en 2 días → ventas elabora cotización en Word → envía por email → espera aprobación → si aprueba, genera orden manualmente en ERP → Lead time total: 4-7 días</p>
+        <strong style="color:var(--green);margin-top:8px;display:block;">TO-BE (proceso optimizado):</strong>
+        <p style="color:var(--muted);">Cliente solicita en portal web → sistema verifica disponibilidad automática → genera cotización automática en &lt;5 min → cliente aprueba en portal → genera OV automáticamente → Lead time total: &lt;30 minutos</p>
+        <p style="color:var(--gold);margin-top:6px;font-weight:600;">Reducción: de 4-7 días a 30 minutos. Eliminación de 6 pasos manuales.</p>
+      </div>
+    </div>
+  </div>
+  <div class="box bl"><div class="bt">🔬 PRÁCTICA — Modelado en Bizagi Business Modeler</div>
+    <p>Modelar el proceso actual (AS-IS) de gestión de órdenes de mantenimiento en planta: desde que el operador reporta una falla hasta que el técnico cierra la orden. Identificar desperdicios (esperas, reprocesos, aprobaciones innecesarias). Diseñar el proceso optimizado (TO-BE) con automatización de notificaciones, asignación automática de técnico y cierre digital. Comparar Lead Times AS-IS vs TO-BE.</p>
+  </div>
+</div>
+
+<!-- CIERRE -->
+<div class="slide cover" data-s="4">
+  <div class="badge">BLOQUE III — CIERRE</div>
+  <h1>Valor Estratégico:<br>Del Proyecto al Negocio</h1>
+  <p style="max-width:600px;margin:16px auto;color:var(--muted);">PMO que alinea portafolios, riesgos proactivamente gestionados, Business Cases financieramente sólidos, cambio organizacional planificado y procesos optimizados con BPM: las 5 competencias que convierten al PM en un estratega de negocio.</p>
+  <div class="sr" style="justify-content:center;max-width:700px;margin:20px auto;">
+    <div class="stat"><div class="n" style="color:var(--gold)">🏢</div><div class="l">PMO y portafolio estratégico</div></div>
+    <div class="stat"><div class="n" style="color:var(--red)">⚠️</div><div class="l">Gestión de riesgos</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">💰</div><div class="l">ROI, VPN, TIR</div></div>
+    <div class="stat"><div class="n" style="color:var(--violet)">🔄</div><div class="l">Gestión del cambio</div></div>
+    <div class="stat"><div class="n" style="color:var(--teal)">🗺️</div><div class="l">BPM y Bizagi</div></div>
+  </div>
+  <div style="margin-top:16px;font-size:.78rem;color:var(--muted);">
+    <strong style="color:var(--gold);">Referencias:</strong> PMI (2021) PMBOK 7th Ed. · PMI Process Groups Practice Guide · ISO 21500 · CMMI Institute (2018) CMMI Dev V2.0
+  </div>
+</div>
+
+</div>
+<div id="footer">
+  <button onclick="prev()">← Anterior</button>
+  <span class="hint">← → · Espacio</span>
+  <button onclick="next()">Siguiente →</button>
+</div>
+<script>
+const slides=document.querySelectorAll('.slide'),total=slides.length;let cur=0;
+const ss=[];slides.forEach((s,i)=>{const v=parseInt(s.dataset.s);if(ss[v]===undefined)ss[v]=i;});
+function go(n){if(n<0||n>=total)return;slides[cur].classList.remove('active');cur=n;slides[cur].classList.add('active');document.getElementById('ctr').textContent=(cur+1)+' / '+total;document.getElementById('pb').style.width=((cur+1)/total*100)+'%';ut();slides[cur].scrollTop=0;}
+function next(){go(cur+1);}function prev(){go(cur-1);}function gts(i){go(ss[i]);}
+function ut(){const v=parseInt(slides[cur].dataset.s);for(let i=0;i<5;i++){const b=document.getElementById('t'+i);if(b)b.classList.toggle('active',i===v);}}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();}if(e.key==='ArrowLeft'){e.preventDefault();prev();}});
+ut();
+</script>
+</body>
+</html>

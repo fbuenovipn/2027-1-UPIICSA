@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seminario de Titulación — Gestión Estratégica de Proyectos Tecnológicos</title>
+<style>
+  :root {
+    --azul: #1a3a5c;
+    --azul-medio: #2563a8;
+    --azul-claro: #3b82f6;
+    --acento: #e8a020;
+    --acento-claro: #fbbf24;
+    --verde: #16a34a;
+    --rojo: #dc2626;
+    --gris-claro: #f1f5f9;
+    --gris: #64748b;
+    --texto: #1e293b;
+    --blanco: #ffffff;
+    --sombra: 0 4px 20px rgba(0,0,0,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--gris-claro);
+    color: var(--texto);
+    line-height: 1.6;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, var(--azul) 0%, var(--azul-medio) 60%, var(--azul-claro) 100%);
+    color: var(--blanco);
+    padding: 60px 24px 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 24px;
+    padding: 6px 18px;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-size: clamp(1.6rem, 4vw, 2.8rem);
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+  .hero h1 span { color: var(--acento-claro); }
+  .hero .subtitle {
+    font-size: 1.05rem;
+    opacity: 0.88;
+    max-width: 680px;
+    margin: 0 auto 32px;
+  }
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .stat-box {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 12px;
+    padding: 14px 24px;
+    min-width: 110px;
+  }
+  .stat-box .num { font-size: 1.9rem; font-weight: 800; color: var(--acento-claro); }
+  .stat-box .lbl { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.8; }
+
+  /* ── CARRERAS CHIPS ── */
+  .carreras {
+    background: var(--blanco);
+    border-bottom: 1px solid #e2e8f0;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .carrera-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--gris-claro);
+    border: 1.5px solid #cbd5e1;
+    border-radius: 24px;
+    padding: 6px 14px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--azul);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .carrera-chip:hover, .carrera-chip.activo {
+    background: var(--azul);
+    border-color: var(--azul);
+    color: var(--blanco);
+  }
+  .carrera-chip .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* ── LAYOUT PRINCIPAL ── */
+  .container { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+
+  /* ── TABS DE BLOQUES ── */
+  .tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 28px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: thin;
+  }
+  .tab-btn {
+    flex-shrink: 0;
+    padding: 10px 18px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    background: var(--blanco);
+    color: var(--gris);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab-btn:hover { border-color: var(--azul-claro); color: var(--azul); }
+  .tab-btn.activo {
+    background: var(--azul);
+    border-color: var(--azul);
+    color: var(--blanco);
+  }
+
+  /* ── SESIÓN CARD ── */
+  .sesion-card {
+    background: var(--blanco);
+    border-radius: 16px;
+    box-shadow: var(--sombra);
+    margin-bottom: 18px;
+    overflow: hidden;
+    border-left: 4px solid var(--azul-claro);
+    transition: box-shadow 0.2s;
+  }
+  .sesion-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.15); }
+  .sesion-card.bloque-1 { border-color: #3b82f6; }
+  .sesion-card.bloque-2 { border-color: #16a34a; }
+  .sesion-card.bloque-3 { border-color: #9333ea; }
+  .sesion-card.bloque-4 { border-color: #ea580c; }
+  .sesion-card.bloque-5 { border-color: #e8a020; }
+
+  .sesion-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 22px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .sesion-num {
+    width: 46px; height: 46px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; font-weight: 800;
+    color: var(--blanco);
+    flex-shrink: 0;
+  }
+  .bloque-1 .sesion-num { background: #3b82f6; }
+  .bloque-2 .sesion-num { background: #16a34a; }
+  .bloque-3 .sesion-num { background: #9333ea; }
+  .bloque-4 .sesion-num { background: #ea580c; }
+  .bloque-5 .sesion-num { background: #e8a020; }
+
+  .sesion-title { flex: 1; }
+  .sesion-title h3 { font-size: 1rem; font-weight: 700; color: var(--azul); margin-bottom: 3px; }
+  .sesion-title p { font-size: 0.8rem; color: var(--gris); }
+
+  .chevron {
+    width: 22px; height: 22px;
+    border: 2px solid #cbd5e1;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.3s, border-color 0.2s;
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    color: var(--gris);
+  }
+  .sesion-card.abierta .chevron { transform: rotate(180deg); border-color: var(--azul-claro); color: var(--azul-claro); }
+
+  .sesion-body {
+    display: none;
+    padding: 0 22px 22px;
+    border-top: 1px solid #f1f5f9;
+  }
+  .sesion-card.abierta .sesion-body { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 680px) { .sesion-card.abierta .sesion-body { grid-template-columns: 1fr; } }
+
+  .objetivo-box {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
+    padding: 14px 16px;
+    grid-column: 1 / -1;
+    margin-top: 14px;
+  }
+  .objetivo-box strong { display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--azul-medio); margin-bottom: 6px; }
+  .objetivo-box p { font-size: 0.88rem; color: var(--texto); }
+
+  .contenido-list { margin-top: 14px; }
+  .contenido-list h4 { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gris); margin-bottom: 10px; }
+  .contenido-list ol { padding-left: 18px; }
+  .contenido-list li { font-size: 0.87rem; color: var(--texto); margin-bottom: 5px; }
+
+  .actividad-box {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-top: 14px;
+  }
+  .actividad-box strong { display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--verde); margin-bottom: 6px; }
+  .actividad-box p { font-size: 0.87rem; }
+
+  .herramientas-box {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-top: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+  .herramienta-tag {
+    background: var(--acento);
+    color: var(--blanco);
+    border-radius: 20px;
+    padding: 3px 11px;
+    font-size: 0.76rem;
+    font-weight: 700;
+  }
+
+  /* ── BLOQUE HEADER ── */
+  .bloque-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 22px;
+    border-radius: 14px;
+    margin-bottom: 20px;
+    color: var(--blanco);
+  }
+  .bloque-header.b1 { background: linear-gradient(135deg, #1d4ed8, #3b82f6); }
+  .bloque-header.b2 { background: linear-gradient(135deg, #15803d, #16a34a); }
+  .bloque-header.b3 { background: linear-gradient(135deg, #7e22ce, #9333ea); }
+  .bloque-header.b4 { background: linear-gradient(135deg, #c2410c, #ea580c); }
+  .bloque-header.b5 { background: linear-gradient(135deg, #b45309, #e8a020); }
+  .bloque-header .icon { font-size: 2rem; }
+  .bloque-header h2 { font-size: 1.15rem; font-weight: 800; }
+  .bloque-header span { font-size: 0.82rem; opacity: 0.85; }
+
+  /* ── RESUMEN TABLE ── */
+  .resumen-section { margin-top: 40px; }
+  .resumen-section h2 {
+    font-size: 1.3rem; font-weight: 800;
+    color: var(--azul); margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 3px solid var(--azul-claro);
+  }
+
+  .grid-info { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 32px; align-items: start; }
+  @media (max-width: 700px) { .grid-info { grid-template-columns: 1fr; } }
+  .info-card {
+    background: var(--blanco);
+    border-radius: 14px;
+    padding: 20px 22px;
+    box-shadow: var(--sombra);
+  }
+  .info-card h3 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--gris); margin-bottom: 14px; }
+
+  .carrera-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 0.85rem;
+  }
+  .carrera-row:last-child { border-bottom: none; }
+  .carrera-row .carrera-nombre { font-weight: 700; color: var(--azul); min-width: 180px; }
+  .carrera-row .carrera-app { color: var(--gris); }
+
+  .eval-item { margin-bottom: 14px; }
+  .eval-item:last-of-type { margin-bottom: 0; }
+  .eval-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 0.87rem;
+  }
+  .eval-pct {
+    font-weight: 800;
+    font-size: 1.05rem;
+    color: var(--azul-medio);
+    white-space: nowrap;
+    margin-left: 12px;
+  }
+  .progress-bar {
+    height: 7px;
+    background: #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .progress-fill { height: 100%; border-radius: 10px; background: var(--azul-claro); }
+
+  .bloque-table { width: 100%; border-collapse: collapse; font-size: 0.87rem; }
+  .bloque-table th { background: var(--azul); color: var(--blanco); padding: 10px 14px; text-align: left; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .bloque-table td { padding: 10px 14px; border-bottom: 1px solid #f1f5f9; }
+  .bloque-table tr:last-child td { border-bottom: none; font-weight: 700; background: #f8fafc; }
+  .bloque-table tr:nth-child(even) td { background: #f8fafc; }
+  .bloque-table tr:last-child td:nth-child(2) { color: var(--azul-medio); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--azul);
+    color: rgba(255,255,255,0.7);
+    text-align: center;
+    padding: 24px;
+    font-size: 0.8rem;
+    margin-top: 40px;
+  }
+  footer strong { color: var(--blanco); }
+
+  /* ── SEARCH ── */
+  .search-box {
+    position: relative;
+    max-width: 480px;
+    margin: 0 auto 28px;
+  }
+  .search-box input {
+    width: 100%;
+    padding: 12px 16px 12px 42px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-box input:focus { border-color: var(--azul-claro); }
+  .search-box .icon-search {
+    position: absolute;
+    left: 14px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--gris);
+    font-size: 1rem;
+  }
+
+  .hidden { display: none !important; }
+
+  @media (max-width: 480px) {
+    .hero h1 { font-size: 1.4rem; }
+    .hero-stats { gap: 14px; }
+    .stat-box { padding: 10px 16px; }
+    .stat-box .num { font-size: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">Seminario de Titulación · UPIICSA</div>
+  <h1>Gestión Estratégica de Proyectos <span>Tecnológicos</span></h1>
+  <p class="subtitle">Transformación Digital y Valor Empresarial — Estándares PMI, metodologías ágiles e ITIL para el profesionista que lidera el cambio en la industria.</p>
+  <div class="hero-stats">
+    <div class="stat-box"><div class="num">150</div><div class="lbl">Horas</div></div>
+    <div class="stat-box"><div class="num">25</div><div class="lbl">Sesiones</div></div>
+    <div class="stat-box"><div class="num">5</div><div class="lbl">Bloques</div></div>
+    <div class="stat-box"><div class="num">5</div><div class="lbl">Carreras</div></div>
+  </div>
+</div>
+
+<!-- CARRERAS -->
+<div class="carreras">
+  <div class="carrera-chip activo" onclick="filtrarCarrera('todas', this)">
+    <div class="dot" style="background:#64748b"></div> Todas las carreras
+  </div>
+  <div class="carrera-chip" onclick="filtrarCarrera('adm', this)">
+    <div class="dot" style="background:#3b82f6"></div> Administración Industrial
+  </div>
+  <div class="carrera-chip" onclick="filtrarCarrera('info', this)">
+    <div class="dot" style="background:#16a34a"></div> Ing. en Informática
+  </div>
+  <div class="carrera-chip" onclick="filtrarCarrera('ind', this)">
+    <div class="dot" style="background:#9333ea"></div> Ing. Industrial
+  </div>
+  <div class="carrera-chip" onclick="filtrarCarrera('trans', this)">
+    <div class="dot" style="background:#ea580c"></div> Ing. en Transporte
+  </div>
+  <div class="carrera-chip" onclick="filtrarCarrera('auto', this)">
+    <div class="dot" style="background:#e8a020"></div> Ing. Sistemas Automotrices
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- BÚSQUEDA -->
+  <div class="search-box">
+    <span class="icon-search">&#128269;</span>
+    <input type="text" id="searchInput" placeholder="Buscar sesión, tema o herramienta..." oninput="buscar(this.value)">
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn activo" onclick="mostrarBloque('todos', this)">Todos los bloques</button>
+    <button class="tab-btn" onclick="mostrarBloque('1', this)">I · Fundamentos</button>
+    <button class="tab-btn" onclick="mostrarBloque('2', this)">II · Ágil &amp; DevOps</button>
+    <button class="tab-btn" onclick="mostrarBloque('3', this)">III · Estrategia &amp; Finanzas</button>
+    <button class="tab-btn" onclick="mostrarBloque('4', this)">IV · Tecnología &amp; Calidad</button>
+    <button class="tab-btn" onclick="mostrarBloque('5', this)">V · Liderazgo &amp; PI</button>
+  </div>
+
+  <!-- ════════ BLOQUE I ════════ -->
+  <div class="bloque-contenido" data-bloque="1">
+    <div class="bloque-header b1">
+      <div class="icon">&#128196;</div>
+      <div>
+        <h2>Bloque I — Fundamentos de la Gestión de Proyectos Tecnológicos</h2>
+        <span>Sesiones 1 a 5 · 30 horas · PMI / PMBOK · MS Project · MS Excel</span>
+      </div>
+    </div>
+
+    <!-- S1 -->
+    <div class="sesion-card bloque-1" data-bloque="1" data-carreras="todas adm info ind trans auto" data-texto="ventaja competitiva estrategia proyectos pmbok pmí iso estándares">
+      <div class="sesion-header" onclick="toggleSesion(this.parentElement)">
+        <div class="sesion-num">1</div>
+        <div class="sesion-title">
+          <h3>La Administración de Proyectos como Ventaja Competitiva</h3>
+          <p>Estándares globales · PMBOK 7 · ISO 21500 · Project Charter</p>
+        </div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sesion-body">
+        <div class="objetivo-box">
+          <strong>Objetivo de la sesión</strong>
+          <p>Comprender el rol estratégico de la gestión de proyectos en las organizaciones modernas y los estándares internacionales que la sustentan.</p>
+        </div>
+        <div class="contenido-list">
+          <h4>Contenido temático</h4>
+          <ol>
+            <li>El valor de los proyectos en la estrategia empresarial</li>
+            <li>Historia y evolución de la administración de proyectos</li>
+            <li>Estándares internacionales: PMBOK 7ª ed., ISO 21500, PRINCE2</li>
+            <li>El triángulo de restricciones: alcance, tiempo, costo y calidad</li>
+            <li>Roles: Project Manager, Sponsor, Stakeholders</li>
+            <li>Código de ética y conducta profesional del PMI</li>
+          </ol>
+        </div>
+        <div class="actividad-box">
+          <strong>&#9997; Actividad práctica</strong>
+          <p>Análisis de casos reales de proyectos fallidos y exitosos en manufactura, TI y transporte.</p>
+        </div>
+        <div class="herramientas-box">
+          <span style="font-size:0.72rem;font-weight:600;color:#92400e;margin-right:6px">HERRAMIENTAS:</span>
+          <span class="herramienta-tag">Project Charter</span>
+          <span class="herramienta-tag">Registro de Interesados</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- S2 -->
+    <div class="sesion-card bloque-1" data-bloque="1" data-carreras="todas adm info ind trans auto" data-texto="ciclos de vida predictivo ágil híbrido pmbok dominio desempeño">
+      <div class="sesion-header" onclick="toggleSesion(this.parentElement)">
+        <div class="sesion-num">2</div>
+        <div class="sesion-title">
+          <h3>Ciclos de Vida y Enfoques de Desarrollo</h3>
+          <p>Predictivo · Ágil · Híbrido · Dominio de desempeño PMBOK 7</p>
+        </div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sesion-body">
+        <div class="objetivo-box">
+          <strong>Objetivo de la sesión</strong>
+          <p>Seleccionar el enfoque de desarrollo más adecuado según las características del proyecto y el contexto organizacional.</p>
+        </div>
+        <div class="contenido-list">
+          <h4>Contenido temático</h4>
+          <ol>
+            <li>Ciclo de vida predictivo: fases y entregables</li>
+            <li>Ciclo de vida adaptativo: iteraciones e incrementos</li>
+            <li>Ciclo de vida híbrido: cuándo y cómo combinarlo</li>
+            <li>El dominio de desempeño del proyecto según PMBOK 7</li>
+            <li>Factores ambientales y activos de los procesos organizacionales</li>
+            <li>Selección del enfoque: criterios y ejemplos por industria</li>
+          </ol>
+        </div>
+        <div class="actividad-box">
+          <strong>&#9997; Actividad práctica</strong>
+          <p>Diagnóstico del enfoque adecuado para tres proyectos de diferente sector industrial.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- S3 -->
+    <div class="sesion-card bloque-1" data-bloque="1" data-carreras="todas adm info ind trans auto" data-texto="alcance wbs scope creep requisitos erp ms project">
+      <div class="sesion-header" onclick="toggleSesion(this.parentElement)">
+        <div class="sesion-num">3</div>
+        <div class="sesion-title">
+          <h3>Gestión del Alcance y Estructura de Desglose del Trabajo</h3>
+          <p>WBS · Requisitos · Business Case · MS Project</p>
+        </div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sesion-body">
+        <div class="objetivo-box">
+          <strong>Objetivo de la sesión</strong>
+          <p>Definir, documentar y controlar el alcance del proyecto previniendo la expansión no autorizada (scope creep) y maximizando la entrega de valor.</p>
+        </div>
+        <div class="contenido-list">
+          <h4>Contenido temático</h4>
+          <ol>
+            <li>Recopilación de requisitos: técnicas de elicitación</li>
+            <li>Declaración del alcance del proyecto</li>
+            <li>Work Breakdown Structure (WBS): construcción y diccionario</li>
+            <li>Control del alcance: gestión de cambios</li>
+            <li>Requisitos funcionales y no funcionales en proyectos de TI</li>
+            <li>Caso de negocio (Business Case): estructura y presentación ejecutiva</li>
+          </ol>
+        </div>
+        <div class="actividad-box">
+          <strong>&#9997; Actividad práctica</strong>
+          <p>Elaboración de WBS para un proyecto de implantación de sistema ERP.</p>
+        </div>
+        <div class="herramientas-box">
+          <span style="font-size:0.72rem;font-weight:600;color:#92400e;margin-right:6px">HERRAMIENTAS:</span>
+          <span class="herramienta-tag">MS Project</span>
+          <span class="herramienta-tag">Plantilla WBS</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- S4 -->
+    <div class="sesion-card bloque-1" data-bloque="1" data-carreras="todas adm info ind trans auto" data-texto="tiempo cronograma ruta crítica cpm pert fast tracking crashing ms project">
+      <div class="sesion-header" onclick="toggleSesion(this.parentElement)">
+        <div class="sesion-num">4</div>
+        <div class="sesion-title">
+          <h3>Gestión del Tiempo y Planeación de Proyectos</h3>
+          <p>Ruta Crítica (CPM) · PERT · Cronograma en MS Project</p>
+        </div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sesion-body">
+        <div class="objetivo-box">
+          <strong>Objetivo de la sesión</strong>
+          <p>Construir cronogramas realistas y calcular la ruta crítica para garantizar la entrega oportuna del proyecto.</p>
+        </div>
+        <div class="contenido-list">
+          <h4>Contenido temático</h4>
+          <ol>
+            <li>Secuenciación de actividades: diagramas de red</li>
+            <li>Estimación de duraciones: análoga, paramétrica, PERT</li>
+            <li>Ruta crítica: CPM y holguras</li>
+            <li>Compresión del cronograma: fast-tracking y crashing</li>
+            <li>Cronograma de proyecto con MS Project</li>
+            <li>Línea base y control del cronograma</li>
+          </ol>
+        </div>
+        <div class="actividad-box">
+          <strong>&#9997; Actividad práctica</strong>
+          <p>Construcción de cronograma y ruta crítica en MS Project para proyecto tecnológico real.</p>
+        </div>
+        <div class="herramientas-box">
+          <span style="font-size:0.72rem;font-weight:600;color:#92400e;margin-right:6px">HERRAMIENTAS:</span>
+          <span class="herramienta-tag">MS Project</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- S5 -->
+    <div class="sesion-card bloque-1" data-bloque="1" data-carreras="todas adm info ind trans auto" data-texto="costos valor ganado evm presupuesto roi cpi spi excel">
+      <div class="sesion-header" onclick="toggleSesion(this.parentElement)">
+        <div class="sesion-num">5</div>
+        <div class="sesion-title">
+          <h3>Gestión de Costos y Valor Ganado (EVM)</h3>
+          <p>Presupuesto · CPI · SPI · EVM · MS Excel</p>
+        </div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sesion-body">
+        <div class="objetivo-box">
+          <strong>Objetivo de la sesión</strong>
+          <p>Estimar, presupuestar y controlar los costos del proyecto utilizando la técnica de Valor Ganado para reportar desempeño financiero a la dirección.</p>
+        </div>
+        <div class="contenido-list">
+          <h4>Contenido temático</h4>
+          <ol>
+            <li>Estimación de costos: bottom-up, análoga, paramétrica</li>
+            <li>Presupuesto: reservas de contingencia y gestión</li>
+            <li>Técnica de Valor Ganado (EVM): PV, AC, EV</li>
+            <li>Índices de desempeño: CPI, SPI, proyecciones EAC, ETC</li>
+            <li>Control de costos: acciones correctivas</li>
+            <li>Presentación del estado financiero del proyecto a la dirección</li>
+          </ol>
+        </div>
+        <div class="actividad-box">
+          <strong>&#9997; Actividad práctica</strong>
+          <p>Análisis de Valor Ganado con hoja de cálculo — proyecto en ejecución con desviaciones reales.</p>
+        </div>
+        <div class="herramientas-box">
+          <span style="font-size:0.72rem;font-weight:600;color:#92400e;margin-right:6px">HERRAMIENTAS:</span>
+          <span class="herramienta-tag">MS Excel</span>
+        </div>
+      </div>
+    </div>
+  </div><!-- fin bloque 1 -->
+
+  <!-- ════════ BLOQUE II ════════ -->
+  <div class="bloque-contenido" data-bloque="2">
+    <div class="bloque-header b2">
+      <div class="icon">&#9889;</div>
+      <div>
+        <h2>Bloque II — Metodologías Ágiles, Lean y DevOps</h2>
+        <span>Sesiones 6 a 10 · 30 horas · Scrum · Kanban · DevOps · Jira · Power BI</span>
+      </div>
+    </div>
+
+    <!-- S6 -->
+    <div class="sesion-card bloque-2" data-bloque="2" data-carreras="todas info ind adm" data-texto="scrum sprint backlog product owner scrum master ágil iteración jira">
+      <div class="sesion-header" onclick="toggleSesion(this.parentElement)">
+        <div class="sesion-num">6</div>
+        <div class="sesion-title">
+          <h3>Scrum: Marco de Trabajo para Proyectos Complejos</h3>
+          <p>Manifiesto Ágil · Roles · Artefactos · Eventos · Jira</p>
+        </div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sesion-body">
+        <div class="objetivo-box">
+          <strong>Objetivo de la sesión</strong>
+          <p>Gestionar proyectos de desarrollo tecnológico aplicando Scrum para entregar valor incremental y adaptarse a cambios de negocio con rapidez.</p>
+        </div>
+        <div class="contenido-list">
+          <h4>Contenido temático</h4>
+          <ol>
+            <li>Manifiesto Ágil: valores y principios</li>
+            <li>¿Qué es Scrum? Pilares y valores</li>
+            <li>Roles: Product Owner, Scrum Master, Development Team</li>
+            <li>Artefactos: Product Backlog, Sprint Backlog, Incremento</li>
+            <li>Eventos: Sprint Planning, Daily Scrum, Sprint Review, Retrospectiva</li>
+            <li>Herramientas: Jira, Azure DevOps, Trello</li>
+          </ol>
+        </div>
+        <div class="actividad-box">
+          <strong>&#9997; Actividad práctica</strong>
+          <p>Simulación completa de un Sprint con tablero Scrum en equipo y entregable incremental.</p>
+        </div>
+        <div class="herramientas-box">
+          <span style="font-size:0.72rem;font-weight:600;color:#92400e;margin-right:6px">HERRAMIENTAS:</span>
+          <span class="herramienta-tag">Jira</span>
+          <span class="herramienta-tag">Azure DevOps</span>
+          <span class="herramienta-tag">Trello</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- S7 -->
+    <div class="sesion-card bloque-2" data-bloque="2" data-carreras="todas ind trans auto adm" data-texto="lean kanban desperdicios vsm value stream map flujo continuo toyota">
+      <div class="sesion-header" onclick="toggleSesion(this.parentElement)">
+        <div class="sesion-num">7</div>
+        <div class="sesion-title">
+          <h3>Lean y Kanban: Eliminación de Desperdicios y Flujo Continuo</h3>
+          <p>VSM · 8 Desperdicios · WIP limits · Métricas de flujo</p>
+        </div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sesion-body">
+        <div class="objetivo-box">
+          <strong>Objetivo de la sesión</strong>
+          <p>Visualizar y optimizar el flujo de trabajo aplicando principios Lean y Kanban para reducir tiempos de ciclo y eliminar actividades sin valor en procesos industriales y tecnológicos.</p>
+        </div>
+        <div class="contenido-list">
+          <h4>Contenido temático</h4>
+          <ol>
+            <li>Pensamiento Lean: origen Toyota y aplicación en TI</li>
+            <li>Los 8 desperdicios en proyectos tecnológicos y de manufactura</li>
+            <li>Value Stream Map (VSM): mapeo del flujo de valor</li>
+            <li>Kanban: tableros, WIP limits y métricas de flujo</li>
+            <li>Diagrama de flujo acumulativo y tiempo de ciclo</li>
+            <li>Herramientas: Kanbanize, Trello, Azure Boards</li>
+          </ol>
+        </div>
+        <div class="actividad-box">
+          <strong>&#9997; Actividad práctica</strong>
+          <p>Mapeo VSM de un proceso industrial o de desarrollo de software y detección de desperdicios.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- S8 -->
+    <div class="sesion-card bloque-2" data-bloque="2" data-carreras="todas info ind" data-texto="devops cicd integración continua entrega pipeline uml infraestructura como código">
+      <div class="sesion-header" onclick="toggleSesion(this.parentElement)">
+        <div class="sesion-num">8</div>
+        <div class="sesion-title">
+          <h3>DevOps: Integración y Entrega Continua</h3>
+          <p>CI/CD · Pipeline · UML · Infraestructura como código</p>
+        </div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sesion-body">
+        <div class="objetivo-box">
+          <strong>Objetivo de la sesión</strong>
+          <p>Implementar prácticas DevOps para acelerar el tiempo de entrega de software y servicios tecnológicos reduciendo el riesgo operativo.</p>
+        </div>
+        <div class="contenido-list">
+          <h4>Contenido temático</h4>
+          <ol>
+            <li>Filosofía DevOps: romper silos entre desarrollo y operaciones</li>
+            <li>Modelado con UML: diagramas de casos de uso y despliegue</li>
+            <li>Pipeline CI/CD: integración continua y entrega continua</li>
+            <li>Infraestructura como código (IaC): conceptos y herramientas</li>
+            <li>Monitoreo continuo: observabilidad y alertas</li>
+            <li>Factores críticos de éxito en la adopción DevOps</li>
+          </ol>
+        </div>
+        <div class="actividad-box">
+          <strong>&#9997; Actividad práctica</strong>
+          <p>Diseño de pipeline CI/CD para un microservicio o módulo de sistema industrial.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- S9 -->
+    <div class="sesion-card bloque-2" data-bloque="2" data-carreras="todas adm ind trans auto" data-texto="híbrido adaptativo rolling wave disciplined agile da way of working mes manufactura">
+      <div class="sesion-header" onclick="toggleSesion(this.parentElement)">
+        <div class="sesion-num">9</div>
+        <div class="sesion-title">
+          <h3>Planeación Adaptativa y Metodologías Híbridas</h3>
+          <p>Rolling Wave · Disciplined Agile · Enfoques combinados</p>
+        </div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sesion-body">
+        <div class="objetivo-box">
+          <strong>Objetivo de la sesión</strong>
+          <p>Diseñar planes de proyecto que combinen herramientas predictivas y ágiles para proyectos con componentes de alta incertidumbre y requisitos estables simultáneamente.</p>
+        </div>
+        <div class="contenido-list">
+          <h4>Contenido temático</h4>
+          <ol>
+            <li>Cuándo usar enfoque híbrido: análisis de características</li>
+            <li>Planeación por olas (Rolling Wave Planning)</li>
+            <li>Backlog de requisitos en proyectos con componentes predictivos</li>
+            <li>Gestión de dependencias entre equipos ágiles y áreas funcionales</li>
+            <li>Disciplined Agile (DA): el Way of Working adaptable</li>
+            <li>Casos en manufactura, logística y sistemas automotrices</li>
+          </ol>
+        </div>
+        <div class="actividad-box">
+          <strong>&#9997; Actividad práctica</strong>
+          <p>Diseño del plan híbrido para un proyecto de implementación de sistema MES en planta de producción.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- S10 -->
+    <div class="sesion-card bloque-2" data-bloque="2" data-carreras="todas adm info ind" data-texto="métricas ágiles dashboard power bi okr burndown reporting ejecutivo">
+      <div class="sesion-header" onclick="toggleSesion(this.parentElement)">
+        <div class="sesion-num">10</div>
+        <div class="sesion-title">
+          <h3>Métricas Ágiles y Reporting Ejecutivo</h3>
+          <p>GQM · Burndown · OKRs · Dashboard Power BI</p>
+        </div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sesion-body">
+        <div class="objetivo-box">
+          <strong>Objetivo de la sesión</strong>
+          <p>Seleccionar, implementar e interpretar métricas para proyectos ágiles e híbridos, comunicando el estado a todos los niveles de la organización.</p>
+        </div>
+        <div class="contenido-list">
+          <h4>Contenido temático</h4>
+          <ol>
+            <li>Principios en métricas: qué medir y por qué</li>
+            <li>Método GQM: Goal-Question-Metric</li>
+            <li>Métricas de velocidad, predictibilidad y calidad ágiles</li>
+            <li>Burndown chart, burnup chart, diagrama de flujo acumulativo</li>
+            <li>Reportes ejecutivos: dashboard para dirección general</li>
+            <li>Agilidad empresarial: OKRs y métricas de valor de negocio</li>
+          </ol>
+        </div>
+        <div class="actividad-box">
+          <strong>&#9997; Actividad práctica</strong>
+          <p>Construcción de dashboard de proyecto en Power BI con métricas combinadas predictivas-ágiles.</p>
+        </div>
+        <div class="herramientas-box">
+          <span style="font-size:0.72rem;font-weight:600;color:#92400e;margin-right:6px">HERRAMIENTAS:</span>
+          <span class="herramienta-tag">Power BI</span>
+          <span class="herramienta-tag">MS Excel</span>
+        </div>
+      </div>
+    </div>
+  </div><!-- fin bloque 2 -->
+
+  <!-- ════════ BLOQUE III ════════ -->
+  <div class="bloque-contenido" data-bloque="3">
+    <div class="bloque-header b3">
+      <div class="icon">&#128200;</div>
+      <div>
+        <h2>Bloque III — Gestión Estratégica, Financiera y de Valor</h2>
+        <span>Sesiones 11 a 15 · 30 horas · PMO · ROI · VPN · TIR · BPM · Bizagi</span>
+      </div>
+    </div>
+
+    <!-- S11 -->
+    <div class="sesion-card bloque-3" data-bloque="3" data-carreras="todas adm info ind" data-texto="pmo portafolio gobernanza opm3 kpi estrategia dirección">
+      <div class="sesion-header" onclick="toggleSesion(this.parentElement)">
+        <div class="sesion-num">11</div>
+        <div class="sesion-title">
+          <h3>PMO y Gestión de Portafolio de Proyectos</h3>
+          <p>Oficina de Proyectos · Gobernanza · KPIs · OPM3</p>
+        </div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sesion-body">
+        <div class="objetivo-box">
+          <strong>Objetivo de la sesión</strong>
+          <p>Diseñar una Oficina de Gestión de Proyectos que alinee el portafolio de TI con la estrategia corporativa y optimice la asignación de recursos.</p>
+        </div>
+        <div class="contenido-list">
+          <h4>Contenido temático</h4>
+          <ol>
+            <li>Tipos de PMO: apoyo, control y directiva</li>
+            <li>PMO como área estratégica para la entrega de valor</li>
+            <li>Gestión estratégica del portafolio: priorización y selección</li>
+            <li>Gobernanza de proyectos y portafolios: roles y comités</li>
+            <li>Medición del desempeño de la PMO: KPIs y cuadro de mando</li>
+            <li>Madurez organizacional: modelos OPM3</li>
+          </ol>
+        </div>
+        <div class="actividad-box">
+          <strong>&#9997; Actividad práctica</strong>
+          <p>Diseño de estructura de PMO y criterios de priorización de portafolio para empresa manufacturera o de transporte.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- S12 -->
+    <div class="sesion-card bloque-3" data-bloque="3" data-carreras="todas adm info ind trans auto" data-texto="riesgos montecarlo matriz probabilidad impacto ciberseguridad nube migración">
+      <div class="sesion-header" onclick="toggleSesion(this.parentElement)">
+        <div class="sesion-num">12</div>
+        <div class="sesion-title">
+          <h3>Gestión de Riesgos en Proyectos de TI</h3>
+          <p>Análisis cualitativo y cuantitativo · Montecarlo · Registro de riesgos</p>
+        </div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sesion-body">
+        <div class="objetivo-box">
+          <strong>Objetivo de la sesión</strong>
+          <p>Identificar, analizar y responder proactivamente a los riesgos de proyectos tecnológicos para proteger el valor del negocio y la continuidad operativa.</p>
+        </div>
+        <div class="contenido-list">
+          <h4>Contenido temático</h4>
+          <ol>
+            <li>Identificación de riesgos: lluvia de ideas, registro de riesgos</li>
+            <li>Análisis cualitativo: matriz de probabilidad e impacto</li>
+            <li>Análisis cuantitativo: simulación Montecarlo, árbol de decisiones</li>
+            <li>Estrategias de respuesta: evitar, transferir, mitigar, aceptar</li>
+            <li>Riesgos específicos de TI: ciberseguridad, obsolescencia, integración</li>
+            <li>Monitoreo y control de riesgos durante la ejecución</li>
+          </ol>
+        </div>
+        <div class="actividad-box">
+          <strong>&#9997; Actividad práctica</strong>
+          <p>Construcción del registro de riesgos y plan de respuesta para proyecto de migración a la nube.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- S13 -->
+    <div class="sesion-card bloque-3" data-bloque="3" data-carreras="todas adm info ind trans auto" data-texto="evaluación económica roi vpn tir payback capex opex business case dirección excel">
+      <div class="sesion-header" onclick="toggleSesion(this.parentElement)">
+        <div class="sesion-num">13</div>
+        <div class="sesion-title">
+          <h3>Evaluación Económica de Proyectos de TI</h3>
+          <p>ROI · VPN · TIR · Payback · Business Case · MS Excel</p>
+        </div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sesion-body">
+        <div class="objetivo-box">
+          <strong>Objetivo de la sesión</strong>
+          <p>Elaborar estudios de factibilidad económica y financiera para proyectos de tecnología que justifiquen la inversión ante el consejo directivo con argumentos sólidos.</p>
+        </div>
+        <div class="contenido-list">
+          <h4>Contenido temático</h4>
+          <ol>
+            <li>Contexto financiero del proyecto: CAPEX vs OPEX</li>
+            <li>Estimación de costos de inversión, operación y mantenimiento en TI</li>
+            <li>Estimación de beneficios: tangibles e intangibles</li>
+            <li>Indicadores financieros: ROI, VPN, TIR, Payback Period</li>
+            <li>Análisis de sensibilidad y escenarios (mejor/peor caso)</li>
+            <li>Estructura del Business Case ejecutivo: presentación a dirección</li>
+          </ol>
+        </div>
+        <div class="actividad-box">
+          <strong>&#9997; Actividad práctica</strong>
+          <p>Elaboración de Business Case completo para proyecto de TI con análisis financiero en MS Excel.</p>
+        </div>
+        <div class="herramientas-box">
+          <span style="font-size:0.72rem;font-weight:600;color:#92400e;margin-right:6px">HERRAMIENTAS:</span>
+          <span class="herramienta-tag">MS Excel</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- S14 -->
+    <div class="sesion-card bloque-3" data-bloque="3" data-carreras="todas adm info ind trans auto" data-texto="alineación estratégica gestión del cambio kotter adkar bani vuca resistencia">
+      <div class="sesion-header" onclick="toggleSesion(this.parentElement)">
+        <div class="sesion-num">14</div>
+        <div class="sesion-title">
+          <h3>Alineación Estratégica y Gestión del Cambio</h3>
+          <p>BANI · VUCA · Kotter · ADKAR · Adopción tecnológica</p>
+        </div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sesion-body">
+        <div class="objetivo-box">
+          <strong>Objetivo de la sesión</strong>
+          <p>Conectar los proyectos tecnológicos con la estrategia corporativa y gestionar la resistencia al cambio para garantizar la adopción exitosa de nuevas tecnologías.</p>
+        </div>
+        <div class="contenido-list">
+          <h4>Contenido temático</h4>
+          <ol>
+            <li>Planeación estratégica y su relación con el portafolio de TI</li>
+            <li>Análisis BANI y VUCA: gestión en entornos volátiles e inciertos</li>
+            <li>Modelos de gestión del cambio: Kotter, ADKAR, Lewin</li>
+            <li>El sistema de creencias y su impacto en la adopción tecnológica</li>
+            <li>Gestión emocional: resistencia, facilitación y consolidación del cambio</li>
+            <li>Matriz del cambio: planear, ejecutar, seguimiento y nueva cultura</li>
+          </ol>
+        </div>
+        <div class="actividad-box">
+          <strong>&#9997; Actividad práctica</strong>
+          <p>Diseño de plan de gestión del cambio para implementación de ERP o plataforma IoT industrial.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- S15 -->
+    <div class="sesion-card bloque-3" data-bloque="3" data-carreras="todas adm ind trans auto info" data-texto="bpm procesos negocio bpmn bizagi modelado as-is to-be automatización transformación digital">
+      <div class="sesion-header" onclick="toggleSesion(this.parentElement)">
+        <div class="sesion-num">15</div>
+        <div class="sesion-title">
+          <h3>Gestión de Procesos de Negocio (BPM)</h3>
+          <p>BPMN 2.0 · AS-IS / TO-BE · Bizagi · Automatización</p>
+        </div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sesion-body">
+        <div class="objetivo-box">
+          <strong>Objetivo de la sesión</strong>
+          <p>Modelar, analizar y optimizar procesos de negocio utilizando BPM para identificar oportunidades de automatización y mejora continua.</p>
+        </div>
+        <div class="contenido-list">
+          <h4>Contenido temático</h4>
+          <ol>
+            <li>Antecedentes y fundamentos de BPM</li>
+            <li>Notación BPMN 2.0: elementos y convenciones</li>
+            <li>Modelado de procesos AS-IS y TO-BE</li>
+            <li>Administración y simulación de procesos</li>
+            <li>BPM en proyectos de transformación digital</li>
+            <li>Herramientas: Bizagi, Camunda, Microsoft Visio</li>
+          </ol>
+        </div>
+        <div class="actividad-box">
+          <strong>&#9997; Actividad práctica</strong>
+          <p>Modelado AS-IS y TO-BE de proceso industrial o logístico en Bizagi Business Modeler.</p>
+        </div>
+        <div class="herramientas-box">
+          <span style="font-size:0.72rem;font-weight:600;color:#92400e;margin-right:6px">HERRAMIENTAS:</span>
+          <span class="herramienta-tag">Bizagi Business Modeler</span>
+          <span class="herramienta-tag">Camunda</span>
+        </div>
+      </div>
+    </div>
+  </div><!-- fin bloque 3 -->
+
+  <!-- ════════ BLOQUE IV ════════ -->
+  <div class="bloque-contenido" data-bloque="4">
+    <div class="bloque-header b4">
+      <div class="icon">&#128295;</div>
+      <div>
+        <h2>Bloque IV — Tecnología, Infraestructura y Calidad</h2>
+        <span>Sesiones 16 a 20 · 30 horas · ITIL · CMMI · ISO · Industria 4.0 · SAFe</span>
+      </div>
+    </div>
+
+    <!-- S16 -->
+    <div class="sesion-card bloque-4" data-bloque="4" data-carreras="todas info adm ind" data-texto="itil service desk sla ola incidentes problemas configuración cmdb servicios ti">
+      <div class="sesion-header" onclick="toggleSesion(this.parentElement)">
+        <div class="sesion-num">16</div>
+        <div class="sesion-title">
+          <h3>ITIL: Gestión de Servicios de TI</h3>
+          <p>Service Desk · SLA · Incidentes · Problemas · CMDB</p>
+        </div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sesion-body">
+        <div class="objetivo-box">
+          <strong>Objetivo de la sesión</strong>
+          <p>Implementar las mejores prácticas ITIL para gestionar servicios de TI con niveles de calidad y disponibilidad acordados con el negocio.</p>
+        </div>
+        <div class="contenido-list">
+          <h4>Contenido temático</h4>
+          <ol>
+            <li>Introducción a la gestión de servicios de TI: valor y propósito</li>
+            <li>Service Desk: centro de atención a usuarios y rol estratégico</li>
+            <li>Gestión de incidentes: clasificación, priorización, resolución</li>
+            <li>Gestión de problemas: análisis de causa raíz (RCA)</li>
+            <li>Gestión de la configuración: CMDB</li>
+            <li>Gestión de nivel de servicio: SLA, OLA, UC</li>
+          </ol>
+        </div>
+        <div class="actividad-box">
+          <strong>&#9997; Actividad práctica</strong>
+          <p>Diseño de proceso de gestión de incidentes para área de TI de empresa industrial.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- S17 -->
+    <div class="sesion-card bloque-4" data-bloque="4" data-carreras="todas info adm ind trans" data-texto="continuidad drp bcp capacidad disponibilidad mtbf mttr tco servicios ti financiero">
+      <div class="sesion-header" onclick="toggleSesion(this.parentElement)">
+        <div class="sesion-num">17</div>
+        <div class="sesion-title">
+          <h3>Continuidad, Capacidad y Gestión Financiera de TI</h3>
+          <p>DRP · BCP · MTBF · MTTR · TCO · Chargeback</p>
+        </div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sesion-body">
+        <div class="objetivo-box">
+          <strong>Objetivo de la sesión</strong>
+          <p>Garantizar la disponibilidad, continuidad y sostenibilidad financiera de los servicios de TI críticos para la operación del negocio.</p>
+        </div>
+        <div class="contenido-list">
+          <h4>Contenido temático</h4>
+          <ol>
+            <li>Gestión de cambios en TI: flujo de aprobación y control de versiones</li>
+            <li>Gestión de versiones y despliegues: planificación y rollback</li>
+            <li>Gestión de la capacidad: demanda actual y futura</li>
+            <li>Continuidad de los servicios TI: DRP y BCP</li>
+            <li>Gestión de la disponibilidad: métricas MTBF, MTTR</li>
+            <li>Gestión financiera TI: TCO y chargeback</li>
+          </ol>
+        </div>
+        <div class="actividad-box">
+          <strong>&#9997; Actividad práctica</strong>
+          <p>Elaboración de Plan de Continuidad del Negocio (BCP) para servicio crítico de TI.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- S18 -->
+    <div class="sesion-card bloque-4" data-bloque="4" data-carreras="todas info ind adm" data-texto="calidad cmmi iso 9000 cumplimiento contratos legal auditoría estándares">
+      <div class="sesion-header" onclick="toggleSesion(this.parentElement)">
+        <div class="sesion-num">18</div>
+        <div class="sesion-title">
+          <h3>Calidad, Cumplimiento y Estándares en Proyectos de TI</h3>
+          <p>CMMI · ISO 9000 · Cumplimiento normativo · Contratos</p>
+        </div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sesion-body">
+        <div class="objetivo-box">
+          <strong>Objetivo de la sesión</strong>
+          <p>Integrar estándares de calidad y cumplimiento normativo en los proyectos de TI para reducir retrabajos, auditorías y riesgos legales.</p>
+        </div>
+        <div class="contenido-list">
+          <h4>Contenido temático</h4>
+          <ol>
+            <li>Gestión de la calidad: planificar, asegurar y controlar</li>
+            <li>Métricas de calidad de software: defect density, code coverage</li>
+            <li>Modelos de madurez: CMMI niveles 1–5 e impacto en productividad</li>
+            <li>ISO 9000 en organizaciones de desarrollo de software</li>
+            <li>Legal and Regulatory Compliance en proyectos de TI</li>
+            <li>Tipos de contratos en la administración de proyectos tecnológicos</li>
+          </ol>
+        </div>
+        <div class="actividad-box">
+          <strong>&#9997; Actividad práctica</strong>
+          <p>Auditoría de calidad simulada y elaboración de plan de mejora de procesos.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- S19 -->
+    <div class="sesion-card bloque-4" data-bloque="4" data-carreras="todas ind trans auto info adm" data-texto="industria 4.0 iot inteligencia artificial rpa gemelo digital manufactura transformación digital">
+      <div class="sesion-header" onclick="toggleSesion(this.parentElement)">
+        <div class="sesion-num">19</div>
+        <div class="sesion-title">
+          <h3>Transformación Digital: Industria 4.0 y Tecnologías Emergentes</h3>
+          <p>IoT · IA · RPA · Digital Twin · Manufactura inteligente</p>
+        </div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sesion-body">
+        <div class="objetivo-box">
+          <strong>Objetivo de la sesión</strong>
+          <p>Identificar y evaluar tecnologías emergentes aplicables a proyectos industriales para diseñar iniciativas de transformación digital con impacto medible en el negocio.</p>
+        </div>
+        <div class="contenido-list">
+          <h4>Contenido temático</h4>
+          <ol>
+            <li>Industria 4.0: pilares tecnológicos y casos sectoriales</li>
+            <li>Internet de las Cosas (IoT): arquitectura y aplicaciones industriales</li>
+            <li>IA y Machine Learning en la gestión de operaciones</li>
+            <li>Automatización robótica de procesos (RPA): oportunidades y límites</li>
+            <li>Gemelo digital (Digital Twin): manufactura, logística y automotriz</li>
+            <li>Evaluación estratégica de adopción de tecnologías emergentes</li>
+          </ol>
+        </div>
+        <div class="actividad-box">
+          <strong>&#9997; Actividad práctica</strong>
+          <p>Diseño de iniciativa de transformación digital para un proceso de la carrera propia del participante.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- S20 -->
+    <div class="sesion-card bloque-4" data-bloque="4" data-carreras="todas info adm ind" data-texto="agilidad escalada safe scrum@scale nexus less programas múltiples equipos">
+      <div class="sesion-header" onclick="toggleSesion(this.parentElement)">
+        <div class="sesion-num">20</div>
+        <div class="sesion-title">
+          <h3>Agilidad Escalada y Gestión de Programas</h3>
+          <p>SAFe · Scrum@Scale · Nexus · LeSS · Coordinación multi-equipo</p>
+        </div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sesion-body">
+        <div class="objetivo-box">
+          <strong>Objetivo de la sesión</strong>
+          <p>Escalar metodologías ágiles a programas y portafolios en organizaciones medianas y grandes, coordinando múltiples equipos simultáneamente.</p>
+        </div>
+        <div class="contenido-list">
+          <h4>Contenido temático</h4>
+          <ol>
+            <li>Gestión de programas vs gestión de proyectos individuales</li>
+            <li>Beneficios y desafíos de la agilidad escalada</li>
+            <li>Scrum@Scale y Nexus: coordinación de múltiples equipos Scrum</li>
+            <li>SAFe: niveles team, program y portfolio</li>
+            <li>LeSS: estructura simplificada para escala</li>
+            <li>Evaluación y selección del marco según contexto organizacional</li>
+          </ol>
+        </div>
+        <div class="actividad-box">
+          <strong>&#9997; Actividad práctica</strong>
+          <p>Diseño del nivel de programa en SAFe para iniciativa tecnológica multi-equipo.</p>
+        </div>
+      </div>
+    </div>
+  </div><!-- fin bloque 4 -->
+
+  <!-- ════════ BLOQUE V ════════ -->
+  <div class="bloque-contenido" data-bloque="5">
+    <div class="bloque-header b5">
+      <div class="icon">&#127941;</div>
+      <div>
+        <h2>Bloque V — Liderazgo, Comunicación y Proyecto Integrador</h2>
+        <span>Sesiones 21 a 25 · 30 horas · Liderazgo · Comunicación · Defensa ante panel</span>
+      </div>
+    </div>
+
+    <!-- S21 -->
+    <div class="sesion-card bloque-5" data-bloque="5" data-carreras="todas adm ind trans auto info" data-texto="liderazgo colaborativo equipos alto desempeño coaching tuckman lencioni coaching ágil">
+      <div class="sesion-header" onclick="toggleSesion(this.parentElement)">
+        <div class="sesion-num">21</div>
+        <div class="sesion-title">
+          <h3>Liderazgo Colaborativo y Equipos de Alto Desempeño</h3>
+          <p>Liderazgo situacional · Tuckman · Lencioni · Coaching ágil</p>
+        </div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sesion-body">
+        <div class="objetivo-box">
+          <strong>Objetivo de la sesión</strong>
+          <p>Desarrollar competencias de liderazgo para crear ambientes colaborativos, empoderar equipos y maximizar el desempeño individual y colectivo en proyectos.</p>
+        </div>
+        <div class="contenido-list">
+          <h4>Contenido temático</h4>
+          <ol>
+            <li>Habilidades del líder de proyectos: técnicas vs. interpersonales</li>
+            <li>Estilos de liderazgo situacional: dirigir, entrenar, apoyar, delegar</li>
+            <li>Creación de ambiente colaborativo y psicología del equipo</li>
+            <li>Modelos de formación de equipos: Tuckman, Lencioni</li>
+            <li>Training, coaching y mentoring en equipos de proyecto</li>
+            <li>El líder-coach en equipos autodirigidos ágiles</li>
+          </ol>
+        </div>
+        <div class="actividad-box">
+          <strong>&#9997; Actividad práctica</strong>
+          <p>Diagnóstico del estilo de liderazgo personal y diseño del plan de desarrollo individual.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- S22 -->
+    <div class="sesion-card bloque-5" data-bloque="5" data-carreras="todas adm info ind trans auto" data-texto="interesados stakeholders comunicación poder interés conflictos plan comunicación">
+      <div class="sesion-header" onclick="toggleSesion(this.parentElement)">
+        <div class="sesion-num">22</div>
+        <div class="sesion-title">
+          <h3>Gestión de Involucrados y Comunicación Estratégica</h3>
+          <p>Mapeo poder/interés · Plan de comunicación · Gestión de conflictos</p>
+        </div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sesion-body">
+        <div class="objetivo-box">
+          <strong>Objetivo de la sesión</strong>
+          <p>Identificar, analizar y gestionar el compromiso de todos los interesados del proyecto para garantizar el respaldo necesario en cada etapa del ciclo de vida.</p>
+        </div>
+        <div class="contenido-list">
+          <h4>Contenido temático</h4>
+          <ol>
+            <li>Identificación de interesados: mapeo y análisis de poder/interés</li>
+            <li>Plan de compromiso de interesados: estrategias diferenciadas</li>
+            <li>Planificación de la comunicación: quién, qué, cuándo y cómo</li>
+            <li>Comunicación con la dirección: reportes y comités directivos</li>
+            <li>Gestión de conflictos: negociación y resolución</li>
+            <li>Comunicación intercultural en equipos distribuidos o globales</li>
+          </ol>
+        </div>
+        <div class="actividad-box">
+          <strong>&#9997; Actividad práctica</strong>
+          <p>Elaboración del plan de comunicación y registro de interesados para el proyecto integrador.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- S23 -->
+    <div class="sesion-card bloque-5" data-bloque="5" data-carreras="todas adm info ind trans auto" data-texto="optimización recursos cierre lecciones aprendidas outsourcing histograma nivelación">
+      <div class="sesion-header" onclick="toggleSesion(this.parentElement)">
+        <div class="sesion-num">23</div>
+        <div class="sesion-title">
+          <h3>Optimización de Recursos y Cierre de Proyectos</h3>
+          <p>Nivelación de recursos · Outsourcing · Cierre formal · Lecciones aprendidas</p>
+        </div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sesion-body">
+        <div class="objetivo-box">
+          <strong>Objetivo de la sesión</strong>
+          <p>Optimizar la asignación de recursos y ejecutar un cierre formal que capture lecciones aprendidas para la organización.</p>
+        </div>
+        <div class="contenido-list">
+          <h4>Contenido temático</h4>
+          <ol>
+            <li>Planificación de recursos: histograma y nivelación</li>
+            <li>Identificación y adquisición de recursos: contratos y outsourcing</li>
+            <li>Desarrollo del equipo: planes de capacitación y certificación</li>
+            <li>Monitoreo del desempeño del equipo: métricas y retroalimentación</li>
+            <li>Proceso de cierre del proyecto: entregables, aceptación formal</li>
+            <li>Lecciones aprendidas y gestión del conocimiento organizacional</li>
+          </ol>
+        </div>
+        <div class="actividad-box">
+          <strong>&#9997; Actividad práctica</strong>
+          <p>Elaboración del acta de cierre y repositorio de lecciones aprendidas para el proyecto integrador.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- S24 -->
+    <div class="sesion-card bloque-5" data-bloque="5" data-carreras="todas adm info ind trans auto" data-texto="taller proyecto integrador revisión retroalimentación defensa panel">
+      <div class="sesion-header" onclick="toggleSesion(this.parentElement)">
+        <div class="sesion-num">24</div>
+        <div class="sesion-title">
+          <h3>Taller de Proyecto Integrador: Desarrollo y Revisión</h3>
+          <p>Retroalimentación individual · Ajuste de entregables · Práctica de defensa</p>
+        </div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sesion-body">
+        <div class="objetivo-box">
+          <strong>Objetivo de la sesión</strong>
+          <p>Consolidar los entregables del proyecto integrador con retroalimentación personalizada del facilitador para asegurar la calidad de la presentación final.</p>
+        </div>
+        <div class="contenido-list">
+          <h4>Dinámica de la sesión</h4>
+          <ol>
+            <li>Revisión del avance por equipo: presentación ante pares</li>
+            <li>Retroalimentación del facilitador: fortalezas y áreas de mejora</li>
+            <li>Ajuste de análisis financiero y gestión de riesgos</li>
+            <li>Perfeccionamiento de la presentación ejecutiva</li>
+            <li>Práctica de defensa oral ante preguntas del panel</li>
+            <li>Checklist de entregables finales requeridos</li>
+          </ol>
+        </div>
+        <div class="actividad-box">
+          <strong>&#9997; Actividad principal</strong>
+          <p>Presentación de avance del proyecto integrador ante pares y retroalimentación cruzada entre equipos.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- S25 -->
+    <div class="sesion-card bloque-5" data-bloque="5" data-carreras="todas adm info ind trans auto" data-texto="presentación final defensa panel titulación cierre clausura proyecto integrador">
+      <div class="sesion-header" onclick="toggleSesion(this.parentElement)">
+        <div class="sesion-num">25</div>
+        <div class="sesion-title">
+          <h3>Presentación Final del Proyecto Integrador y Cierre del Seminario</h3>
+          <p>Defensa ante panel evaluador · Entrega de evidencias · Clausura</p>
+        </div>
+        <div class="chevron">&#9660;</div>
+      </div>
+      <div class="sesion-body">
+        <div class="objetivo-box">
+          <strong>Objetivo de la sesión</strong>
+          <p>Demostrar ante un panel evaluador el dominio de las competencias del seminario mediante la defensa oral y escrita del proyecto integrador de alcance real.</p>
+        </div>
+        <div class="contenido-list">
+          <h4>Estructura de la sesión</h4>
+          <ol>
+            <li>Presentación ejecutiva por equipo (15–20 min)</li>
+            <li>Defensa ante panel evaluador: preguntas y réplica</li>
+            <li>Evaluación del panel: criterios de éxito y retroalimentación formal</li>
+            <li>Entrega del informe final y carpeta de evidencias</li>
+            <li>Retroalimentación general del seminario</li>
+            <li>Clausura: reconocimientos y perspectivas profesionales</li>
+          </ol>
+        </div>
+        <div class="actividad-box">
+          <strong>&#128203; Entregables del Proyecto Integrador</strong>
+          <p>Project Charter · WBS + Cronograma (MS Project) · Registro de riesgos · Business Case con ROI/VPN/TIR (MS Excel) · Modelo BPM en Bizagi · Plan de gestión del cambio · Dashboard de métricas · Presentación ejecutiva (15–20 diapositivas)</p>
+        </div>
+      </div>
+    </div>
+  </div><!-- fin bloque 5 -->
+
+  <!-- ════════ RESUMEN ════════ -->
+  <div class="resumen-section">
+    <h2>Estructura y Evaluación</h2>
+
+    <div class="grid-info">
+      <!-- Tabla de bloques -->
+      <div class="info-card" style="grid-column: 1 / -1;">
+        <h3>Distribución por bloques</h3>
+        <table class="bloque-table">
+          <thead>
+            <tr><th>Bloque</th><th>Nombre</th><th>Sesiones</th><th>Horas</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>I</td><td>Fundamentos de la Gestión de Proyectos Tecnológicos</td><td>1–5</td><td>30 h</td></tr>
+            <tr><td>II</td><td>Metodologías Ágiles, Lean y DevOps</td><td>6–10</td><td>30 h</td></tr>
+            <tr><td>III</td><td>Gestión Estratégica, Financiera y de Valor</td><td>11–15</td><td>30 h</td></tr>
+            <tr><td>IV</td><td>Tecnología, Infraestructura y Calidad</td><td>16–20</td><td>30 h</td></tr>
+            <tr><td>V</td><td>Liderazgo, Comunicación y Proyecto Integrador</td><td>21–25</td><td>30 h</td></tr>
+            <tr><td><strong>Total</strong></td><td></td><td><strong>25 sesiones</strong></td><td><strong>150 h</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Evaluación -->
+      <div class="info-card">
+        <h3>Criterios de evaluación</h3>
+        <div class="eval-item">
+          <div class="eval-row">
+            <span>Participación y prácticas en sesión</span>
+            <span class="eval-pct">20%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:20%"></div></div>
+        </div>
+        <div class="eval-item">
+          <div class="eval-row">
+            <span>Entregables por bloque (5 entregables)</span>
+            <span class="eval-pct">30%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:30%"></div></div>
+        </div>
+        <div class="eval-item">
+          <div class="eval-row">
+            <span>Proyecto integrador escrito</span>
+            <span class="eval-pct">25%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:25%"></div></div>
+        </div>
+        <div class="eval-item">
+          <div class="eval-row">
+            <span>Presentación y defensa oral</span>
+            <span class="eval-pct">25%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:25%"></div></div>
+        </div>
+        <p style="font-size:0.78rem;color:var(--gris);margin-top:16px">Calificación mínima aprobatoria: <strong>80/100</strong> · Asistencia mínima: <strong>90%</strong> (23 de 25 sesiones)</p>
+      </div>
+
+      <!-- Carreras -->
+      <div class="info-card">
+        <h3>Relevancia por carrera</h3>
+        <div class="carrera-row">
+          <span class="carrera-nombre" style="color:#3b82f6">Adm. Industrial</span>
+          <span class="carrera-app">Digitalización de procesos administrativos y ERP</span>
+        </div>
+        <div class="carrera-row">
+          <span class="carrera-nombre" style="color:#16a34a">Ing. Informática</span>
+          <span class="carrera-app">Dirección técnica de proyectos de software e infraestructura</span>
+        </div>
+        <div class="carrera-row">
+          <span class="carrera-nombre" style="color:#9333ea">Ing. Industrial</span>
+          <span class="carrera-app">Automatización de procesos y Lean Digital (Industria 4.0)</span>
+        </div>
+        <div class="carrera-row">
+          <span class="carrera-nombre" style="color:#ea580c">Ing. Transporte</span>
+          <span class="carrera-app">Gestión logística, trazabilidad y plataformas de movilidad</span>
+        </div>
+        <div class="carrera-row">
+          <span class="carrera-nombre" style="color:#e8a020">Ing. Automotriz</span>
+          <span class="carrera-app">Manufactura inteligente, diagnóstico digital y vehículos conectados</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- fin container -->
+
+<footer>
+  <strong>Gestión Estratégica de Proyectos Tecnológicos: Transformación Digital y Valor Empresarial</strong><br>
+  Seminario de Titulación · 150 horas · 25 sesiones · TecNM<br>
+  Administración Industrial · Ing. Informática · Ing. Industrial · Ing. Transporte · Ing. Sistemas Automotrices
+</footer>
+
+<script>
+  // ── Acordeón de sesiones ──
+  function toggleSesion(card) {
+    card.classList.toggle('abierta');
+  }
+
+  // ── Tabs de bloque ──
+  function mostrarBloque(bloque, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('activo'));
+    btn.classList.add('activo');
+    document.querySelectorAll('.bloque-contenido').forEach(bc => {
+      bc.style.display = (bloque === 'todos' || bc.dataset.bloque === bloque) ? '' : 'none';
+    });
+  }
+
+  // ── Filtro por carrera ──
+  function filtrarCarrera(carrera, chip) {
+    document.querySelectorAll('.carrera-chip').forEach(c => c.classList.remove('activo'));
+    chip.classList.add('activo');
+    document.querySelectorAll('.sesion-card').forEach(card => {
+      const carreras = card.dataset.carreras || '';
+      card.style.display = (carrera === 'todas' || carreras.includes(carrera)) ? '' : 'none';
+    });
+  }
+
+  // ── Búsqueda en tiempo real ──
+  function buscar(q) {
+    q = q.toLowerCase().trim();
+    document.querySelectorAll('.sesion-card').forEach(card => {
+      const texto = (card.querySelector('h3').textContent + ' ' +
+                     card.querySelector('p').textContent + ' ' +
+                     (card.dataset.texto || '')).toLowerCase();
+      card.style.display = (!q || texto.includes(q)) ? '' : 'none';
+    });
+  }
+
+  // ── Abrir todas las sesiones si se busca algo ──
+  document.getElementById('searchInput').addEventListener('input', function() {
+    if (this.value.trim()) {
+      document.querySelectorAll('.bloque-contenido').forEach(b => b.style.display = '');
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('activo'));
+      document.querySelectorAll('.tab-btn')[0].classList.add('activo');
+    }
+  });
+</script>
+</body>
+</html>

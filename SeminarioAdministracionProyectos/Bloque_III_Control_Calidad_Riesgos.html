@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloque III — Control, Calidad y Riesgos</title>
+<style>
+:root{--bg:#03060f;--card:#0a1628;--border:#1e3a5f;--teal:#0d9488;--amber:#f59e0b;--indigo:#6366f1;--green:#10b981;--red:#ef4444;--blue:#3b82f6;--pink:#ec4899;--violet:#7c3aed;--muted:#64748b;--text:#e2e8f0;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden;height:100vh;}
+#navbar{position:fixed;top:0;left:0;right:0;height:54px;background:rgba(3,6,15,.96);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:100;backdrop-filter:blur(8px);}
+.brand{color:var(--red);font-weight:700;font-size:.85rem;letter-spacing:1px;}
+.brand span{color:var(--teal);}
+.stabs{display:flex;gap:6px;}
+.stabs button{background:transparent;border:1px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:20px;cursor:pointer;font-size:.75rem;transition:all .2s;}
+.stabs button.active{background:var(--red);border-color:var(--red);color:#fff;font-weight:700;}
+.stabs button:hover:not(.active){border-color:var(--red);color:var(--red);}
+#ctr{color:var(--muted);font-size:.8rem;min-width:80px;text-align:right;}
+#pb{position:fixed;top:54px;left:0;height:3px;background:linear-gradient(90deg,var(--red),var(--teal));transition:width .3s;z-index:100;}
+#sc{position:fixed;top:57px;left:0;right:0;bottom:40px;overflow:hidden;}
+.slide{position:absolute;top:0;left:0;right:0;bottom:0;padding:28px 48px;display:none;overflow-y:auto;animation:fi .35s ease;}
+.slide.active{display:flex;flex-direction:column;}
+@keyframes fi{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+#footer{position:fixed;bottom:0;left:0;right:0;height:40px;background:rgba(3,6,15,.96);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:16px;z-index:100;}
+#footer button{background:var(--card);border:1px solid var(--border);color:var(--text);padding:5px 20px;border-radius:6px;cursor:pointer;font-size:.8rem;transition:all .2s;}
+#footer button:hover{border-color:var(--red);color:var(--red);}
+.hint{color:var(--muted);font-size:.72rem;}
+h1{font-size:2rem;font-weight:800;line-height:1.2;margin-bottom:10px;}
+h2{font-size:1.45rem;font-weight:700;margin-bottom:14px;}
+h3{font-size:1rem;font-weight:600;color:var(--teal);margin-bottom:8px;margin-top:8px;}
+p{font-size:.9rem;line-height:1.65;margin-bottom:8px;}
+ul,ol{padding-left:20px;font-size:.88rem;line-height:1.8;}
+li{margin-bottom:3px;}
+.cover{align-items:center;justify-content:center;text-align:center;}
+.cover h1{font-size:2.2rem;background:linear-gradient(135deg,var(--red),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;}
+.badge{display:inline-block;border:1px solid var(--red);border-radius:8px;padding:8px 24px;color:var(--red);font-size:.9rem;font-weight:700;letter-spacing:2px;margin-bottom:20px;background:rgba(239,68,68,.08);}
+.sg{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px;}
+.sc2{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 14px;width:170px;text-align:left;}
+.sc2 .num{color:var(--red);font-size:.7rem;font-weight:700;}
+.sc2 .nm{font-size:.78rem;margin-top:4px;}
+.sub{color:var(--muted);font-size:1rem;}
+.cg{display:grid;gap:12px;margin-top:10px;}
+.cg.c2{grid-template-columns:1fr 1fr;}
+.cg.c3{grid-template-columns:1fr 1fr 1fr;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:15px;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.card.ct::before{background:var(--teal);}
+.card.ca::before{background:var(--amber);}
+.card.cg2::before{background:var(--green);}
+.card.ci::before{background:var(--indigo);}
+.card.cr::before{background:var(--red);}
+.card.cb::before{background:var(--blue);}
+.card.cv::before{background:var(--violet);}
+.card.cp::before{background:var(--pink);}
+.card h3{margin-top:0;font-size:.9rem;}
+.card p,.card ul,.card li{font-size:.84rem;}
+.box{border-radius:10px;padding:13px 17px;margin:9px 0;}
+.bm{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.4);}
+.bc{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.4);}
+.bl{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.4);}
+.bd{background:rgba(13,148,136,.08);border:1px solid rgba(13,148,136,.4);}
+.bq{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.4);cursor:pointer;}
+.bt{font-weight:700;font-size:.8rem;margin-bottom:5px;letter-spacing:.5px;}
+.bm .bt{color:#a78bfa;}
+.bc .bt{color:var(--amber);}
+.bl .bt{color:#34d399;}
+.bd .bt{color:var(--teal);}
+.bq .bt{color:#fbbf24;}
+.box p,.box li,.box ul{font-size:.86rem;}
+.qa{display:none;margin-top:7px;padding-top:7px;border-top:1px solid rgba(251,191,36,.3);color:#34d399;font-size:.84rem;}
+.bq.revealed .qa{display:block;}
+table{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:8px;}
+th{background:#071020;color:var(--teal);text-align:left;padding:7px 11px;border:1px solid var(--border);}
+td{padding:6px 11px;border:1px solid var(--border);vertical-align:top;}
+tr:nth-child(even) td{background:rgba(10,22,40,.6);}
+.tl{list-style:none;padding:0;margin-top:8px;}
+.tl li{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start;}
+.tl .st{min-width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.78rem;flex-shrink:0;}
+.tl .st.t{background:rgba(13,148,136,.15);border:2px solid var(--teal);color:var(--teal);}
+.tl .st.a{background:rgba(245,158,11,.15);border:2px solid var(--amber);color:var(--amber);}
+.tl .st.g{background:rgba(16,185,129,.15);border:2px solid var(--green);color:var(--green);}
+.tl .st.i{background:rgba(99,102,241,.15);border:2px solid var(--indigo);color:var(--indigo);}
+.tl .st.r{background:rgba(239,68,68,.15);border:2px solid var(--red);color:var(--red);}
+.tl .content h4{font-size:.88rem;font-weight:600;}
+.tl .content p{font-size:.82rem;color:var(--muted);margin:0;}
+.sr{display:flex;gap:12px;flex-wrap:wrap;margin:10px 0;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:13px 16px;flex:1;min-width:110px;text-align:center;}
+.stat .n{font-size:1.7rem;font-weight:800;line-height:1;}
+.stat .l{font-size:.7rem;color:var(--muted);margin-top:4px;}
+.ld{display:flex;flex-direction:column;gap:5px;margin:10px 0;}
+.lr{border-radius:6px;padding:7px 14px;font-size:.81rem;font-weight:600;}
+.rmatrix{display:grid;grid-template-columns:repeat(6,1fr);gap:3px;margin:10px 0;font-size:.72rem;text-align:center;}
+.rmatrix .rh{background:#071020;padding:4px;border-radius:4px;color:var(--muted);font-weight:700;}
+.rc-r{background:rgba(239,68,68,.4);border-radius:4px;padding:5px 3px;font-weight:700;color:#fff;}
+.rc-a{background:rgba(245,158,11,.4);border-radius:4px;padding:5px 3px;font-weight:700;color:#fff;}
+.rc-v{background:rgba(16,185,129,.4);border-radius:4px;padding:5px 3px;color:#fff;}
+.tag{display:inline-block;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:2px 9px;font-size:.74rem;color:var(--muted);margin:2px;}
+.slide::-webkit-scrollbar{width:4px;}
+.slide::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+</style>
+</head>
+<body>
+<div id="navbar">
+  <div class="brand">🎯 CONTROL &amp; <span>RIESGOS</span> · BLOQUE III</div>
+  <div class="stabs">
+    <button onclick="gts(0)" id="t0">S11</button>
+    <button onclick="gts(1)" id="t1">S12</button>
+    <button onclick="gts(2)" id="t2">S13</button>
+    <button onclick="gts(3)" id="t3">S14</button>
+    <button onclick="gts(4)" id="t4">S15</button>
+  </div>
+  <div id="ctr">1 / 1</div>
+</div>
+<div id="pb" style="width:0%"></div>
+<div id="sc">
+
+<!-- PORTADA -->
+<div class="slide active cover" data-s="0">
+  <div class="badge">BLOQUE III · SESIONES 11 – 15</div>
+  <h1>Control, Calidad<br>y Gestión de Riesgos</h1>
+  <p class="sub">Riesgos PMI · EVM · PDCA · Ishikawa · Pareto · DORA · Power BI · 30 horas</p>
+  <div class="sg">
+    <div class="sc2"><div class="num">SESIÓN 11</div><div class="nm">Gestión de Riesgos</div></div>
+    <div class="sc2"><div class="num">SESIÓN 12</div><div class="nm">EVM Completo</div></div>
+    <div class="sc2"><div class="num">SESIÓN 13</div><div class="nm">Monitoreo y Control</div></div>
+    <div class="sc2"><div class="num">SESIÓN 14</div><div class="nm">Calidad y Mejora</div></div>
+    <div class="sc2"><div class="num">SESIÓN 15</div><div class="nm">Métricas y Dashboards</div></div>
+  </div>
+  <p style="margin-top:24px;color:var(--muted);font-size:.8rem;">← → Espacio · Tabs S11–S15 para saltar sesión</p>
+</div>
+
+<!-- ═══ S11: GESTIÓN DE RIESGOS ═══ -->
+<div class="slide" data-s="0">
+  <h2>Sesión 11 — <span style="color:var(--red)">Gestión de Riesgos: Los 7 Pasos del PMI</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Gestionar riesgos no es ser pesimista — es ser un <strong>capitán de barco profesional</strong>. Un capitán novato espera que no haya tormentas. Un capitán experto revisa los mapas meteorológicos ANTES de zarpar, tiene rutas alternativas planificadas, y si de todas formas llega la tormenta, el barco tiene los equipos de seguridad preparados. Los proyectos sin gestión de riesgos son barcos sin bote salvavidas: navegan igual de bien en calma, pero cuando hay tormenta, todos se ahogan.</p>
+  </div>
+  <div class="sr" style="margin-top:12px;">
+    <div class="stat"><div class="n" style="color:var(--red)">56%</div><div class="l">de los proyectos fallidos identificaron los riesgos críticos con anticipación pero no actuaron (PMI)</div></div>
+    <div class="stat"><div class="n" style="color:var(--amber)">4:1</div><div class="l">ROI promedio de la gestión proactiva de riesgos: $4 ahorrados por cada $1 invertido en PM de riesgos</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">31%</div><div class="l">menos sobrecostos en proyectos con registro de riesgos formal y revisión periódica</div></div>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Los 7 Pasos del PMI para Gestión de Riesgos</h2>
+  <ul class="tl">
+    <li><div class="st r">1</div><div class="content"><h4>Planificar la Gestión de Riesgos</h4><p>Definir metodología, roles, categorías (RBS), niveles de tolerancia y escalas de probabilidad/impacto. Salida: Plan de Gestión de Riesgos.</p></div></li>
+    <li><div class="st a">2</div><div class="content"><h4>Identificar los Riesgos</h4><p>Técnicas: tormenta de ideas, Delphi, lista de verificación, FMEA, SWOT, entrevistas con expertos, lecciones aprendidas. Salida: Registro de Riesgos (Risk Register).</p></div></li>
+    <li><div class="st i">3</div><div class="content"><h4>Análisis Cualitativo</h4><p>Priorizar riesgos según Probabilidad × Impacto (Matriz 5×5). Urgencia y proximidad también cuentan. Objetivo: saber en qué riesgos concentrar esfuerzo.</p></div></li>
+    <li><div class="st g">4</div><div class="content"><h4>Análisis Cuantitativo</h4><p>Modelado numérico: Monte Carlo (simulación de escenarios), Árbol de Decisión (EMV), análisis de sensibilidad (tornado). Para proyectos complejos o de alto valor.</p></div></li>
+    <li><div class="st t">5</div><div class="content"><h4>Planificar Respuestas</h4><p>Amenazas: Evitar, Transferir, Mitigar, Aceptar (activa/pasiva). Oportunidades: Explotar, Compartir, Mejorar, Aceptar. Cada respuesta tiene dueño, costo y fecha.</p></div></li>
+    <li><div class="st r">6</div><div class="content"><h4>Implementar Respuestas</h4><p>Ejecutar los planes de respuesta. Asignar reservas de contingencia. Activar planes de contingencia cuando se disparan los triggers (disparadores) definidos.</p></div></li>
+    <li><div class="st a">7</div><div class="content"><h4>Monitorear Riesgos</h4><p>Revisar el Risk Register en cada reunión de seguimiento. Buscar riesgos emergentes. Cerrar riesgos que ya pasaron. Actualizar el score de cada riesgo activo.</p></div></li>
+  </ul>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Matriz de Riesgos P×I y FMEA</h2>
+  <div class="cg c2">
+    <div class="card cr">
+      <h3>Matriz Probabilidad × Impacto (5×5)</h3>
+      <div class="rmatrix">
+        <div class="rh">P\I</div><div class="rh">Muy bajo (1)</div><div class="rh">Bajo (2)</div><div class="rh">Medio (3)</div><div class="rh">Alto (4)</div><div class="rh">Muy Alto (5)</div>
+        <div class="rh">Casi seguro (5)</div><div class="rc-a">5</div><div class="rc-r">10</div><div class="rc-r">15</div><div class="rc-r">20</div><div class="rc-r">25</div>
+        <div class="rh">Probable (4)</div><div class="rc-v">4</div><div class="rc-a">8</div><div class="rc-r">12</div><div class="rc-r">16</div><div class="rc-r">20</div>
+        <div class="rh">Posible (3)</div><div class="rc-v">3</div><div class="rc-v">6</div><div class="rc-a">9</div><div class="rc-r">12</div><div class="rc-r">15</div>
+        <div class="rh">Poco prob. (2)</div><div class="rc-v">2</div><div class="rc-v">4</div><div class="rc-v">6</div><div class="rc-a">8</div><div class="rc-r">10</div>
+        <div class="rh">Raro (1)</div><div class="rc-v">1</div><div class="rc-v">2</div><div class="rc-v">3</div><div class="rc-v">4</div><div class="rc-a">5</div>
+      </div>
+      <div style="display:flex;gap:8px;font-size:.72rem;margin-top:6px;">
+        <span style="background:rgba(239,68,68,.4);padding:2px 8px;border-radius:4px;">Rojo 10+: Respuesta urgente</span>
+        <span style="background:rgba(245,158,11,.4);padding:2px 8px;border-radius:4px;">Amarillo 5-9: Monitorear activo</span>
+        <span style="background:rgba(16,185,129,.4);padding:2px 8px;border-radius:4px;">Verde 1-4: Aceptar/registro</span>
+      </div>
+    </div>
+    <div class="card ca">
+      <h3>FMEA — Análisis Modal de Fallas y Efectos</h3>
+      <p>Método para analizar fallas en procesos/productos antes de que ocurran:</p>
+      <p style="font-size:.85rem;margin-top:6px;"><strong>RPN = Severidad × Ocurrencia × Detectabilidad</strong></p>
+      <p style="font-size:.82rem;color:var(--muted);">Cada factor en escala 1–10. RPN &gt; 100 requiere acción correctiva.</p>
+      <table style="margin-top:8px;">
+        <tr><th>Falla Potencial</th><th>S</th><th>O</th><th>D</th><th>RPN</th><th>Prioridad</th></tr>
+        <tr><td>Falla del GPS en condiciones extremas</td><td>8</td><td>4</td><td>3</td><td><strong style="color:var(--red);">96</strong></td><td>Alta</td></tr>
+        <tr><td>Pérdida de datos en tránsito</td><td>9</td><td>3</td><td>2</td><td><strong style="color:var(--red);">54</strong></td><td>Media</td></tr>
+        <tr><td>Latencia en dashboard &gt;5s</td><td>5</td><td>5</td><td>4</td><td><strong>100</strong></td><td>Alta</td></tr>
+      </table>
+      <div class="box bl"><div class="bt">🔬 LABORATORIO</div>
+        <p>Identificar 8 riesgos del proyecto integrador. Construir la matriz P×I. Realizar FMEA de los 3 riesgos más críticos. Definir respuesta (EVMT) y dueño para cada uno.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ S12: EVM ═══ -->
+<div class="slide" data-s="1">
+  <h2>Sesión 12 — <span style="color:var(--amber)">Earned Value Management — El Radar del Proyecto</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>El EVM es como el <strong>cuadro de instrumentos de un avión</strong>: en un vistazo tells you si vas a tiempo (SPI), si vas dentro del presupuesto (CPI), dónde aterrizarás al final (EAC), y si todavía puedes corregir el rumbo (TCPI). Un piloto que solo mira el horizonte y no los instrumentos está volando a ciegas — igual que un PM que solo mira "¿cuánto hemos gastado?" sin EVM. El dinero gastado sin avance no cuenta como progreso real.</p>
+  </div>
+  <div class="cg c3" style="margin-top:12px;">
+    <div class="card ct"><h3>PV — Planned Value</h3><p><strong>Valor Planificado</strong>: ¿Cuánto trabajo DEBERÍA estar hecho hasta hoy, según el plan original?<br><span style="color:var(--muted);font-size:.82rem;">También llamado BCWS (Budgeted Cost of Work Scheduled)</span></p></div>
+    <div class="card ca"><h3>EV — Earned Value</h3><p><strong>Valor Ganado</strong>: ¿Cuánto trabajo EN REALIDAD está hecho hasta hoy (valorado al precio del plan)?<br><span style="color:var(--muted);font-size:.82rem;">También llamado BCWP. Ojo: se mide en dinero del plan, no del real.</span></p></div>
+    <div class="card cr"><h3>AC — Actual Cost</h3><p><strong>Costo Real</strong>: ¿Cuánto dinero REALMENTE hemos gastado hasta hoy?<br><span style="color:var(--muted);font-size:.82rem;">También llamado ACWP. Incluye todo: salarios, materiales, overhead.</span></p></div>
+  </div>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>EVM: Varianzas, Índices y Pronósticos</h2>
+  <div class="cg c2">
+    <div class="card ci">
+      <h3>Varianzas e Índices — La Calculadora del PM</h3>
+      <table>
+        <tr><th>Indicador</th><th>Fórmula</th><th>Interpretación</th></tr>
+        <tr><td><strong>CV (Varianza de Costo)</strong></td><td>EV – AC</td><td>&gt;0: bajo presupuesto ✅ &lt;0: sobreCosto ❌</td></tr>
+        <tr><td><strong>SV (Varianza de Cronograma)</strong></td><td>EV – PV</td><td>&gt;0: adelantado ✅ &lt;0: atrasado ❌</td></tr>
+        <tr><td><strong>CPI (Índice de Costo)</strong></td><td>EV / AC</td><td>&gt;1: eficiente ✅ &lt;1: ineficiente ❌</td></tr>
+        <tr><td><strong>SPI (Índice de Cronograma)</strong></td><td>EV / PV</td><td>&gt;1: adelantado ✅ &lt;1: atrasado ❌</td></tr>
+        <tr><td><strong>EAC (Estimación a la Terminación)</strong></td><td>BAC / CPI</td><td>¿Cuánto va a costar el proyecto completo?</td></tr>
+        <tr><td><strong>ETC (Estimación Para Terminar)</strong></td><td>EAC – AC</td><td>¿Cuánto más necesito gastar?</td></tr>
+        <tr><td><strong>VAC (Varianza a la Terminación)</strong></td><td>BAC – EAC</td><td>&gt;0: llegará bajo presupuesto ✅</td></tr>
+        <tr><td><strong>TCPI (Rendimiento Requerido)</strong></td><td>(BAC–EV)/(BAC–AC)</td><td>&lt;1: meta alcanzable ✅ &gt;1.1: muy difícil ❌</td></tr>
+      </table>
+    </div>
+    <div class="card cg2">
+      <h3>Ejemplo EVM Completo — Proyecto de Trazabilidad</h3>
+      <p style="font-size:.83rem;">Semana 10 de 20. BAC = $800,000</p>
+      <table>
+        <tr><th>Dato</th><th>Valor</th></tr>
+        <tr><td>PV (debería estar hecho)</td><td>$400,000</td></tr>
+        <tr><td>EV (valor trabajo real hecho)</td><td>$320,000</td></tr>
+        <tr><td>AC (lo que hemos gastado)</td><td>$380,000</td></tr>
+      </table>
+      <div style="font-size:.83rem;margin-top:8px;">
+        <p><strong>CV</strong> = $320K – $380K = <strong style="color:var(--red);">-$60,000</strong> (sobre presupuesto)</p>
+        <p><strong>SV</strong> = $320K – $400K = <strong style="color:var(--red);">-$80,000</strong> (atrasado)</p>
+        <p><strong>CPI</strong> = 320K/380K = <strong style="color:var(--red);">0.84</strong> (gastamos $1.19 por cada $1 de valor)</p>
+        <p><strong>SPI</strong> = 320K/400K = <strong style="color:var(--red);">0.80</strong> (avanzamos al 80% de la velocidad planeada)</p>
+        <p><strong>EAC</strong> = 800K/0.84 = <strong style="color:var(--amber);">$952,381</strong> (pronóstico final)</p>
+        <p><strong>VAC</strong> = 800K–952K = <strong style="color:var(--red);">-$152,381</strong> (sobrecosto proyectado)</p>
+        <p><strong>TCPI</strong> = (800K–320K)/(800K–380K) = <strong style="color:var(--amber);">1.14</strong> (muy difícil recuperar)</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>La Curva S y EVM en Contexto Ágil</h2>
+  <div class="cg c2">
+    <div class="card ct">
+      <h3>La Curva S — Visualización del Control</h3>
+      <p>La curva S del proyecto muestra en el eje Y el costo acumulado y en el eje X el tiempo. Una curva S saludable tiene:</p>
+      <ul style="font-size:.84rem;">
+        <li><strong>Línea PV (plan)</strong>: la curva S original del presupuesto</li>
+        <li><strong>Línea EV (valor ganado)</strong>: avance real valorado al precio plan</li>
+        <li><strong>Línea AC (costo real)</strong>: lo que realmente hemos gastado</li>
+      </ul>
+      <p style="font-size:.84rem;margin-top:8px;">Interpretación visual inmediata:</p>
+      <ul style="font-size:.84rem;">
+        <li>AC por ENCIMA de EV → estamos pagando de más (ineficiencia)</li>
+        <li>EV por DEBAJO de PV → vamos atrasados en avance</li>
+        <li>La brecha AC-EV en el tiempo = deuda financiera del proyecto</li>
+      </ul>
+      <div class="box bc"><div class="bt">📰 CASO NASA — EVM Salvó el Presupuesto</div>
+        <p style="font-size:.82rem;">La NASA empezó a usar EVM obligatoriamente en todos sus contratos desde 1967. Un estudio de 2010 mostró que proyectos con EVM tenían 30% más probabilidad de terminar dentro del presupuesto. Hoy es requisito para contratos del DoD de EE.UU. mayores a $50M.</p>
+      </div>
+    </div>
+    <div class="card ca">
+      <h3>EVM Ágil — Adaptación para Sprints</h3>
+      <p>En proyectos ágiles, el EVM se adapta:</p>
+      <table>
+        <tr><th>EVM Tradicional</th><th>EVM Ágil</th></tr>
+        <tr><td>PV por paquetes de trabajo</td><td>PV por puntos de historia planeados</td></tr>
+        <tr><td>EV por entregables aceptados</td><td>EV por historias de usuario completadas (DoD)</td></tr>
+        <tr><td>AC por horas/costos reportados</td><td>AC por horas del equipo consumidas en sprint</td></tr>
+        <tr><td>Curva S mensual</td><td>Burndown chart por sprint</td></tr>
+        <tr><td>EAC con CPI</td><td>Velocity × Sprints restantes</td></tr>
+      </table>
+      <div class="box bl"><div class="bt">🔬 LABORATORIO — EVM del Proyecto Integrador</div>
+        <p>Con los datos de la semana 8 (simulados por el instructor), calcular: PV, EV, AC, CV, SV, CPI, SPI, EAC, ETC, VAC, TCPI. Construir la curva S en Excel. Presentar: "¿está el proyecto en control? ¿qué medidas propones?"</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ S13: MONITOREO Y CONTROL ═══ -->
+<div class="slide" data-s="2">
+  <h2>Sesión 13 — <span style="color:var(--indigo)">Monitoreo, Control y Gestión del Cambio</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Controlar un proyecto sin un proceso de cambio formal es como <strong>navegar con el timón roto</strong>: la embarcación sigue moviéndose, pero sin dirección real. Cada "pequeño cambio" sin evaluación ni aprobación va desviando el rumbo. Lo que comenzó como "agregar solo esta funcionalidad" se convierte en semanas adicionales y miles de pesos extra que nadie aprobó, y nadie puede explicar exactamente cómo llegamos aquí. El Change Control Board es el timón.</p>
+  </div>
+  <div class="cg c2" style="margin-top:12px;">
+    <div class="card ci">
+      <h3>PDCA — El Ciclo de Mejora Continua</h3>
+      <ul class="tl">
+        <li><div class="st t">P</div><div class="content"><h4>Plan — Planificar</h4><p>Identificar la oportunidad de mejora. Establecer el plan de acción con KPIs medibles de éxito. Definir hipótesis.</p></div></li>
+        <li><div class="st a">D</div><div class="content"><h4>Do — Hacer</h4><p>Ejecutar el plan en escala pequeña (piloto). Documentar todo lo que ocurre, incluyendo lo inesperado.</p></div></li>
+        <li><div class="st i">C</div><div class="content"><h4>Check — Verificar</h4><p>Medir los resultados contra las métricas del Plan. ¿La mejora funcionó? ¿Los datos confirman la hipótesis?</p></div></li>
+        <li><div class="st g">A</div><div class="content"><h4>Act — Actuar</h4><p>Si funcionó: estandarizar y escalar. Si no: ajustar la hipótesis y volver al Plan. El ciclo nunca termina.</p></div></li>
+      </ul>
+    </div>
+    <div class="card ca">
+      <h3>Change Control Board (CCB) — Predictivo vs Ágil</h3>
+      <table>
+        <tr><th>Aspecto</th><th>Predictivo (CCB formal)</th><th>Ágil (PO + Backlog)</th></tr>
+        <tr><td><strong>¿Quién aprueba?</strong></td><td>CCB (PM, Sponsor, stakeholders)</td><td>Product Owner</td></tr>
+        <tr><td><strong>¿Cómo se solicita?</strong></td><td>CR formal por escrito</td><td>Historia de usuario en backlog</td></tr>
+        <tr><td><strong>¿Cuándo se evalúa?</strong></td><td>Reuniones CCB (semanal/quincenal)</td><td>En cada Sprint Planning</td></tr>
+        <tr><td><strong>¿Qué analiza?</strong></td><td>Impacto en triángulo alcance/tiempo/costo</td><td>Prioridad relativa vs otros ítems</td></tr>
+        <tr><td><strong>Change Log</strong></td><td>Registro formal de todos los CR</td><td>Historial del Product Backlog</td></tr>
+      </table>
+      <div class="box bd"><div class="bt">💡 SCOPE CREEP vs CHANGE MANAGEMENT</div>
+        <p>El scope creep ocurre cuando los cambios se implementan SIN pasar por el proceso de control. El Change Management es el antídoto: cualquier modificación al alcance, cronograma o presupuesto debe ser evaluada, aprobada (o rechazada) y documentada.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="2">
+  <h2>Técnicas de Control de Cronograma y Alcance</h2>
+  <div class="cg c2">
+    <div class="card ct">
+      <h3>Control de Cronograma — 5 Señales de Alerta</h3>
+      <ul style="font-size:.84rem;">
+        <li><strong>SPI &lt; 0.9</strong>: avanzamos al menos 10% más lento de lo planeado</li>
+        <li><strong>3 hitos consecutivos retrasados</strong>: señal de problema estructural en el plan</li>
+        <li><strong>Tareas de la ruta crítica iniciando tarde</strong>: el proyecto se retrasa día a día</li>
+        <li><strong>Recursos reportando más del 100% de carga</strong>: sobreasignación sistémica</li>
+        <li><strong>ETC creciendo cada semana</strong>: las estimaciones de lo que queda son incorrectas</li>
+      </ul>
+      <div class="box bc"><div class="bt">📰 CASO: Los Juegos Olímpicos de Londres 2012</div>
+        <p style="font-size:.82rem;">Uno de los proyectos de construcción más complejos de la historia: 70 lugares de competencia, $14.8B de presupuesto, 7 años. Se completó 1 mes antes de tiempo y dentro del presupuesto. Clave: revisiones EVM semanales por el comité olímpico, CCB activo, y gestión de riesgos con 30,000+ riesgos identificados y monitoreados.</p>
+      </div>
+    </div>
+    <div class="card cg2">
+      <h3>Baseline Review: ¿Cuándo Re-baselinar?</h3>
+      <p>La línea base del proyecto es la referencia de control. Solo se actualiza (re-baseline) cuando:</p>
+      <ul style="font-size:.84rem;">
+        <li>El alcance cambia significativamente por decisión del sponsor/cliente</li>
+        <li>Ocurre un evento externo mayor (pandemia, catástrofe, cambio regulatorio)</li>
+        <li>La línea base original ya es tan irrelevante que dificulta el control real</li>
+      </ul>
+      <p style="font-size:.84rem;margin-top:8px;"><strong>NO se re-baselina</strong> para "esconder" el pobre desempeño del equipo o para limpiar el historial de desvíos. El re-baseline requiere aprobación del Sponsor y debe documentarse en el Change Log.</p>
+    </div>
+  </div>
+  <div class="bq box" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Control de Cambios</div>
+    <p>El desarrollador líder te dice: "el cliente me pidió por chat agregar un módulo de reportes PDF. Ya lo hice, solo tomó 2 días." ¿Qué problema ocurrió? ¿Cuáles son las consecuencias? ¿Qué deberías hacer ahora?</p>
+    <div class="qa">Problema: scope creep en acción — un cambio de alcance se implementó sin pasar por el proceso de control de cambios (sin CR formal, sin análisis de impacto, sin aprobación del CCB). Consecuencias: el cronograma perdió 2 días sin que el plan refleje eso, el presupuesto consumió horas no autorizadas, y si hay problemas en el módulo, no está en el alcance formalmente, lo que crea ambigüedad en la responsabilidad. Acciones: (1) retroactivamente levantar un CR por el cambio ya hecho, (2) documentarlo en el Change Log, (3) analizar impacto real en cronograma y costo, (4) capacitar al equipo que TODOS los cambios van por el CCB, sin importar el canal por el que llegaron.</div>
+  </div>
+</div>
+
+<!-- ═══ S14: CALIDAD ═══ -->
+<div class="slide" data-s="3">
+  <h2>Sesión 14 — <span style="color:var(--green)">Gestión de Calidad: Herramientas y Cultura</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>La calidad en proyectos es como los <strong>semáforos del tráfico urbano</strong>: cuando funcionan bien, nadie los nota ni agradece. Solo se vuelven visibles cuando fallan. Lo mismo pasa con la calidad en proyectos: nadie celebra que "el sistema no tuvo errores" — eso se da por sentado. Lo que SÍ mata proyectos es descubrir los defectos al final, cuando el costo de corrección es 100 veces mayor que si los hubieras detectado en diseño. La regla 1-10-100: detectar en diseño cuesta $1; en construcción $10; en producción $100.</p>
+  </div>
+  <div class="cg c3" style="margin-top:12px;">
+    <div class="card cg2"><h3>Costo de la Calidad (CoQ)</h3><p><strong>Costo de Conformidad</strong> (invertir para evitar fallas):</p><ul style="font-size:.82rem;"><li>Prevención: capacitación, estándares, auditorías</li><li>Evaluación: pruebas, inspecciones, revisiones</li></ul><p style="margin-top:8px;"><strong>Costo de No-Conformidad</strong> (pagar por las fallas):</p><ul style="font-size:.82rem;"><li>Internas: reprocesos, desperdicio, retrabajos</li><li>Externas: garantías, reclamos, pérdida de clientes</li></ul></div>
+    <div class="card ct"><h3>Herramientas de Calidad — Los 7 Básicos</h3><ul style="font-size:.84rem;"><li><strong>1. Diagrama de Ishikawa</strong> (causa-efecto / espina de pescado)</li><li><strong>2. Pareto (80/20)</strong>: 20% de causas generan 80% de problemas</li><li><strong>3. Cartas de Control</strong>: límites de control estadístico (LSC/LIC)</li><li><strong>4. Histograma</strong>: distribución de datos de calidad</li><li><strong>5. Diagrama de dispersión</strong>: correlación causa-efecto</li><li><strong>6. Hoja de verificación</strong>: registro sistemático de defectos</li><li><strong>7. Diagrama de flujo</strong>: visualizar el proceso</li></ul></div>
+    <div class="card ca"><h3>DoD y DoR en Ágil</h3><p><strong>Definition of Done (DoD)</strong>: acuerdo del equipo sobre cuándo un ítem está "terminado de verdad". Ejemplo: código revisado + pruebas unitarias al 80% + integrado al main + documentado + aceptado por PO. Sin DoD, "terminado" significa 5 cosas diferentes para 5 personas.</p><p style="margin-top:8px;"><strong>Definition of Ready (DoR)</strong>: criterios para que una historia de usuario PUEDA entrar a un sprint. Sin DoR, el equipo acepta trabajo ambiguo que genera rework.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-s="3">
+  <h2>Diagrama de Ishikawa y Pareto en la Práctica</h2>
+  <div class="cg c2">
+    <div class="card ci">
+      <h3>Diagrama de Ishikawa — Las 6M</h3>
+      <p>Para un problema de "retrasos en entrega de módulos de software en el proyecto":</p>
+      <div style="background:#071020;border-radius:8px;padding:12px;font-size:.78rem;margin-top:6px;">
+        <div style="color:var(--red);font-weight:700;text-align:center;margin-bottom:8px;">EFECTO: Módulos entregados tarde</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div><div style="color:var(--teal);font-weight:600;">🔧 Método</div><div style="color:var(--muted);">• Sin revisión de código<br>• Estimaciones optimistas<br>• Falta de pruebas unitarias</div></div>
+          <div><div style="color:var(--amber);font-weight:600;">👥 Mano de obra</div><div style="color:var(--muted);">• Dev senior en múltiples proyectos<br>• Junior sin mentoría<br>• Alta rotación</div></div>
+          <div><div style="color:var(--indigo);font-weight:600;">💻 Máquina</div><div style="color:var(--muted);">• Ambiente de pruebas inestable<br>• CI/CD sin configurar<br>• Equipos lentos</div></div>
+          <div><div style="color:var(--green);font-weight:600;">📋 Material</div><div style="color:var(--muted);">• Requisitos incompletos<br>• APIs externas no documentadas<br>• Datos de prueba insuficientes</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card cg2">
+      <h3>Análisis de Pareto — Priorizar las Causas</h3>
+      <p>Regla 80/20: concentrar esfuerzo donde está el 80% del impacto.</p>
+      <table>
+        <tr><th>Causa de Defecto</th><th>Frec.</th><th>% Acumulado</th></tr>
+        <tr><td>Requisitos ambiguos</td><td>45</td><td style="color:var(--red);">38%</td></tr>
+        <tr><td>Sin pruebas unitarias</td><td>32</td><td style="color:var(--amber);">65%</td></tr>
+        <tr><td>Integración tardía</td><td>18</td><td style="color:var(--amber);">80%</td></tr>
+        <tr><td>Ambiente inestable</td><td>12</td><td>90%</td></tr>
+        <tr><td>Otras (8 causas)</td><td>12</td><td>100%</td></tr>
+      </table>
+      <p style="font-size:.82rem;color:var(--green);margin-top:8px;">→ Atacar las 3 primeras causas resuelve el 80% de los defectos. No disperses esfuerzo en las 8 causas menores.</p>
+      <div class="box bl"><div class="bt">🔬 LABORATORIO — Plan de Calidad</div>
+        <p>Construir el Plan de Calidad del proyecto integrador: identificar 5 entregables clave, definir criterios de aceptación para cada uno, definir métricas de calidad y su método de medición. Aplicar Pareto a los defectos más comunes del tipo de proyecto.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ S15: MÉTRICAS Y DASHBOARDS ═══ -->
+<div class="slide" data-s="4">
+  <h2>Sesión 15 — <span style="color:var(--blue)">Métricas, Dashboards y Storytelling Ejecutivo</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Tener datos sin un dashboard es como tener una biblioteca sin índice: la información existe, pero nadie sabe dónde está ni qué significa. Un buen dashboard ejecutivo es como el <strong>marcador de un partido de fútbol</strong>: en 2 segundos, cualquier persona sabe quién va ganando, cuánto tiempo queda, y si hay señales de alerta. El objetivo del PM no es inundar al sponsor con datos — es darle <strong>la respuesta a la pregunta que siempre tienen</strong>: "¿estamos bien?" en menos de 30 segundos.</p>
+  </div>
+  <div class="cg c2" style="margin-top:12px;">
+    <div class="card cb">
+      <h3>El Modelo GQM — Goal-Question-Metric</h3>
+      <p>Para definir métricas relevantes, no métricas por costumbre:</p>
+      <ul class="tl" style="margin-top:6px;">
+        <li><div class="st t">G</div><div class="content"><h4>Goal (Meta)</h4><p>¿Qué queremos lograr? "Mejorar la velocidad de entrega de software en producción"</p></div></li>
+        <li><div class="st a">Q</div><div class="content"><h4>Question (Pregunta)</h4><p>¿Cómo sabemos si logramos el goal? "¿Con qué frecuencia desplegamos a producción?"</p></div></li>
+        <li><div class="st g">M</div><div class="content"><h4>Metric (Métrica)</h4><p>¿Qué dato responde la pregunta? "Deployment frequency (despliegues/semana)"</p></div></li>
+      </ul>
+      <div class="box bd"><div class="bt">💡 DATO CLAVE</div>
+        <p>El error más común: medir lo que es fácil de medir, no lo que importa. Si tu goal es "aumentar la satisfacción del cliente" y solo mides "bugs cerrados", no estás midiendo lo correcto.</p>
+      </div>
+    </div>
+    <div class="card cv">
+      <h3>Métricas DORA — Engineering Excellence</h3>
+      <table>
+        <tr><th>Métrica DORA</th><th>Qué mide</th><th>Elite (top 1%)</th></tr>
+        <tr><td><strong>Deployment Frequency</strong></td><td>Frecuencia de despliegues a producción</td><td>Múltiples veces al día</td></tr>
+        <tr><td><strong>Lead Time for Changes</strong></td><td>De commit a producción</td><td>&lt;1 hora</td></tr>
+        <tr><td><strong>Change Failure Rate</strong></td><td>% despliegues que requieren rollback</td><td>&lt;5%</td></tr>
+        <tr><td><strong>Time to Restore Service</strong></td><td>De incidente a restauración</td><td>&lt;1 hora</td></tr>
+      </table>
+      <p style="font-size:.8rem;color:var(--muted);margin-top:6px;">Fuente: Google/DORA State of DevOps Report 2023. Organizaciones "elite" tienen 1,460× más despliegues y 3× menos fallos que las de bajo rendimiento.</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="4">
+  <h2>Métricas Ágiles y el Dashboard Ejecutivo</h2>
+  <div class="cg c2">
+    <div class="card ct">
+      <h3>Métricas Ágiles Esenciales</h3>
+      <table>
+        <tr><th>Métrica</th><th>Definición</th><th>Uso</th></tr>
+        <tr><td><strong>Velocity</strong></td><td>Puntos de historia completados por sprint</td><td>Predecir cuándo termina el proyecto</td></tr>
+        <tr><td><strong>Burndown Chart</strong></td><td>Trabajo restante vs tiempo en sprint</td><td>Detectar si el sprint está en riesgo</td></tr>
+        <tr><td><strong>Burnup Chart</strong></td><td>Trabajo hecho vs trabajo total</td><td>Mostrar progreso acumulado y scope changes</td></tr>
+        <tr><td><strong>Cumulative Flow Diagram (CFD)</strong></td><td>Trabajo en cada estado del Kanban a lo largo del tiempo</td><td>Identificar cuellos de botella y WIP excesivo</td></tr>
+        <tr><td><strong>Cycle Time</strong></td><td>Tiempo de "en proceso" a "terminado"</td><td>Medir eficiencia del equipo</td></tr>
+        <tr><td><strong>Throughput</strong></td><td>Historias completadas por unidad de tiempo</td><td>Planificar releases sin puntos de historia</td></tr>
+        <tr><td><strong>Happiness Index</strong></td><td>Bienestar del equipo (survey rápido)</td><td>Predictor temprano de problemas de rendimiento</td></tr>
+      </table>
+    </div>
+    <div class="card ca">
+      <h3>Dashboard Ejecutivo — Los 5 Paneles</h3>
+      <div class="ld" style="margin-top:6px;">
+        <div class="lr" style="background:rgba(13,148,136,.1);border:1px solid var(--teal);color:var(--teal);">1. SEMÁFORO RAG: Estado del proyecto (Rojo/Ámbar/Verde) + 1 línea de justificación</div>
+        <div class="lr" style="background:rgba(245,158,11,.1);border:1px solid var(--amber);color:var(--amber);">2. TRIÁNGULO: Alcance/Tiempo/Costo — ¿cuál está en riesgo?</div>
+        <div class="lr" style="background:rgba(99,102,241,.1);border:1px solid var(--indigo);color:var(--indigo);">3. EVM PANEL: CPI, SPI, EAC en una tarjeta de 3 indicadores</div>
+        <div class="lr" style="background:rgba(239,68,68,.1);border:1px solid var(--red);color:var(--red);">4. TOP 3 RIESGOS: Score, dueño y acción de mitigación activa</div>
+        <div class="lr" style="background:rgba(16,185,129,.1);border:1px solid var(--green);color:var(--green);">5. PRÓXIMOS HITOS: 30/60/90 días con % de avance estimado</div>
+      </div>
+      <div class="box bc"><div class="bt">📰 STORYTELLING EJECUTIVO</div>
+        <p style="font-size:.82rem;">El sponsor no quiere data dumps — quiere una narrativa: "El proyecto está al 65% de avance, con un CPI de 0.93 — estamos gastando 7% más de lo planeado. Las 3 acciones que tomamos esta semana para corregirlo son: (1) renegociar el contrato de proveedor X, (2) reasignar 2 recursos del módulo B al crítico C, (3) fast-tracking de las pruebas de integración." Esa es la presentación de 2 minutos que quieren escuchar.</p>
+      </div>
+    </div>
+  </div>
+  <div class="box bl"><div class="bt">🔬 LABORATORIO FINAL — Dashboard del Proyecto Integrador</div>
+    <p>Construir en Power BI o Excel el dashboard ejecutivo completo del proyecto integrador con los 5 paneles. Incluir: métricas EVM con los datos reales del ejercicio S12, top 3 riesgos del Risk Register, y semáforo RAG con justificación. Presentar ante el grupo como si fuera el sponsor: máximo 3 minutos, 1 pantalla.</p>
+  </div>
+</div>
+
+<!-- REFERENCIAS BLOQUE III -->
+<div class="slide cover" data-s="4">
+  <div class="badge">BLOQUE III — REFERENCIAS Y CIERRE</div>
+  <h1 style="font-size:1.8rem;background:linear-gradient(135deg,var(--red),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Fuentes Bibliográficas del Bloque III</h1>
+  <div class="cg c2" style="max-width:800px;margin:20px auto;text-align:left;">
+    <div class="card cr">
+      <h3>Gestión de Riesgos</h3>
+      <ul style="font-size:.84rem;">
+        <li>PMI (2021). <em>Practice Standard for Project Risk Management</em>. PMI.</li>
+        <li>Hulett, D. (2011). <em>Practical Schedule Risk Analysis</em>. Gower.</li>
+        <li>Hillson, D. &amp; Murray-Webster, R. (2017). <em>Understanding and Managing Risk Attitude</em>. Routledge.</li>
+      </ul>
+    </div>
+    <div class="card ca">
+      <h3>EVM y Control</h3>
+      <ul style="font-size:.84rem;">
+        <li>Fleming, Q. &amp; Koppelman, J. (2010). <em>Earned Value Project Management</em>, 4th Ed. PMI.</li>
+        <li>Lipke, W. (2012). <em>Earned Schedule</em>. lulu.com.</li>
+        <li>PMI (2019). <em>Practice Standard for Earned Value Management</em>, 3rd Ed.</li>
+      </ul>
+    </div>
+    <div class="card cg2">
+      <h3>Calidad y Mejora</h3>
+      <ul style="font-size:.84rem;">
+        <li>Juran, J.M. &amp; DeFeo, J. (2010). <em>Juran's Quality Handbook</em>, 6th Ed. McGraw-Hill.</li>
+        <li>Montgomery, D.C. (2020). <em>Introduction to Statistical Quality Control</em>, 8th Ed. Wiley.</li>
+        <li>PMI (2021). <em>PMBOK 7 — Quality Domain</em>. PMI.</li>
+      </ul>
+    </div>
+    <div class="card cb">
+      <h3>Métricas y DevOps</h3>
+      <ul style="font-size:.84rem;">
+        <li>Forsgren, N., Humble, J. &amp; Kim, G. (2018). <em>Accelerate: The Science of Lean Software and DevOps</em>. IT Revolution.</li>
+        <li>DORA (2023). <em>State of DevOps Report 2023</em>. Google Cloud.</li>
+        <li>Basili, V., Caldiera, G. &amp; Rombach, H.D. (1994). The Goal Question Metric Approach. <em>Encyclopedia of Software Engineering</em>.</li>
+      </ul>
+    </div>
+  </div>
+  <div style="margin-top:14px;">
+    <span class="tag">Riesgos PMI</span><span class="tag">FMEA</span><span class="tag">Monte Carlo</span>
+    <span class="tag">EVM</span><span class="tag">CPI/SPI</span><span class="tag">Curva S</span>
+    <span class="tag">Ishikawa</span><span class="tag">Pareto</span><span class="tag">DORA</span>
+    <span class="tag">Power BI</span><span class="tag">Dashboard RAG</span><span class="tag">GQM</span>
+  </div>
+</div>
+
+</div><!-- fin #sc -->
+<div id="footer">
+  <button onclick="prev()">← Anterior</button>
+  <span class="hint">← → · Espacio</span>
+  <button onclick="next()">Siguiente →</button>
+</div>
+<script>
+const slides=document.querySelectorAll('.slide'),total=slides.length;let cur=0;
+const ss=[];slides.forEach((s,i)=>{const v=parseInt(s.dataset.s);if(ss[v]===undefined)ss[v]=i;});
+function go(n){if(n<0||n>=total)return;slides[cur].classList.remove('active');cur=n;slides[cur].classList.add('active');document.getElementById('ctr').textContent=(cur+1)+' / '+total;document.getElementById('pb').style.width=((cur+1)/total*100)+'%';ut();slides[cur].scrollTop=0;}
+function next(){go(cur+1);}function prev(){go(cur-1);}function gts(i){go(ss[i]);}
+function ut(){const v=parseInt(slides[cur].dataset.s);for(let i=0;i<5;i++){const b=document.getElementById('t'+i);if(b)b.classList.toggle('active',i===v);}}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();}if(e.key==='ArrowLeft'){e.preventDefault();prev();}});
+ut();
+</script>
+</body>
+</html>
