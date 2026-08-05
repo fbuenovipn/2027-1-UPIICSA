@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Maestría en Seguridad Informática</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0e1a;--bg2:#111827;--bg3:#1a2235;
+  --cyan:#00d4ff;--green:#39ff14;--orange:#ff6b35;
+  --text:#e2e8f0;--muted:#94a3b8;
+  --border:rgba(0,212,255,.18);--glass:rgba(255,255,255,.03)
+}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+
+/* ── HEADER ── */
+header{
+  text-align:center;padding:72px 24px 52px;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(0,212,255,.06),transparent);
+  border-bottom:1px solid var(--border);position:relative;overflow:hidden
+}
+header::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(0,212,255,.03) 40px),
+             repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(0,212,255,.03) 40px);
+  pointer-events:none
+}
+.badge{
+  display:inline-block;padding:5px 14px;border:1px solid var(--border);
+  border-radius:20px;font-size:.72rem;color:var(--cyan);letter-spacing:.1em;
+  text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:22px;
+  background:rgba(0,212,255,.05)
+}
+header h1{font-size:clamp(1.8rem,5vw,3rem);font-weight:700;line-height:1.2;margin-bottom:12px}
+header h1 span{color:var(--cyan)}
+header p{color:var(--muted);font-size:1rem;max-width:560px;margin:0 auto;line-height:1.7}
+
+/* ── GRID ── */
+.container{max-width:1100px;margin:0 auto;padding:60px 24px 80px}
+.section-label{
+  font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--cyan);font-family:'JetBrains Mono',monospace;margin-bottom:28px;
+  display:flex;align-items:center;gap:10px
+}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px}
+
+/* ── CARD ── */
+.card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:14px;
+  padding:28px;cursor:pointer;text-decoration:none;color:inherit;
+  transition:.25s;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:14px
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--cyan),var(--green));
+  transform:scaleX(0);transform-origin:left;transition:.3s
+}
+.card:hover{border-color:rgba(0,212,255,.4);background:rgba(0,212,255,.03);transform:translateY(-3px)}
+.card:hover::before{transform:scaleX(1)}
+
+.card-head{display:flex;align-items:flex-start;gap:14px}
+.card-icon{
+  width:46px;height:46px;border-radius:10px;background:rgba(0,212,255,.08);
+  border:1px solid var(--border);display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;flex-shrink:0
+}
+.card-meta{flex:1}
+.card-num{
+  font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--cyan);
+  letter-spacing:.1em;margin-bottom:4px;opacity:.8
+}
+.card-title{font-size:1rem;font-weight:600;line-height:1.3;color:var(--text)}
+.card-desc{font-size:.82rem;color:var(--muted);line-height:1.65}
+.card-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.tag{
+  font-size:.68rem;padding:3px 9px;border-radius:12px;
+  background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.15);color:var(--cyan);
+  font-family:'JetBrains Mono',monospace
+}
+.card-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  padding-top:12px;border-top:1px solid var(--border);margin-top:auto
+}
+.card-units{font-size:.75rem;color:var(--muted)}
+.card-arrow{
+  width:30px;height:30px;border-radius:50%;background:rgba(0,212,255,.08);
+  border:1px solid var(--border);display:flex;align-items:center;justify-content:center;
+  color:var(--cyan);font-size:.85rem;transition:.2s
+}
+.card:hover .card-arrow{background:rgba(0,212,255,.2);border-color:var(--cyan)}
+
+/* ── INFO BAR ── */
+.info{
+  margin-top:56px;background:var(--bg2);border:1px solid var(--border);
+  border-radius:12px;padding:22px 28px;display:flex;gap:32px;flex-wrap:wrap;
+  align-items:center
+}
+.info-item{display:flex;align-items:center;gap:10px;font-size:.82rem;color:var(--muted)}
+.info-item strong{color:var(--text)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--cyan);flex-shrink:0}
+
+/* ── FOOTER ── */
+footer{text-align:center;padding:28px;border-top:1px solid var(--border);font-size:.78rem;color:var(--muted)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:640px){
+  header{padding:48px 20px 36px}
+  .container{padding:36px 18px 60px}
+  .grid{grid-template-columns:1fr}
+  .info{gap:16px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">Maestría en Seguridad Informática</div>
+  <h1>Materiales del <span>Curso</span></h1>
+  <p>Selecciona un módulo para acceder a la presentación interactiva. Contenidos alineados con ISO 27001:2022, NIST CSF 2.0, MITRE ATT&amp;CK v15 y marcos regulatorios vigentes.</p>
+</header>
+
+<div class="container">
+  <div class="section-label">Módulos del programa</div>
+
+  <div class="grid">
+
+    <!-- Módulo 1 -->
+    <a class="card" href="presentacion_seguridad_informatica.html">
+      <div class="card-head">
+        <div class="card-icon">🔐</div>
+        <div class="card-meta">
+          <div class="card-num">MÓDULO 01</div>
+          <div class="card-title">Gestión de la Seguridad y Delitos Informáticos</div>
+        </div>
+      </div>
+      <div class="card-desc">Fundamentos de la seguridad informática, marco legal, delitos cibernéticos, gestión de la información y principios CIA. Introducción al ecosistema normativo internacional.</div>
+      <div class="card-tags">
+        <span class="tag">CIA Triad</span>
+        <span class="tag">Delitos informáticos</span>
+        <span class="tag">Marco legal</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-units">10 unidades temáticas</span>
+        <div class="card-arrow">→</div>
+      </div>
+    </a>
+
+    <!-- Módulo 2 -->
+    <a class="card" href="presentacion_nube_redes_sociales.html">
+      <div class="card-head">
+        <div class="card-icon">☁️</div>
+        <div class="card-meta">
+          <div class="card-num">MÓDULO 02</div>
+          <div class="card-title">Seguridad en la Nube y Redes Sociales</div>
+        </div>
+      </div>
+      <div class="card-desc">Arquitecturas cloud (IaaS/PaaS/SaaS), modelos de responsabilidad compartida, CASB, SASE, Zero Trust y gestión de riesgos en entornos multinube y redes sociales corporativas.</div>
+      <div class="card-tags">
+        <span class="tag">Cloud Security</span>
+        <span class="tag">Zero Trust</span>
+        <span class="tag">SASE</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-units">10 unidades temáticas</span>
+        <div class="card-arrow">→</div>
+      </div>
+    </a>
+
+    <!-- Módulo 3 -->
+    <a class="card" href="presentacion_amenazas_vulnerabilidades.html">
+      <div class="card-head">
+        <div class="card-icon">⚠️</div>
+        <div class="card-meta">
+          <div class="card-num">MÓDULO 03</div>
+          <div class="card-title">Amenazas y Vulnerabilidades</div>
+        </div>
+      </div>
+      <div class="card-desc">Taxonomía de amenazas y actores, CVE/CVSS v4.0, CISA KEV, EPSS, MITRE ATT&amp;CK v15, hacking ético, análisis de vulnerabilidades en sistemas, redes Wi-Fi y aplicaciones web.</div>
+      <div class="card-tags">
+        <span class="tag">CVE/CVSS</span>
+        <span class="tag">MITRE ATT&amp;CK</span>
+        <span class="tag">Pentesting</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-units">11 unidades temáticas</span>
+        <div class="card-arrow">→</div>
+      </div>
+    </a>
+
+    <!-- Módulo 4 -->
+    <a class="card" href="presentacion_riesgos_controles.html">
+      <div class="card-head">
+        <div class="card-icon">📊</div>
+        <div class="card-meta">
+          <div class="card-num">MÓDULO 04</div>
+          <div class="card-title">Administración de Riesgos e Impactos</div>
+        </div>
+      </div>
+      <div class="card-desc">Comunicaciones OSI/TCP-IP, PKI e infraestructura de clave pública, IDS/IPS, SIEM, respuesta a incidentes, análisis de riesgos cuantitativo (FAIR) y gestión del impacto empresarial (BIA).</div>
+      <div class="card-tags">
+        <span class="tag">SIEM/SOC</span>
+        <span class="tag">BIA/BCP</span>
+        <span class="tag">FAIR</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-units">12 unidades temáticas</span>
+        <div class="card-arrow">→</div>
+      </div>
+    </a>
+
+    <!-- Módulo 5 -->
+    <a class="card" href="presentacion_normas_estandares.html">
+      <div class="card-head">
+        <div class="card-icon">📜</div>
+        <div class="card-meta">
+          <div class="card-num">MÓDULO 05</div>
+          <div class="card-title">Normas y Estándares de Seguridad Informática</div>
+        </div>
+      </div>
+      <div class="card-desc">Familia ISO/IEC 27000, NIST SP 800-30, ISA/IEC 62443 para OT/ICS, BS 25999/ISO 22301, RFC 2196, COBIT e ITIL. Marco regulatorio europeo: NIS2, DORA, RGPD, CRA, AI Act.</div>
+      <div class="card-tags">
+        <span class="tag">ISO 27001:2022</span>
+        <span class="tag">NIST CSF 2.0</span>
+        <span class="tag">NIS2/DORA</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-units">11 unidades temáticas</span>
+        <div class="card-arrow">→</div>
+      </div>
+    </a>
+
+    <!-- Módulo 6 -->
+    <a class="card" href="presentacion_proyecto_integrador.html">
+      <div class="card-head">
+        <div class="card-icon">🚀</div>
+        <div class="card-meta">
+          <div class="card-num">MÓDULO 06</div>
+          <div class="card-title">Proyecto Integrador de Seguridad Informática</div>
+        </div>
+      </div>
+      <div class="card-desc">Construcción completa de un SGSI: inventario de activos CIA, política de seguridad, análisis de vulnerabilidades, Risk Register, plan de tratamiento de riesgos, SoA y plan de continuidad.</div>
+      <div class="card-tags">
+        <span class="tag">SGSI completo</span>
+        <span class="tag">Risk Register</span>
+        <span class="tag">SoA ISO 27001</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-units">11 unidades + síntesis</span>
+        <div class="card-arrow">→</div>
+      </div>
+    </a>
+
+  </div><!-- /grid -->
+
+  <div class="info">
+    <div class="info-item"><div class="dot"></div><strong>6</strong>&nbsp;módulos disponibles</div>
+    <div class="info-item"><div class="dot"></div><strong>65+</strong>&nbsp;unidades temáticas</div>
+    <div class="info-item"><div class="dot"></div>Alineado con <strong>ISO 27001:2022</strong></div>
+    <div class="info-item"><div class="dot"></div>Contenidos actualizados <strong>2024–2025</strong></div>
+    <div class="info-item"><div class="dot"></div>Navegación con <strong>teclado ← →</strong></div>
+  </div>
+
+</div><!-- /container -->
+
+<footer>Materiales de seguridad informática · Contenidos alineados con estándares internacionales vigentes</footer>
+
+</body>
+</html>

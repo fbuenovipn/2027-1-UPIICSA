@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proyecto Integrador de Seguridad Informática</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0e1a;--bg2:#111827;--bg3:#1a2235;--cyan:#00d4ff;--green:#39ff14;--red:#ff4757;--orange:#ff6b35;--purple:#a855f7;--teal:#14b8a6;--text:#e2e8f0;--muted:#94a3b8;--border:rgba(0,212,255,.18);--glass:rgba(255,255,255,.03);--sw:270px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+#sidebar{position:fixed;top:0;left:0;width:var(--sw);height:100vh;background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;z-index:100;transition:.3s}
+.logo{padding:20px 18px 14px;border-bottom:1px solid var(--border)}
+.logo h2{font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--cyan);font-family:'JetBrains Mono',monospace}
+.logo p{font-size:.68rem;color:var(--muted);margin-top:3px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:10px 16px;cursor:pointer;transition:.2s;border-left:3px solid transparent;font-size:.79rem;color:var(--muted)}
+.nav-item:hover{background:var(--glass);color:var(--text)}
+.nav-item.active{border-left-color:var(--cyan);background:rgba(0,212,255,.07);color:var(--cyan)}
+.nav-item .ic{min-width:18px}
+#pbar{position:fixed;top:0;left:var(--sw);right:0;height:3px;background:var(--bg3);z-index:99}
+#pfill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--cyan));transition:.4s;width:0}
+#main{margin-left:var(--sw);padding:44px 48px 80px;min-height:100vh;max-width:980px}
+.sec{display:none;animation:fi .4s ease}
+.sec.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.hero{background:linear-gradient(135deg,#001420,#0a1422 50%,#0a0e1a);border:1px solid rgba(0,212,255,.25);border-radius:16px;padding:52px 44px;margin-bottom:36px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-40%;right:-8%;width:460px;height:460px;background:radial-gradient(circle,rgba(0,212,255,.07) 0%,transparent 70%);pointer-events:none}
+.badge{display:inline-block;background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.35);color:var(--cyan);font-size:.7rem;padding:4px 12px;border-radius:20px;font-family:'JetBrains Mono',monospace;letter-spacing:.05em;margin-bottom:18px}
+.hero h1{font-size:2rem;font-weight:700;line-height:1.2;margin-bottom:14px}
+.hero h1 span{color:var(--cyan)}
+.hero p{color:var(--muted);font-size:.97rem;line-height:1.7;max-width:600px}
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:28px 0}
+.sc{background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center}
+.sc .v{font-size:1.55rem;font-weight:700;color:var(--cyan);font-family:'JetBrains Mono',monospace}
+.sc .l{font-size:.71rem;color:var(--muted);margin-top:4px}
+.uh{background:linear-gradient(135deg,var(--bg3),var(--bg2));border:1px solid var(--border);border-radius:12px;padding:28px;margin-bottom:22px}
+.uh .un{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--cyan);text-transform:uppercase;letter-spacing:.12em}
+.uh h2{font-size:1.5rem;margin:7px 0 10px}
+.met{background:rgba(0,212,255,.05);border-left:3px solid var(--cyan);padding:13px 16px;border-radius:0 8px 8px 0;font-style:italic;color:var(--muted);font-size:.87rem;line-height:1.6}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}
+.card{background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:18px;transition:.2s}
+.card:hover{border-color:rgba(0,212,255,.35);background:rgba(0,212,255,.03)}
+.card h4{font-size:.81rem;color:var(--cyan);margin-bottom:8px}
+.card ul{font-size:.8rem;color:var(--muted);line-height:1.7;padding-left:15px}
+.card ul li{margin-bottom:4px}
+.fc{background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:22px;margin:14px 0}
+.fc h3{font-size:.93rem;color:var(--text);margin-bottom:10px}
+.fc p,.fc ul{font-size:.82rem;color:var(--muted);line-height:1.7}
+.fc ul{padding-left:16px}
+.fc ul li{margin-bottom:5px}
+.tags{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0}
+.tag{font-size:.69rem;padding:3px 9px;border-radius:12px;font-family:'JetBrains Mono',monospace}
+.tc{background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);color:var(--cyan)}
+.tg{background:rgba(57,255,20,.08);border:1px solid rgba(57,255,20,.2);color:var(--green)}
+.tr{background:rgba(255,71,87,.08);border:1px solid rgba(255,71,87,.2);color:var(--red)}
+.to{background:rgba(255,107,53,.08);border:1px solid rgba(255,107,53,.2);color:var(--orange)}
+.tp{background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.2);color:var(--purple)}
+.tt{background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);color:var(--cyan)}
+.alert{border-radius:10px;padding:14px 18px;margin:14px 0;font-size:.81rem;display:flex;gap:9px;align-items:flex-start}
+.ar{background:rgba(255,71,87,.07);border:1px solid rgba(255,71,87,.3);color:#ff6b7a}
+.ai{background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.3);color:var(--cyan)}
+.ao{background:rgba(255,107,53,.07);border:1px solid rgba(255,107,53,.3);color:var(--orange)}
+.at{background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.3);color:var(--cyan)}
+.rt{background:none;border:1px solid var(--border);color:var(--muted);padding:9px 16px;border-radius:8px;cursor:pointer;font-size:.77rem;margin-top:20px;transition:.2s;display:flex;align-items:center;gap:7px;font-family:'Inter',sans-serif}
+.rt:hover{border-color:var(--cyan);color:var(--cyan)}
+.rc{display:none;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:18px;margin-top:7px}
+.rc.open{display:block}
+.rc ul{padding-left:16px}
+.rc li{font-size:.75rem;color:var(--muted);margin-bottom:7px;line-height:1.5}
+.rc a{color:var(--cyan);text-decoration:none}
+.rc a:hover{text-decoration:underline}
+.nb{display:flex;justify-content:space-between;margin-top:44px;padding-top:22px;border-top:1px solid var(--border)}
+.btn{background:var(--glass);border:1px solid var(--border);color:var(--text);padding:9px 22px;border-radius:8px;cursor:pointer;font-size:.82rem;transition:.2s;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:7px}
+.btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.btn.pri{background:rgba(0,212,255,.1);border-color:var(--cyan);color:var(--cyan)}
+.btn.pri:hover{background:rgba(0,212,255,.18)}
+.phases{display:flex;gap:0;margin:16px 0;overflow-x:auto;padding-bottom:8px}
+.phase{flex:1;min-width:85px;background:var(--glass);border:1px solid var(--border);padding:12px 10px;text-align:center;position:relative}
+.phase:not(:last-child)::after{content:'→';position:absolute;right:-11px;top:50%;transform:translateY(-50%);color:var(--cyan);font-size:.9rem;z-index:1}
+.phase:first-child{border-radius:8px 0 0 8px}
+.phase:last-child{border-radius:0 8px 8px 0}
+.phase .pnum{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--cyan);text-transform:uppercase}
+.phase .ptitle{font-size:.74rem;font-weight:600;margin:4px 0 2px;color:var(--text)}
+.phase .pdesc{font-size:.67rem;color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:.79rem;margin:12px 0}
+th{background:var(--bg3);color:var(--text);padding:9px 12px;text-align:left;border-bottom:1px solid var(--border);font-weight:600}
+td{padding:8px 12px;color:var(--muted);border-bottom:1px solid rgba(255,255,255,.04)}
+tr:hover td{background:var(--glass)}
+.step-box{background:var(--glass);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin:10px 0;display:flex;gap:14px;align-items:flex-start}
+.step-num{background:rgba(0,212,255,.12);border:1px solid rgba(0,212,255,.3);color:var(--cyan);font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:6px;white-space:nowrap;margin-top:2px}
+.step-content h4{font-size:.84rem;color:var(--text);margin-bottom:5px}
+.step-content p{font-size:.79rem;color:var(--muted);line-height:1.6}
+#ham{display:none;position:fixed;top:12px;left:12px;z-index:200;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;cursor:pointer;flex-direction:column;gap:5px}
+#ham span{display:block;width:22px;height:2px;background:var(--cyan);border-radius:2px}
+#ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99}
+@media(max-width:768px){#ham{display:flex}#sidebar{transform:translateX(-100%)}#sidebar.open{transform:translateX(0)}#ov.open{display:block}#main{margin-left:0;padding:24px 18px 60px}#pbar{left:0}.sgrid,.cards{grid-template-columns:1fr}.hero{padding:28px 20px}.hero h1{font-size:1.4rem}.phases{flex-direction:column}.phase:not(:last-child)::after{display:none}}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
+.home-btn{display:block;margin:8px 16px 4px;padding:7px 12px;background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);border-radius:6px;color:var(--cyan);font-size:.76rem;text-decoration:none;text-align:center;transition:.2s}.home-btn:hover{background:rgba(0,212,255,.15);border-color:var(--cyan)}
+</style>
+</head>
+<body>
+<div id="ham" onclick="tog()"><span></span><span></span><span></span></div>
+<div id="ov" onclick="tog()"></div>
+<div id="pbar"><div id="pfill"></div></div>
+<nav id="sidebar"><div class="logo"><h2>🔒 Proyecto Integrador SI</h2><p>Maestría en Seguridad Informática</p></div><a href="index.html" class="home-btn">← Inicio</a><div id="nl"></div></nav>
+<main id="main">
+
+<!-- PORTADA -->
+<section class="sec active" data-id="0">
+<div class="hero">
+  <div class="badge">// Módulo 10 — Proyecto Integrador · Maestría en Seguridad Informática</div>
+  <h1>Proyecto Integrador de <span>Seguridad Informática</span></h1>
+  <p>Integra todos los conocimientos del programa para desarrollar un análisis de riesgos completo: identificación de activos, políticas, vulnerabilidades, amenazas, impactos, medición de riesgos e implementación de controles. Del diagnóstico al plan de acción.</p>
+</div>
+<div class="sgrid">
+  <div class="sc"><div class="v">$4.88M</div><div class="l">Costo promedio de una brecha de datos 2024 (IBM)</div></div>
+  <div class="sc"><div class="v">10 fases</div><div class="l">Del inventario de activos al plan de tratamiento</div></div>
+  <div class="sc"><div class="v">ISO+NIST</div><div class="l">Marcos integrados en la metodología del proyecto</div></div>
+</div>
+<div class="fc"><h3>🗺️ El flujo del proyecto integrador</h3>
+<div class="phases">
+  <div class="phase"><div class="pnum">U1</div><div class="ptitle">Activos</div><div class="pdesc">¿Qué proteger?</div></div>
+  <div class="phase"><div class="pnum">U2</div><div class="ptitle">Políticas</div><div class="pdesc">Reglas del juego</div></div>
+  <div class="phase"><div class="pnum">U3</div><div class="ptitle">Vulnerab.</div><div class="pdesc">¿Dónde hay brechas?</div></div>
+  <div class="phase"><div class="pnum">U4</div><div class="ptitle">Amenazas</div><div class="pdesc">¿Quién y cómo ataca?</div></div>
+  <div class="phase"><div class="pnum">U5</div><div class="ptitle">Mecanismos</div><div class="pdesc">Defensa activa</div></div>
+  <div class="phase"><div class="pnum">U6</div><div class="ptitle">Impactos</div><div class="pdesc">¿Cuánto cuesta?</div></div>
+  <div class="phase"><div class="pnum">U7</div><div class="ptitle">Riesgo</div><div class="pdesc">P × I = nivel</div></div>
+  <div class="phase"><div class="pnum">U8</div><div class="ptitle">Controles</div><div class="pdesc">Tratamiento</div></div>
+  <div class="phase"><div class="pnum">U9</div><div class="ptitle">Estándares</div><div class="pdesc">Marcos ISO/NIST</div></div>
+  <div class="phase"><div class="pnum">U10</div><div class="ptitle">Análisis</div><div class="pdesc">Plan de acción</div></div>
+</div></div>
+</section>
+<!-- U1: Identificación de activos -->
+<section class="sec" data-id="1">
+<div class="uh"><div class="un">Unidad 1</div><h2>🏢 Identificación de Activos</h2>
+<div class="met">"Los activos de información son el tesoro del galeón empresarial: antes de contratar guardias y cañones, necesitas saber exactamente qué hay en la bodega, qué cofres son vitales y cuáles son de adorno — porque proteger todo igual es proteger nada bien."</div></div>
+<div class="fc"><h3>📖 ¿Qué es un activo de información?</h3>
+<p>Un <strong>activo de información</strong> es cualquier elemento que tiene valor para la organización y que debe ser protegido. Según ISO/IEC 27001:2022, los activos incluyen tanto los componentes del sistema de información como la propia información que procesan. El primer paso de cualquier análisis de riesgos es el <strong>inventario completo de activos</strong>.</p></div>
+<div class="fc"><h3>🗂️ Taxonomía de activos (ISO 27005:2022)</h3>
+<table>
+<tr><th>Tipo</th><th>Ejemplos</th><th>Valor / Impacto si se pierde</th></tr>
+<tr><td><strong>Datos / Información</strong></td><td>BBDD clientes, propiedad intelectual, contratos, credenciales</td><td>Crítico — núcleo del negocio</td></tr>
+<tr><td><strong>Software</strong></td><td>Aplicaciones propias, ERP, SO, firmware, código fuente</td><td>Alto — operaciones dependen de él</td></tr>
+<tr><td><strong>Hardware físico</strong></td><td>Servidores, switches, portátiles, móviles, HSM, SAI</td><td>Medio-Alto — reemplazable con costo</td></tr>
+<tr><td><strong>Servicios</strong></td><td>Cloud (AWS/Azure), internet, electricidad, cooling, DNS</td><td>Alto — paraliza operaciones</td></tr>
+<tr><td><strong>Personas</strong></td><td>Empleados clave, administradores, CISO, proveedores</td><td>Crítico — conocimiento tácito irrecuperable</td></tr>
+<tr><td><strong>Instalaciones físicas</strong></td><td>CPD, oficinas, sala de servidores</td><td>Medio — afecta disponibilidad</td></tr>
+<tr><td><strong>Activos intangibles</strong></td><td>Reputación, marca, confianza del cliente, licencias</td><td>Crítico — difícil de recuperar</td></tr>
+</table></div>
+<div class="cards">
+  <div class="card"><h4>⚖️ Valoración de activos — Dimensiones CIA</h4><ul>
+    <li><strong>Confidencialidad:</strong> ¿qué pasa si la información se revela sin autorización?</li>
+    <li><strong>Integridad:</strong> ¿qué pasa si la información se altera sin autorización?</li>
+    <li><strong>Disponibilidad:</strong> ¿qué pasa si la información o el servicio no está accesible?</li>
+    <li>Escala típica: Muy Alto (5) → Alto (4) → Medio (3) → Bajo (2) → Muy Bajo (1)</li>
+    <li>El valor del activo = dimensión con puntuación más alta (criterio conservador)</li>
+  </ul></div>
+  <div class="card"><h4>🔄 Flujo de información y activos</h4><ul>
+    <li>Mapear cómo fluye la información entre activos (data flow diagram)</li>
+    <li>Identificar puntos de entrada y salida de datos sensibles</li>
+    <li>Clasificar la información: pública / interna / confidencial / secreta</li>
+    <li>Propietario del activo (Asset Owner): responsable de valorarlo y protegerlo</li>
+    <li>Custodio técnico (Asset Custodian): responsable operativo de la protección</li>
+  </ul></div>
+</div>
+<div class="fc"><h3>🛠️ Inventario de activos en 2024 — Herramientas</h3><ul>
+  <li><strong>CMDB (Configuration Management Database):</strong> base de datos centralizada de activos TI y sus relaciones; ServiceNow, Lansweeper, Device42</li>
+  <li><strong>Asset Discovery automático:</strong> Nmap, Qualys Asset Inventory, Microsoft Defender for Endpoint (inventario automático de endpoints)</li>
+  <li><strong>Cloud Asset Management:</strong> AWS Config, Azure Resource Graph, GCP Asset Inventory — inventario automático de activos cloud</li>
+  <li><strong>Shadow IT:</strong> activos no autorizados conectados a la red corporativa; herramientas como Netskope o Prisma Cloud los detectan</li>
+  <li><strong>CAASM (Cyber Asset Attack Surface Management):</strong> tendencia 2024 — gestión continua de la superficie de ataque basada en inventario de activos</li>
+</ul></div>
+<div class="alert at"><span>💡</span><span><strong>El activo más olvidado — las APIs:</strong> En 2024, OWASP publicó que las APIs son el vector de ataque más desatendido: el 41% de las organizaciones no tienen un inventario completo de sus APIs expuestas. Cada API no documentada es un activo sin valorar, sin propietario y sin controles — el blanco perfecto.</span></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>ISO/IEC 27005:2022. Information Security Risk Management. <a href="https://www.iso.org/standard/80585.html" target="_blank">iso.org/standard/80585</a></li>
+  <li>NIST. (2024). Cybersecurity Framework 2.0 — ID.AM (Asset Management). <a href="https://www.nist.gov/cyberframework" target="_blank">nist.gov/cyberframework</a></li>
+  <li>OWASP. (2023). API Security Top 10. <a href="https://owasp.org/API-Security/" target="_blank">owasp.org/API-Security</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(0)">← Portada</button><button class="btn pri" onclick="go(2)">Unidad 2 →</button></div>
+</section>
+
+<!-- U2: Políticas de seguridad -->
+<section class="sec" data-id="2">
+<div class="uh"><div class="un">Unidad 2</div><h2>📋 Identificación de Políticas de Seguridad</h2>
+<div class="met">"Una política de seguridad sin cultura de cumplimiento es como una señal de tráfico en medio del desierto: existe, es correcta, pero nadie la ve y nadie la sigue. La política vive cuando la gente la conoce, la entiende y sabe por qué importa."</div></div>
+<div class="fc"><h3>📖 ¿Qué es una política de seguridad informática?</h3>
+<p>Una <strong>política de seguridad informática</strong> es un documento formal que establece las reglas, directrices y prácticas que gobiernan cómo una organización gestiona, protege y distribuye su información. Define las expectativas de comportamiento de todos los actores (empleados, proveedores, clientes) y proporciona el marco dentro del cual operan los controles técnicos.</p></div>
+<div class="cards">
+  <div class="card"><h4>🏗️ Jerarquía documental de seguridad</h4><ul>
+    <li><strong>Política:</strong> declaración de alto nivel — QUÉ y POR QUÉ (aprobada por dirección)</li>
+    <li><strong>Estándar:</strong> requisitos específicos y medibles derivados de la política</li>
+    <li><strong>Procedimiento:</strong> pasos detallados de CÓMO cumplir los estándares</li>
+    <li><strong>Guía / Baseline:</strong> recomendaciones técnicas de configuración segura</li>
+    <li><strong>Plan:</strong> respuesta a incidentes, continuidad, recuperación</li>
+  </ul></div>
+  <div class="card"><h4>📝 Políticas esenciales del proyecto integrador</h4><ul>
+    <li>Política de Seguridad de la Información (PSI) — madre de todas las políticas</li>
+    <li>Política de Control de Acceso (PCA)</li>
+    <li>Política de Uso Aceptable (AUP)</li>
+    <li>Política de Clasificación de la Información</li>
+    <li>Política de Gestión de Incidentes</li>
+    <li>Política de Copias de Seguridad</li>
+    <li>Política de Teletrabajo y BYOD</li>
+    <li>Política de Gestión de Proveedores (Supply Chain)</li>
+  </ul></div>
+</div>
+<div class="fc"><h3>📊 Métricas, procedimientos y bitácoras</h3>
+<div class="cards">
+  <div class="card"><h4>📈 Métricas de gestión de seguridad</h4><ul>
+    <li>% de sistemas con patches aplicados en plazo</li>
+    <li>Número de incidentes por categoría/mes</li>
+    <li>MTTD y MTTR de incidentes</li>
+    <li>% empleados con formación de seguridad al día</li>
+    <li>Tasa de click en simulaciones de phishing</li>
+    <li>% cuentas privilegiadas con MFA activo</li>
+    <li>Número de no conformidades abiertas en SGSI</li>
+  </ul></div>
+  <div class="card"><h4>🗒️ Bitácoras y registros esenciales</h4><ul>
+    <li>Registro de incidentes de seguridad (ISO 27035)</li>
+    <li>Bitácora de cambios (Change Log) — ITIL Change Management</li>
+    <li>Registro de accesos privilegiados (PAM audit log)</li>
+    <li>Log de acceso a datos sensibles (GDPR Article 30)</li>
+    <li>Registro de auditorías y revisiones del SGSI</li>
+    <li>Bitácora de copias de seguridad y pruebas de restauración</li>
+  </ul></div>
+</div></div>
+<div class="fc"><h3>🔄 Ciclo de vida de una política de seguridad</h3>
+<div class="phases">
+  <div class="phase"><div class="pnum">01</div><div class="ptitle">Diseño</div><div class="pdesc">Identificar necesidades y riesgos</div></div>
+  <div class="phase"><div class="pnum">02</div><div class="ptitle">Aprobación</div><div class="pdesc">Alta dirección y legal</div></div>
+  <div class="phase"><div class="pnum">03</div><div class="ptitle">Difusión</div><div class="pdesc">Formación y comunicación</div></div>
+  <div class="phase"><div class="pnum">04</div><div class="ptitle">Implementación</div><div class="pdesc">Controles técnicos y org.</div></div>
+  <div class="phase"><div class="pnum">05</div><div class="ptitle">Monitoreo</div><div class="pdesc">Verificar cumplimiento</div></div>
+  <div class="phase"><div class="pnum">06</div><div class="ptitle">Revisión</div><div class="pdesc">Actualizar ante cambios (mínimo anual)</div></div>
+</div></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>ISO/IEC 27001:2022 Cláusula 5.2 — Política. <a href="https://www.iso.org/standard/27001" target="_blank">iso.org/standard/27001</a></li>
+  <li>SANS Institute. (2024). Security Policy Templates. <a href="https://www.sans.org/information-security-policy/" target="_blank">sans.org/information-security-policy</a></li>
+  <li>NIST SP 800-12 Rev.1. Introduction to Information Security. <a href="https://csrc.nist.gov/publications/detail/sp/800-12/rev-1/final" target="_blank">csrc.nist.gov</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(1)">← Unidad 1</button><button class="btn pri" onclick="go(3)">Unidad 3 →</button></div>
+</section>
+<!-- U3: Vulnerabilidades -->
+<section class="sec" data-id="3">
+<div class="uh"><div class="un">Unidad 3</div><h2>🔓 Identificación de Vulnerabilidades</h2>
+<div class="met">"Una vulnerabilidad es la grieta en el muro que el enemigo todavía no encontró. El profesional de seguridad debe encontrarla primero: porque si él no la descubre, el atacante sí lo hará — y entonces ya no es una grieta, es una puerta trasera."</div></div>
+<div class="fc"><h3>📖 Definición y tipos de vulnerabilidades</h3>
+<p>Una <strong>vulnerabilidad</strong> es una debilidad en un activo o en un control de seguridad que puede ser explotada por una o más amenazas para causar daño. Las vulnerabilidades no causan daño por sí solas — necesitan una amenaza que las explote y un activo expuesto.</p></div>
+<div class="cards">
+  <div class="card"><h4>💻 Vulnerabilidades técnicas</h4><ul>
+    <li><strong>Software sin parchear:</strong> CVEs conocidos no corregidos; vector #1 de explotación</li>
+    <li><strong>Misconfiguraciones:</strong> servicios expuestos, permisos excesivos, credenciales por defecto</li>
+    <li><strong>Código inseguro:</strong> SQLi, XSS, deserialización insegura, path traversal</li>
+    <li><strong>Cifrado débil:</strong> TLS 1.0/1.1, MD5, RSA &lt;2048 bits, contraseñas en texto claro</li>
+    <li><strong>Dependencias vulnerables:</strong> librerías de terceros con CVEs (SCA)</li>
+    <li><strong>Shadow IT / activos no gestionados</strong></li>
+  </ul></div>
+  <div class="card"><h4>👥 Vulnerabilidades humanas y organizativas</h4><ul>
+    <li><strong>Ingeniería social:</strong> la persona como vector más explotado</li>
+    <li><strong>Falta de formación:</strong> usuarios que no reconocen phishing</li>
+    <li><strong>Contraseñas débiles o reutilizadas:</strong> 80% de brechas involucran credenciales comprometidas</li>
+    <li><strong>Exceso de privilegios:</strong> violación del principio de menor privilegio</li>
+    <li><strong>Procesos sin controles:</strong> accesos no revocados a ex-empleados</li>
+    <li><strong>Falta de segregación de funciones</strong></li>
+  </ul></div>
+</div>
+<div class="fc"><h3>📊 CVE y CVSS — El lenguaje estándar de vulnerabilidades</h3>
+<table>
+<tr><th>Concepto</th><th>Definición</th><th>Recurso</th></tr>
+<tr><td><strong>CVE</strong> (Common Vulnerabilities and Exposures)</td><td>Identificador único para cada vulnerabilidad conocida. Ej: CVE-2024-3400</td><td>cve.mitre.org</td></tr>
+<tr><td><strong>NVD</strong> (National Vulnerability Database)</td><td>Base de datos del NIST con análisis y puntuación CVSS de cada CVE</td><td>nvd.nist.gov</td></tr>
+<tr><td><strong>CVSS v4.0</strong> (2023)</td><td>Sistema de puntuación 0-10: Crítico (&gt;9), Alto (7-8.9), Medio (4-6.9), Bajo (&lt;4)</td><td>first.org/cvss</td></tr>
+<tr><td><strong>CISA KEV</strong></td><td>Catálogo de vulnerabilidades conocidas activamente explotadas; prioridad máxima de parcheo</td><td>cisa.gov/kev</td></tr>
+<tr><td><strong>EPSS</strong></td><td>Exploit Prediction Scoring System: probabilidad de explotación en los próximos 30 días</td><td>first.org/epss</td></tr>
+</table></div>
+<div class="fc"><h3>🔍 Herramientas de identificación de vulnerabilidades 2024</h3><ul>
+  <li><strong>Vulnerability Scanners:</strong> Nessus (Tenable), Qualys, OpenVAS/Greenbone — escaneo de red y sistemas</li>
+  <li><strong>Web App Scanners:</strong> Burp Suite Pro, OWASP ZAP, Nuclei — vulnerabilidades en aplicaciones web</li>
+  <li><strong>SAST/DAST:</strong> análisis estático (SonarQube, Checkmarx) y dinámico del código fuente en CI/CD</li>
+  <li><strong>SCA:</strong> Software Composition Analysis — Snyk, Dependabot, OWASP Dependency-Check para librerías</li>
+  <li><strong>Pen Testing:</strong> Kali Linux, Metasploit Framework — identificación manual de vulnerabilidades complejas</li>
+  <li><strong>Cloud Security Posture:</strong> Wiz, Prisma Cloud — misconfiguraciones en cloud</li>
+</ul></div>
+<div class="alert ar"><span>⚠️</span><span><strong>Récord de vulnerabilidades 2023:</strong> La NVD publicó más de 29,000 CVEs en 2023 — el máximo histórico. El tiempo medio de explotación activa tras publicación de un CVE crítico cayó a menos de 5 días en 2024 (Mandiant M-Trends). Esto hace que la ventana de parcheo sea cada vez más estrecha y la priorización por EPSS/KEV sea imprescindible.</span></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>NIST NVD. <a href="https://nvd.nist.gov" target="_blank">nvd.nist.gov</a></li>
+  <li>FIRST. CVSS v4.0. <a href="https://www.first.org/cvss/" target="_blank">first.org/cvss</a></li>
+  <li>CISA KEV Catalog. <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" target="_blank">cisa.gov/known-exploited-vulnerabilities-catalog</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(2)">← Unidad 2</button><button class="btn pri" onclick="go(4)">Unidad 4 →</button></div>
+</section>
+
+<!-- U4: Amenazas -->
+<section class="sec" data-id="4">
+<div class="uh"><div class="un">Unidad 4</div><h2>⚡ Identificación de Amenazas</h2>
+<div class="met">"Una amenaza sin vulnerabilidad es como un ladrón frente a una cámara acorazada: tiene la intención pero no tiene el medio. Una vulnerabilidad sin amenaza es como una puerta abierta en el desierto: existe la debilidad pero nadie la usa. El riesgo nace cuando ambos convergen."</div></div>
+<div class="sgrid">
+  <div class="sc"><div class="v">APT28</div><div class="l">GRU ruso — actor estado-nación más activo en Europa 2024</div></div>
+  <div class="sc"><div class="v">$1.1B</div><div class="l">Pagos de ransomware en 2023 — récord absoluto (Chainalysis)</div></div>
+  <div class="sc"><div class="v">3.4B</div><div class="l">Correos de phishing enviados al día globalmente (2024)</div></div>
+</div>
+<div class="fc"><h3>🗂️ Taxonomía de amenazas (MAGERIT / ENISA 2024)</h3>
+<table>
+<tr><th>Categoría</th><th>Ejemplos actuales</th><th>Tendencia 2024</th></tr>
+<tr><td><strong>Malware</strong></td><td>Ransomware (LockBit, BlackCat), Infostealer (Redline, Lumma), Wiper</td><td>↑ RaaS + IA generativa</td></tr>
+<tr><td><strong>Ingeniería social</strong></td><td>Phishing, spear-phishing, vishing, smishing, BEC</td><td>↑ Deepfakes + LLMs</td></tr>
+<tr><td><strong>Amenaza interna</strong></td><td>Empleado negligente, insider malicioso, ex-empleado</td><td>↑ con rotación laboral</td></tr>
+<tr><td><strong>APT / Estado-nación</strong></td><td>Lazarus (Corea del Norte), APT28/29 (Rusia), APT41 (China), Volt Typhoon</td><td>↑ Infraestructura crítica</td></tr>
+<tr><td><strong>Supply chain</strong></td><td>SolarWinds, XZ Utils (2024), MOVEit Transfer (2023)</td><td>↑ Software de terceros</td></tr>
+<tr><td><strong>DoS / DDoS</strong></td><td>Botnets, amplificación DNS/NTP, HTTP/2 Rapid Reset (2023)</td><td>→ Estable con picos</td></tr>
+<tr><td><strong>Acceso no autorizado</strong></td><td>Credential stuffing, brute force, pass-the-hash, Kerberoasting</td><td>↑ IAM y credenciales</td></tr>
+<tr><td><strong>Físicas / Ambientales</strong></td><td>Robo de hardware, desastres naturales, cortes eléctricos</td><td>→ Estable</td></tr>
+</table></div>
+<div class="cards">
+  <div class="card"><h4>🎭 Actores de amenaza y motivaciones</h4><ul>
+    <li><strong>Ciberdelincuentes:</strong> motivación económica; RaaS, fraude, robo de credenciales</li>
+    <li><strong>Estado-nación (APT):</strong> espionaje, sabotaje, influencia geopolítica; recursos ilimitados</li>
+    <li><strong>Hacktivistas:</strong> motivación ideológica; DDoS, defacement, filtración de datos</li>
+    <li><strong>Insiders:</strong> empleados descontentos, negligentes o cooptados por actores externos</li>
+    <li><strong>Script kiddies:</strong> baja sofisticación; usan herramientas automáticas preconfiguradas</li>
+    <li><strong>Competidores:</strong> espionaje industrial; robo de PI y clientes</li>
+  </ul></div>
+  <div class="card"><h4>📊 Grados de amenaza — Probabilidad</h4><ul>
+    <li><strong>Muy Alta (5):</strong> ha ocurrido múltiples veces; el atacante tiene capacidad y motivación demostradas</li>
+    <li><strong>Alta (4):</strong> ha ocurrido al menos una vez en el sector; es técnicamente factible</li>
+    <li><strong>Media (3):</strong> podría ocurrir; existen técnicas conocidas; requiere habilidad moderada</li>
+    <li><strong>Baja (2):</strong> poco probable; requiere habilidad avanzada o motivación específica</li>
+    <li><strong>Muy Baja (1):</strong> casi imposible; técnicamente muy difícil o sin motivación</li>
+  </ul></div>
+</div>
+<div class="fc"><h3>🔗 MITRE ATT&amp;CK — El mapa de las amenazas reales</h3><ul>
+  <li><strong>Versión 15 (2024):</strong> 14 tácticas, 193 técnicas, 401 sub-técnicas para Enterprise</li>
+  <li>Base de conocimiento de TTPs (Tácticas, Técnicas y Procedimientos) documentados de actores reales</li>
+  <li>Permite mapear amenazas identificadas a técnicas concretas y a controles defensivos (D3FEND)</li>
+  <li><strong>ATT&amp;CK Navigator:</strong> herramienta visual gratuita para mapear cobertura defensiva</li>
+  <li><strong>Uso en el proyecto:</strong> para cada amenaza identificada, referenciar la técnica ATT&amp;CK correspondiente (Ej: T1566 — Phishing, T1059 — Command and Scripting Interpreter)</li>
+</ul></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>MITRE ATT&amp;CK v15. <a href="https://attack.mitre.org" target="_blank">attack.mitre.org</a></li>
+  <li>ENISA. (2024). Threat Landscape 2024. <a href="https://www.enisa.europa.eu/topics/cyber-threats/enisa-threat-landscape" target="_blank">enisa.europa.eu</a></li>
+  <li>Chainalysis. (2024). Crypto Crime Report. <a href="https://www.chainalysis.com/blog/crypto-crime-2024-update-ransomware/" target="_blank">chainalysis.com</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(3)">← Unidad 3</button><button class="btn pri" onclick="go(5)">Unidad 5 →</button></div>
+</section>
+<!-- U5: Mecanismos de seguridad -->
+<section class="sec" data-id="5">
+<div class="uh"><div class="un">Unidad 5</div><h2>🛡️ Mecanismos de Seguridad</h2>
+<div class="met">"Los mecanismos de seguridad son como las capas de una cebolla: el atacante que logra pelar la primera capa exterior se encuentra con otra, y otra más. Cada capa que penetra le cuesta tiempo, ruido y recursos — y ese ruido es el que el SOC escucha para detenerlo."</div></div>
+<div class="cards">
+  <div class="card"><h4>🔴 Mecanismos preventivos</h4><ul>
+    <li><strong>Objetivo:</strong> evitar que el incidente ocurra</li>
+    <li>Firewalls NGFW con inspección profunda (DPI)</li>
+    <li>Control de acceso: MFA, SSO, Zero Trust</li>
+    <li>Cifrado de datos en reposo y en tránsito</li>
+    <li>Parcheo y gestión de vulnerabilidades</li>
+    <li>Segmentación de red y microsegmentación</li>
+    <li>Security Awareness Training</li>
+    <li>WAF, Email Security Gateway (SPF/DKIM/DMARC)</li>
+  </ul></div>
+  <div class="card"><h4>🟡 Mecanismos detectivos</h4><ul>
+    <li><strong>Objetivo:</strong> identificar que el incidente está ocurriendo o ha ocurrido</li>
+    <li>IDS/IPS (Snort 3, Suricata 7)</li>
+    <li>SIEM (Microsoft Sentinel, Splunk, Elastic)</li>
+    <li>EDR/XDR (CrowdStrike, SentinelOne, Defender)</li>
+    <li>UEBA — detección de anomalías de comportamiento</li>
+    <li>Honeypots / Honeytokens</li>
+    <li>Auditoría y revisión de logs</li>
+    <li>Threat Hunting proactivo</li>
+  </ul></div>
+  <div class="card"><h4>🟢 Mecanismos correctivos</h4><ul>
+    <li><strong>Objetivo:</strong> limitar el daño y recuperar la normalidad</li>
+    <li>Incident Response (NIST SP 800-61 Rev.3)</li>
+    <li>Aislamiento automático de endpoints comprometidos (EDR)</li>
+    <li>Restauración desde backups inmutables (3-2-1-1)</li>
+    <li>Reconfiguración dinámica de reglas firewall (SOAR)</li>
+    <li>Plan de Continuidad del Negocio (BCP)</li>
+    <li>Parches de emergencia (zero-day response)</li>
+  </ul></div>
+  <div class="card"><h4>🔵 Mecanismos disuasivos</h4><ul>
+    <li><strong>Objetivo:</strong> desincentivar al atacante</li>
+    <li>Políticas de sanciones visibles y aplicadas</li>
+    <li>Marco legal y contractual (NDA, cláusulas penales)</li>
+    <li>Comunicación pública de capacidades defensivas</li>
+    <li>Bug bounty programs (demuestra madurez)</li>
+    <li>Certificaciones ISO 27001 visibles</li>
+  </ul></div>
+</div>
+<div class="fc"><h3>🔍 El proceso del ataque — Hacker Kill Chain</h3>
+<div class="phases">
+  <div class="phase"><div class="pnum">01</div><div class="ptitle">Reconocimiento</div><div class="pdesc">OSINT, Shodan</div></div>
+  <div class="phase"><div class="pnum">02</div><div class="ptitle">Armado</div><div class="pdesc">Exploit + payload</div></div>
+  <div class="phase"><div class="pnum">03</div><div class="ptitle">Entrega</div><div class="pdesc">Email, web, USB</div></div>
+  <div class="phase"><div class="pnum">04</div><div class="ptitle">Explotación</div><div class="pdesc">Ejecutar exploit</div></div>
+  <div class="phase"><div class="pnum">05</div><div class="ptitle">Instalación</div><div class="pdesc">Persistencia</div></div>
+  <div class="phase"><div class="pnum">06</div><div class="ptitle">C2</div><div class="pdesc">Comando y control</div></div>
+  <div class="phase"><div class="pnum">07</div><div class="ptitle">Acción</div><div class="pdesc">Exfiltrar / Cifrar</div></div>
+</div></div>
+<div class="fc"><h3>📊 Monitoreo y auditoría de sistemas</h3><ul>
+  <li><strong>Principio:</strong> no se puede proteger lo que no se monitorea; no se puede mejorar lo que no se mide</li>
+  <li><strong>Sysmon (Windows):</strong> módulo que registra eventos detallados de proceso, red y registro — gold standard para detección en endpoints Windows</li>
+  <li><strong>auditd (Linux):</strong> subsistema de auditoría del kernel Linux; registra llamadas al sistema</li>
+  <li><strong>Centralización en SIEM:</strong> todos los logs deben enviarse a un SIEM central para correlación</li>
+  <li><strong>Retención de logs:</strong> GDPR/PCI-DSS requieren mínimo 12 meses; NIS2 requiere 18 meses para sectores críticos</li>
+  <li><strong>Integridad de logs:</strong> los logs deben estar protegidos contra manipulación (WORM storage, firma digital)</li>
+</ul></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>Lockheed Martin. Cyber Kill Chain. <a href="https://www.lockheedmartin.com/en-us/capabilities/cyber/cyber-kill-chain.html" target="_blank">lockheedmartin.com</a></li>
+  <li>CIS Controls v8. <a href="https://www.cisecurity.org/controls/v8" target="_blank">cisecurity.org/controls/v8</a></li>
+  <li>NIST SP 800-92. Log Management Guide. <a href="https://csrc.nist.gov/publications/detail/sp/800-92/final" target="_blank">csrc.nist.gov</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(4)">← Unidad 4</button><button class="btn pri" onclick="go(6)">Unidad 6 →</button></div>
+</section>
+
+<!-- U6: Identificación de impactos -->
+<section class="sec" data-id="6">
+<div class="uh"><div class="un">Unidad 6</div><h2>💥 Identificación de Impactos</h2>
+<div class="met">"El impacto es la factura que llega después del incidente: puede ser tan obvia como el dinero del rescate, o tan invisible como la confianza de los clientes que nunca regresa. El BIA existe para leerla antes de que llegue y decidir cuánto vale pagar para que no llegue."</div></div>
+<div class="fc"><h3>📊 Dimensiones del impacto</h3>
+<table>
+<tr><th>Dimensión</th><th>Descripción</th><th>Ejemplos concretos 2024</th></tr>
+<tr><td><strong>Financiero directo</strong></td><td>Pérdidas económicas inmediatas</td><td>Rescate pagado, robo de fondos, penalizaciones contractuales</td></tr>
+<tr><td><strong>Financiero indirecto</strong></td><td>Costos derivados del incidente</td><td>Respuesta al incidente, honorarios legales, notificación de afectados, seguros</td></tr>
+<tr><td><strong>Reputacional</strong></td><td>Daño a la imagen y confianza</td><td>Pérdida de clientes, caída de cotización bursátil, cobertura negativa de prensa</td></tr>
+<tr><td><strong>Regulatorio / Legal</strong></td><td>Multas y sanciones</td><td>GDPR hasta 4% facturación global, NIS2 €10M, acción legal de afectados</td></tr>
+<tr><td><strong>Operacional</strong></td><td>Interrupción de operaciones</td><td>Tiempo de inactividad, pérdida de productividad, SLA incumplidos</td></tr>
+<tr><td><strong>Seguridad física</strong></td><td>Riesgo para personas</td><td>Ataques OT a plantas químicas, sistemas de agua, infraestructuras críticas</td></tr>
+</table></div>
+<div class="cards">
+  <div class="card"><h4>📈 Escala de impacto (cualitativa)</h4><ul>
+    <li><strong>Muy Alto (5) — Catastrófico:</strong> amenaza la supervivencia de la organización; pérdidas &gt;10M€ o pérdida de vidas</li>
+    <li><strong>Alto (4) — Severo:</strong> daño grave a operaciones críticas; pérdidas 1-10M€; multas regulatorias mayores</li>
+    <li><strong>Medio (3) — Moderado:</strong> daño significativo pero recuperable; pérdidas 100K-1M€</li>
+    <li><strong>Bajo (2) — Limitado:</strong> daño menor; pérdidas &lt;100K€; recuperación rápida</li>
+    <li><strong>Muy Bajo (1) — Despreciable:</strong> impacto mínimo; sin consecuencias materiales</li>
+  </ul></div>
+  <div class="card"><h4>🔄 BIA — Business Impact Analysis</h4><ul>
+    <li>Analiza qué procesos son críticos y cuánto cuesta cada hora de inactividad</li>
+    <li><strong>RTO:</strong> tiempo máximo tolerable de inactividad por proceso</li>
+    <li><strong>RPO:</strong> pérdida máxima de datos tolerable</li>
+    <li><strong>MTPD:</strong> tiempo máximo absoluto antes de quiebra / colapso</li>
+    <li>Resultado: tabla de prioridades de recuperación para el DRP/BCP</li>
+    <li>Revisión: obligatoria ante cambios organizacionales significativos</li>
+  </ul></div>
+</div>
+<div class="fc"><h3>💰 Casos de impacto real 2023-2024</h3><ul>
+  <li><strong>MGM Resorts (2023):</strong> ransomware paralizó hoteles durante 10 días → $100M de impacto total; iniciado con vishing al helpdesk</li>
+  <li><strong>MOVEit Transfer (2023):</strong> vulnerabilidad zero-day afectó a 2,600+ organizaciones; 94M personas afectadas; $2.7B en impacto total estimado</li>
+  <li><strong>Change Healthcare (2024):</strong> ataque ransomware a infraestructura sanitaria EE.UU.; $1.6B impacto; 1/3 del sistema de pago de recetas médico afectado</li>
+  <li><strong>CDK Global (2024):</strong> ransomware paralizó concesionarios de automóviles en EE.UU. durante semanas; $600M en pérdidas de ventas estimadas</li>
+</ul></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>IBM Security. (2024). Cost of a Data Breach 2024. <a href="https://www.ibm.com/reports/data-breach" target="_blank">ibm.com/reports/data-breach</a></li>
+  <li>ISO 22301:2019. Business Continuity Management. <a href="https://www.iso.org/standard/75106.html" target="_blank">iso.org/standard/75106</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(5)">← Unidad 5</button><button class="btn pri" onclick="go(7)">Unidad 7 →</button></div>
+</section>
+<!-- U7: Medición de riesgos -->
+<section class="sec" data-id="7">
+<div class="uh"><div class="un">Unidad 7</div><h2>📊 Medición de Riesgos</h2>
+<div class="met">"La matriz de riesgos es el tablero de ajedrez del CISO: sin él, juegas a ciegas moviendo piezas al azar. Con él, ves simultáneamente todos los peligros del tablero, sabes cuáles amenazan al rey (activos críticos) y puedes decidir qué defender primero con los recursos disponibles."</div></div>
+<div class="fc"><h3>📐 Fórmula fundamental del riesgo</h3>
+<div class="cards">
+  <div class="card"><h4>⚖️ Riesgo Inherente</h4><ul>
+    <li><strong>Riesgo = Probabilidad × Impacto</strong></li>
+    <li>Probabilidad: que la amenaza explote la vulnerabilidad</li>
+    <li>Impacto: consecuencia si el riesgo se materializa</li>
+    <li>Se calcula ANTES de aplicar controles</li>
+    <li>Escala típica: 1-5 × 1-5 = 1-25</li>
+  </ul></div>
+  <div class="card"><h4>🛡️ Riesgo Residual</h4><ul>
+    <li>Riesgo que QUEDA después de implementar controles</li>
+    <li>Riesgo Residual = Riesgo Inherente − Efectividad del control</li>
+    <li>Si riesgo residual &gt; apetito de riesgo → implementar más controles</li>
+    <li>Si riesgo residual ≤ apetito de riesgo → aceptar formalmente</li>
+    <li>Documentar la decisión: firma del risk owner</li>
+  </ul></div>
+</div></div>
+<div class="fc"><h3>🎯 Matriz de riesgos 5×5</h3>
+<table>
+<tr><th>Impacto ↓ / Probabilidad →</th><th>Muy Baja (1)</th><th>Baja (2)</th><th>Media (3)</th><th>Alta (4)</th><th>Muy Alta (5)</th></tr>
+<tr><td><strong>Muy Alto (5)</strong></td><td style="background:rgba(255,107,53,.15);color:var(--orange)">5 — Medio</td><td style="background:rgba(255,71,87,.15);color:var(--red)">10 — Alto</td><td style="background:rgba(255,71,87,.2);color:var(--red)">15 — Crítico</td><td style="background:rgba(255,71,87,.25);color:var(--red)">20 — Crítico</td><td style="background:rgba(255,71,87,.3);color:var(--red)">25 — Crítico</td></tr>
+<tr><td><strong>Alto (4)</strong></td><td style="background:rgba(57,255,20,.1);color:var(--green)">4 — Bajo</td><td style="background:rgba(255,107,53,.12);color:var(--orange)">8 — Medio</td><td style="background:rgba(255,71,87,.15);color:var(--red)">12 — Alto</td><td style="background:rgba(255,71,87,.2);color:var(--red)">16 — Crítico</td><td style="background:rgba(255,71,87,.25);color:var(--red)">20 — Crítico</td></tr>
+<tr><td><strong>Medio (3)</strong></td><td style="background:rgba(57,255,20,.1);color:var(--green)">3 — Bajo</td><td style="background:rgba(57,255,20,.12);color:var(--green)">6 — Bajo</td><td style="background:rgba(255,107,53,.12);color:var(--orange)">9 — Medio</td><td style="background:rgba(255,71,87,.15);color:var(--red)">12 — Alto</td><td style="background:rgba(255,71,87,.18);color:var(--red)">15 — Crítico</td></tr>
+<tr><td><strong>Bajo (2)</strong></td><td style="background:rgba(57,255,20,.08);color:var(--green)">2 — Bajo</td><td style="background:rgba(57,255,20,.1);color:var(--green)">4 — Bajo</td><td style="background:rgba(57,255,20,.12);color:var(--green)">6 — Bajo</td><td style="background:rgba(255,107,53,.1);color:var(--orange)">8 — Medio</td><td style="background:rgba(255,107,53,.12);color:var(--orange)">10 — Alto</td></tr>
+<tr><td><strong>Muy Bajo (1)</strong></td><td style="background:rgba(57,255,20,.06);color:var(--green)">1 — Bajo</td><td style="background:rgba(57,255,20,.08);color:var(--green)">2 — Bajo</td><td style="background:rgba(57,255,20,.1);color:var(--green)">3 — Bajo</td><td style="background:rgba(57,255,20,.12);color:var(--green)">4 — Bajo</td><td style="background:rgba(255,107,53,.08);color:var(--orange)">5 — Medio</td></tr>
+</table></div>
+<div class="cards">
+  <div class="card"><h4>📏 Análisis cualitativo vs cuantitativo</h4><ul>
+    <li><strong>Cualitativo:</strong> escalas descriptivas (Alto/Medio/Bajo); rápido, intuitivo, menos preciso; ideal para PYMES y primera iteración</li>
+    <li><strong>Cuantitativo (FAIR):</strong> expresado en € / $; más preciso; requiere datos históricos; ideal para empresas con historial de incidentes</li>
+    <li><strong>Semi-cuantitativo:</strong> híbrido; escalas numéricas con rangos monetarios asociados a cada nivel; el más usado en la práctica</li>
+  </ul></div>
+  <div class="card"><h4>📋 Registro de riesgos (Risk Register)</h4><ul>
+    <li>Documento central del análisis: un riesgo por fila</li>
+    <li>Campos: ID riesgo, activo, amenaza, vulnerabilidad, probabilidad, impacto, riesgo inherente, controles existentes, riesgo residual, tratamiento, propietario, fecha revisión</li>
+    <li>Herramientas: hoja Excel/Google Sheets, RiskWatch, Archer, ServiceNow GRC, Vanta</li>
+    <li>Debe revisarse ante cambios del entorno y mínimo anual</li>
+  </ul></div>
+</div>
+<div class="alert at"><span>💡</span><span><strong>Apetito de riesgo (Risk Appetite):</strong> Nivel de riesgo que la organización está dispuesta a aceptar para alcanzar sus objetivos estratégicos. Debe estar definido y aprobado por la alta dirección. Sin apetito de riesgo definido, no existe criterio para decidir qué riesgos tratar primero — el analista no puede actuar con autonomía responsable.</span></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>ISO/IEC 27005:2022. Risk Management. <a href="https://www.iso.org/standard/80585.html" target="_blank">iso.org/standard/80585</a></li>
+  <li>FAIR Institute. Factor Analysis of Information Risk. <a href="https://www.fairinstitute.org" target="_blank">fairinstitute.org</a></li>
+  <li>NIST SP 800-30 Rev.1. Risk Assessments. <a href="https://csrc.nist.gov/publications/detail/sp/800-30/rev-1/final" target="_blank">csrc.nist.gov</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(6)">← Unidad 6</button><button class="btn pri" onclick="go(8)">Unidad 8 →</button></div>
+</section>
+
+<!-- U8: Identificación de controles -->
+<section class="sec" data-id="8">
+<div class="uh"><div class="un">Unidad 8</div><h2>🔧 Identificación de Controles</h2>
+<div class="met">"Los controles de seguridad son los anticuerpos del sistema organizacional: deben ser específicos contra el patógeno que combaten, deben ser proporcionales a la amenaza, y deben poder actuar tanto antes como durante y después del ataque. Un control genérico es casi tan inútil como ninguno."</div></div>
+<div class="cards">
+  <div class="card"><h4>💻 Controles lógicos / técnicos</h4><ul>
+    <li>Autenticación MFA (FIDO2, TOTP, biometría)</li>
+    <li>Control de acceso: RBAC, ABAC, PAM</li>
+    <li>Cifrado: datos en reposo (AES-256) y en tránsito (TLS 1.3)</li>
+    <li>Firewall NGFW, IDS/IPS, WAF, EDR/XDR</li>
+    <li>SIEM/SOAR para detección y respuesta</li>
+    <li>Backup 3-2-1-1 con copias inmutables</li>
+    <li>Gestión de parches y vulnerabilidades</li>
+  </ul></div>
+  <div class="card"><h4>🏢 Controles físicos</h4><ul>
+    <li>Control de acceso físico: tarjetas RFID, biometría, torniquetes</li>
+    <li>CCTV y monitoreo 24/7 de instalaciones críticas</li>
+    <li>CPD: UPS, generadores, cooling redundante, detección de incendio</li>
+    <li>Destrucción segura de soportes: DIN 66399 / NIST 800-88</li>
+    <li>Políticas de escritorio limpio y pantalla limpia</li>
+    <li>Separación física de entornos (producción vs desarrollo)</li>
+  </ul></div>
+  <div class="card"><h4>👥 Controles humanos / organizativos</h4><ul>
+    <li>Formación y concienciación en seguridad (ISO 27001 A.6.3)</li>
+    <li>Procedimientos de selección de personal (background checks)</li>
+    <li>Gestión de altas y bajas de empleados (onboarding/offboarding)</li>
+    <li>Separación de funciones (SoD) para operaciones críticas</li>
+    <li>Acuerdos de confidencialidad (NDA)</li>
+    <li>Auditorías internas y externas periódicas</li>
+  </ul></div>
+  <div class="card"><h4>⏱️ Por momento de actuación</h4><ul>
+    <li><strong>Preventivos:</strong> actúan antes del incidente (firewall, cifrado, formación)</li>
+    <li><strong>Detectivos:</strong> identifican el incidente cuando ocurre (IDS, SIEM, auditoría)</li>
+    <li><strong>Correctivos:</strong> limitan el daño y recuperan (IR, backup, DRP)</li>
+    <li><strong>Compensatorios:</strong> cuando el control principal no es viable (VPN en lugar de red privada)</li>
+    <li><strong>Disuasivos:</strong> desalientan al atacante (políticas visibles, cámaras)</li>
+  </ul></div>
+</div>
+<div class="fc"><h3>📋 Declaración de Aplicabilidad (SoA) — ISO 27001</h3>
+<p>La <strong>Declaración de Aplicabilidad (Statement of Applicability)</strong> es uno de los documentos más importantes del SGSI. Lista todos los 93 controles del Anexo A de ISO 27001:2022, indicando para cada uno si está aplicado, excluido (con justificación) y el estado de implementación. Es la evidencia central que presenta el auditor de certificación.</p>
+<div class="tags" style="margin-top:10px">
+  <span class="tag tt">Controles Organizativos (37)</span>
+  <span class="tag tc">Controles Personas (8)</span>
+  <span class="tag tg">Controles Físicos (14)</span>
+  <span class="tag to">Controles Tecnológicos (34)</span>
+</div></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>ISO/IEC 27001:2022 Anexo A — 93 controles. <a href="https://www.iso.org/standard/27001" target="_blank">iso.org/standard/27001</a></li>
+  <li>CIS Controls v8. 18 controles priorizados. <a href="https://www.cisecurity.org/controls/v8" target="_blank">cisecurity.org/controls/v8</a></li>
+  <li>NIST SP 800-53 Rev.5. Security Controls Catalog. <a href="https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final" target="_blank">csrc.nist.gov</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(7)">← Unidad 7</button><button class="btn pri" onclick="go(9)">Unidad 9 →</button></div>
+</section>
+<!-- U9: Estándares de gestión -->
+<section class="sec" data-id="9">
+<div class="uh"><div class="un">Unidad 9</div><h2>📜 Estándares de Gestión de Seguridad</h2>
+<div class="met">"Los estándares de seguridad son el idioma universal de la confianza digital: cuando una empresa dice 'somos ISO 27001', cualquier socio en cualquier país entiende inmediatamente qué nivel de madurez esperar, exactamente igual que el sistema métrico unifica la ingeniería mundial sin importar el idioma hablado."</div></div>
+<div class="cards">
+  <div class="card"><h4>🏆 ISO/IEC 27001:2022 — SGSI</h4><ul>
+    <li>Estándar de certificación para Sistemas de Gestión de Seguridad de la Información</li>
+    <li>Requisitos: contexto, liderazgo, planificación, soporte, operación, evaluación, mejora</li>
+    <li>Ciclo PDCA (Plan-Do-Check-Act) como motor de mejora continua</li>
+    <li>Anexo A: 93 controles en 4 categorías (org., personas, físicos, tecnológicos)</li>
+    <li>Certificación válida 3 años con auditorías de seguimiento anuales</li>
+  </ul></div>
+  <div class="card"><h4>🔷 COBIT 2019 — Gobernanza TI</h4><ul>
+    <li>Marco de gobernanza y gestión de TI corporativa (ISACA)</li>
+    <li>6 principios: sistema de gobernanza, enfoque holístico, sistema dinámico, distinción gestión/gobernanza, adaptado a empresa, de extremo a extremo</li>
+    <li>40 objetivos de gobernanza y gestión agrupados en dominios (EDM, APO, BAI, DSS, MEA)</li>
+    <li>Modelo de madurez CMMI: niveles 0 (incompleto) a 5 (optimizado)</li>
+    <li>Alineación con ISO 27001, ITIL, NIST y regulaciones</li>
+  </ul></div>
+  <div class="card"><h4>⚙️ ITIL 4 — Gestión de servicios TI</h4><ul>
+    <li>Buenas prácticas para gestión del ciclo de vida de servicios TI</li>
+    <li>Sistema de Valor del Servicio (SVS) como modelo central</li>
+    <li>Cadena de Valor: Planear, Mejorar, Involucrar, Diseñar/Transicionar, Obtener/Construir, Entregar/Soportar</li>
+    <li>Gestión de incidentes, problemas, cambios, activos de servicio</li>
+    <li>Complementa la seguridad: gestión de incidentes de seguridad como proceso formal</li>
+  </ul></div>
+  <div class="card"><h4>🔬 Auditorías de seguridad</h4><ul>
+    <li><strong>Interna:</strong> equipo propio o consultor; visión operativa; continua</li>
+    <li><strong>Externa:</strong> tercero independiente; requerida para certificación ISO 27001; mayor credibilidad</li>
+    <li><strong>Técnica:</strong> pentesting, análisis de configuraciones, revisión de código</li>
+    <li><strong>Cumplimiento:</strong> verifica adherencia a RGPD, NIS2, PCI-DSS, etc.</li>
+    <li>Hallazgos: No Conformidad Mayor (suspende certificación), No Conformidad Menor, Observación</li>
+  </ul></div>
+</div>
+<div class="fc"><h3>🗺️ Comparativa de marcos de gestión</h3>
+<table>
+<tr><th>Marco</th><th>Foco</th><th>Tipo</th><th>Certificable</th><th>Uso principal</th></tr>
+<tr><td>ISO 27001:2022</td><td>Seguridad información</td><td>Requisitos (shall)</td><td>✅ Sí</td><td>SGSI corporativo</td></tr>
+<tr><td>ISO 27002:2022</td><td>Controles seguridad</td><td>Guía (should)</td><td>❌ No</td><td>Implementación controles</td></tr>
+<tr><td>COBIT 2019</td><td>Gobernanza TI</td><td>Marco referencia</td><td>🔸 Parcial (CGEIT)</td><td>Alineación TI-negocio</td></tr>
+<tr><td>ITIL 4</td><td>Servicios TI</td><td>Buenas prácticas</td><td>🔸 Parcial (ITIL4)</td><td>Gestión servicios</td></tr>
+<tr><td>NIST CSF 2.0</td><td>Ciberriesgo</td><td>Marco voluntario</td><td>❌ No</td><td>Evaluación madurez</td></tr>
+<tr><td>NIST SP 800-53</td><td>Controles federales</td><td>Catálogo controles</td><td>✅ FedRAMP</td><td>Sector público EEUU</td></tr>
+</table></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>ISO/IEC 27001:2022. <a href="https://www.iso.org/standard/27001" target="_blank">iso.org/standard/27001</a></li>
+  <li>ISACA. COBIT 2019 Framework. <a href="https://www.isaca.org/resources/cobit" target="_blank">isaca.org/cobit</a></li>
+  <li>Axelos. ITIL 4 Foundation. <a href="https://www.axelos.com/certifications/itil-service-management" target="_blank">axelos.com/itil</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(8)">← Unidad 8</button><button class="btn pri" onclick="go(10)">Unidad 10 →</button></div>
+</section>
+
+<!-- U10: Análisis de riesgo empresarial -->
+<section class="sec" data-id="10">
+<div class="uh"><div class="un">Unidad 10</div><h2>🏢 Análisis de Riesgo Empresarial</h2>
+<div class="met">"El análisis de riesgo empresarial es como el diagnóstico médico integral de la organización: no basta con revisar solo la presión arterial (ciberseguridad) si el corazón (continuidad de negocio), los pulmones (cadena de suministro) y el sistema nervioso (reputación) también están bajo amenaza. Solo con el cuadro completo puedes prescribir el tratamiento correcto."</div></div>
+<div class="cards">
+  <div class="card"><h4>🌀 Entorno VUCA y riesgo empresarial</h4><ul>
+    <li><strong>Volatility:</strong> cambios rápidos e impredecibles (IA, geopolítica, nuevas regulaciones)</li>
+    <li><strong>Uncertainty:</strong> incertidumbre sobre causas y efectos (amenazas emergentes, APT desconocidos)</li>
+    <li><strong>Complexity:</strong> múltiples factores interconectados (ecosistemas supply chain, multinube)</li>
+    <li><strong>Ambiguity:</strong> falta de claridad sobre la naturaleza del riesgo (deepfakes, desinformación)</li>
+    <li>Respuesta VUCA+: Vision, Understanding, Clarity, Agility</li>
+  </ul></div>
+  <div class="card"><h4>🎯 Tipos de riesgo empresarial</h4><ul>
+    <li><strong>Estratégico:</strong> disrupción del modelo de negocio (ransomware que para producción)</li>
+    <li><strong>Operacional:</strong> fallo de procesos/sistemas (DDoS, fallo CPD)</li>
+    <li><strong>Financiero:</strong> pérdidas económicas (fraude, multas RGPD, coste recuperación)</li>
+    <li><strong>Reputacional:</strong> daño a la imagen (breach público, filtración de datos de clientes)</li>
+    <li><strong>Legal/Regulatorio:</strong> incumplimiento normativo (NIS2, DORA, RGPD, AI Act)</li>
+    <li><strong>Cadena de suministro:</strong> riesgo de terceros y proveedores</li>
+  </ul></div>
+</div>
+<div class="fc"><h3>📋 Proceso de gestión del riesgo empresarial (ERM)</h3>
+<div class="steps">
+  <div class="step-box"><div class="step-num">1</div><div class="step-content"><h4>Establecer el contexto</h4><p>Definir alcance, objetivos de negocio, criterios de riesgo, apetito de riesgo. Involucrar a dirección y responsables de cada proceso.</p></div></div>
+  <div class="step-box"><div class="step-num">2</div><div class="step-content"><h4>Identificar riesgos</h4><p>Talleres BIA, entrevistas con responsables de proceso, análisis de incidentes pasados, benchmarks sectoriales, threat intelligence.</p></div></div>
+  <div class="step-box"><div class="step-num">3</div><div class="step-content"><h4>Analizar riesgos</h4><p>Evaluar probabilidad e impacto. Metodología: cualitativa (matriz P×I) o cuantitativa (FAIR). Calcular riesgo inherente y residual.</p></div></div>
+  <div class="step-box"><div class="step-num">4</div><div class="step-content"><h4>Evaluar y priorizar</h4><p>Comparar riesgo residual vs apetito. Clasificar por criticidad. Identificar riesgos que requieren tratamiento inmediato.</p></div></div>
+  <div class="step-box"><div class="step-num">5</div><div class="step-content"><h4>Tratar el riesgo</h4><p>4T: Transferir (seguro), Terminar (eliminar causa), Tolerar (aceptar), Tratar (controles). Elaborar Plan de Tratamiento de Riesgos (PTR).</p></div></div>
+  <div class="step-box"><div class="step-num">6</div><div class="step-content"><h4>Monitorear y revisar</h4><p>KRI (Key Risk Indicators), dashboards en tiempo real, revisión periódica del Risk Register, informe al comité de dirección.</p></div></div>
+</div></div>
+<div class="alert at"><span>💡</span><span><strong>DORA (Digital Operational Resilience Act) — vigente desde enero 2025:</strong> Obligatorio para entidades financieras en la UE. Exige gestión del riesgo TIC, pruebas de resiliencia (TLPT), gestión de incidentes con reporte en 4h (graves) / 24h (significativos) / 1 mes (informe final), y gestión del riesgo de terceros proveedores TIC. Las multas pueden alcanzar el 1% de la facturación diaria global.</span></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>COSO ERM 2017. Enterprise Risk Management Framework. <a href="https://www.coso.org/erm" target="_blank">coso.org/erm</a></li>
+  <li>DORA Regulation (EU) 2022/2554. <a href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022R2554" target="_blank">eur-lex.europa.eu</a></li>
+  <li>ISACA. Risk IT Framework 2nd Edition. <a href="https://www.isaca.org/resources/risk-it-and-riskscape" target="_blank">isaca.org/risk-it</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(9)">← Unidad 9</button><button class="btn pri" onclick="go(11)">Síntesis →</button></div>
+</section>
+<!-- U11: Síntesis y entregables del proyecto integrador -->
+<section class="sec" data-id="11">
+<div class="uh"><div class="un">Síntesis</div><h2>🚀 Proyecto Integrador — Entregables</h2>
+<div class="met">"El proyecto integrador de seguridad informática es la brújula que transforma el conocimiento fragmentado en capacidad profesional real: no se trata solo de elaborar documentos, sino de construir el sistema nervioso de defensa que protegerá activos reales de amenazas reales. Cada entregable es una pieza de un escudo que la organización llevará consigo al campo de batalla digital."</div></div>
+<div class="fc"><h3>📦 Estructura del proyecto integrador completo</h3>
+<div class="steps">
+  <div class="step-box"><div class="step-num">E1</div><div class="step-content"><h4>Inventario de activos + clasificación CIA</h4><p>Lista completa de activos (HW, SW, datos, personas, servicios). Valoración C/I/D en escala 1-3. Activos críticos resaltados.</p></div></div>
+  <div class="step-box"><div class="step-num">E2</div><div class="step-content"><h4>Política de seguridad de la información</h4><p>Documento firmado por la dirección. Alcance, objetivos, roles y responsabilidades, compromisos de cumplimiento.</p></div></div>
+  <div class="step-box"><div class="step-num">E3</div><div class="step-content"><h4>Análisis de vulnerabilidades</h4><p>Escaneo técnico (Nessus/OpenVAS), CVE identificados con CVSS ≥7, vulnerabilidades humanas y organizativas, mapa de superficie de ataque.</p></div></div>
+  <div class="step-box"><div class="step-num">E4</div><div class="step-content"><h4>Catálogo de amenazas</h4><p>Amenazas relevantes al contexto de la organización. Referenciadas en MITRE ATT&CK, ENISA Threat Landscape 2024. Clasificadas por tipo y actor.</p></div></div>
+  <div class="step-box"><div class="step-num">E5</div><div class="step-content"><h4>Registro de riesgos (Risk Register)</h4><p>Matriz P×I con riesgos inherentes y residuales. Mínimo 10 riesgos documentados. Priorización y owner para cada riesgo.</p></div></div>
+  <div class="step-box"><div class="step-num">E6</div><div class="step-content"><h4>Plan de tratamiento de riesgos (PTR)</h4><p>Para cada riesgo: opción de tratamiento (4T), controles a implementar, responsable, plazo, coste estimado, riesgo residual esperado.</p></div></div>
+  <div class="step-box"><div class="step-num">E7</div><div class="step-content"><h4>Declaración de Aplicabilidad (SoA)</h4><p>Lista de controles ISO 27001:2022 Anexo A. Indicar: aplicable/excluido, estado (implementado/parcial/planificado), justificación de exclusiones.</p></div></div>
+  <div class="step-box"><div class="step-num">E8</div><div class="step-content"><h4>Plan de continuidad y respuesta a incidentes</h4><p>BIA con RTO/RPO por proceso. Procedimiento de respuesta a incidentes (PPRR). Contactos clave, pasos de escalación, comunicados.</p></div></div>
+</div></div>
+<div class="fc"><h3>🛠️ Herramientas recomendadas por entregable</h3>
+<table>
+<tr><th>Entregable</th><th>Herramientas gratuitas</th><th>Herramientas profesionales</th></tr>
+<tr><td>Inventario activos</td><td>OCS Inventory, Spiceworks</td><td>ServiceNow CMDB, Qualys AssetView</td></tr>
+<tr><td>Análisis vulnerabilidades</td><td>OpenVAS, Nikto, Nmap</td><td>Nessus Pro, Qualys VMDR, Rapid7</td></tr>
+<tr><td>Gestión de riesgos</td><td>Excel/Google Sheets, SimpleRisk</td><td>Archer GRC, ServiceNow GRC, Vanta</td></tr>
+<tr><td>Amenazas &amp; CTI</td><td>MITRE ATT&CK Navigator, OpenCTI</td><td>Recorded Future, ThreatConnect</td></tr>
+<tr><td>Controles &amp; SoA</td><td>Plantillas ISO 27001 (GitHub)</td><td>Orca Security, Drata, Secureframe</td></tr>
+<tr><td>Incidentes &amp; SIEM</td><td>Wazuh, Elastic SIEM, Graylog</td><td>Splunk, Microsoft Sentinel, IBM QRadar</td></tr>
+</table></div>
+<div class="cards">
+  <div class="card"><h4>📐 Criterios de evaluación del proyecto</h4><ul>
+    <li>Completitud: todos los entregables presentes y bien estructurados</li>
+    <li>Coherencia: los riesgos provienen de activos + vulnerabilidades + amenazas identificadas</li>
+    <li>Proporcionalidad: controles proporcionales al nivel de riesgo</li>
+    <li>Fundamentación: referencias a estándares (ISO 27001, NIST, CIS Controls)</li>
+    <li>Realismo: el proyecto se adapta al contexto real de la organización elegida</li>
+    <li>Presentación: documento estructurado, ejecutivo + técnico, sin ambigüedades</li>
+  </ul></div>
+  <div class="card"><h4>⚡ Roadmap del curso — resumen de capacidades</h4><ul>
+    <li>✅ U1: Identificar y clasificar activos de información con CIA</li>
+    <li>✅ U2: Diseñar políticas de seguridad alineadas con ISO 27001</li>
+    <li>✅ U3: Analizar vulnerabilidades técnicas con CVE/CVSS/EPSS</li>
+    <li>✅ U4: Catalogar amenazas con MITRE ATT&CK y ENISA TL</li>
+    <li>✅ U5: Implementar mecanismos preventivos/detectivos/correctivos</li>
+    <li>✅ U6: Evaluar impactos con BIA y gestionar continuidad</li>
+    <li>✅ U7: Construir matrices de riesgo P×I y Risk Register</li>
+    <li>✅ U8: Seleccionar controles ISO 27001 Anexo A (SoA)</li>
+    <li>✅ U9: Aplicar marcos COBIT/ITIL y preparar auditorías</li>
+    <li>✅ U10: Integrar gestión ERM en contexto VUCA/DORA</li>
+  </ul></div>
+</div>
+<div class="alert as"><span>🎯</span><span><strong>Guía de entrega:</strong> El proyecto integrador debe presentarse como un informe ejecutivo (máx. 5 páginas para la dirección) + anexos técnicos detallados. Incluye portada, índice, resumen ejecutivo, cada entregable en sección propia, glosario y bibliografía en formato APA 7. El informe ejecutivo debe ser legible por un CEO sin formación técnica: cifras, riesgos en euros/impacto, recomendaciones priorizadas.</span></div>
+<button class="rt" onclick="tr(this)">📚 Referencias clave del curso ▾</button>
+<div class="rc"><ul>
+  <li>ISO/IEC 27001:2022. <a href="https://www.iso.org/standard/27001" target="_blank">iso.org</a> | ISO/IEC 27005:2022. <a href="https://www.iso.org/standard/80585.html" target="_blank">iso.org</a></li>
+  <li>NIST CSF 2.0 (2024). <a href="https://www.nist.gov/cyberframework" target="_blank">nist.gov/cyberframework</a></li>
+  <li>MITRE ATT&CK v15. <a href="https://attack.mitre.org" target="_blank">attack.mitre.org</a></li>
+  <li>ENISA Threat Landscape 2024. <a href="https://www.enisa.europa.eu/publications/enisa-threat-landscape-2024" target="_blank">enisa.europa.eu</a></li>
+  <li>CISA KEV Catalog. <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" target="_blank">cisa.gov/kev</a></li>
+  <li>CIS Controls v8. <a href="https://www.cisecurity.org/controls/v8" target="_blank">cisecurity.org</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(10)">← Unidad 10</button><button class="btn pri" onclick="go(0)">Inicio ↑</button></div>
+</section>
+</main>
+<script>
+const S=[
+  {id:0,label:"Portada"},
+  {id:1,label:"U1: Activos"},
+  {id:2,label:"U2: Políticas"},
+  {id:3,label:"U3: Vulnerabilidades"},
+  {id:4,label:"U4: Amenazas"},
+  {id:5,label:"U5: Mecanismos"},
+  {id:6,label:"U6: Impactos"},
+  {id:7,label:"U7: Medición Riesgos"},
+  {id:8,label:"U8: Controles"},
+  {id:9,label:"U9: Estándares"},
+  {id:10,label:"U10: Análisis Riesgo"},
+  {id:11,label:"Síntesis y Entregables"}
+];
+let cur=0;
+const nav=document.getElementById('nl');
+S.forEach(s=>{
+  const a=document.createElement('a');
+  a.className='nav-item'+(s.id===0?' active':'');
+  a.dataset.id=s.id;
+  a.textContent=s.label;
+  a.onclick=()=>go(s.id);
+  nav.appendChild(a);
+});
+function go(id){
+  document.querySelector('.sec.active')?.classList.remove('active');
+  document.querySelector('.nav-item.active')?.classList.remove('active');
+  document.querySelector(`.sec[data-id="${id}"]`).classList.add('active');
+  document.querySelector(`.nav-item[data-id="${id}"]`).classList.add('active');
+  cur=id;
+  document.getElementById('pfill').style.width=(id===0?0:Math.round(id/11*100))+'%';
+  window.scrollTo({top:0,behavior:'smooth'});
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('ov').classList.remove('open');
+}
+function tog(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('ov').classList.toggle('open');
+}
+function tr(btn){
+  const rc=btn.nextElementSibling;
+  rc.style.display=rc.style.display==='block'?'none':'block';
+  btn.textContent=rc.style.display==='block'?btn.textContent.replace('▾','▴'):btn.textContent.replace('▴','▾');
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'&&cur<11)go(cur+1);
+  if(e.key==='ArrowLeft'&&cur>0)go(cur-1);
+});
+</script>
+</body>
+</html>

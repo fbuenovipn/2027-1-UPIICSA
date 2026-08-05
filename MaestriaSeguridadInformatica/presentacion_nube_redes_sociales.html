@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seguridad en la Nube y Redes Sociales</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0e1a;--bg2:#111827;--bg3:#1a2235;--cyan:#00d4ff;--green:#39ff14;--orange:#ff6b35;--purple:#a855f7;--pink:#ec4899;--text:#e2e8f0;--muted:#94a3b8;--border:rgba(0,212,255,.18);--glass:rgba(255,255,255,.03);--sw:270px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+#sidebar{position:fixed;top:0;left:0;width:var(--sw);height:100vh;background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;z-index:100;transition:.3s}
+.logo{padding:22px 18px 14px;border-bottom:1px solid var(--border)}
+.logo h2{font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--cyan);font-family:'JetBrains Mono',monospace}
+.logo p{font-size:.68rem;color:var(--muted);margin-top:3px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:10px 18px;cursor:pointer;transition:.2s;border-left:3px solid transparent;font-size:.8rem;color:var(--muted)}
+.nav-item:hover{background:var(--glass);color:var(--text)}
+.nav-item.active{border-left-color:var(--cyan);background:rgba(0,212,255,.07);color:var(--cyan)}
+.nav-item .ic{min-width:20px;font-size:.85rem}
+#pbar{position:fixed;top:0;left:var(--sw);right:0;height:3px;background:var(--bg3);z-index:99}
+#pfill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--green));transition:.4s;width:0}
+#main{margin-left:var(--sw);padding:44px 48px 80px;min-height:100vh;max-width:980px}
+.sec{display:none;animation:fi .4s ease}
+.sec.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.hero{background:linear-gradient(135deg,#001420,#0a1422 50%,#0a0e1a);border:1px solid var(--border);border-radius:16px;padding:52px 44px;margin-bottom:36px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-40%;right:-8%;width:480px;height:480px;background:radial-gradient(circle,rgba(0,212,255,.07) 0%,transparent 70%);pointer-events:none}
+.badge{display:inline-block;background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.3);color:var(--cyan);font-size:.7rem;padding:4px 12px;border-radius:20px;font-family:'JetBrains Mono',monospace;letter-spacing:.05em;margin-bottom:18px}
+.hero h1{font-size:2.2rem;font-weight:700;line-height:1.2;margin-bottom:14px}
+.hero h1 span{color:var(--cyan)}
+.hero p{color:var(--muted);font-size:1rem;line-height:1.7;max-width:580px}
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:28px 0}
+.sc{background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center}
+.sc .v{font-size:1.7rem;font-weight:700;color:var(--cyan);font-family:'JetBrains Mono',monospace}
+.sc .l{font-size:.72rem;color:var(--muted);margin-top:4px}
+.uh{background:linear-gradient(135deg,var(--bg3),var(--bg2));border:1px solid var(--border);border-radius:12px;padding:28px;margin-bottom:24px}
+.uh .un{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--cyan);text-transform:uppercase;letter-spacing:.1em}
+.uh h2{font-size:1.6rem;margin:7px 0 10px}
+.met{background:rgba(0,212,255,.05);border-left:3px solid var(--cyan);padding:13px 16px;border-radius:0 8px 8px 0;font-style:italic;color:var(--muted);font-size:.88rem;line-height:1.6}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}
+.card{background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:18px;transition:.2s}
+.card:hover{border-color:rgba(0,212,255,.35);background:rgba(0,212,255,.03)}
+.card h4{font-size:.82rem;color:var(--cyan);margin-bottom:8px;display:flex;align-items:center;gap:7px}
+.card p,.card ul{font-size:.81rem;color:var(--muted);line-height:1.7}
+.card ul{padding-left:15px}
+.card ul li{margin-bottom:4px}
+.fc{background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:22px;margin:14px 0}
+.fc h3{font-size:.95rem;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.fc p,.fc ul{font-size:.83rem;color:var(--muted);line-height:1.7}
+.fc ul{padding-left:16px}
+.fc ul li{margin-bottom:5px}
+.tags{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0}
+.tag{background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);color:var(--cyan);font-size:.7rem;padding:3px 9px;border-radius:12px;font-family:'JetBrains Mono',monospace}
+.tag.g{background:rgba(57,255,20,.08);border-color:rgba(57,255,20,.2);color:var(--green)}
+.tag.o{background:rgba(255,107,53,.08);border-color:rgba(255,107,53,.2);color:var(--orange)}
+.tag.p{background:rgba(168,85,247,.08);border-color:rgba(168,85,247,.2);color:var(--purple)}
+.tag.k{background:rgba(236,72,153,.08);border-color:rgba(236,72,153,.2);color:var(--pink)}
+.alert{background:rgba(255,107,53,.07);border:1px solid rgba(255,107,53,.3);border-radius:10px;padding:14px 18px;margin:14px 0;font-size:.82rem;color:var(--orange);display:flex;gap:9px;align-items:flex-start}
+.info{background:rgba(0,212,255,.06);border-color:rgba(0,212,255,.3);color:var(--cyan)}
+.rt{background:none;border:1px solid var(--border);color:var(--muted);padding:9px 16px;border-radius:8px;cursor:pointer;font-size:.78rem;margin-top:22px;transition:.2s;display:flex;align-items:center;gap:7px;font-family:'Inter',sans-serif}
+.rt:hover{border-color:var(--cyan);color:var(--cyan)}
+.rc{display:none;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:18px;margin-top:7px}
+.rc.open{display:block}
+.rc ul{padding-left:16px}
+.rc ul li{font-size:.76rem;color:var(--muted);margin-bottom:7px;line-height:1.5}
+.rc ul li a{color:var(--cyan);text-decoration:none}
+.rc ul li a:hover{text-decoration:underline}
+.nb{display:flex;justify-content:space-between;margin-top:44px;padding-top:22px;border-top:1px solid var(--border)}
+.btn{background:var(--glass);border:1px solid var(--border);color:var(--text);padding:9px 22px;border-radius:8px;cursor:pointer;font-size:.83rem;transition:.2s;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:7px}
+.btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.btn.pri{background:rgba(0,212,255,.1);border-color:var(--cyan);color:var(--cyan)}
+.btn.pri:hover{background:rgba(0,212,255,.18)}
+#ham{display:none;position:fixed;top:12px;left:12px;z-index:200;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;cursor:pointer;flex-direction:column;gap:5px}
+#ham span{display:block;width:22px;height:2px;background:var(--cyan);border-radius:2px}
+#ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99}
+@media(max-width:768px){#ham{display:flex}#sidebar{transform:translateX(-100%)}#sidebar.open{transform:translateX(0)}#ov.open{display:block}#main{margin-left:0;padding:24px 18px 60px}#pbar{left:0}.sgrid{grid-template-columns:1fr}.cards{grid-template-columns:1fr}.hero{padding:28px 20px}.hero h1{font-size:1.55rem}}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
+.home-btn{display:block;margin:8px 16px 4px;padding:7px 12px;background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);border-radius:6px;color:var(--cyan);font-size:.76rem;text-decoration:none;text-align:center;transition:.2s}.home-btn:hover{background:rgba(0,212,255,.15);border-color:var(--cyan)}
+</style>
+</head>
+<body>
+<div id="ham" onclick="tog()"><span></span><span></span><span></span></div>
+<div id="ov" onclick="tog()"></div>
+<div id="pbar"><div id="pfill"></div></div>
+<nav id="sidebar"><div class="logo"><h2>☁️ Nube &amp; Redes Sociales</h2><p>Maestría en Seguridad Informática</p></div><a href="index.html" class="home-btn">← Inicio</a><div id="nl"></div></nav>
+<main id="main">
+
+<!-- PORTADA -->
+<section class="sec active" data-id="0">
+<div class="hero">
+  <div class="badge">// Módulo 4 — Maestría en Seguridad Informática</div>
+  <h1>Seguridad en la <span>Nube</span> y<br>Redes Sociales</h1>
+  <p>Explora los riesgos, estrategias de protección y marcos normativos que gobiernan la seguridad digital en entornos cloud y plataformas sociales en la era de la IA.</p>
+</div>
+<div class="sgrid">
+  <div class="sc"><div class="v">5.2B</div><div class="l">Usuarios activos en redes sociales (2024)</div></div>
+  <div class="sc"><div class="v">$679B</div><div class="l">Mercado cloud global en 2024 (Gartner)</div></div>
+  <div class="sc"><div class="v">82%</div><div class="l">de brechas de datos involucran la nube (IBM, 2024)</div></div>
+</div>
+<div class="fc"><h3>🎯 Descripción del curso</h3><p>Este curso analiza la seguridad de la información en dos entornos críticos del siglo XXI: las plataformas de redes sociales y la computación en la nube. Abordaremos los riesgos específicos de cada ecosistema, los controles técnicos y normativos disponibles, y las mejores prácticas para proteger datos tanto a nivel personal como empresarial.</p></div>
+<div class="cards">
+  <div class="card"><h4>📚 Bloque I — Redes Sociales</h4><ul><li>U1: Introducción a las redes sociales</li><li>U2: Meta / Facebook &amp; Instagram</li><li>U3: X Corp. (Twitter) y nuevas plataformas</li><li>U4: LinkedIn — red profesional</li><li>U5: Blogs y contenido propio</li><li>U6: TikTok, YouTube y otras redes</li></ul></div>
+  <div class="card"><h4>☁️ Bloque II — Cloud Computing</h4><ul><li>U7: Fundamentos de la nube</li><li>U8: Arquitectura cloud</li><li>U9: Seguridad en la nube</li><li>U10: Desarrollo de apps en la nube</li></ul></div>
+</div>
+</section>
+
+<!-- U1 -->
+<section class="sec" data-id="1">
+<div class="uh"><div class="un">Unidad 1</div><h2>🌐 Introducción a las Redes Sociales</h2><div class="met">"Las redes sociales son el sistema nervioso de la sociedad digital: transmiten información a la velocidad del impulso eléctrico, pero también propagan virus conceptuales igual de rápido."</div></div>
+<div class="sgrid">
+  <div class="sc"><div class="v">5.2B</div><div class="l">Usuarios en redes sociales 2024</div></div>
+  <div class="sc"><div class="v">6h 37m</div><div class="l">Tiempo diario promedio en internet</div></div>
+  <div class="sc"><div class="v">143M</div><div class="l">Usuarios en redes sociales en México 2024</div></div>
+</div>
+<div class="fc"><h3>📖 Concepto y evolución</h3><p>Las redes sociales son plataformas digitales que permiten crear perfiles, conectar con otros usuarios y compartir contenido en tiempo real. Evolucionaron desde foros y chats (1990s) → Web 2.0 / MySpace / Facebook (2000s) → móvil y video (2010s) → IA generativa e inmersión (2020s). Hoy las redes son infraestructura de comunicación pública, herramienta política, canal comercial y vector de desinformación simultáneamente.</p></div>
+<div class="cards">
+  <div class="card"><h4>🏛️ Historia clave</h4><ul><li><strong>1997:</strong> SixDegrees — primera red social moderna</li><li><strong>2003:</strong> LinkedIn y MySpace</li><li><strong>2004:</strong> Facebook (Harvard)</li><li><strong>2005:</strong> YouTube</li><li><strong>2006:</strong> Twitter</li><li><strong>2010:</strong> Instagram, Pinterest</li><li><strong>2016:</strong> TikTok (Douyin en China)</li><li><strong>2022-2024:</strong> Mastodon, Threads, Bluesky</li></ul></div>
+  <div class="card"><h4>🗂️ Tipos de redes sociales</h4><ul><li><strong>Generalistas:</strong> Facebook, Instagram, TikTok</li><li><strong>Profesionales:</strong> LinkedIn, Xing</li><li><strong>Microblogging:</strong> X (Twitter), Mastodon, Bluesky</li><li><strong>Video:</strong> YouTube, TikTok, Twitch</li><li><strong>Mensajería:</strong> WhatsApp, Telegram, Signal</li><li><strong>Contenido visual:</strong> Pinterest, Snapchat</li><li><strong>Descentralizadas:</strong> Mastodon, ActivityPub</li></ul></div>
+</div>
+<div class="fc"><h3>⚖️ Ética y redes sociales 2024</h3><ul><li><strong>Desinformación y deepfakes:</strong> contenido falso generado con IA circula en redes antes de ser verificado; las elecciones de 2024 en múltiples países evidenciaron este riesgo</li><li><strong>Algoritmos y cámaras de eco:</strong> los sistemas de recomendación priorizan contenido que genera engagement, amplificando polarización</li><li><strong>Bienestar digital:</strong> estudios de la APA (2023) vinculan el uso excesivo de redes con ansiedad y depresión en adolescentes</li><li><strong>Responsabilidad de plataformas:</strong> EU Digital Services Act (DSA, 2024) obliga a plataformas grandes a auditar algoritmos y moderar contenido dañino</li></ul></div>
+<div class="alert"><span>⚠️</span><span><strong>EU Digital Services Act (DSA, feb. 2024):</strong> Aplicable a las 19 plataformas muy grandes (VLOP) como Meta, TikTok, YouTube y X. Exige auditorías de riesgos algorítmicos, herramientas de moderación transparentes y eliminación de contenido ilegal en 24 horas. Multas de hasta el 6% de la facturación global.</span></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>We Are Social / Hootsuite. (2024). <em>Digital 2024 Global Overview Report</em>. <a href="https://wearesocial.com/es/blog/2024/01/digital-2024/" target="_blank">wearesocial.com</a></li>
+  <li>Reglamento (UE) 2022/2065 — Digital Services Act. <a href="https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32022R2065" target="_blank">EUR-Lex</a></li>
+  <li>APA. (2023). <em>Health Advisory on Social Media Use in Adolescence</em>. <a href="https://www.apa.org/topics/social-media-internet/health-advisory-adolescent-social-media-use" target="_blank">apa.org</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(0)">← Portada</button><button class="btn pri" onclick="go(2)">Unidad 2 →</button></div>
+</section>
+
+<!-- U2 -->
+<section class="sec" data-id="2">
+<div class="uh"><div class="un">Unidad 2</div><h2>📘 Meta: Facebook e Instagram</h2><div class="met">"Meta es el dueño del pueblo digital donde vive más de la mitad de la humanidad conectada; administra la plaza pública, la tienda, el consultorio y el salón de casa al mismo tiempo."</div></div>
+<div class="sgrid">
+  <div class="sc"><div class="v">3.27B</div><div class="l">Usuarios activos diarios en familia Meta (Q2 2024)</div></div>
+  <div class="sc"><div class="v">€1.2B</div><div class="l">Multa GDPR a Meta (Irlanda, 2023)</div></div>
+  <div class="sc"><div class="v">2B+</div><div class="l">Usuarios activos en Instagram (2024)</div></div>
+</div>
+<div class="fc"><h3>📊 Facebook / Meta en 2024</h3><p>Meta Platforms (renombrada desde 2021) engloba Facebook, Instagram, WhatsApp y Threads. Con 3.27 mil millones de usuarios diarios activos en su familia de apps, es la mayor red social del mundo. En 2023, Meta lanzó <strong>Threads</strong> como alternativa a X, alcanzando 200 millones de usuarios en diciembre 2024. El negocio publicitario de Meta generó $134.9B en ingresos en 2023, sostenido en gran parte por su motor de IA para segmentación.</p></div>
+<div class="cards">
+  <div class="card"><h4>🔒 Seguridad en Facebook 2024</h4><ul><li>Autenticación en dos pasos (2FA): SMS, app autenticadora o llave física</li><li>Alertas de inicio de sesión en dispositivos nuevos</li><li>Centro de privacidad: control granular de datos</li><li>Comprobación de privacidad: asistente paso a paso</li><li>Herramienta "Off-Facebook Activity": controlar rastreo externo</li><li>Revisión de acceso de apps de terceros</li></ul></div>
+  <div class="card"><h4>🏢 Facebook como herramienta empresarial</h4><ul><li>Meta Business Suite: gestión centralizada de páginas y anuncios</li><li>Facebook Ads: segmentación por demografía, intereses, comportamiento</li><li>Pixel de Meta: rastreo de conversiones en sitio web</li><li>Catálogos de producto: tienda integrada (Facebook Shops)</li><li>WhatsApp Business API: atención al cliente a escala</li></ul></div>
+  <div class="card"><h4>📸 Instagram — Seguridad 2024</h4><ul><li>Función "Acerca de esta cuenta": historial de nombre, país, anuncios</li><li>Control de mensajes de desconocidos (filtros IA)</li><li>Supervisión parental: Family Center (menores)</li><li>Restricción de contenido sensible</li><li>Verificación de edad para cuentas de menores (AI + ID)</li></ul></div>
+  <div class="card"><h4>⚠️ Riesgos y controversias</h4><ul><li>Cambridge Analytica (2018): 87M perfiles usados sin consentimiento</li><li>Multa DPC Irlanda €1.2B (2023): transferencia ilegal de datos a EE.UU.</li><li>Impacto en salud mental adolescente: demandas de 40 estados de EE.UU. (2023)</li><li>Publicitad política micro-segmentada y desinformación</li><li>Scraping masivo: 533M registros filtrados (2021)</li></ul></div>
+</div>
+<div class="alert info"><span>ℹ️</span><span><strong>Threads y el Fediverso:</strong> Threads (Meta, 2023) está implementando soporte para ActivityPub, el protocolo del Fediverso, lo que permitirá que usuarios de Mastodon y otras redes descentralizadas interactúen con cuentas de Threads. Esto representa un cambio histórico hacia la interoperabilidad entre redes.</span></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>Meta Investor Relations. (2024). Q2 2024 Earnings. <a href="https://investor.fb.com" target="_blank">investor.fb.com</a></li>
+  <li>Data Protection Commission Ireland. (2023). Meta Platforms Ireland Limited Decision. <a href="https://www.dataprotection.ie" target="_blank">dataprotection.ie</a></li>
+  <li>Meta Privacy Center. (2024). <a href="https://www.facebook.com/privacy/center/" target="_blank">facebook.com/privacy/center</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(1)">← Unidad 1</button><button class="btn pri" onclick="go(3)">Unidad 3 →</button></div>
+</section>
+
+<!-- U3 -->
+<section class="sec" data-id="3">
+<div class="uh"><div class="un">Unidad 3</div><h2>🐦 X Corp. (Twitter) y Nuevas Plataformas</h2><div class="met">"X es la plaza pública global donde todos tienen micrófono pero nadie controla el volumen: la información y la desinformación viajan a la misma velocidad, y el moderador ya no es neutral."</div></div>
+<div class="sgrid">
+  <div class="sc"><div class="v">611M</div><div class="l">Usuarios activos mensuales en X (2024)</div></div>
+  <div class="sc"><div class="v">$44B</div><div class="l">Adquisición por Elon Musk (oct. 2022)</div></div>
+  <div class="sc"><div class="v">-50%</div><div class="l">Caída en ingresos publicitarios de X (2023 vs 2022)</div></div>
+</div>
+<div class="fc"><h3>🔄 Twitter → X Corp.: transformación 2022-2024</h3><ul>
+  <li><strong>Oct. 2022:</strong> Elon Musk adquiere Twitter por $44B y despide al 80% de la plantilla</li>
+  <li><strong>Nov. 2022:</strong> Verificación de pago (X Premium / Twitter Blue) reemplaza verificación editorial</li>
+  <li><strong>Jul. 2023:</strong> Rebrand oficial a "X"; desaparece el pájaro azul</li>
+  <li><strong>2023-2024:</strong> Reducción drástica del equipo de moderación; aumento de contenido odioso documentado por investigadores (ADL, Stanford Internet Observatory)</li>
+  <li><strong>2024:</strong> X anuncia pagos integrados (X Money) y llamadas de voz/video</li>
+  <li><strong>Brasil (ago. 2024):</strong> X suspendida en Brasil por incumplir órdenes judiciales de moderación; restaurada en oct. 2024</li>
+</ul></div>
+<div class="cards">
+  <div class="card"><h4>🔒 Seguridad en X</h4><ul><li>2FA disponible pero SMS solo para X Premium</li><li>Llaves de seguridad física (FIDO2)</li><li>Cifrado de mensajes directos (DM): activable</li><li>Controles de privacidad de tweets (público vs. protegido)</li><li>Gestión de apps con acceso OAuth</li></ul></div>
+  <div class="card"><h4>🏢 X como herramienta empresarial</h4><ul><li>X Ads: campañas de alcance, engagement, conversión</li><li>X Analytics: métricas de rendimiento de publicaciones</li><li>Cuentas verificadas (etiqueta dorada para empresas)</li><li>X Premium: acceso anticipado a funciones, mayor alcance</li><li>Espacios (Spaces): audio en vivo para eventos de marca</li></ul></div>
+</div>
+<div class="fc"><h3>🌿 Alternativas descentralizadas que crecen (2024)</h3><ul>
+  <li><strong>Mastodon:</strong> red federada basada en ActivityPub; +12M usuarios (2024); sin algoritmo central</li>
+  <li><strong>Bluesky:</strong> fundada por Jack Dorsey; protocolo AT abierto; 20M usuarios (dic. 2024); creció tras suspensión de X en Brasil</li>
+  <li><strong>Threads:</strong> Meta; 200M usuarios (dic. 2024); integración con Fediverso en desarrollo</li>
+  <li><strong>Nostr:</strong> protocolo criptográfico descentralizado para redes sociales; usado por comunidad Bitcoin</li>
+</ul></div>
+<div class="tags"><span class="tag">Fediverso</span><span class="tag">ActivityPub</span><span class="tag p">Descentralización</span><span class="tag g">Bluesky</span><span class="tag g">Mastodon</span></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>Reuters. (2024). X Corp usage and advertising revenue reports 2024.</li>
+  <li>Stanford Internet Observatory. (2024). Hate Speech on X post-acquisition research.</li>
+  <li>Bluesky. (2024). AT Protocol documentation. <a href="https://atproto.com" target="_blank">atproto.com</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(2)">← Unidad 2</button><button class="btn pri" onclick="go(4)">Unidad 4 →</button></div>
+</section>
+
+<!-- U4 -->
+<section class="sec" data-id="4">
+<div class="uh"><div class="un">Unidad 4</div><h2>💼 LinkedIn — La Red Profesional</h2><div class="met">"LinkedIn es el currículum vivo que trabaja mientras duermes: tu reputación profesional se construye post a post, y también puede destruirse en un solo clic mal calculado."</div></div>
+<div class="sgrid">
+  <div class="sc"><div class="v">1B+</div><div class="l">Miembros en LinkedIn (2024)</div></div>
+  <div class="sc"><div class="v">200+</div><div class="l">Países y territorios</div></div>
+  <div class="sc"><div class="v">$15B</div><div class="l">Ingresos anuales LinkedIn 2024 (Microsoft)</div></div>
+</div>
+<div class="fc"><h3>🔎 LinkedIn en 2024</h3><p>LinkedIn, adquirida por Microsoft en 2016 por $26.2B, superó el hito de <strong>1 mil millones de miembros</strong> en 2024. Es la plataforma referencia para reclutamiento, marca personal y ventas B2B. LinkedIn Learning (ex-Lynda.com) ofrece más de 21,000 cursos. La integración con Microsoft 365 y Copilot IA está transformando cómo las empresas utilizan la plataforma para recursos humanos y ventas.</p></div>
+<div class="cards">
+  <div class="card"><h4>🔒 Seguridad en LinkedIn 2024</h4><ul><li>Verificación de identidad con ID oficial (piloto EE.UU.)</li><li>2FA con app autenticadora o SMS</li><li>Detección de perfiles falsos con IA (más de 60M eliminados en 2023)</li><li>Alertas de mensajes sospechosos</li><li>Centro de privacidad: control de datos para IA</li><li>Opt-out para entrenamiento de IA generativa con tus datos (2024)</li></ul></div>
+  <div class="card"><h4>⚠️ Amenazas específicas de LinkedIn</h4><ul><li><strong>Spear phishing:</strong> atacantes crean perfiles falsos de reclutadores para obtener información</li><li><strong>Pig Butchering scams:</strong> fraudes de inversión iniciados en LinkedIn</li><li><strong>Scraping masivo:</strong> 700M registros raspados y vendidos (2021)</li><li><strong>Malware vía mensajes directos:</strong> documentos con macros maliciosas</li><li><strong>Ingeniería social:</strong> reconocimiento OSINT previo a ataques corporativos</li></ul></div>
+</div>
+<div class="fc"><h3>🤖 LinkedIn e Inteligencia Artificial</h3><ul>
+  <li><strong>LinkedIn AI (Copilot integrado):</strong> asistente para redactar publicaciones, resumir perfiles, preparar entrevistas</li>
+  <li><strong>Generación de leads con IA:</strong> Sales Navigator con recomendaciones predictivas</li>
+  <li><strong>Controversia opt-out IA:</strong> En agosto 2024, LinkedIn activó por defecto el uso de datos de usuarios para entrenar sus modelos de IA generativa. Tras presión de usuarios y reguladores europeos, añadió opción de exclusión voluntaria</li>
+  <li><strong>Detección de deepfakes:</strong> fotos de perfil generadas por IA son un problema creciente; LinkedIn usa modelos de detección propios</li>
+</ul></div>
+<div class="alert"><span>⚠️</span><span><strong>Caso real 2023:</strong> El grupo APT norcoreano Lazarus usó perfiles falsos de LinkedIn haciéndose pasar por reclutadores de empresas tecnológicas para distribuir malware a ingenieros de criptomonedas. Las "ofertas de trabajo" incluían archivos de proyecto infectados. Este vector de ataque es conocido como "Operation Dream Job".</span></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>LinkedIn Newsroom. (2024). LinkedIn reaches 1 billion members. <a href="https://news.linkedin.com" target="_blank">news.linkedin.com</a></li>
+  <li>LinkedIn. (2024). Privacy Settings for AI Data. <a href="https://www.linkedin.com/psettings/data-for-generative-ai-improvement" target="_blank">linkedin.com</a></li>
+  <li>Mandiant. (2023). Operation Dream Job — North Korea LinkedIn campaign report.</li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(3)">← Unidad 3</button><button class="btn pri" onclick="go(5)">Unidad 5 →</button></div>
+</section>
+
+<!-- U5 -->
+<section class="sec" data-id="5">
+<div class="uh"><div class="un">Unidad 5</div><h2>✍️ Blogs y Contenido Propio</h2><div class="met">"Un blog es tu territorio soberano en internet: mientras las redes sociales son ciudades donde alquilas un departamento, el blog es tu propia casa, con tus reglas y sin riesgo de que el casero cambie el algoritmo."</div></div>
+<div class="cards">
+  <div class="card"><h4>📝 Tipos de blogs</h4><ul><li><strong>Personal:</strong> diario, reflexiones, vida cotidiana</li><li><strong>Profesional / de nicho:</strong> posicionamiento de expertise</li><li><strong>Corporativo:</strong> marketing de contenido, SEO empresarial</li><li><strong>Periodístico:</strong> análisis, investigación</li><li><strong>Newsletter-blog:</strong> Substack, Ghost (tendencia 2024)</li></ul></div>
+  <div class="card"><h4>🛠️ Plataformas 2024</h4><ul><li><strong>WordPress.org:</strong> 43% de la web; máximo control</li><li><strong>Substack:</strong> newsletters con suscripción de pago; 35M lectores activos</li><li><strong>Ghost:</strong> open source, enfocado en creadores independientes</li><li><strong>Medium:</strong> distribución integrada; programa de partners</li><li><strong>Hashnode:</strong> enfocado en desarrolladores</li></ul></div>
+</div>
+<div class="fc"><h3>🔒 Seguridad en WordPress y plataformas de blog</h3><ul>
+  <li><strong>Actualizaciones:</strong> el 97% de los sitios WordPress hackeados tenían plugins o temas desactualizados (Wordfence, 2023)</li>
+  <li><strong>Plugins de seguridad:</strong> Wordfence, Sucuri Security, iThemes Security</li>
+  <li><strong>SSL/TLS:</strong> HTTPS obligatorio; certificados Let's Encrypt gratuitos</li>
+  <li><strong>Backups automáticos:</strong> UpdraftPlus, Jetpack; regla 3-2-1</li>
+  <li><strong>WAF (Web Application Firewall):</strong> Cloudflare, Sucuri</li>
+  <li><strong>Limitar intentos de login:</strong> bloqueo por IP tras N intentos fallidos</li>
+  <li><strong>Usuarios y permisos:</strong> principio de mínimo privilegio para roles de WordPress</li>
+</ul></div>
+<div class="fc"><h3>🤖 IA y la creación de contenido en blogs (2024)</h3><p>Las herramientas de IA (ChatGPT, Claude, Gemini) han transformado la creación de contenido. Los retos éticos incluyen: atribución y originalidad, posible penalización de Google a contenido "útil para el usuario" vs. generado masivamente con IA, y el riesgo de alucinaciones en contenido factual. Google clarificó en 2023 que el contenido IA de calidad no está prohibido, pero debe ser original y útil. Los motores de búsqueda están ajustando sus algoritmos para priorizar Experience, Expertise, Authoritativeness, Trustworthiness (E-E-A-T).</p></div>
+<div class="tags"><span class="tag">SEO</span><span class="tag g">WordPress</span><span class="tag g">Substack</span><span class="tag p">E-E-A-T</span><span class="tag o">WAF</span></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>Wordfence. (2023). <em>WordPress Security Report 2023</em>. <a href="https://www.wordfence.com/blog/" target="_blank">wordfence.com</a></li>
+  <li>Google Search Central. (2023). Creating helpful, reliable, people-first content. <a href="https://developers.google.com/search/docs/fundamentals/creating-helpful-content" target="_blank">developers.google.com</a></li>
+  <li>W3Techs. (2024). Web Technology Surveys — CMS market share. <a href="https://w3techs.com" target="_blank">w3techs.com</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(4)">← Unidad 4</button><button class="btn pri" onclick="go(6)">Unidad 6 →</button></div>
+</section>
+
+<!-- U6 -->
+<section class="sec" data-id="6">
+<div class="uh"><div class="un">Unidad 6</div><h2>🎵 TikTok, YouTube y Otras Plataformas</h2><div class="met">"TikTok es el algoritmo más democrático y adictivo que existe: no importa si tienes cero seguidores, si el contenido engancha, el algoritmo lo viraliza; por eso es tan poderoso y tan difícil de regular."</div></div>
+<div class="sgrid">
+  <div class="sc"><div class="v">1.6B</div><div class="l">Usuarios activos mensuales TikTok (2024)</div></div>
+  <div class="sc"><div class="v">2.7B</div><div class="l">Usuarios activos mensuales YouTube (2024)</div></div>
+  <div class="sc"><div class="v">170M</div><div class="l">Usuarios de TikTok en EE.UU. (posible ban 2025)</div></div>
+</div>
+<div class="cards">
+  <div class="card"><h4>🎵 TikTok — Seguridad y controversia</h4><ul><li>Propiedad: ByteDance (China) — debate soberanía de datos</li><li>EE.UU. aprobó ley de desinversión forzada (abril 2024)</li><li>Algoritmo FYP (For You Page): rastreo granular de comportamiento</li><li>Project Texas: servidores en EE.UU. para datos americanos</li><li>TikTok Shop: nuevo vector de fraude y productos falsos</li><li>Protección de menores: límite de 60 min/día por defecto</li></ul></div>
+  <div class="card"><h4>▶️ YouTube — Seguridad y monetización</h4><ul><li>2FA requerido para monetización</li><li>Content ID: sistema antipiratería por IA</li><li>YouTube Premium y modelo de suscripción</li><li>Estafas de impersonación de creadores (deepfakes)</li><li>Transparencia en anuncios políticos</li><li>YouTube Kids: filtros de contenido para menores</li></ul></div>
+  <div class="card"><h4>📸 Instagram Reels y Snapchat</h4><ul><li>Instagram Reels: respuesta directa a TikTok</li><li>Instagram DM: cifrado de extremo a extremo (2023)</li><li>Snapchat My AI: asistente integrado, controversias de privacidad</li><li>BeReal: autenticidad vs. curación</li><li>Pinterest: visual search y compras integradas</li></ul></div>
+  <div class="card"><h4>🎮 Twitch y Discord</h4><ul><li>Twitch: streaming en vivo; principal vector de grooming en gaming</li><li>Raids maliciosos: ataques coordinados de odio</li><li>Discord: 200M usuarios; comunidades cerradas; riesgo de exfiltración de datos corporativos</li><li>Discord fue usado para filtrar documentos clasificados del Pentágono (2023)</li></ul></div>
+</div>
+<div class="alert"><span>⚠️</span><span><strong>TikTok y seguridad nacional:</strong> En enero 2025, la Corte Suprema de EE.UU. confirmó por unanimidad la constitucionalidad de la ley que obliga a ByteDance a vender TikTok o ser prohibida en EE.UU. Esta decisión tiene implicaciones globales para la soberanía digital y el debate sobre plataformas de países extranjeros en infraestructura de comunicación nacional.</span></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>We Are Social. (2024). <em>Digital 2024 Report</em>. <a href="https://datareportal.com/reports/digital-2024-global-overview-report" target="_blank">datareportal.com</a></li>
+  <li>US Congress. (2024). Protecting Americans from Foreign Adversary Controlled Applications Act.</li>
+  <li>TikTok Newsroom. (2024). Project Texas Update. <a href="https://newsroom.tiktok.com" target="_blank">newsroom.tiktok.com</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(5)">← Unidad 5</button><button class="btn pri" onclick="go(7)">Unidad 7 →</button></div>
+</section>
+
+<!-- U7 -->
+<section class="sec" data-id="7">
+<div class="uh"><div class="un">Unidad 7</div><h2>☁️ Fundamentos de la Nube</h2><div class="met">"La nube no es un concepto abstracto: son millones de servidores físicos en centros de datos que consumen tanta energía como países enteros. Su nombre poético oculta una infraestructura concreta con riesgos muy concretos."</div></div>
+<div class="sgrid">
+  <div class="sc"><div class="v">$679B</div><div class="l">Mercado cloud global 2024 (Gartner)</div></div>
+  <div class="sc"><div class="v">65%</div><div class="l">del gasto en software pasa a la nube para 2025</div></div>
+  <div class="sc"><div class="v">3</div><div class="l">Hiperescaladores dominan: AWS, Azure, GCP</div></div>
+</div>
+<div class="fc"><h3>📖 Definición NIST</h3><p>El NIST (SP 800-145) define cloud computing como <em>"un modelo para habilitar el acceso conveniente y bajo demanda a través de la red a un conjunto compartido de recursos de computación configurables (redes, servidores, almacenamiento, aplicaciones y servicios) que pueden ser aprovisionados y liberados rápidamente con mínimo esfuerzo de gestión o interacción del proveedor de servicio"</em>.</p></div>
+<div class="cards">
+  <div class="card"><h4>🧩 Modelos de servicio</h4><ul><li><strong>IaaS</strong> (Infrastructure as a Service): AWS EC2, Azure VMs, GCP Compute Engine</li><li><strong>PaaS</strong> (Platform as a Service): Heroku, Azure App Service, Google App Engine</li><li><strong>SaaS</strong> (Software as a Service): Microsoft 365, Google Workspace, Salesforce</li><li><strong>FaaS</strong> (Functions as a Service): AWS Lambda, Azure Functions — serverless</li><li><strong>CaaS</strong> (Containers as a Service): EKS, AKS, GKE</li></ul></div>
+  <div class="card"><h4>🏗️ Modelos de despliegue</h4><ul><li><strong>Pública:</strong> recursos compartidos del proveedor (AWS, Azure, GCP)</li><li><strong>Privada:</strong> infraestructura dedicada on-premise o colocation</li><li><strong>Híbrida:</strong> combinación de pública y privada con orquestación</li><li><strong>Multi-cloud:</strong> uso de múltiples proveedores (estrategia dominante en 2024)</li><li><strong>Edge cloud:</strong> procesamiento en el borde de la red, cerca del usuario</li></ul></div>
+</div>
+<div class="fc"><h3>💡 Características esenciales del cloud (NIST)</h3><ul>
+  <li><strong>Autoservicio bajo demanda:</strong> aprovisionar recursos sin intervención humana del proveedor</li>
+  <li><strong>Acceso amplio a la red:</strong> disponible desde cualquier dispositivo por red estándar</li>
+  <li><strong>Pool de recursos:</strong> recursos compartidos entre múltiples clientes (multi-tenancy)</li>
+  <li><strong>Elasticidad rápida:</strong> escalar verticalmente y horizontalmente de forma automática</li>
+  <li><strong>Servicio medido:</strong> pago por uso (pay-as-you-go)</li>
+</ul></div>
+<div class="fc"><h3>🌍 Panorama de hiperescaladores 2024</h3><ul>
+  <li><strong>AWS (Amazon):</strong> 31% cuota de mercado; 200+ servicios; líder global</li>
+  <li><strong>Microsoft Azure:</strong> 25% cuota; fuerza en empresas con Microsoft 365 + Copilot AI</li>
+  <li><strong>Google Cloud (GCP):</strong> 11% cuota; fuerza en IA/ML con Vertex AI y Gemini</li>
+  <li><strong>Alibaba Cloud:</strong> dominante en Asia-Pacífico; expansión global</li>
+  <li><strong>Oracle Cloud:</strong> 9B+ en contratos con gobierno de EE.UU. (2023)</li>
+</ul></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>NIST. (2011). <em>SP 800-145: The NIST Definition of Cloud Computing</em>. <a href="https://csrc.nist.gov/publications/detail/sp/800-145/final" target="_blank">csrc.nist.gov</a></li>
+  <li>Gartner. (2024). <em>Forecast: Public Cloud Services, Worldwide 2024</em>.</li>
+  <li>Synergy Research Group. (2024). Cloud market share Q2 2024.</li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(6)">← Unidad 6</button><button class="btn pri" onclick="go(8)">Unidad 8 →</button></div>
+</section>
+
+<!-- U8 -->
+<section class="sec" data-id="8">
+<div class="uh"><div class="un">Unidad 8</div><h2>🏗️ Arquitectura Cloud</h2><div class="met">"La arquitectura cloud bien diseñada es como el diseño de un edificio antisísmico: invisible en tiempos normales, pero es exactamente lo que impide el colapso cuando llega el temblor."</div></div>
+<div class="cards">
+  <div class="card"><h4>🖥️ Virtualización y contenedores</h4><ul><li><strong>Máquinas virtuales (VM):</strong> hipervisores (VMware, Hyper-V, KVM) aíslan sistemas completos</li><li><strong>Contenedores (Docker):</strong> empaquetan solo la app y sus dependencias; más ligeros que VMs</li><li><strong>Kubernetes (K8s):</strong> orquestador de contenedores; estándar de facto en cloud nativo</li><li><strong>Serverless:</strong> AWS Lambda, Azure Functions — sin gestión de servidores</li></ul></div>
+  <div class="card"><h4>🌐 Redes y conectividad</h4><ul><li><strong>VPC (Virtual Private Cloud):</strong> red aislada lógicamente dentro del cloud</li><li><strong>Subnets públicas y privadas</strong></li><li><strong>VPN site-to-site:</strong> conectar datacenter on-premise con cloud</li><li><strong>Direct Connect / ExpressRoute:</strong> conexión dedicada privada</li><li><strong>CDN:</strong> Cloudflare, AWS CloudFront — entrega de contenido con latencia mínima</li></ul></div>
+  <div class="card"><h4>💾 Almacenamiento cloud</h4><ul><li><strong>Object storage:</strong> AWS S3, Azure Blob, GCS — infinitamente escalable</li><li><strong>Block storage:</strong> EBS, Azure Disk — para VMs</li><li><strong>File storage:</strong> EFS, Azure Files — NFS/SMB en la nube</li><li><strong>Bases de datos:</strong> RDS (relacional), DynamoDB (NoSQL), BigQuery (analítica)</li><li><strong>Data lakehouse:</strong> Databricks, Snowflake</li></div>
+  <div class="card"><h4>⚙️ DevOps y CI/CD en cloud</h4><ul><li><strong>IaC (Infrastructure as Code):</strong> Terraform, AWS CloudFormation, Pulumi</li><li><strong>CI/CD:</strong> GitHub Actions, GitLab CI, AWS CodePipeline</li><li><strong>GitOps:</strong> ArgoCD, Flux — sincronización de estado deseado</li><li><strong>Observabilidad:</strong> Prometheus, Grafana, Datadog, AWS CloudWatch</li></ul></div>
+</div>
+<div class="fc"><h3>🏛️ Well-Architected Framework (AWS/Azure/GCP 2024)</h3><p>Los principales proveedores ofrecen marcos de buenas prácticas para arquitecturas cloud. El <strong>AWS Well-Architected Framework</strong> define 6 pilares: <em>Excelencia operacional, Seguridad, Fiabilidad, Eficiencia de rendimiento, Optimización de costos y Sostenibilidad</em>. El pilar de Seguridad incluye: gestión de identidad y acceso (IAM), detección, protección de infraestructura, protección de datos y respuesta a incidentes.</p></div>
+<div class="alert info"><span>ℹ️</span><span><strong>FinOps:</strong> Disciplina emergente que combina finanzas, tecnología y negocios para optimizar el gasto en cloud. Con el 32% de presupuesto cloud desperdiciado anualmente (Flexera, 2024), las organizaciones están adoptando FinOps como práctica cultural para la responsabilidad del gasto en la nube.</span></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>AWS. (2024). <em>AWS Well-Architected Framework</em>. <a href="https://docs.aws.amazon.com/wellarchitected/latest/framework/" target="_blank">docs.aws.amazon.com</a></li>
+  <li>CNCF. (2024). Cloud Native Computing Foundation landscape. <a href="https://landscape.cncf.io" target="_blank">landscape.cncf.io</a></li>
+  <li>Flexera. (2024). <em>State of the Cloud Report 2024</em>. <a href="https://www.flexera.com/blog/cloud/cloud-computing-trends-2024-state-of-the-cloud-report/" target="_blank">flexera.com</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(7)">← Unidad 7</button><button class="btn pri" onclick="go(9)">Unidad 9 →</button></div>
+</section>
+
+<!-- U9 -->
+<section class="sec" data-id="9">
+<div class="uh"><div class="un">Unidad 9</div><h2>🔐 Seguridad en la Nube</h2><div class="met">"En la nube, la seguridad es como la responsabilidad en un edificio de apartamentos: el edificio (proveedor) garantiza paredes y techo; lo que ocurre dentro de tu departamento (datos y apps) es tu responsabilidad."</div></div>
+<div class="sgrid">
+  <div class="sc"><div class="v">82%</div><div class="l">de brechas involucran datos en la nube (IBM, 2024)</div></div>
+  <div class="sc"><div class="v">$4.88M</div><div class="l">Costo promedio de una brecha de datos 2024 (IBM)</div></div>
+  <div class="sc"><div class="v">277 días</div><div class="l">Promedio para identificar y contener una brecha</div></div>
+</div>
+<div class="fc"><h3>🤝 Modelo de Responsabilidad Compartida</h3><p>El principio fundamental de la seguridad cloud: el proveedor es responsable de la seguridad <strong>de</strong> la nube (infraestructura física, hipervisor, red); el cliente es responsable de la seguridad <strong>en</strong> la nube (datos, identidades, aplicaciones, configuración). Esta distinción varía según el modelo de servicio:</p><ul><li><strong>IaaS:</strong> cliente gestiona SO, middleware, runtime, apps, datos</li><li><strong>PaaS:</strong> cliente gestiona apps y datos; proveedor gestiona runtime y SO</li><li><strong>SaaS:</strong> cliente solo gestiona sus datos y accesos; proveedor gestiona todo lo demás</li></ul></div>
+<div class="cards">
+  <div class="card"><h4>🔑 IAM — Gestión de Identidad y Acceso</h4><ul><li><strong>MFA obligatorio</strong> para todas las cuentas con privilegios</li><li><strong>Principio de mínimo privilegio:</strong> solo los permisos necesarios</li><li><strong>Cero Trust (Zero Trust):</strong> "nunca confíes, siempre verifica"</li><li><strong>PAM:</strong> Privileged Access Management (CyberArk, BeyondTrust)</li><li><strong>RBAC:</strong> control de acceso basado en roles</li><li><strong>SSO + SAML/OIDC:</strong> autenticación federada</li></ul></div>
+  <div class="card"><h4>🔒 Protección de datos en la nube</h4><ul><li><strong>Cifrado en reposo:</strong> AES-256; llaves gestionadas por cliente (BYOK)</li><li><strong>Cifrado en tránsito:</strong> TLS 1.3</li><li><strong>Tokenización:</strong> sustituir datos sensibles por tokens</li><li><strong>DLP (Data Loss Prevention):</strong> evitar exfiltración</li><li><strong>CASB (Cloud Access Security Broker):</strong> visibilidad y control sobre SaaS</li></ul></div>
+  <div class="card"><h4>🛡️ Detección y respuesta</h4><ul><li><strong>CSPM</strong> (Cloud Security Posture Management): detectar configuraciones erróneas</li><li><strong>CWPP</strong> (Cloud Workload Protection): protección de cargas de trabajo</li><li><strong>SIEM en la nube:</strong> Microsoft Sentinel, Splunk, AWS Security Hub</li><li><strong>NDR:</strong> detección de amenazas en tráfico de red</li><li><strong>Threat Intelligence:</strong> feeds de IOCs (indicadores de compromiso)</li></ul></div>
+  <div class="card"><h4>⚠️ Amenazas top en cloud (CSA 2024)</h4><ul><li>Configuraciones erróneas: bucket S3 público, IAM permisivo</li><li>Identidades comprometidas: credential stuffing, phishing</li><li>APIs inseguras: el 95% de incidentes de API son evitables</li><li>Shadow IT: uso de servicios cloud no autorizados</li><li>Ataques a cadena de suministro: dependencias de terceros</li></ul></div>
+</div>
+<div class="fc"><h3>📋 Marcos y estándares de seguridad cloud 2024</h3><ul>
+  <li><strong>ISO/IEC 27017:2015:</strong> controles de seguridad específicos para cloud (complementa ISO 27001)</li>
+  <li><strong>ISO/IEC 27018:2019:</strong> privacidad de datos personales en cloud</li>
+  <li><strong>CSA CCM v4:</strong> Cloud Controls Matrix; 197 controles de seguridad cloud</li>
+  <li><strong>NIST SP 800-210:</strong> guía de control de acceso para sistemas cloud</li>
+  <li><strong>SOC 2 Type II:</strong> auditoría de controles de seguridad, disponibilidad, confidencialidad</li>
+  <li><strong>FedRAMP (EE.UU.):</strong> autorización de seguridad para cloud en gobierno federal</li>
+</ul></div>
+<div class="alert"><span>⚠️</span><span><strong>Caso: Microsoft Azure (jul. 2023):</strong> El grupo chino Storm-0558 comprometió cuentas de correo de 25 organizaciones gubernamentales incluyendo el Departamento de Estado de EE.UU., aprovechando una clave de firma (MSA key) de Microsoft. El incidente reveló debilidades en gestión de llaves criptográficas y auditoría de logs en servicios cloud empresariales.</span></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>IBM Security. (2024). <em>Cost of a Data Breach Report 2024</em>. <a href="https://www.ibm.com/reports/data-breach" target="_blank">ibm.com/reports/data-breach</a></li>
+  <li>CSA. (2024). <em>Top Threats to Cloud Computing 2024</em>. <a href="https://cloudsecurityalliance.org" target="_blank">cloudsecurityalliance.org</a></li>
+  <li>CISA. (2023). Microsoft Cloud Security Advisory AA23-193A.</li>
+  <li>NIST. (2024). <em>SP 800-210: General Access Control Guidance for Cloud Systems</em>. <a href="https://csrc.nist.gov" target="_blank">csrc.nist.gov</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(8)">← Unidad 8</button><button class="btn pri" onclick="go(10)">Unidad 10 →</button></div>
+</section>
+
+<!-- U10 -->
+<section class="sec" data-id="10">
+<div class="uh"><div class="un">Unidad 10</div><h2>🚀 Desarrollo de Aplicaciones en la Nube</h2><div class="met">"Desarrollar en la nube es como construir un avión mientras vuela: las prácticas DevSecOps integran la seguridad en cada tornillo, no como un inspector final de pista, sino como parte del diseño del motor."</div></div>
+<div class="cards">
+  <div class="card"><h4>☁️ Cloud Native vs Tradicional</h4><ul><li><strong>Tradicional:</strong> monolítico, deploy manual, escalado vertical, meses entre releases</li><li><strong>Cloud Native:</strong> microservicios, contenedores, CI/CD, escalado horizontal automático, deploys diarios</li><li><strong>Principios:</strong> 12-factor app methodology</li><li><strong>Herramientas:</strong> Kubernetes, Helm, Istio, ArgoCD</li></ul></div>
+  <div class="card"><h4>🔒 DevSecOps</h4><ul><li>"Shift left": integrar seguridad desde el diseño, no al final</li><li><strong>SAST:</strong> análisis estático de código (Sonarqube, Snyk)</li><li><strong>DAST:</strong> análisis dinámico en runtime (OWASP ZAP, Burp Suite)</li><li><strong>SCA:</strong> análisis de dependencias open source</li><li><strong>Container scanning:</strong> Trivy, Twistlock</li><li><strong>Secret scanning:</strong> detectar llaves expuestas en código</li></ul></div>
+  <div class="card"><h4>🤖 IA en desarrollo cloud 2024</h4><ul><li><strong>GitHub Copilot:</strong> autocompletado de código con IA; 1.8M usuarios de pago</li><li><strong>Amazon CodeWhisperer:</strong> Copilot de AWS</li><li><strong>Vertex AI / Amazon Bedrock:</strong> APIs de IA generativa como servicio</li><li><strong>MLOps:</strong> operaciones de modelos de ML en producción</li><li><strong>AI Security:</strong> ataques de prompt injection, envenenamiento de modelos</li></ul></div>
+  <div class="card"><h4>🌐 APIs y Seguridad</h4><ul><li>OWASP API Security Top 10 (2023 actualización)</li><li>API Gateway: AWS API Gateway, Kong, Apigee</li><li>OAuth 2.0 / OIDC: autorización y autenticación</li><li>Rate limiting y throttling</li><li>API versioning para evitar breaking changes</li><li>mTLS para comunicación servicio-a-servicio</li></ul></div>
+</div>
+<div class="fc"><h3>📊 Arquitecturas modernas 2024</h3><ul>
+  <li><strong>Microservicios:</strong> cada servicio desplegable independientemente; Netflix, Uber, Spotify</li>
+  <li><strong>Serverless / FaaS:</strong> AWS Lambda; pago por ejecución; ideal para cargas variables</li>
+  <li><strong>Service Mesh:</strong> Istio, Linkerd — gestión de tráfico y seguridad entre microservicios</li>
+  <li><strong>Event-driven:</strong> Apache Kafka, AWS EventBridge — arquitectura basada en eventos</li>
+  <li><strong>Edge computing:</strong> Cloudflare Workers, AWS Lambda@Edge — lógica cerca del usuario</li>
+</ul></div>
+<div class="fc"><h3>♻️ Sostenibilidad y Green Cloud (2024)</h3><p>Los centros de datos representan entre el 1-2% del consumo eléctrico global. El <strong>Green Software Foundation</strong> promueve prácticas de desarrollo sostenible: eficiencia energética, intensidad de carbono y hardware incorporado. Los principales proveedores (AWS, Azure, GCP) publican compromisos de neutralidad de carbono y uso de 100% energías renovables. La regulación europea exige desde 2024 que los grandes centros de datos reporten su impacto ambiental bajo la directiva de eficiencia energética.</p>
+<div class="tags" style="margin-top:10px"><span class="tag g">Green Software</span><span class="tag g">Carbono neutral</span><span class="tag g">Energía renovable</span><span class="tag">PUE</span></div></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>OWASP. (2023). <em>OWASP API Security Top 10 2023</em>. <a href="https://owasp.org/API-Security/" target="_blank">owasp.org</a></li>
+  <li>CNCF. (2024). Cloud Native Annual Survey 2024. <a href="https://www.cncf.io/reports/cncf-annual-survey-2024/" target="_blank">cncf.io</a></li>
+  <li>Green Software Foundation. (2024). <em>Software Carbon Intensity Specification</em>. <a href="https://greensoftware.foundation" target="_blank">greensoftware.foundation</a></li>
+  <li>Gartner. (2024). <em>Magic Quadrant for Cloud Infrastructure and Platform Services</em>.</li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(9)">← Unidad 9</button><button class="btn" onclick="go(0)" style="border-color:var(--green);color:var(--green)">🏠 Inicio</button></div>
+</section>
+
+</main>
+<script>
+const SECS=[
+  {id:0,l:"Portada",ic:"🏠"},
+  {id:1,l:"U1. Introducción Redes Sociales",ic:"🌐"},
+  {id:2,l:"U2. Meta: Facebook e Instagram",ic:"📘"},
+  {id:3,l:"U3. X Corp. y Nuevas Plataformas",ic:"🐦"},
+  {id:4,l:"U4. LinkedIn",ic:"💼"},
+  {id:5,l:"U5. Blogs y Contenido Propio",ic:"✍️"},
+  {id:6,l:"U6. TikTok, YouTube y Otras",ic:"🎵"},
+  {id:7,l:"U7. Fundamentos de la Nube",ic:"☁️"},
+  {id:8,l:"U8. Arquitectura Cloud",ic:"🏗️"},
+  {id:9,l:"U9. Seguridad en la Nube",ic:"🔐"},
+  {id:10,l:"U10. Desarrollo en la Nube",ic:"🚀"},
+];
+let cur=0;
+const nl=document.getElementById('nl');
+SECS.forEach(s=>{
+  const e=document.createElement('div');
+  e.className='nav-item'+(s.id===0?' active':'');
+  e.dataset.id=s.id;
+  e.innerHTML=`<span class="ic">${s.ic}</span><span>${s.l}</span>`;
+  e.addEventListener('click',()=>go(s.id));
+  nl.appendChild(e);
+});
+function go(id){
+  document.querySelector('.sec.active')?.classList.remove('active');
+  document.querySelector('.nav-item.active')?.classList.remove('active');
+  document.querySelector(`.sec[data-id="${id}"]`).classList.add('active');
+  document.querySelector(`.nav-item[data-id="${id}"]`).classList.add('active');
+  cur=id;
+  document.getElementById('pfill').style.width=(id===0?0:Math.round(id/10*100))+'%';
+  window.scrollTo({top:0,behavior:'smooth'});
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('ov').classList.remove('open');
+}
+function tr(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.textContent=btn.textContent.includes('▾')?btn.textContent.replace('▾','▴'):btn.textContent.replace('▴','▾');
+}
+function tog(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('ov').classList.toggle('open');
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'&&cur<10)go(cur+1);
+  if(e.key==='ArrowLeft'&&cur>0)go(cur-1);
+});
+</script>
+</body>
+</html>

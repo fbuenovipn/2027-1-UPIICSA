@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Normas y Estándares de Seguridad Informática</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0e1a;--bg2:#111827;--bg3:#1a2235;--cyan:#00d4ff;--green:#39ff14;--red:#ff4757;--orange:#ff6b35;--purple:#a855f7;--pink:#ec4899;--gold:#f59e0b;--text:#e2e8f0;--muted:#94a3b8;--border:rgba(0,212,255,.18);--glass:rgba(255,255,255,.03);--sw:270px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+#sidebar{position:fixed;top:0;left:0;width:var(--sw);height:100vh;background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;z-index:100;transition:.3s}
+.logo{padding:20px 18px 14px;border-bottom:1px solid var(--border)}
+.logo h2{font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--cyan);font-family:'JetBrains Mono',monospace}
+.logo p{font-size:.68rem;color:var(--muted);margin-top:3px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:10px 16px;cursor:pointer;transition:.2s;border-left:3px solid transparent;font-size:.79rem;color:var(--muted)}
+.nav-item:hover{background:var(--glass);color:var(--text)}
+.nav-item.active{border-left-color:var(--cyan);background:rgba(0,212,255,.07);color:var(--cyan)}
+.nav-item .ic{min-width:18px}
+#pbar{position:fixed;top:0;left:var(--sw);right:0;height:3px;background:var(--bg3);z-index:99}
+#pfill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--orange));transition:.4s;width:0}
+#main{margin-left:var(--sw);padding:44px 48px 80px;min-height:100vh;max-width:980px}
+.sec{display:none;animation:fi .4s ease}
+.sec.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.hero{background:linear-gradient(135deg,#001420,#0a1422 50%,#0a0e1a);border:1px solid rgba(0,212,255,.25);border-radius:16px;padding:52px 44px;margin-bottom:36px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-40%;right:-8%;width:460px;height:460px;background:radial-gradient(circle,rgba(0,212,255,.07) 0%,transparent 70%);pointer-events:none}
+.badge{display:inline-block;background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.35);color:var(--cyan);font-size:.7rem;padding:4px 12px;border-radius:20px;font-family:'JetBrains Mono',monospace;letter-spacing:.05em;margin-bottom:18px}
+.hero h1{font-size:2rem;font-weight:700;line-height:1.2;margin-bottom:14px}
+.hero h1 span{color:var(--cyan)}
+.hero p{color:var(--muted);font-size:.97rem;line-height:1.7;max-width:600px}
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:28px 0}
+.sc{background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center}
+.sc .v{font-size:1.55rem;font-weight:700;color:var(--cyan);font-family:'JetBrains Mono',monospace}
+.sc .l{font-size:.71rem;color:var(--muted);margin-top:4px}
+.uh{background:linear-gradient(135deg,var(--bg3),var(--bg2));border:1px solid var(--border);border-radius:12px;padding:28px;margin-bottom:22px}
+.uh .un{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--cyan);text-transform:uppercase;letter-spacing:.12em}
+.uh h2{font-size:1.5rem;margin:7px 0 10px}
+.met{background:rgba(0,212,255,.05);border-left:3px solid var(--cyan);padding:13px 16px;border-radius:0 8px 8px 0;font-style:italic;color:var(--muted);font-size:.87rem;line-height:1.6}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}
+.card{background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:18px;transition:.2s}
+.card:hover{border-color:rgba(0,212,255,.35);background:rgba(0,212,255,.03)}
+.card h4{font-size:.81rem;color:var(--cyan);margin-bottom:8px}
+.card ul{font-size:.8rem;color:var(--muted);line-height:1.7;padding-left:15px}
+.card ul li{margin-bottom:4px}
+.fc{background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:22px;margin:14px 0}
+.fc h3{font-size:.93rem;color:var(--text);margin-bottom:10px}
+.fc p,.fc ul{font-size:.82rem;color:var(--muted);line-height:1.7}
+.fc ul{padding-left:16px}
+.fc ul li{margin-bottom:5px}
+.tags{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0}
+.tag{font-size:.69rem;padding:3px 9px;border-radius:12px;font-family:'JetBrains Mono',monospace}
+.tc{background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);color:var(--cyan)}
+.tg{background:rgba(57,255,20,.08);border:1px solid rgba(57,255,20,.2);color:var(--green)}
+.tr{background:rgba(255,71,87,.08);border:1px solid rgba(255,71,87,.2);color:var(--red)}
+.to{background:rgba(255,107,53,.08);border:1px solid rgba(255,107,53,.2);color:var(--orange)}
+.tp{background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.2);color:var(--purple)}
+.tg2{background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);color:var(--cyan)}
+.alert{border-radius:10px;padding:14px 18px;margin:14px 0;font-size:.81rem;display:flex;gap:9px;align-items:flex-start}
+.ar{background:rgba(255,71,87,.07);border:1px solid rgba(255,71,87,.3);color:#ff6b7a}
+.ai{background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.3);color:var(--cyan)}
+.ao{background:rgba(255,107,53,.07);border:1px solid rgba(255,107,53,.3);color:var(--orange)}
+.ag{background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.3);color:var(--cyan)}
+.rt{background:none;border:1px solid var(--border);color:var(--muted);padding:9px 16px;border-radius:8px;cursor:pointer;font-size:.77rem;margin-top:20px;transition:.2s;display:flex;align-items:center;gap:7px;font-family:'Inter',sans-serif}
+.rt:hover{border-color:var(--cyan);color:var(--cyan)}
+.rc{display:none;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:18px;margin-top:7px}
+.rc.open{display:block}
+.rc ul{padding-left:16px}
+.rc li{font-size:.75rem;color:var(--muted);margin-bottom:7px;line-height:1.5}
+.rc a{color:var(--cyan);text-decoration:none}
+.rc a:hover{text-decoration:underline}
+.nb{display:flex;justify-content:space-between;margin-top:44px;padding-top:22px;border-top:1px solid var(--border)}
+.btn{background:var(--glass);border:1px solid var(--border);color:var(--text);padding:9px 22px;border-radius:8px;cursor:pointer;font-size:.82rem;transition:.2s;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:7px}
+.btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.btn.pri{background:rgba(0,212,255,.1);border-color:var(--cyan);color:var(--cyan)}
+.btn.pri:hover{background:rgba(0,212,255,.18)}
+.phases{display:flex;gap:0;margin:16px 0;overflow-x:auto;padding-bottom:8px}
+.phase{flex:1;min-width:90px;background:var(--glass);border:1px solid var(--border);padding:12px 10px;text-align:center;position:relative}
+.phase:not(:last-child)::after{content:'→';position:absolute;right:-11px;top:50%;transform:translateY(-50%);color:var(--cyan);font-size:.9rem;z-index:1}
+.phase:first-child{border-radius:8px 0 0 8px}
+.phase:last-child{border-radius:0 8px 8px 0}
+.phase .pnum{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--cyan);text-transform:uppercase}
+.phase .ptitle{font-size:.74rem;font-weight:600;margin:4px 0 2px;color:var(--text)}
+.phase .pdesc{font-size:.67rem;color:var(--muted)}
+.norm-card{background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:20px;margin:10px 0;border-left:3px solid var(--cyan)}
+.norm-card .nc-id{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--cyan);text-transform:uppercase;letter-spacing:.08em}
+.norm-card h4{font-size:.9rem;color:var(--text);margin:5px 0 8px}
+.norm-card p,.norm-card ul{font-size:.8rem;color:var(--muted);line-height:1.65}
+.norm-card ul{padding-left:15px}
+.norm-card ul li{margin-bottom:4px}
+table{width:100%;border-collapse:collapse;font-size:.79rem;margin:12px 0}
+th{background:var(--bg3);color:var(--text);padding:9px 12px;text-align:left;border-bottom:1px solid var(--border);font-weight:600}
+td{padding:8px 12px;color:var(--muted);border-bottom:1px solid rgba(255,255,255,.04)}
+tr:hover td{background:var(--glass)}
+#ham{display:none;position:fixed;top:12px;left:12px;z-index:200;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;cursor:pointer;flex-direction:column;gap:5px}
+#ham span{display:block;width:22px;height:2px;background:var(--cyan);border-radius:2px}
+#ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99}
+@media(max-width:768px){#ham{display:flex}#sidebar{transform:translateX(-100%)}#sidebar.open{transform:translateX(0)}#ov.open{display:block}#main{margin-left:0;padding:24px 18px 60px}#pbar{left:0}.sgrid,.cards{grid-template-columns:1fr}.hero{padding:28px 20px}.hero h1{font-size:1.4rem}.phases{flex-direction:column}.phase:not(:last-child)::after{display:none}}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
+.home-btn{display:block;margin:8px 16px 4px;padding:7px 12px;background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);border-radius:6px;color:var(--cyan);font-size:.76rem;text-decoration:none;text-align:center;transition:.2s}.home-btn:hover{background:rgba(0,212,255,.15);border-color:var(--cyan)}
+</style>
+</head>
+<body>
+<div id="ham" onclick="tog()"><span></span><span></span><span></span></div>
+<div id="ov" onclick="tog()"></div>
+<div id="pbar"><div id="pfill"></div></div>
+<nav id="sidebar"><div class="logo"><h2>📜 Normas y Estándares</h2><p>Maestría en Seguridad Informática</p></div><a href="index.html" class="home-btn">← Inicio</a><div id="nl"></div></nav>
+<main id="main">
+
+<!-- PORTADA -->
+<section class="sec active" data-id="0">
+<div class="hero">
+  <div class="badge">// Módulo 9 — Maestría en Seguridad Informática</div>
+  <h1>Normas y Estándares de <span>Seguridad Informática</span> para las Empresas</h1>
+  <p>Comprende, aplica y audita los marcos normativos internacionales que rigen la seguridad de la información. Desde la familia ISO/IEC 27000 hasta ICS/OT con ISA/IEC 62443, domina el lenguaje regulatorio del profesional de seguridad.</p>
+</div>
+<div class="sgrid">
+  <div class="sc"><div class="v">70K+</div><div class="l">Organizaciones certificadas ISO 27001 en 130 países (ISO Survey 2023)</div></div>
+  <div class="sc"><div class="v">ISO+NIST</div><div class="l">Marcos más adoptados globalmente para gestión de seguridad</div></div>
+  <div class="sc"><div class="v">10 U.</div><div class="l">Unidades temáticas del curso</div></div>
+</div>
+<div class="cards">
+  <div class="card"><h4>📚 Familia ISO/IEC 27000</h4><ul>
+    <li>U1: Introducción a normas y estándares</li>
+    <li>U2: Normas ISO — fundamentos y 27000</li>
+    <li>U3: ISO/IEC 27001 e ISO/IEC 27002</li>
+    <li>U4: ISO/IEC 27003 e ISO/IEC 27004</li>
+    <li>U5: ISO/IEC 27005 e ISO/IEC 27006</li>
+    <li>U6: ISO/IEC 27007 — Auditoría SGSI</li>
+  </ul></div>
+  <div class="card"><h4>🌐 Otros marcos esenciales</h4><ul>
+    <li>U7: RFC 2196 — Site Security Handbook</li>
+    <li>U8: ISA/IEC 62443 — Ciberseguridad industrial OT</li>
+    <li>U9: NIST SP 800-30 — Evaluación de riesgos</li>
+    <li>U10: BS 25999 / ISO 22301 — Continuidad del negocio</li>
+    <li>Síntesis: mapa comparativo y tendencias 2025</li>
+  </ul></div>
+</div>
+</section>
+<!-- U1: Introducción a normas y estándares -->
+<section class="sec" data-id="1">
+<div class="uh"><div class="un">Unidad 1</div><h2>📖 Introducción a las Normas y los Estándares</h2>
+<div class="met">"Las normas de seguridad son el idioma común de la confianza empresarial: sin ellas, cada organización hablaría su propio dialecto de seguridad y ninguna podría demostrar a clientes, socios o reguladores que realmente protege lo que dice proteger."</div></div>
+<div class="fc"><h3>🔑 Norma vs Estándar — ¿son lo mismo?</h3>
+<div class="cards">
+  <div class="card"><h4>📋 Norma</h4><ul>
+    <li>Documento establecido por consenso y aprobado por un organismo reconocido</li>
+    <li>Proporciona reglas, directrices o características para actividades o resultados</li>
+    <li>De adopción voluntaria u obligatoria según el contexto legal</li>
+    <li>Ejemplos: ISO 27001, ISO 9001, ISO 14001</li>
+    <li>Objetivo: unificar criterios entre partes interesadas</li>
+  </ul></div>
+  <div class="card"><h4>⚙️ Estándar</h4><ul>
+    <li>Especificación técnica de amplia aceptación, no necesariamente de organismos formales</li>
+    <li>Puede ser de facto (adoptado por la industria sin ser oficial)</li>
+    <li>Ejemplos: RFC 2196, NIST SP 800-30, CIS Controls</li>
+    <li>Más ágil en actualización que las normas formales</li>
+    <li>A menudo precede a la norma; la industria adopta antes de que ISO formalice</li>
+  </ul></div>
+</div></div>
+<div class="fc"><h3>🏛️ Principales organismos desarrolladores</h3>
+<table>
+<tr><th>Organismo</th><th>Alcance</th><th>Marcos clave</th></tr>
+<tr><td><strong>ISO</strong> — International Organization for Standardization</td><td>Global; 167 países miembros</td><td>ISO 27001, ISO 22301, ISO 31000</td></tr>
+<tr><td><strong>IEC</strong> — International Electrotechnical Commission</td><td>Global; electrotecnia y TI</td><td>IEC 62443 (OT), conjunto ISO/IEC</td></tr>
+<tr><td><strong>NIST</strong> — National Institute of Standards and Technology (EE.UU.)</td><td>EE.UU.; adoptado globalmente</td><td>CSF 2.0, SP 800-30, SP 800-53</td></tr>
+<tr><td><strong>IETF</strong> — Internet Engineering Task Force</td><td>Global; protocolos de Internet</td><td>RFC 2196, RFC 8446 (TLS 1.3)</td></tr>
+<tr><td><strong>ISA</strong> — International Society of Automation</td><td>Global; automatización industrial</td><td>ISA/IEC 62443</td></tr>
+<tr><td><strong>BSI</strong> — British Standards Institution</td><td>UK; adoptado globalmente</td><td>BS 25999 (predecessor de ISO 22301)</td></tr>
+<tr><td><strong>ENISA</strong> — European Union Agency for Cybersecurity</td><td>Europa</td><td>NIS2, ENISA Threat Landscape, ECSF</td></tr>
+<tr><td><strong>CIS</strong> — Center for Internet Security</td><td>Global</td><td>CIS Controls v8, CIS Benchmarks</td></tr>
+</table></div>
+<div class="fc"><h3>🎯 ¿Por qué certificarse? Beneficios medibles 2024</h3><ul>
+  <li><strong>Confianza de clientes y socios:</strong> certificación ISO 27001 como requisito en licitaciones y contratos B2B; 61% de empresas la exigen a proveedores (BSI 2024)</li>
+  <li><strong>Reducción de costos de brechas:</strong> organizaciones con SGSI maduro tienen un costo de brecha 18% menor que aquellas sin él (IBM Cost of Data Breach 2024)</li>
+  <li><strong>Cumplimiento regulatorio simplificado:</strong> ISO 27001 + ISO 27701 facilita cumplir GDPR, NIS2, DORA simultáneamente</li>
+  <li><strong>Ventaja competitiva:</strong> diferenciación en mercados donde la seguridad es requisito (fintech, salud, gobierno, defensa)</li>
+  <li><strong>Mejora continua demostrable:</strong> el ciclo PDCA de ISO fuerza revisiones regulares y auditorías independientes</li>
+</ul></div>
+<div class="alert ag"><span>💡</span><span><strong>Tendencia 2024:</strong> Regulaciones como NIS2 (Europa) y DORA (sector financiero EU) comienzan a hacer que el cumplimiento de marcos como ISO 27001 sea prácticamente obligatorio para organizaciones de sectores críticos. La diferencia entre "buena práctica voluntaria" y "requisito legal" se está diluyendo rápidamente.</span></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>ISO. (2023). ISO Survey of Certifications 2022. <a href="https://www.iso.org/the-iso-survey.html" target="_blank">iso.org/the-iso-survey</a></li>
+  <li>BSI. (2024). State of IT Procurement Report. <a href="https://www.bsigroup.com" target="_blank">bsigroup.com</a></li>
+  <li>IBM Security. (2024). Cost of a Data Breach Report 2024. <a href="https://www.ibm.com/reports/data-breach" target="_blank">ibm.com/reports/data-breach</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(0)">← Portada</button><button class="btn pri" onclick="go(2)">Unidad 2 →</button></div>
+</section>
+
+<!-- U2: Normas ISO y familia 27000 -->
+<section class="sec" data-id="2">
+<div class="uh"><div class="un">Unidad 2</div><h2>🏛️ Normas ISO — Fundamentos y Familia 27000</h2>
+<div class="met">"La familia ISO 27000 es el sistema solar de la seguridad de la información: ISO 27001 es el sol que todo lo gobierna, y el resto de normas son los planetas que orbitan alrededor, cada uno con su función específica pero todos siguiendo las leyes gravitacionales del SGSI central."</div></div>
+<div class="fc"><h3>🌍 La ISO — International Organization for Standardization</h3>
+<p>Fundada en 1947, la ISO es una federación mundial de organismos nacionales de normalización de 167 países. Ha publicado más de 24,500 normas internacionales que cubren desde manufactura hasta tecnología de la información. Sus normas son de adopción voluntaria, aunque muchas regulaciones nacionales e internacionales las referencian como obligatorias de facto.</p>
+<div class="tags" style="margin-top:10px">
+  <span class="tag tg2">ISO 9001 — Calidad</span>
+  <span class="tag tg2">ISO 14001 — Ambiental</span>
+  <span class="tag tg2">ISO 27001 — Seguridad TI</span>
+  <span class="tag tg2">ISO 22301 — Continuidad</span>
+  <span class="tag tg2">ISO 31000 — Riesgos</span>
+  <span class="tag tg2">ISO 45001 — SST</span>
+</div></div>
+<div class="norm-card">
+  <div class="nc-id">ISO/IEC 27000:2018</div>
+  <h4>Vocabulario y Conceptos Fundamentales del SGSI</h4>
+  <p>Define el vocabulario común y los términos usados en toda la familia ISO 27000. Es la norma de referencia terminológica: proporciona una visión general y el glosario que asegura que todos los demás documentos de la familia usen el mismo lenguaje. Incluye conceptos como SGSI, activo de información, riesgo, control, política, auditoría, certificación. Es gratuita — disponible en el sitio oficial de ISO.</p>
+</div>
+<div class="fc"><h3>📚 Mapa completo de la familia ISO/IEC 27000 (actualizado 2024)</h3>
+<table>
+<tr><th>Norma</th><th>Título</th><th>Tipo</th><th>Estado</th></tr>
+<tr><td><strong>27000</strong></td><td>Vocabulario y visión general del SGSI</td><td>Fundacional</td><td>Vigente 2018</td></tr>
+<tr><td><strong>27001</strong></td><td>Requisitos del SGSI (certificable)</td><td>Requisitos</td><td>Actualizada 2022 ✓</td></tr>
+<tr><td><strong>27002</strong></td><td>Controles de seguridad de la información</td><td>Guía práctica</td><td>Actualizada 2022 ✓</td></tr>
+<tr><td><strong>27003</strong></td><td>Guía de implementación del SGSI</td><td>Guía</td><td>Vigente 2017</td></tr>
+<tr><td><strong>27004</strong></td><td>Métricas y medición del SGSI</td><td>Guía</td><td>Vigente 2016</td></tr>
+<tr><td><strong>27005</strong></td><td>Gestión de riesgos de seguridad</td><td>Guía</td><td>Actualizada 2022 ✓</td></tr>
+<tr><td><strong>27006</strong></td><td>Requisitos para organismos de certificación</td><td>Acreditación</td><td>Vigente 2015+A1:2020</td></tr>
+<tr><td><strong>27007</strong></td><td>Directrices para auditoría de SGSI</td><td>Auditoría</td><td>Vigente 2020</td></tr>
+<tr><td><strong>27017</strong></td><td>Controles para servicios en la nube</td><td>Extensión cloud</td><td>Vigente 2015</td></tr>
+<tr><td><strong>27018</strong></td><td>Protección de PII en cloud público</td><td>Privacidad cloud</td><td>Vigente 2019</td></tr>
+<tr><td><strong>27701</strong></td><td>Gestión de privacidad (PIMS) — complementa GDPR</td><td>Privacidad</td><td>Vigente 2019</td></tr>
+<tr><td><strong>27032</strong></td><td>Directrices de ciberseguridad</td><td>Ciberseguridad</td><td>Actualizada 2023 ✓</td></tr>
+</table></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>ISO. Catálogo completo normas 27000. <a href="https://www.iso.org/isoiec-27001-information-security.html" target="_blank">iso.org/isoiec-27001</a></li>
+  <li>ISO/IEC 27000:2018. <a href="https://www.iso.org/standard/73906.html" target="_blank">iso.org/standard/73906</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(1)">← Unidad 1</button><button class="btn pri" onclick="go(3)">Unidad 3 →</button></div>
+</section>
+<!-- U3: ISO 27001 e ISO 27002 -->
+<section class="sec" data-id="3">
+<div class="uh"><div class="un">Unidad 3</div><h2>🔐 ISO/IEC 27001:2022 e ISO/IEC 27002:2022</h2>
+<div class="met">"ISO 27001 es el plano arquitectónico del edificio de la seguridad: define qué debe tener el edificio y cómo debe funcionar, mientras ISO 27002 es el catálogo de materiales y técnicas de construcción que el arquitecto usa para levantarlo correctamente."</div></div>
+<div class="sgrid">
+  <div class="sc"><div class="v">70K+</div><div class="l">Certificaciones ISO 27001 activas en el mundo (ISO Survey 2023)</div></div>
+  <div class="sc"><div class="v">93</div><div class="l">Controles en el Anexo A de ISO 27001:2022 (antes 114)</div></div>
+  <div class="sc"><div class="v">4 temas</div><div class="l">Organizativos / Personas / Físicos / Tecnológicos</div></div>
+</div>
+<div class="norm-card">
+  <div class="nc-id">ISO/IEC 27001:2022 — Certificable</div>
+  <h4>Sistema de Gestión de Seguridad de la Información (SGSI)</h4>
+  <ul>
+    <li><strong>Propósito:</strong> establece los REQUISITOS para implementar, mantener y mejorar continuamente un SGSI</li>
+    <li><strong>Estructura:</strong> cláusulas 4-10 (High Level Structure — alineada con ISO 9001, ISO 14001)</li>
+    <li><strong>Anexo A:</strong> 93 controles de referencia en 4 temas (no todos son obligatorios, se seleccionan según el análisis de riesgos)</li>
+    <li><strong>Actualización 2022:</strong> nueva estructura del Anexo A; 11 controles nuevos incluyendo threat intelligence, cloud security, ICT supply chain security, secure coding</li>
+    <li><strong>Ciclo PDCA:</strong> Plan → Do → Check → Act para mejora continua</li>
+  </ul>
+</div>
+<div class="fc"><h3>🏗️ Estructura de ISO 27001:2022 — Cláusulas 4 a 10</h3>
+<div class="phases">
+  <div class="phase"><div class="pnum">C4</div><div class="ptitle">Contexto</div><div class="pdesc">Organización e interesados</div></div>
+  <div class="phase"><div class="pnum">C5</div><div class="ptitle">Liderazgo</div><div class="pdesc">Compromiso y política</div></div>
+  <div class="phase"><div class="pnum">C6</div><div class="ptitle">Planificación</div><div class="pdesc">Riesgos y objetivos</div></div>
+  <div class="phase"><div class="pnum">C7</div><div class="ptitle">Soporte</div><div class="pdesc">Recursos y competencias</div></div>
+  <div class="phase"><div class="pnum">C8</div><div class="ptitle">Operación</div><div class="pdesc">Implementar controles</div></div>
+  <div class="phase"><div class="pnum">C9</div><div class="ptitle">Evaluación</div><div class="pdesc">Auditoría interna</div></div>
+  <div class="phase"><div class="pnum">C10</div><div class="ptitle">Mejora</div><div class="pdesc">No conformidades y mejora</div></div>
+</div></div>
+<div class="norm-card">
+  <div class="nc-id">ISO/IEC 27002:2022 — Guía de implementación</div>
+  <h4>Controles de Seguridad de la Información</h4>
+  <ul>
+    <li><strong>Propósito:</strong> proporciona guía detallada sobre CÓMO implementar cada uno de los 93 controles del Anexo A de ISO 27001</li>
+    <li><strong>No es certificable</strong> por sí sola; es la guía práctica que acompaña a ISO 27001</li>
+    <li><strong>4 temas de controles:</strong> Organizativos (37), Personas (8), Físicos (14), Tecnológicos (34)</li>
+    <li><strong>Nuevos controles 2022:</strong> Threat Intelligence (#5.7), Seguridad cloud (#5.23), Continuidad TIC (#5.30), Seguridad física monitoreo (#7.4), Masking de datos (#8.11), Data leakage prevention (#8.12), Web filtering (#8.23), Secure coding (#8.28)</li>
+    <li><strong>Atributos de control:</strong> cada control tiene propiedades (preventivo/detectivo/correctivo; CIA; capacidades de seguridad; conceptos operativos)</li>
+  </ul>
+</div>
+<div class="fc"><h3>📋 Proceso de certificación ISO 27001</h3>
+<div class="phases">
+  <div class="phase"><div class="pnum">01</div><div class="ptitle">Gap Analysis</div><div class="pdesc">Diagnóstico vs 27001</div></div>
+  <div class="phase"><div class="pnum">02</div><div class="ptitle">Implementación</div><div class="pdesc">SGSI + controles Anexo A</div></div>
+  <div class="phase"><div class="pnum">03</div><div class="ptitle">Auditoría Interna</div><div class="pdesc">Verificación propia</div></div>
+  <div class="phase"><div class="pnum">04</div><div class="ptitle">Revisión Dirección</div><div class="pdesc">Management review</div></div>
+  <div class="phase"><div class="pnum">05</div><div class="ptitle">Auditoría Fase 1</div><div class="pdesc">Revisión documental</div></div>
+  <div class="phase"><div class="pnum">06</div><div class="ptitle">Auditoría Fase 2</div><div class="pdesc">Auditoría in situ</div></div>
+  <div class="phase"><div class="pnum">07</div><div class="ptitle">Certificación</div><div class="pdesc">3 años + auditorías anuales</div></div>
+</div></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>ISO/IEC 27001:2022. <a href="https://www.iso.org/standard/27001" target="_blank">iso.org/standard/27001</a></li>
+  <li>ISO/IEC 27002:2022. <a href="https://www.iso.org/standard/75652.html" target="_blank">iso.org/standard/75652</a></li>
+  <li>ISO Survey 2023. <a href="https://www.iso.org/the-iso-survey.html" target="_blank">iso.org/the-iso-survey</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(2)">← Unidad 2</button><button class="btn pri" onclick="go(4)">Unidad 4 →</button></div>
+</section>
+
+<!-- U4: ISO 27003 e ISO 27004 -->
+<section class="sec" data-id="4">
+<div class="uh"><div class="un">Unidad 4</div><h2>📐 ISO/IEC 27003 e ISO/IEC 27004</h2>
+<div class="met">"ISO 27003 es el manual de instrucciones del SGSI: saber que necesitas un sistema de gestión (27001) es distinto a saber cómo armarlo paso a paso. ISO 27004 es el velocímetro: sin métricas no puedes saber si vas a 30 km/h o a 120 km/h hacia tus objetivos de seguridad."</div></div>
+<div class="norm-card">
+  <div class="nc-id">ISO/IEC 27003:2017 — Guía de implementación SGSI</div>
+  <h4>Cómo implementar un SGSI conforme a ISO 27001</h4>
+  <ul>
+    <li><strong>Propósito:</strong> proporciona orientación práctica para implementar los requisitos de ISO/IEC 27001</li>
+    <li><strong>Estructura:</strong> sigue cláusula por cláusula de ISO 27001 (C4 a C10), explicando cómo cumplir cada requisito</li>
+    <li><strong>Puntos clave:</strong>
+      <ul style="margin-top:6px">
+        <li>Cómo definir el alcance del SGSI de manera efectiva</li>
+        <li>Cómo involucrar a la alta dirección (C5) con ejemplos concretos</li>
+        <li>Cómo documentar el proceso de evaluación de riesgos</li>
+        <li>Cómo crear la Declaración de Aplicabilidad (SoA)</li>
+        <li>Cómo estructurar el programa de auditoría interna</li>
+      </ul>
+    </li>
+    <li><strong>Prerrequisito:</strong> conocimiento de ISO 27001; ISO 27003 no es certificable, es una herramienta de apoyo</li>
+  </ul>
+</div>
+<div class="norm-card">
+  <div class="nc-id">ISO/IEC 27004:2016 — Métricas y Medición del SGSI</div>
+  <h4>¿Cómo saber si tu SGSI está funcionando?</h4>
+  <ul>
+    <li><strong>Propósito:</strong> ayuda a evaluar la eficacia del SGSI mediante un sistema de medición estructurado</li>
+    <li><strong>Tipos de mediciones definidos:</strong>
+      <ul style="margin-top:6px">
+        <li><strong>Mediciones base:</strong> datos brutos recolectados directamente (ej. número de vulnerabilidades detectadas)</li>
+        <li><strong>Mediciones derivadas:</strong> calculadas a partir de mediciones base (ej. % de vulnerabilidades corregidas en plazo)</li>
+        <li><strong>Indicadores:</strong> combinan mediciones para expresar desempeño (KPIs de seguridad)</li>
+        <li><strong>Resultados de medición:</strong> valor final interpretado por la dirección</li>
+      </ul>
+    </li>
+    <li><strong>Modelo de medición:</strong> definir qué medir → cómo medir → quién mide → con qué frecuencia → cómo interpretar</li>
+    <li><strong>Alineación:</strong> los KPIs de seguridad deben vincularse con los objetivos de negocio del SGSI</li>
+  </ul>
+</div>
+<div class="fc"><h3>📊 KPIs de seguridad recomendados 2024 (basados en ISO 27004)</h3>
+<table>
+<tr><th>Categoría</th><th>KPI / Métrica</th><th>Objetivo típico</th></tr>
+<tr><td>Vulnerabilidades</td><td>% de CVE críticos parcheados en ≤30 días</td><td>&gt;95%</td></tr>
+<tr><td>Incidentes</td><td>MTTD — Tiempo medio de detección</td><td>&lt;24 horas</td></tr>
+<tr><td>Incidentes</td><td>MTTR — Tiempo medio de respuesta/cierre</td><td>&lt;72 horas (críticos)</td></tr>
+<tr><td>Formación</td><td>% empleados con security awareness anual</td><td>100%</td></tr>
+<tr><td>Phishing</td><td>Tasa de click en simulaciones de phishing</td><td>&lt;5%</td></tr>
+<tr><td>Acceso</td><td>% de cuentas privilegiadas con MFA activo</td><td>100%</td></tr>
+<tr><td>Auditoría</td><td>No conformidades abiertas &gt;90 días</td><td>0</td></tr>
+<tr><td>Continuidad</td><td>RTO probado en ejercicio de DR</td><td>Según SLA</td></tr>
+</table></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>ISO/IEC 27003:2017. <a href="https://www.iso.org/standard/63417.html" target="_blank">iso.org/standard/63417</a></li>
+  <li>ISO/IEC 27004:2016. <a href="https://www.iso.org/standard/64120.html" target="_blank">iso.org/standard/64120</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(3)">← Unidad 3</button><button class="btn pri" onclick="go(5)">Unidad 5 →</button></div>
+</section>
+<!-- U5: ISO 27005 e ISO 27006 -->
+<section class="sec" data-id="5">
+<div class="uh"><div class="un">Unidad 5</div><h2>⚠️ ISO/IEC 27005:2022 e ISO/IEC 27006</h2>
+<div class="met">"ISO 27005 es el GPS del análisis de riesgos: no te dice a dónde ir, sino que te muestra con precisión dónde están los peligros del camino para que puedas decidir ruta, velocidad y equipamiento de seguridad antes de arrancar."</div></div>
+<div class="norm-card">
+  <div class="nc-id">ISO/IEC 27005:2022 — Gestión de riesgos de seguridad de la información</div>
+  <h4>El proceso de análisis y gestión de riesgos del SGSI</h4>
+  <ul>
+    <li><strong>Actualización 2022:</strong> alineada con ISO 31000:2018 (gestión de riesgos general) y con los cambios de ISO 27001:2022</li>
+    <li><strong>Proceso iterativo de gestión de riesgos:</strong>
+      <ul style="margin-top:6px">
+        <li><strong>Establecer el contexto:</strong> alcance, criterios de aceptación de riesgo, apetito de riesgo</li>
+        <li><strong>Identificar riesgos:</strong> activos → amenazas → vulnerabilidades → consecuencias</li>
+        <li><strong>Analizar riesgos:</strong> probabilidad × impacto; escalas cualitativas y cuantitativas</li>
+        <li><strong>Evaluar riesgos:</strong> comparar con criterios de aceptación; priorizar tratamiento</li>
+        <li><strong>Tratar riesgos:</strong> mitigar, aceptar, transferir, evitar; seleccionar controles (Anexo A 27001)</li>
+        <li><strong>Monitorear y revisar:</strong> ciclo continuo; actualizar ante cambios del contexto</li>
+      </ul>
+    </li>
+    <li><strong>Comunicación:</strong> ISO 27005 destaca que la comunicación del riesgo entre propietarios y dirección es tan importante como el análisis técnico</li>
+  </ul>
+</div>
+<div class="fc"><h3>🔄 Ciclo de gestión de riesgos — ISO 27005:2022</h3>
+<div class="phases">
+  <div class="phase"><div class="pnum">01</div><div class="ptitle">Contexto</div><div class="pdesc">Criterios y alcance</div></div>
+  <div class="phase"><div class="pnum">02</div><div class="ptitle">Identificar</div><div class="pdesc">Activos, amenazas, vulns</div></div>
+  <div class="phase"><div class="pnum">03</div><div class="ptitle">Analizar</div><div class="pdesc">P × I = nivel de riesgo</div></div>
+  <div class="phase"><div class="pnum">04</div><div class="ptitle">Evaluar</div><div class="pdesc">Priorizar vs criterios</div></div>
+  <div class="phase"><div class="pnum">05</div><div class="ptitle">Tratar</div><div class="pdesc">Mitigar/Aceptar/Transferir</div></div>
+  <div class="phase"><div class="pnum">06</div><div class="ptitle">Monitorear</div><div class="pdesc">Ciclo continuo</div></div>
+</div></div>
+<div class="norm-card">
+  <div class="nc-id">ISO/IEC 27006:2015+A1:2020 — Requisitos para organismos de certificación</div>
+  <h4>¿Quién puede certificar en ISO 27001?</h4>
+  <ul>
+    <li><strong>Propósito:</strong> establece los requisitos para los organismos que realizan auditoría y certificación de SGSI</li>
+    <li><strong>Destinatario:</strong> NO es para las organizaciones que se certifican, sino para los <em>certificadores</em> (ej. Bureau Veritas, TÜV, AENOR, SGS, DNV)</li>
+    <li><strong>Acreditación:</strong> los organismos de certificación deben estar acreditados por un organismo de acreditación nacional (ENAC en España, UKAS en UK, A2LA en EE.UU.) según ISO 17021</li>
+    <li><strong>Competencia de auditores:</strong> define los conocimientos técnicos mínimos para auditores de SGSI; incluye sectores específicos</li>
+    <li><strong>Tiempo de auditoría:</strong> especifica la duración mínima de auditoría según el tamaño y complejidad de la organización</li>
+    <li><strong>Ciclo de certificación:</strong> 3 años — auditoría inicial + 2 auditorías de seguimiento anuales + recertificación</li>
+  </ul>
+</div>
+<div class="alert ai"><span>ℹ️</span><span><strong>Diferencia clave 27005 vs 27006:</strong> ISO 27005 es para los que <em>construyen</em> el SGSI (cualquier organización que quiera gestionar riesgos). ISO 27006 es para los que <em>auditan y certifican</em> que otro lo ha construido bien. Son herramientas para actores completamente distintos del ecosistema ISO 27001.</span></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>ISO/IEC 27005:2022. <a href="https://www.iso.org/standard/80585.html" target="_blank">iso.org/standard/80585</a></li>
+  <li>ISO/IEC 27006:2015+A1:2020. <a href="https://www.iso.org/standard/77028.html" target="_blank">iso.org/standard/77028</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(4)">← Unidad 4</button><button class="btn pri" onclick="go(6)">Unidad 6 →</button></div>
+</section>
+
+<!-- U6: ISO 27007 -->
+<section class="sec" data-id="6">
+<div class="uh"><div class="un">Unidad 6</div><h2>🔎 ISO/IEC 27007:2020 — Auditoría del SGSI</h2>
+<div class="met">"El auditor de un SGSI es el inspector de sanidad del restaurante de la seguridad: no cocina, pero revisa sistemáticamente que la cocina cumpla las normas de higiene, que los procesos sean los correctos y que lo que sale por la puerta sea seguro para consumir."</div></div>
+<div class="norm-card">
+  <div class="nc-id">ISO/IEC 27007:2020</div>
+  <h4>Directrices para la auditoría de sistemas de gestión de seguridad de la información</h4>
+  <ul>
+    <li><strong>Propósito:</strong> proporciona guía para conducir auditorías de SGSI basados en ISO/IEC 27001</li>
+    <li><strong>Base:</strong> complementa ISO 19011 (directrices de auditoría de sistemas de gestión) con especificidades de los SGSI</li>
+    <li><strong>Tipos de auditoría que aborda:</strong>
+      <ul style="margin-top:6px">
+        <li><strong>Auditoría interna (1ª parte):</strong> la propia organización audita su SGSI; requisito de ISO 27001 Cláusula 9.2</li>
+        <li><strong>Auditoría de segunda parte:</strong> un cliente o partner audita al proveedor</li>
+        <li><strong>Auditoría de tercera parte:</strong> organismo de certificación acreditado audita para emitir/mantener certificado</li>
+      </ul>
+    </li>
+  </ul>
+</div>
+<div class="cards">
+  <div class="card"><h4>📋 Proceso de auditoría según ISO 27007</h4><ul>
+    <li><strong>Planificación:</strong> objetivos, alcance, criterios, equipo auditor</li>
+    <li><strong>Preparación:</strong> revisión documental previa (plan de auditoría, SoA)</li>
+    <li><strong>Ejecución:</strong> reunión de apertura → entrevistas → observación → revisión evidencias</li>
+    <li><strong>Hallazgos:</strong> no conformidades mayores, no conformidades menores, observaciones</li>
+    <li><strong>Informe:</strong> hallazgos documentados con evidencias; conclusiones</li>
+    <li><strong>Seguimiento:</strong> verificación de planes de acción correctiva</li>
+  </ul></div>
+  <div class="card"><h4>👤 Competencias del auditor de SGSI</h4><ul>
+    <li>Conocimiento de ISO 27001 y el Anexo A (93 controles)</li>
+    <li>Comprensión de tecnologías de seguridad relevantes</li>
+    <li>Experiencia en gestión de sistemas de información</li>
+    <li>Habilidades de entrevista y análisis de evidencias</li>
+    <li>Independencia e imparcialidad (sin conflicto de interés)</li>
+    <li><strong>Certificaciones:</strong> ISO 27001 Lead Auditor (PECB, BSI, Bureau Veritas)</li>
+  </ul></div>
+</div>
+<div class="fc"><h3>🔍 No conformidades — Tipos y gestión</h3><ul>
+  <li><strong>No conformidad mayor (NC mayor):</strong> ausencia o fallo sistemático de un requisito de ISO 27001; impide la certificación o puede provocar su suspensión. Ejemplo: no existe política de seguridad firmada por dirección</li>
+  <li><strong>No conformidad menor (NC menor):</strong> fallo puntual o incompleto de un requisito; debe corregirse en el ciclo de auditoría siguiente. Ejemplo: un procedimiento existente no está actualizado</li>
+  <li><strong>Observación/Oportunidad de mejora (OFI):</strong> no es obligatorio corregirlo, pero se recomienda. Ejemplo: los controles funcionan pero podrían estar mejor documentados</li>
+  <li><strong>Plan de acción correctiva (CAPA):</strong> para cada NC, la organización debe identificar causa raíz → acción correctiva → plazo → responsable → verificación de eficacia</li>
+</ul></div>
+<div class="alert ag"><span>💡</span><span><strong>Auditoría continua (2024):</strong> La tendencia emergente es complementar las auditorías periódicas con monitoreo continuo automatizado mediante herramientas de GRC (Governance, Risk and Compliance) como Vanta, Drata o Secureframe, que verifican automáticamente el estado de controles en tiempo real. Esto reduce el esfuerzo de preparación para auditorías formales de hasta el 60%.</span></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>ISO/IEC 27007:2020. <a href="https://www.iso.org/standard/77802.html" target="_blank">iso.org/standard/77802</a></li>
+  <li>ISO 19011:2018. Directrices para la auditoría de sistemas de gestión. <a href="https://www.iso.org/standard/70017.html" target="_blank">iso.org/standard/70017</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(5)">← Unidad 5</button><button class="btn pri" onclick="go(7)">Unidad 7 →</button></div>
+</section>
+<!-- U7: RFC 2196 -->
+<section class="sec" data-id="7">
+<div class="uh"><div class="un">Unidad 7</div><h2>📡 RFC 2196 — Site Security Handbook</h2>
+<div class="met">"El RFC 2196 es la constitución de la seguridad organizacional: publicada en 1997, sus principios fundamentales de política, responsabilidad y gestión de incidentes siguen siendo tan válidos hoy como cuando se redactaron, porque la naturaleza humana del riesgo no ha cambiado."</div></div>
+<div class="norm-card">
+  <div class="nc-id">RFC 2196 — Site Security Handbook (IETF, 1997)</div>
+  <h4>El manual fundacional de políticas de seguridad organizacional</h4>
+  <ul>
+    <li><strong>Publicado por:</strong> IETF (Internet Engineering Task Force), septiembre 1997</li>
+    <li><strong>Propósito:</strong> guía práctica para establecer políticas y procedimientos de seguridad en organizaciones conectadas a Internet</li>
+    <li><strong>Estado actual:</strong> obsoleto como RFC técnico, pero sus principios de gestión de seguridad son base de las prácticas modernas</li>
+    <li><strong>Relevancia histórica:</strong> fue el primer documento que sistematizó cómo una organización debe pensar sobre su seguridad de manera holística</li>
+  </ul>
+</div>
+<div class="fc"><h3>📋 Áreas temáticas del RFC 2196</h3>
+<div class="cards">
+  <div class="card"><h4>🏛️ Política de seguridad</h4><ul>
+    <li>Qué debe incluir una política de seguridad eficaz</li>
+    <li>Diferencia entre política, procedimiento y guía</li>
+    <li>Roles y responsabilidades: usuarios, administradores, dirección</li>
+    <li>Proceso de aprobación y comunicación de políticas</li>
+    <li>Principio: "lo que no está explícitamente permitido está prohibido"</li>
+  </ul></div>
+  <div class="card"><h4>🛡️ Seguridad de sistemas</h4><ul>
+    <li>Autenticación de usuarios y control de acceso</li>
+    <li>Protección de contraseñas (sigue siendo relevante)</li>
+    <li>Hardening de sistemas operativos</li>
+    <li>Seguridad en servicios de red (FTP, email, DNS)</li>
+    <li>Registro de actividad y logging</li>
+  </ul></div>
+  <div class="card"><h4>🔒 Seguridad de la red</h4><ul>
+    <li>Firewalls y arquitectura de red segura</li>
+    <li>Protección de datos en tránsito (cifrado)</li>
+    <li>Monitoreo de tráfico de red</li>
+    <li>Detección de intrusiones (precursor de IDS/IPS)</li>
+    <li>Respuesta ante ataques de red</li>
+  </ul></div>
+  <div class="card"><h4>🚨 Gestión de incidentes</h4><ul>
+    <li>Procedimiento de respuesta ante incidentes (base de los modernos)</li>
+    <li>Coordinación con CERT/CSIRT</li>
+    <li>Recolección de evidencias (cadena de custodia básica)</li>
+    <li>Comunicación durante incidentes</li>
+    <li>Análisis post-incidente y mejora</li>
+  </ul></div>
+</div></div>
+<div class="fc"><h3>🔗 Legado del RFC 2196 en los estándares modernos</h3>
+<table>
+<tr><th>Principio del RFC 2196</th><th>Estándar moderno equivalente</th></tr>
+<tr><td>Política de seguridad aprobada por dirección</td><td>ISO 27001:2022 Cláusula 5.2</td></tr>
+<tr><td>Gestión de incidentes estructurada</td><td>NIST SP 800-61 Rev.3, ISO 27035</td></tr>
+<tr><td>Concientización de usuarios</td><td>ISO 27001 Control A.6.3, NIST CSF GV.AT</td></tr>
+<tr><td>Hardening de sistemas</td><td>CIS Benchmarks, NIST SP 800-123</td></tr>
+<tr><td>Responsabilidad individual en seguridad</td><td>ISO 27001 Control A.6.2 (Términos de empleo)</td></tr>
+<tr><td>Protección de datos en tránsito</td><td>TLS 1.3 (RFC 8446), ISO 27001 A.8.24</td></tr>
+</table></div>
+<div class="alert ao"><span>📌</span><span><strong>Contexto histórico importante:</strong> El RFC 2196 fue escrito cuando Internet era joven y la mayoría de organizaciones apenas empezaban a conectarse. Su visión de que la seguridad requiere políticas, personas Y tecnología — no solo firewalls — fue revolucionaria en 1997 y sigue siendo el principio rector de todos los marcos modernos. NIST CSF, ISO 27001 y CIS Controls son, en esencia, versiones elaboradas de esta misma filosofía.</span></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>RFC 2196. (1997). Site Security Handbook. <a href="https://www.rfc-editor.org/rfc/rfc2196" target="_blank">rfc-editor.org/rfc/rfc2196</a></li>
+  <li>IETF RFC Repository. <a href="https://www.rfc-editor.org" target="_blank">rfc-editor.org</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(6)">← Unidad 6</button><button class="btn pri" onclick="go(8)">Unidad 8 →</button></div>
+</section>
+
+<!-- U8: ISA/IEC 62443 -->
+<section class="sec" data-id="8">
+<div class="uh"><div class="un">Unidad 8</div><h2>🏭 ISA/IEC 62443 — Ciberseguridad Industrial (OT/ICS)</h2>
+<div class="met">"Proteger un sistema de control industrial es como proteger el corazón de una ciudad: un ataque exitoso a la red de distribución eléctrica, al sistema de agua potable o a una planta química no genera una pérdida de datos — genera una crisis humanitaria. Las reglas del juego son completamente diferentes a las de la ciberseguridad empresarial."</div></div>
+<div class="sgrid">
+  <div class="sc"><div class="v">73%</div><div class="l">de organizaciones OT sufrieron al menos un incidente de ciberseguridad en 2023 (Claroty)</div></div>
+  <div class="sc"><div class="v">Stuxnet</div><div class="l">2010 — primer arma cibernética que atacó infraestructura industrial física (centrifugadoras iraníes)</div></div>
+  <div class="sc"><div class="v">IT vs OT</div><div class="l">Seguridad TI prioriza CIA; OT prioriza disponibilidad y seguridad física (Safety)</div></div>
+</div>
+<div class="norm-card">
+  <div class="nc-id">ISA/IEC 62443 — Serie completa</div>
+  <h4>Ciberseguridad para sistemas de automatización y control industrial (IACS)</h4>
+  <ul>
+    <li><strong>Ámbito:</strong> sistemas de control industrial (ICS), SCADA, DCS, PLCs, RTUs en sectores como energía, agua, manufactura, transporte, petróleo/gas</li>
+    <li><strong>Organización:</strong> serie de normas dividida en 4 grupos temáticos</li>
+    <li><strong>Diferencia clave vs IT:</strong> en OT la <strong>disponibilidad</strong> es prioritaria (parar una turbina = desastre); los parches no se aplican sin pruebas exhaustivas; los ciclos de vida son de 20-30 años</li>
+  </ul>
+</div>
+<div class="fc"><h3>📚 Estructura de la serie ISA/IEC 62443</h3>
+<table>
+<tr><th>Grupo</th><th>Norma</th><th>Contenido</th></tr>
+<tr><td><strong>1 — General</strong></td><td>62443-1-1</td><td>Terminología, conceptos y modelos</td></tr>
+<tr><td><strong>1 — General</strong></td><td>62443-1-2</td><td>Glosario maestro de términos</td></tr>
+<tr><td><strong>2 — Políticas y procedimientos</strong></td><td>62443-2-1</td><td>Requisitos del programa de seguridad para operadores</td></tr>
+<tr><td><strong>2 — Políticas y procedimientos</strong></td><td>62443-2-4</td><td>Requisitos para proveedores de servicios de seguridad</td></tr>
+<tr><td><strong>3 — Sistema</strong></td><td>62443-3-2</td><td>Evaluación de riesgos de seguridad del sistema</td></tr>
+<tr><td><strong>3 — Sistema</strong></td><td>62443-3-3</td><td>Requisitos de seguridad del sistema y niveles de seguridad</td></tr>
+<tr><td><strong>4 — Componente</strong></td><td>62443-4-1</td><td>Ciclo de vida de desarrollo seguro de productos</td></tr>
+<tr><td><strong>4 — Componente</strong></td><td>62443-4-2</td><td>Requisitos técnicos de seguridad para componentes IACS</td></tr>
+</table></div>
+<div class="cards">
+  <div class="card"><h4>🎯 Niveles de seguridad (Security Levels)</h4><ul>
+    <li><strong>SL 0:</strong> sin requisitos de seguridad específicos</li>
+    <li><strong>SL 1:</strong> protección contra violaciones casuales o accidentales</li>
+    <li><strong>SL 2:</strong> protección contra intrusos con medios simples e intención baja</li>
+    <li><strong>SL 3:</strong> protección contra atacantes sofisticados con medios moderados</li>
+    <li><strong>SL 4:</strong> protección contra actores estado-nación con recursos ilimitados</li>
+  </ul></div>
+  <div class="card"><h4>⚡ Casos reales de ataques OT 2020-2024</h4><ul>
+    <li><strong>Oldsmar Water Plant (2021):</strong> atacante aumentó NaOH x100 vía TeamViewer; Florida, EE.UU.</li>
+    <li><strong>Colonial Pipeline (2021):</strong> ransomware paralizó 45% del suministro de combustible del este de EE.UU.; $4.4M rescate</li>
+    <li><strong>Industroyer2 (2022):</strong> malware atacó subestaciones eléctricas de Ucrania</li>
+    <li><strong>Volt Typhoon (2024):</strong> APT chino preposicionado en infraestructura crítica EE.UU. (agua, energía, telecomunicaciones)</li>
+  </ul></div>
+</div>
+<div class="alert ar"><span>⚠️</span><span><strong>Convergencia IT/OT — el riesgo de 2024:</strong> La digitalización industrial (Industria 4.0, IIoT) está conectando sistemas OT históricamente aislados con redes IT y cloud. Esto mejora la eficiencia pero expone sistemas diseñados sin ciberseguridad a las amenazas de Internet. ISA/IEC 62443 es la respuesta estándar a este desafío, adoptada por sectores de energía, agua y manufactura en todo el mundo.</span></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>ISA. ISA/IEC 62443 Series. <a href="https://www.isa.org/standards-and-publications/isa-standards/isa-iec-62443-series-of-standards" target="_blank">isa.org/isa-iec-62443</a></li>
+  <li>CISA. (2024). ICS-CERT Advisories. <a href="https://www.cisa.gov/ics" target="_blank">cisa.gov/ics</a></li>
+  <li>Claroty. (2024). State of XIoT Security Report. <a href="https://claroty.com/resources/reports" target="_blank">claroty.com</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(7)">← Unidad 7</button><button class="btn pri" onclick="go(9)">Unidad 9 →</button></div>
+</section>
+<!-- U9: NIST SP 800-30 -->
+<section class="sec" data-id="9">
+<div class="uh"><div class="un">Unidad 9</div><h2>📊 NIST SP 800-30 — Evaluación de Riesgos</h2>
+<div class="met">"El NIST SP 800-30 es el protocolo clínico del médico de seguridad: no le dice qué medicamento dar, sino cómo hacer el diagnóstico completo — qué síntomas buscar, cómo interpretarlos y cómo comunicarlos al especialista (la dirección) para que tome la decisión informada de tratamiento."</div></div>
+<div class="norm-card">
+  <div class="nc-id">NIST SP 800-30 Rev.1 (2012) — Guía para la evaluación de riesgos</div>
+  <h4>Risk Assessment Guide — Parte del NIST Risk Management Framework (RMF)</h4>
+  <ul>
+    <li><strong>Publicado por:</strong> National Institute of Standards and Technology (EE.UU.)</li>
+    <li><strong>Propósito:</strong> proporciona una metodología estructurada para realizar evaluaciones de riesgos de seguridad de la información</li>
+    <li><strong>Marco mayor:</strong> es un componente del NIST Risk Management Framework (RMF), junto con NIST SP 800-37 (gestión de riesgos) y NIST SP 800-53 (controles de seguridad)</li>
+    <li><strong>Adopción:</strong> base metodológica para miles de organizaciones globales; obligatorio para agencias federales de EE.UU.; adoptado voluntariamente en sector privado global</li>
+  </ul>
+</div>
+<div class="fc"><h3>🔄 Proceso de evaluación de riesgos — NIST SP 800-30</h3>
+<div class="phases">
+  <div class="phase"><div class="pnum">01</div><div class="ptitle">Preparar</div><div class="pdesc">Contexto, alcance, supuestos</div></div>
+  <div class="phase"><div class="pnum">02</div><div class="ptitle">Conducir</div><div class="pdesc">Identificar y analizar riesgos</div></div>
+  <div class="phase"><div class="pnum">03</div><div class="ptitle">Comunicar</div><div class="pdesc">Resultados a stakeholders</div></div>
+  <div class="phase"><div class="pnum">04</div><div class="ptitle">Mantener</div><div class="pdesc">Actualizar continuamente</div></div>
+</div></div>
+<div class="fc"><h3>🔍 Componentes del análisis de riesgos (Paso 2)</h3>
+<table>
+<tr><th>Tarea</th><th>Qué se hace</th><th>Output</th></tr>
+<tr><td>2.1 Identificar fuentes de amenaza</td><td>Adversarios (APT, insider, hacktivistas), accidentales, estructurales, ambientales</td><td>Tabla de fuentes de amenaza</td></tr>
+<tr><td>2.2 Identificar eventos de amenaza</td><td>Acciones específicas que podrían materializarse (ej. phishing, exploit de CVE)</td><td>Catálogo de eventos</td></tr>
+<tr><td>2.3 Identificar vulnerabilidades y condiciones</td><td>Debilidades en sistemas, procesos, personas</td><td>Lista de vulnerabilidades</td></tr>
+<tr><td>2.4 Determinar probabilidad</td><td>Escala cualitativa/cuantitativa; considerar controles existentes</td><td>Nivel de probabilidad (VH/H/M/L/VL)</td></tr>
+<tr><td>2.5 Determinar impacto</td><td>Efecto sobre misión, activos, personas, reputación, finanzas</td><td>Nivel de impacto</td></tr>
+<tr><td>2.6 Determinar riesgo</td><td>Combinar probabilidad × impacto en matriz de riesgo</td><td>Nivel de riesgo final</td></tr>
+</table></div>
+<div class="cards">
+  <div class="card"><h4>📏 Escalas de evaluación NIST SP 800-30</h4><ul>
+    <li><strong>Probabilidad:</strong> Very High (VH), High (H), Moderate (M), Low (L), Very Low (VL)</li>
+    <li><strong>Impacto:</strong> Very High — VH (pérdida catastrófica de misión), ..., Very Low (efecto mínimo)</li>
+    <li><strong>Riesgo:</strong> combinación P × I; la norma provee tablas de conversión</li>
+    <li>También soporta escala numérica 0-10 para análisis más granular</li>
+  </ul></div>
+  <div class="card"><h4>🔗 Integración con NIST CSF 2.0 (2024)</h4><ul>
+    <li>NIST SP 800-30 alimenta la función <strong>IDENTIFY</strong> del CSF (ID.RA — Risk Assessment)</li>
+    <li>Los resultados de la evaluación de riesgo informan qué controles implementar (función PROTECT)</li>
+    <li>La nueva función GOVERN del CSF 2.0 requiere que la evaluación de riesgos esté alineada con la estrategia organizacional</li>
+    <li>Revisión periódica obligatoria: la evaluación de riesgos debe actualizarse ante cambios significativos del entorno de amenazas</li>
+  </ul></div>
+</div>
+<div class="alert ai"><span>ℹ️</span><span><strong>SP 800-30 vs ISO 27005 — ¿cuál usar?</strong> Ambos son metodologías válidas de análisis de riesgos. NIST SP 800-30 es más prescriptivo con escalas y tablas definidas; ISO 27005 es más flexible y principios-based. En la práctica, muchas organizaciones usan los principios de ISO 27005 con las escalas y terminología de NIST SP 800-30. No son excluyentes — son complementarios.</span></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>NIST SP 800-30 Rev.1. (2012). Guide for Conducting Risk Assessments. <a href="https://csrc.nist.gov/publications/detail/sp/800-30/rev-1/final" target="_blank">csrc.nist.gov</a></li>
+  <li>NIST SP 800-37 Rev.2. Risk Management Framework. <a href="https://csrc.nist.gov/publications/detail/sp/800-37/rev-2/final" target="_blank">csrc.nist.gov</a></li>
+  <li>NIST CSF 2.0. (2024). <a href="https://www.nist.gov/cyberframework" target="_blank">nist.gov/cyberframework</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(8)">← Unidad 8</button><button class="btn pri" onclick="go(10)">Unidad 10 →</button></div>
+</section>
+
+<!-- U10: BS 25999 / ISO 22301 -->
+<section class="sec" data-id="10">
+<div class="uh"><div class="un">Unidad 10</div><h2>🔄 BS 25999 e ISO 22301 — Continuidad del Negocio</h2>
+<div class="met">"La continuidad del negocio es el paracaídas de la organización: todos esperan no necesitarlo nunca, pero el único momento en que importa es exactamente cuando no tienes tiempo de hacerlo — por eso tienes que tenerlo preparado, probado y plegado correctamente antes del salto."</div></div>
+<div class="norm-card">
+  <div class="nc-id">BS 25999 → ISO 22301:2019 (evolución)</div>
+  <h4>Gestión de la continuidad del negocio (BCM)</h4>
+  <ul>
+    <li><strong>BS 25999:</strong> estándar británico publicado en 2006 (BSI); primer estándar internacional de facto para BCM</li>
+    <li><strong>ISO 22301:2012:</strong> internacionalización de BS 25999; adoptado globalmente</li>
+    <li><strong>ISO 22301:2019:</strong> versión actual; alineada con la estructura HLS (High Level Structure) de ISO, facilitando integración con ISO 27001 e ISO 9001</li>
+    <li><strong>Certificable:</strong> sí — organismos acreditados pueden certificar el SGCN de una organización</li>
+    <li><strong>Relación con ISO 27001:</strong> ISO 27001 Cláusula 8 requiere gestión de continuidad de las TIC; ISO 22301 amplía esto a toda la organización</li>
+  </ul>
+</div>
+<div class="fc"><h3>📋 Conceptos clave de continuidad del negocio</h3>
+<div class="cards">
+  <div class="card"><h4>⏱️ RTO y RPO — Los dos parámetros críticos</h4><ul>
+    <li><strong>RTO (Recovery Time Objective):</strong> tiempo máximo tolerable para restablecer un proceso tras una interrupción. "¿Cuánto tiempo podemos estar caídos?"</li>
+    <li><strong>RPO (Recovery Point Objective):</strong> punto máximo de pérdida de datos aceptable. "¿Cuántos datos podemos perder?"</li>
+    <li><strong>MTPD (Maximum Tolerable Period of Disruption):</strong> tiempo máximo absoluto antes de que el negocio colapse</li>
+    <li><strong>RTO &lt; MTPD</strong> siempre; el plan de recuperación debe cumplir el RTO definido</li>
+  </ul></div>
+  <div class="card"><h4>🔍 BIA — Business Impact Analysis</h4><ul>
+    <li>Análisis de impacto sobre el negocio: qué procesos son críticos y cuánto cuesta cada hora de inactividad</li>
+    <li>Identifica dependencias: sistemas, proveedores, personal clave</li>
+    <li>Define el RTO y RPO para cada proceso crítico</li>
+    <li>Base para priorizar qué recuperar primero tras un desastre</li>
+    <li>Debe actualizarse ante cambios organizacionales significativos</li>
+  </ul></div>
+</div></div>
+<div class="fc"><h3>🏗️ Ciclo de vida del SGCN — ISO 22301:2019</h3>
+<div class="phases">
+  <div class="phase"><div class="pnum">01</div><div class="ptitle">Contexto</div><div class="pdesc">Alcance y partes interesadas</div></div>
+  <div class="phase"><div class="pnum">02</div><div class="ptitle">BIA</div><div class="pdesc">Análisis de impacto</div></div>
+  <div class="phase"><div class="pnum">03</div><div class="ptitle">Estrategia</div><div class="pdesc">Opciones de recuperación</div></div>
+  <div class="phase"><div class="pnum">04</div><div class="ptitle">BCP</div><div class="pdesc">Plan de Continuidad escrito</div></div>
+  <div class="phase"><div class="pnum">05</div><div class="ptitle">Ejercicios</div><div class="pdesc">Pruebas y simulacros</div></div>
+  <div class="phase"><div class="pnum">06</div><div class="ptitle">Mejora</div><div class="pdesc">Lecciones aprendidas</div></div>
+</div></div>
+<div class="cards">
+  <div class="card"><h4>📋 Planes dentro del BCM</h4><ul>
+    <li><strong>BCP (Business Continuity Plan):</strong> plan general de continuidad</li>
+    <li><strong>DRP (Disaster Recovery Plan):</strong> recuperación de TI y sistemas</li>
+    <li><strong>Crisis Communication Plan:</strong> comunicación interna y externa durante crisis</li>
+    <li><strong>Evacuation Plan:</strong> seguridad del personal (intersección con ISO 45001)</li>
+    <li><strong>Supply Chain Continuity:</strong> alternativas de proveedores críticos</li>
+  </ul></div>
+  <div class="card"><h4>☁️ BCP en la era cloud 2024</h4><ul>
+    <li><strong>Multi-cloud DR:</strong> replicación entre AWS, Azure, GCP para eliminar SPOF</li>
+    <li><strong>Infrastructure as Code:</strong> reconstrucción automatizada de infraestructura en minutos</li>
+    <li><strong>Backup 3-2-1-1:</strong> 3 copias, 2 medios distintos, 1 offsite, 1 inmutable (anti-ransomware)</li>
+    <li><strong>RTO cloud:</strong> puede llegar a minutos vs días en DR tradicional</li>
+    <li><strong>DORA (2025):</strong> sector financiero EU debe tener TLPT + BCP probado anualmente</li>
+  </ul></div>
+</div>
+<div class="alert ar"><span>⚠️</span><span><strong>Ransomware como prueba de BCM real — caso práctico:</strong> El ataque a MGM Resorts (2023) paralizó sistemas durante 10 días con un costo de $100M. Su BCP demostró fallos críticos: la dependencia de Active Directory (comprometido) bloqueó la recuperación de sistemas auxiliares. Un BCM robusto exige también pruebas de escenarios de ransomware con AD comprometido, no solo desastres físicos.</span></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>ISO 22301:2019. Business Continuity Management. <a href="https://www.iso.org/standard/75106.html" target="_blank">iso.org/standard/75106</a></li>
+  <li>BSI. BS 25999 Archive. <a href="https://www.bsigroup.com/en-GB/products-and-services/standards/bs-25999/" target="_blank">bsigroup.com</a></li>
+  <li>DORA Regulation (EU) 2022/2554. <a href="https://www.eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022R2554" target="_blank">eur-lex.europa.eu</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(9)">← Unidad 9</button><button class="btn pri" onclick="go(11)">Síntesis →</button></div>
+</section>
+
+<!-- SINTESIS -->
+<section class="sec" data-id="11">
+<div class="uh"><div class="un">Síntesis Final</div><h2>🎯 Mapa Comparativo, Tendencias 2025 y Recursos</h2>
+<div class="met">"Un profesional que domina los marcos normativos no solo sabe qué hacer para ser seguro — sabe cómo demostrárselo a auditores, reguladores, clientes y al consejo de administración. La norma es el idioma de la confianza demostrable."</div></div>
+<div class="fc"><h3>🗺️ Mapa comparativo de todos los marcos del curso</h3>
+<table>
+<tr><th>Marco</th><th>Tipo</th><th>Ámbito</th><th>Certificable</th><th>Revisión más reciente</th></tr>
+<tr><td><strong>ISO 27001</strong></td><td>Norma internacional</td><td>SGSI — Seguridad información</td><td>✅ Sí</td><td>2022</td></tr>
+<tr><td><strong>ISO 27002</strong></td><td>Guía práctica</td><td>Controles de seguridad</td><td>❌ No</td><td>2022</td></tr>
+<tr><td><strong>ISO 27005</strong></td><td>Guía práctica</td><td>Gestión de riesgos SI</td><td>❌ No</td><td>2022</td></tr>
+<tr><td><strong>ISO 27007</strong></td><td>Guía auditoría</td><td>Auditoría SGSI</td><td>❌ No</td><td>2020</td></tr>
+<tr><td><strong>ISO 22301</strong></td><td>Norma internacional</td><td>Continuidad del negocio</td><td>✅ Sí</td><td>2019</td></tr>
+<tr><td><strong>NIST CSF 2.0</strong></td><td>Framework público</td><td>Ciberseguridad global</td><td>❌ No (voluntary)</td><td>2024</td></tr>
+<tr><td><strong>NIST SP 800-30</strong></td><td>Guía técnica</td><td>Evaluación de riesgos</td><td>❌ No</td><td>2012 (Rev.1)</td></tr>
+<tr><td><strong>ISA/IEC 62443</strong></td><td>Serie de normas</td><td>Ciberseguridad OT/ICS</td><td>✅ (parcial)</td><td>2018-2023</td></tr>
+<tr><td><strong>RFC 2196</strong></td><td>Documento IETF</td><td>Políticas de seguridad org.</td><td>❌ No</td><td>1997 (histórico)</td></tr>
+<tr><td><strong>BS 25999</strong></td><td>Norma británica</td><td>BCM (precursor ISO 22301)</td><td>Reemplazada por 22301</td><td>2006-2012</td></tr>
+</table></div>
+<div class="fc"><h3>🚀 Tendencias regulatorias 2025</h3>
+<div class="cards">
+  <div class="card"><h4>🇪🇺 Europa 2025</h4><ul>
+    <li><strong>NIS2 (2023):</strong> transpuesta en todos los estados EU en 2024; multas hasta €10M o 2% facturación global; directivos personalmente responsables</li>
+    <li><strong>DORA (enero 2025):</strong> sector financiero; TLPT obligatorio; gestión de riesgos TIC; notificación de incidentes en 24h</li>
+    <li><strong>CRA (Cyber Resilience Act, 2024):</strong> dispositivos IoT y software deben cumplir requisitos de seguridad por diseño para venderse en la UE</li>
+    <li><strong>AI Act (2024):</strong> sistemas IA de alto riesgo deben cumplir requisitos de seguridad y robustez</li>
+  </ul></div>
+  <div class="card"><h4>🌍 Global 2025</h4><ul>
+    <li><strong>NIST CSF 2.0:</strong> adopción masiva; nueva función GOVERN impulsa gobernanza de ciberseguridad a nivel de consejo</li>
+    <li><strong>ISO 27001 + ISO 27701:</strong> combinación para cumplir GDPR + seguridad; crecimiento del 40% en certificaciones conjuntas</li>
+    <li><strong>SEC Cybersecurity Rules (EE.UU.):</strong> empresas cotizadas deben reportar incidentes materiales en 4 días hábiles desde 2024</li>
+    <li><strong>Criptografía post-cuántica:</strong> NIST FIPS 203/204/205 obligan a iniciar migración; afecta PKI, VPN, TLS</li>
+  </ul></div>
+</div></div>
+<div class="fc"><h3>📜 Certificaciones recomendadas en marcos normativos</h3>
+<table>
+<tr><th>Certificación</th><th>Marco</th><th>Organismo</th><th>Nivel</th></tr>
+<tr><td>ISO 27001 Lead Implementer</td><td>ISO 27001</td><td>PECB, BSI, Bureau Veritas</td><td>Medio-Senior</td></tr>
+<tr><td>ISO 27001 Lead Auditor</td><td>ISO 27001</td><td>PECB, BSI, TÜV</td><td>Medio-Senior</td></tr>
+<tr><td>ISO 22301 Lead Implementer</td><td>ISO 22301</td><td>PECB, BSI</td><td>Medio-Senior</td></tr>
+<tr><td>CISM — Certified Info. Security Manager</td><td>General + ISO</td><td>ISACA</td><td>Senior</td></tr>
+<tr><td>CRISC — Certified in Risk and IS Control</td><td>Riesgos TI</td><td>ISACA</td><td>Senior</td></tr>
+<tr><td>Global Industrial Cyber Security (GICSP)</td><td>ISA/IEC 62443</td><td>GIAC/SANS</td><td>Medio-Senior</td></tr>
+<tr><td>CBCP — Certified BCP Practitioner</td><td>BS 25999/ISO 22301</td><td>DRI International</td><td>Medio</td></tr>
+</table></div>
+<div class="fc"><h3>🔗 Recursos oficiales esenciales</h3>
+<div class="cards">
+  <div class="card"><h4>📖 Publicaciones y normas</h4><ul>
+    <li><a href="https://www.iso.org/isoiec-27001-information-security.html" target="_blank" style="color:var(--cyan)">ISO — Familia 27000</a></li>
+    <li><a href="https://www.nist.gov/cyberframework" target="_blank" style="color:var(--cyan)">NIST CSF 2.0</a></li>
+    <li><a href="https://csrc.nist.gov/publications" target="_blank" style="color:var(--cyan)">NIST SP Publications</a></li>
+    <li><a href="https://www.isa.org/isa-iec-62443" target="_blank" style="color:var(--cyan)">ISA/IEC 62443</a></li>
+    <li><a href="https://www.rfc-editor.org/rfc/rfc2196" target="_blank" style="color:var(--cyan)">RFC 2196 (IETF)</a></li>
+  </ul></div>
+  <div class="card"><h4>🏛️ Organismos reguladores</h4><ul>
+    <li><a href="https://www.enisa.europa.eu" target="_blank" style="color:var(--cyan)">ENISA — Agencia EU Ciberseguridad</a></li>
+    <li><a href="https://www.cisa.gov" target="_blank" style="color:var(--cyan)">CISA — EE.UU. Infraestructura crítica</a></li>
+    <li><a href="https://www.bsigroup.com" target="_blank" style="color:var(--cyan)">BSI — British Standards</a></li>
+    <li><a href="https://attack.mitre.org" target="_blank" style="color:var(--cyan)">MITRE ATT&amp;CK</a></li>
+    <li><a href="https://owasp.org" target="_blank" style="color:var(--cyan)">OWASP</a></li>
+  </ul></div>
+</div></div>
+<div class="nb"><button class="btn" onclick="go(10)">← Unidad 10</button><button class="btn" onclick="go(0)" style="border-color:var(--green);color:var(--green)">🏠 Inicio</button></div>
+</section>
+
+</main>
+<script>
+const S=[
+  {id:0,l:"Portada",ic:"🏠"},
+  {id:1,l:"U1. Introducción a normas",ic:"📖"},
+  {id:2,l:"U2. Normas ISO y familia 27000",ic:"🏛️"},
+  {id:3,l:"U3. ISO 27001 e ISO 27002",ic:"🔐"},
+  {id:4,l:"U4. ISO 27003 e ISO 27004",ic:"📐"},
+  {id:5,l:"U5. ISO 27005 e ISO 27006",ic:"⚠️"},
+  {id:6,l:"U6. ISO 27007 — Auditoría SGSI",ic:"🔎"},
+  {id:7,l:"U7. RFC 2196 — Site Security",ic:"📡"},
+  {id:8,l:"U8. ISA/IEC 62443 — OT/ICS",ic:"🏭"},
+  {id:9,l:"U9. NIST SP 800-30 — Riesgos",ic:"📊"},
+  {id:10,l:"U10. BS 25999 / ISO 22301 — BCP",ic:"🔄"},
+  {id:11,l:"Síntesis y Recursos",ic:"🎯"},
+];
+let cur=0;
+const nl=document.getElementById('nl');
+S.forEach(s=>{
+  const e=document.createElement('div');
+  e.className='nav-item'+(s.id===0?' active':'');
+  e.dataset.id=s.id;
+  e.innerHTML=`<span class="ic">${s.ic}</span><span>${s.l}</span>`;
+  e.addEventListener('click',()=>go(s.id));
+  nl.appendChild(e);
+});
+function go(id){
+  document.querySelector('.sec.active')?.classList.remove('active');
+  document.querySelector('.nav-item.active')?.classList.remove('active');
+  document.querySelector(`.sec[data-id="${id}"]`).classList.add('active');
+  document.querySelector(`.nav-item[data-id="${id}"]`).classList.add('active');
+  cur=id;
+  document.getElementById('pfill').style.width=(id===0?0:Math.round(id/11*100))+'%';
+  window.scrollTo({top:0,behavior:'smooth'});
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('ov').classList.remove('open');
+}
+function tr(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.textContent=btn.textContent.includes('▾')?btn.textContent.replace('▾','▴'):btn.textContent.replace('▴','▾');
+}
+function tog(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('ov').classList.toggle('open');
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'&&cur<11)go(cur+1);
+  if(e.key==='ArrowLeft'&&cur>0)go(cur-1);
+});
+</script>
+</body>
+</html>

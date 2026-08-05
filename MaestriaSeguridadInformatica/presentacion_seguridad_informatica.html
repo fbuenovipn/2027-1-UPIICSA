@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestión de la Seguridad y Delitos Informáticos</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --bg2: #111827;
+    --bg3: #1a2235;
+    --cyan: #00d4ff;
+    --green: #39ff14;
+    --orange: #ff6b35;
+    --purple: #a855f7;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --border: rgba(0,212,255,0.2);
+    --glass: rgba(255,255,255,0.03);
+    --sidebar-w: 260px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; }
+
+  /* ── SIDEBAR ─────────────────────────────── */
+  #sidebar {
+    position:fixed; top:0; left:0; width:var(--sidebar-w);
+    height:100vh; background:var(--bg2); border-right:1px solid var(--border);
+    overflow-y:auto; z-index:100; transition:.3s;
+  }
+  #sidebar .logo {
+    padding:24px 20px 16px;
+    border-bottom:1px solid var(--border);
+  }
+  #sidebar .logo h2 {
+    font-size:.75rem; text-transform:uppercase; letter-spacing:.1em;
+    color:var(--cyan); font-family:'JetBrains Mono',monospace;
+  }
+  #sidebar .logo p { font-size:.7rem; color:var(--muted); margin-top:4px; }
+
+  .nav-item {
+    display:flex; align-items:center; gap:10px;
+    padding:11px 20px; cursor:pointer; transition:.2s;
+    border-left:3px solid transparent; font-size:.82rem;
+    color:var(--muted);
+  }
+  .nav-item:hover { background:var(--glass); color:var(--text); }
+  .nav-item.active {
+    border-left-color:var(--cyan); background:rgba(0,212,255,.07);
+    color:var(--cyan);
+  }
+  .nav-item .num {
+    font-family:'JetBrains Mono',monospace; font-size:.7rem;
+    color:var(--cyan); opacity:.6; min-width:22px;
+  }
+  .nav-item.active .num { opacity:1; }
+
+  /* ── PROGRESS BAR ─────────────────────────── */
+  #progress-bar {
+    position:fixed; top:0; left:var(--sidebar-w); right:0;
+    height:3px; background:var(--bg3); z-index:99;
+  }
+  #progress-fill {
+    height:100%; background:linear-gradient(90deg,var(--cyan),var(--green));
+    transition:.4s; width:0%;
+  }
+
+  /* ── MAIN ─────────────────────────────────── */
+  #main {
+    margin-left:var(--sidebar-w); padding:48px 48px 80px;
+    min-height:100vh; max-width:960px;
+  }
+
+  /* ── SECTION ──────────────────────────────── */
+  .section { display:none; animation:fadeIn .4s ease; }
+  .section.active { display:block; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ── HERO ─────────────────────────────────── */
+  .hero {
+    background:linear-gradient(135deg,#0d1b2a 0%,#1a0a2e 50%,#0a1a0d 100%);
+    border:1px solid var(--border); border-radius:16px;
+    padding:56px 48px; margin-bottom:40px; position:relative; overflow:hidden;
+  }
+  .hero::before {
+    content:''; position:absolute; top:-50%; right:-10%;
+    width:500px; height:500px;
+    background:radial-gradient(circle,rgba(0,212,255,.08) 0%,transparent 70%);
+    pointer-events:none;
+  }
+  .hero .badge {
+    display:inline-block; background:rgba(0,212,255,.1);
+    border:1px solid rgba(0,212,255,.3); color:var(--cyan);
+    font-size:.72rem; padding:4px 12px; border-radius:20px;
+    font-family:'JetBrains Mono',monospace; letter-spacing:.05em; margin-bottom:20px;
+  }
+  .hero h1 { font-size:2.4rem; font-weight:700; line-height:1.2; margin-bottom:16px; }
+  .hero h1 span { color:var(--cyan); }
+  .hero p { color:var(--muted); font-size:1.05rem; line-height:1.7; max-width:600px; }
+
+  /* ── STAT GRID ────────────────────────────── */
+  .stat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:32px 0; }
+  .stat-card {
+    background:var(--glass); border:1px solid var(--border); border-radius:12px;
+    padding:20px; text-align:center;
+  }
+  .stat-card .value { font-size:1.8rem; font-weight:700; color:var(--cyan); font-family:'JetBrains Mono',monospace; }
+  .stat-card .label { font-size:.75rem; color:var(--muted); margin-top:4px; }
+
+  /* ── UNIT HEADER ──────────────────────────── */
+  .unit-header {
+    background:linear-gradient(135deg,var(--bg3),var(--bg2));
+    border:1px solid var(--border); border-radius:12px;
+    padding:32px; margin-bottom:28px;
+  }
+  .unit-header .unit-num {
+    font-family:'JetBrains Mono',monospace; font-size:.75rem;
+    color:var(--cyan); text-transform:uppercase; letter-spacing:.1em;
+  }
+  .unit-header h2 { font-size:1.7rem; margin:8px 0 12px; }
+  .unit-header .metaphor {
+    background:rgba(0,212,255,.06); border-left:3px solid var(--cyan);
+    padding:14px 18px; border-radius:0 8px 8px 0;
+    font-style:italic; color:var(--muted); font-size:.9rem; line-height:1.6;
+  }
+
+  /* ── CARDS ────────────────────────────────── */
+  .cards { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0; }
+  .card {
+    background:var(--glass); border:1px solid var(--border); border-radius:12px;
+    padding:20px; transition:.2s;
+  }
+  .card:hover { border-color:rgba(0,212,255,.4); background:rgba(0,212,255,.04); }
+  .card h4 { font-size:.85rem; color:var(--cyan); margin-bottom:8px; display:flex; align-items:center; gap:8px; }
+  .card p, .card ul { font-size:.83rem; color:var(--muted); line-height:1.7; }
+  .card ul { padding-left:16px; }
+  .card ul li { margin-bottom:4px; }
+
+  /* ── FULL CARD ────────────────────────────── */
+  .full-card {
+    background:var(--glass); border:1px solid var(--border); border-radius:12px;
+    padding:24px; margin:16px 0;
+  }
+  .full-card h3 { font-size:1rem; color:var(--text); margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+  .full-card p, .full-card ul { font-size:.85rem; color:var(--muted); line-height:1.7; }
+  .full-card ul { padding-left:18px; }
+  .full-card ul li { margin-bottom:6px; }
+
+  /* ── TAG LIST ─────────────────────────────── */
+  .tags { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; }
+  .tag {
+    background:rgba(57,255,20,.08); border:1px solid rgba(57,255,20,.2);
+    color:var(--green); font-size:.72rem; padding:3px 10px; border-radius:12px;
+    font-family:'JetBrains Mono',monospace;
+  }
+  .tag.blue { background:rgba(0,212,255,.08); border-color:rgba(0,212,255,.2); color:var(--cyan); }
+  .tag.orange { background:rgba(255,107,53,.08); border-color:rgba(255,107,53,.2); color:var(--orange); }
+  .tag.purple { background:rgba(168,85,247,.08); border-color:rgba(168,85,247,.2); color:var(--purple); }
+
+  /* ── ALERT ────────────────────────────────── */
+  .alert {
+    background:rgba(255,107,53,.07); border:1px solid rgba(255,107,53,.3);
+    border-radius:10px; padding:16px 20px; margin:16px 0;
+    font-size:.84rem; color:var(--orange); display:flex; gap:10px; align-items:flex-start;
+  }
+  .alert-info {
+    background:rgba(0,212,255,.06); border-color:rgba(0,212,255,.3);
+    color:var(--cyan);
+  }
+
+  /* ── REFERENCES ───────────────────────────── */
+  .refs-toggle {
+    background:none; border:1px solid var(--border); color:var(--muted);
+    padding:10px 18px; border-radius:8px; cursor:pointer; font-size:.8rem;
+    margin-top:24px; transition:.2s; display:flex; align-items:center; gap:8px;
+    font-family:'Inter',sans-serif;
+  }
+  .refs-toggle:hover { border-color:var(--cyan); color:var(--cyan); }
+  .refs-content {
+    display:none; background:var(--bg3); border:1px solid var(--border);
+    border-radius:8px; padding:20px; margin-top:8px;
+  }
+  .refs-content.open { display:block; }
+  .refs-content ul { padding-left:18px; }
+  .refs-content ul li { font-size:.78rem; color:var(--muted); margin-bottom:8px; line-height:1.5; }
+  .refs-content ul li a { color:var(--cyan); text-decoration:none; }
+  .refs-content ul li a:hover { text-decoration:underline; }
+
+  /* ── NAV BUTTONS ──────────────────────────── */
+  .nav-buttons {
+    display:flex; justify-content:space-between; margin-top:48px;
+    padding-top:24px; border-top:1px solid var(--border);
+  }
+  .btn {
+    background:var(--glass); border:1px solid var(--border); color:var(--text);
+    padding:10px 24px; border-radius:8px; cursor:pointer; font-size:.85rem;
+    transition:.2s; font-family:'Inter',sans-serif; display:flex; align-items:center; gap:8px;
+  }
+  .btn:hover { border-color:var(--cyan); color:var(--cyan); }
+  .btn:disabled { opacity:.3; cursor:not-allowed; }
+  .btn.primary { background:rgba(0,212,255,.1); border-color:var(--cyan); color:var(--cyan); }
+  .btn.primary:hover { background:rgba(0,212,255,.2); }
+
+  /* ── HAMBURGER (MOBILE) ───────────────────── */
+  #ham { display:none; position:fixed; top:12px; left:12px; z-index:200;
+    background:var(--bg2); border:1px solid var(--border); border-radius:8px;
+    padding:8px 10px; cursor:pointer; }
+  #overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:99; }
+
+  @media(max-width:768px){
+    #ham { display:flex; flex-direction:column; gap:5px; }
+    #ham span { display:block; width:22px; height:2px; background:var(--cyan); border-radius:2px; }
+    #sidebar { transform:translateX(-100%); }
+    #sidebar.open { transform:translateX(0); }
+    #overlay.open { display:block; }
+    #main { margin-left:0; padding:24px 20px 60px; }
+    #progress-bar { left:0; }
+    .stat-grid { grid-template-columns:1fr; }
+    .cards { grid-template-columns:1fr; }
+    .hero { padding:32px 24px; }
+    .hero h1 { font-size:1.6rem; }
+  }
+
+  /* ── SCROLLBAR ────────────────────────────── */
+  ::-webkit-scrollbar { width:5px; }
+  ::-webkit-scrollbar-track { background:var(--bg); }
+  ::-webkit-scrollbar-thumb { background:var(--border); border-radius:10px; }
+.home-btn{display:block;margin:8px 16px 4px;padding:7px 12px;background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);border-radius:6px;color:var(--cyan);font-size:.76rem;text-decoration:none;text-align:center;transition:.2s}.home-btn:hover{background:rgba(0,212,255,.15);border-color:var(--cyan)}
+</style>
+</head>
+<body>
+
+<!-- Hamburger -->
+<div id="ham" onclick="toggleSidebar()">
+  <span></span><span></span><span></span>
+</div>
+<div id="overlay" onclick="toggleSidebar()"></div>
+
+<!-- Progress bar -->
+<div id="progress-bar"><div id="progress-fill"></div></div>
+
+<!-- Sidebar -->
+<nav id="sidebar">
+  <div class="logo">
+    <h2>🔐 Seguridad &amp; Delitos</h2>
+    <p>Maestría en Seguridad Informática</p>
+  </div><a href="index.html" class="home-btn">← Inicio</a>
+  <div id="nav-list"></div>
+</nav>
+
+<!-- Main content -->
+<main id="main">
+
+  <!-- ══ PORTADA ══════════════════════════════════════ -->
+  <section class="section active" data-id="0">
+    <div class="hero">
+      <div class="badge">// Módulo 2 — Maestría en Seguridad Informática</div>
+      <h1>Gestión de la <span>Seguridad</span> y<br>Delitos Informáticos</h1>
+      <p>Explora el marco jurídico que regula el mundo digital: desde los fundamentos del derecho informático hasta los delitos cibernéticos y su dimensión internacional.</p>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="value">$8.4T</div>
+        <div class="label">Costo del cibercrimen global en 2022 (USD)</div>
+      </div>
+      <div class="stat-card">
+        <div class="value">5.4B</div>
+        <div class="label">Usuarios de internet en 2024 (ITU)</div>
+      </div>
+      <div class="stat-card">
+        <div class="value">10 U.</div>
+        <div class="label">Unidades temáticas del curso</div>
+      </div>
+    </div>
+    <div class="full-card">
+      <h3>🎯 Descripción del curso</h3>
+      <p>Este curso aborda la intersección entre el Derecho y las Tecnologías de la Información. Analizaremos cómo el ordenamiento jurídico responde a los retos que plantea la sociedad digital: la protección de datos personales, la propiedad intelectual del software, los contratos en línea, los delitos informáticos y la cooperación internacional para combatirlos.</p>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <h4>⚖️ Competencias</h4>
+        <ul>
+          <li>Identificar el marco jurídico aplicable a las TIC</li>
+          <li>Analizar delitos informáticos y su regulación</li>
+          <li>Aplicar normas de protección de datos</li>
+          <li>Evaluar marcos normativos nacionales e internacionales</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>📚 Estructura</h4>
+        <ul>
+          <li>10 unidades temáticas semanales</li>
+          <li>Casos de estudio reales (2022-2025)</li>
+          <li>Referencias académicas actualizadas</li>
+          <li>Marco legal México + perspectiva internacional</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ UNIDAD 1 ════════════════════════════════════ -->
+  <section class="section" data-id="1">
+    <div class="unit-header">
+      <div class="unit-num">Unidad 1</div>
+      <h2>⚖️ Introducción al Derecho</h2>
+      <div class="metaphor">"El Derecho es el sistema operativo de la sociedad: sin él, los procesos sociales carecen de reglas para ejecutarse de forma ordenada y predecible."</div>
+    </div>
+
+    <div class="full-card">
+      <h3>📖 Concepto de Derecho</h3>
+      <p>Según Pereznieto y Castro (2019), <em>"el Derecho es el conjunto de normas que imponen deberes y normas que confieren facultades, que establecen las bases de convivencia social y cuyo fin es dotar a todos los miembros de la sociedad de los mínimos de seguridad, certeza, igualdad, libertad y justicia"</em>.</p>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <h4>🏛️ Fuentes del Derecho</h4>
+        <ul>
+          <li><strong>Legislación:</strong> normas escritas del Estado</li>
+          <li><strong>Jurisprudencia:</strong> criterios judiciales reiterados</li>
+          <li><strong>Costumbre:</strong> usos sociales reconocidos</li>
+          <li><strong>Doctrina:</strong> análisis de juristas y académicos</li>
+          <li><strong>Principios generales:</strong> equidad, buena fe</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>🌿 Ramas relevantes para ciberseguridad</h4>
+        <ul>
+          <li><strong>Derecho Penal:</strong> tipificación de delitos informáticos</li>
+          <li><strong>Derecho Civil:</strong> contratos electrónicos y responsabilidad</li>
+          <li><strong>Derecho Administrativo:</strong> regulación de servicios digitales</li>
+          <li><strong>Derecho Internacional:</strong> tratados y convenios (Budapest)</li>
+          <li><strong>Derecho Constitucional:</strong> privacidad, libre expresión (Art. 6, 16 CPEUM)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="full-card">
+      <h3>💻 Derecho Informático</h3>
+      <p>Disciplina jurídica que estudia las normas aplicables a las Tecnologías de la Información y la Comunicación. Julio Téllez Valdés —pionero mexicano del área— lo define como <em>"el conjunto de leyes, normas y principios aplicables a los hechos y actos derivados de la informática"</em>.</p>
+      <div class="tags" style="margin-top:12px">
+        <span class="tag blue">Derecho sustantivo TIC</span>
+        <span class="tag blue">Regulación de internet</span>
+        <span class="tag blue">Protección de datos</span>
+        <span class="tag blue">Ciberdelitos</span>
+        <span class="tag blue">Contratos electrónicos</span>
+      </div>
+    </div>
+
+    <div class="alert alert-info">
+      ℹ️ <span><strong>Reto regulatorio:</strong> La tecnología evoluciona más rápido que el Derecho. La IA generativa (ChatGPT, 2022; EU AI Act, 2024) ilustra este desfase: la norma llega cuando el fenómeno ya transformó la sociedad.</span>
+    </div>
+
+    <button class="refs-toggle" onclick="toggleRefs(this)">📚 Referencias de la unidad ▾</button>
+    <div class="refs-content">
+      <ul>
+        <li>Téllez Valdés, J. (2023). <em>Derecho Informático</em> (6ª ed.). McGraw-Hill.</li>
+        <li>Pereznieto Castro, L. &amp; Castro, J.A. (2019). <em>Introducción al Estudio del Derecho</em>. Oxford.</li>
+        <li>Lastra Lastra, J. M. (2012). <em>Conceptos Jurídicos Fundamentales</em>. UNAM-IIJ. <a href="http://bibliohistorico.juridicas.unam.mx/libros/1/116/25.pdf" target="_blank">Enlace</a></li>
+        <li>IIJUNAM. (2012). Derecho Informático, comentario — Julio Téllez Valdés. <a href="https://www.youtube.com/watch?v=ubi5DSu06ro" target="_blank">YouTube</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn" onclick="goTo(0)">← Portada</button>
+      <button class="btn primary" onclick="goTo(2)">Unidad 2 →</button>
+    </div>
+  </section>
+
+  <!-- ══ UNIDAD 2 ════════════════════════════════════ -->
+  <section class="section" data-id="2">
+    <div class="unit-header">
+      <div class="unit-num">Unidad 2</div>
+      <h2>🌐 La Sociedad de la Información</h2>
+      <div class="metaphor">"Vivimos en un océano de datos: el Derecho Informático es el faro que guía a los navegantes y sanciona a los piratas que acechan en las aguas digitales."</div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card"><div class="value">5.4B</div><div class="label">Usuarios de internet 2024 (ITU)</div></div>
+      <div class="stat-card"><div class="value">120 ZB</div><div class="label">Datos generados globalmente en 2023</div></div>
+      <div class="stat-card"><div class="value">37%</div><div class="label">Población mundial sin acceso a internet</div></div>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <h4>🔄 Evolución social</h4>
+        <ul>
+          <li>Sociedad Agrícola → Industrial</li>
+          <li>Industrial → Sociedad de la Información</li>
+          <li>Información → Sociedad del Conocimiento</li>
+          <li>Conocimiento → Economía de Datos (Data Economy)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>⚖️ Informática Jurídica vs Derecho Informático</h4>
+        <ul>
+          <li><strong>Informática Jurídica:</strong> uso de TI en procesos legales (bases de datos, búsqueda jurisprudencial)</li>
+          <li><strong>Derecho Informático:</strong> normas que regulan las TIC (su objeto de estudio)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="full-card">
+      <h3>🤖 Inteligencia Artificial y el reto jurídico (2024)</h3>
+      <p>El <strong>EU AI Act</strong> (Reglamento UE 2024/1689), vigente desde agosto 2024, es la primera ley integral de IA del mundo. Clasifica los sistemas de IA por niveles de riesgo (inaceptable, alto, limitado, mínimo) e impone obligaciones de transparencia, evaluación de conformidad y registro. Establece multas de hasta €35 millones o el 7% de la facturación global para infracciones de riesgo inaceptable.</p>
+      <div class="tags" style="margin-top:12px">
+        <span class="tag purple">EU AI Act 2024</span>
+        <span class="tag purple">Riesgo inaceptable</span>
+        <span class="tag purple">Transparencia IA</span>
+        <span class="tag purple">Regulación ex-ante</span>
+      </div>
+    </div>
+
+    <div class="full-card">
+      <h3>📡 Brecha Digital</h3>
+      <p>La <strong>brecha digital</strong> es la desigualdad en acceso, uso y apropiación de las TIC. Tiene dimensiones de acceso (infraestructura), uso (habilidades digitales) y calidad (velocidad, dispositivos). En México, el <em>Informe ENDUTIH 2023</em> reporta que el 78.6% de la población de 6 años y más es usuaria de internet, con diferencias significativas entre zonas urbanas (83.1%) y rurales (60.6%).</p>
+    </div>
+
+    <button class="refs-toggle" onclick="toggleRefs(this)">📚 Referencias de la unidad ▾</button>
+    <div class="refs-content">
+      <ul>
+        <li>ITU. (2024). <em>Global Connectivity Report 2024</em>. <a href="https://www.itu.int/en/ITU-D/Statistics/Pages/publications/gcr.aspx" target="_blank">itu.int</a></li>
+        <li>Reglamento (UE) 2024/1689 del Parlamento Europeo y del Consejo (EU AI Act). <a href="https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32024R1689" target="_blank">EUR-Lex</a></li>
+        <li>INEGI. (2023). <em>ENDUTIH 2023</em>. <a href="https://www.inegi.org.mx/programas/dutih/2023/" target="_blank">inegi.org.mx</a></li>
+        <li>Peña, C. A. (s/f). Informática Jurídica y Derecho Informático. <a href="https://www.palermo.edu/ingenieria/downloads/pdfwebc&T8/8CyT05.pdf" target="_blank">palermo.edu</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn" onclick="goTo(1)">← Unidad 1</button>
+      <button class="btn primary" onclick="goTo(3)">Unidad 3 →</button>
+    </div>
+  </section>
+
+  <!-- ══ UNIDAD 3 ════════════════════════════════════ -->
+  <section class="section" data-id="3">
+    <div class="unit-header">
+      <div class="unit-num">Unidad 3</div>
+      <h2>📡 Derecho de la Información y Telecomunicaciones</h2>
+      <div class="metaphor">"La información es como el agua: fluye, nutre y puede inundar. El Derecho de Telecomunicaciones es la infraestructura hidráulica que regula su cauce y garantiza que llegue a todos."</div>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <h4>⚖️ Derecho de Acceso a la Información</h4>
+        <ul>
+          <li>Derecho fundamental reconocido en el Art. 6 CPEUM (México)</li>
+          <li>Principio de máxima publicidad</li>
+          <li>INAI: órgano garante nacional</li>
+          <li>Ley General de Transparencia y Acceso a la Información (LGTAIP, 2015)</li>
+          <li>Sujetos obligados: poderes del Estado, partidos, fideicomisos públicos</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>📶 Ley Federal de Telecomunicaciones (LFTR)</h4>
+        <ul>
+          <li>Publicada en 2014; última reforma 2023</li>
+          <li>Regula: radio, TV, telefonía, internet, satélites</li>
+          <li>Órgano regulador: IFT (Instituto Federal de Telecomunicaciones)</li>
+          <li>Neutralidad de red: Art. 145 LFTR</li>
+          <li>Must-carry / Must-offer en radiodifusión</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="full-card">
+      <h3>🌐 5G y Soberanía Digital</h3>
+      <p>El despliegue de redes 5G plantea retos regulatorios en materia de seguridad nacional (exclusión de proveedores con vínculos gubernamentales extranjeros), espectro radioeléctrico (bien público concesionado), y acceso universal. México comenzó licitaciones 5G en 2022. La OCDE recomienda marcos regulatorios tecnológicamente neutros y que fomenten la competencia entre operadores.</p>
+    </div>
+
+    <div class="full-card">
+      <h3>🔒 Retención de Datos y Vigilancia Legal</h3>
+      <p>El Art. 189 LFTR obliga a concesionarios a colaborar con autoridades en intervención de comunicaciones mediante orden judicial. En 2023, el INAI y la CNDH señalaron la necesidad de fortalecer garantías de proporcionalidad y control judicial. El uso de herramientas como <strong>Pegasus</strong> —spyware detectado en México por Citizen Lab— evidencia los riesgos del espionaje digital fuera de marco legal.</p>
+      <div class="tags" style="margin-top:12px">
+        <span class="tag orange">Vigilancia estatal</span>
+        <span class="tag orange">Pegasus / spyware</span>
+        <span class="tag orange">Control judicial</span>
+        <span class="tag orange">Art. 16 CPEUM</span>
+      </div>
+    </div>
+
+    <button class="refs-toggle" onclick="toggleRefs(this)">📚 Referencias de la unidad ▾</button>
+    <div class="refs-content">
+      <ul>
+        <li>Alvarez, C. L. (2013). <em>Derecho de las telecomunicaciones</em>. Fuendalex. <a href="http://claraluzalvarez.org/wp-content/uploads/2014/10/Clara-Luz-Alvarez-Dcho-Telecom-2013-final.pdf" target="_blank">Enlace PDF</a></li>
+        <li>IFT México. (2024). <a href="https://www.ift.org.mx" target="_blank">ift.org.mx</a></li>
+        <li>OCDE. (2024). <em>Perspectivas de la Economía Digital de la OCDE 2024</em>. OECD Publishing.</li>
+        <li>IIJUNAM. (2015). El Derecho de Acceso a la Información. <a href="https://www.youtube.com/watch?v=bNKvvYE-M6E" target="_blank">YouTube</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn" onclick="goTo(2)">← Unidad 2</button>
+      <button class="btn primary" onclick="goTo(4)">Unidad 4 →</button>
+    </div>
+  </section>
+
+  <!-- ══ UNIDAD 4 ════════════════════════════════════ -->
+  <section class="section" data-id="4">
+    <div class="unit-header">
+      <div class="unit-num">Unidad 4</div>
+      <h2>🛡️ Derecho a los Datos Personales</h2>
+      <div class="metaphor">"Tus datos personales son tu huella dactilar digital: únicos, identificadores, y en manos equivocadas, una llave maestra para el robo de identidad y la manipulación conductual."</div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card"><div class="value">353M</div><div class="label">Víctimas de brechas de datos en 2023 (ITRC)</div></div>
+      <div class="stat-card"><div class="value">€1.2B</div><div class="label">Multa a Meta por GDPR (Irlanda, 2023)</div></div>
+      <div class="stat-card"><div class="value">160+</div><div class="label">Países con leyes de protección de datos</div></div>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <h4>🇲🇽 Marco mexicano (LFPDPPP)</h4>
+        <ul>
+          <li>Ley Federal de Protección de Datos Personales en Posesión de los Particulares (2010)</li>
+          <li>Aplica al sector privado</li>
+          <li>Órgano: INAI (antes IFAI)</li>
+          <li>Derechos ARCO: Acceso, Rectificación, Cancelación, Oposición</li>
+          <li>Aviso de privacidad: obligatorio e integral</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>🇪🇺 GDPR (Europa, 2018)</h4>
+        <ul>
+          <li>Reglamento General de Protección de Datos</li>
+          <li>Aplicación extraterritorial (aplica a empresas fuera de la UE)</li>
+          <li>Multas hasta €20M o 4% facturación global</li>
+          <li>Consentimiento libre, específico, informado e inequívoco</li>
+          <li>Privacy by design y by default</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="full-card">
+      <h3>🔑 Derechos ARCO+ (Nuevas dimensiones)</h3>
+      <ul>
+        <li><strong>Acceso:</strong> conocer qué datos se tienen y cómo se usan</li>
+        <li><strong>Rectificación:</strong> corregir datos inexactos o incompletos</li>
+        <li><strong>Cancelación / Olvido:</strong> suprimir datos cuando ya no sean necesarios</li>
+        <li><strong>Oposición:</strong> impedir el tratamiento para fines específicos</li>
+        <li><strong>Portabilidad:</strong> recibir los datos en formato interoperable (GDPR Art. 20)</li>
+        <li><strong>No ser objeto de decisiones automatizadas:</strong> derecho a intervención humana</li>
+      </ul>
+    </div>
+
+    <div class="alert">
+      ⚠️ <span><strong>Caso Cambridge Analytica (2018):</strong> Datos de 87 millones de usuarios de Facebook fueron usados sin consentimiento para perfilar y micro-segmentar mensajes políticos en la campaña presidencial de EE.UU. Detonó la aprobación del GDPR y reformas globales en protección de datos.</span>
+    </div>
+
+    <div class="full-card">
+      <h3>🤖 IA y Datos Personales</h3>
+      <p>Los modelos de lenguaje e IA generativa entrenan con enormes volúmenes de datos que pueden incluir información personal. El INAI (2023) publicó criterios sobre el tratamiento de datos en sistemas de IA. El EU AI Act (2024) prohíbe el <em>scraping</em> masivo para sistemas de reconocimiento facial en espacios públicos, catalogándolo como riesgo inaceptable.</p>
+    </div>
+
+    <button class="refs-toggle" onclick="toggleRefs(this)">📚 Referencias de la unidad ▾</button>
+    <div class="refs-content">
+      <ul>
+        <li>INAI. (2024). Guía de Protección de Datos Personales. <a href="https://www.inai.org.mx" target="_blank">inai.org.mx</a></li>
+        <li>Reglamento (UE) 2016/679 — GDPR. <a href="https://gdpr.eu" target="_blank">gdpr.eu</a></li>
+        <li>Identity Theft Resource Center. (2024). <em>Annual Data Breach Report 2023</em>. <a href="https://www.idtheftcenter.org" target="_blank">idtheftcenter.org</a></li>
+        <li>Secretaría de la Función Pública. Guía para ejercer el Derecho de Acceso a la Información Pública. <a href="https://www.gob.mx/sfp" target="_blank">gob.mx/sfp</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn" onclick="goTo(3)">← Unidad 3</button>
+      <button class="btn primary" onclick="goTo(5)">Unidad 5 →</button>
+    </div>
+  </section>
+
+  <!-- ══ UNIDAD 5 ════════════════════════════════════ -->
+  <section class="section" data-id="5">
+    <div class="unit-header">
+      <div class="unit-num">Unidad 5</div>
+      <h2>💡 Derecho de la Propiedad Intelectual</h2>
+      <div class="metaphor">"La propiedad intelectual es el ADN de la innovación: protege la identidad única de cada creación y garantiza que el creador cosecha los frutos de su ingenio, incluso en la era de la IA generativa."</div>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <h4>📝 Derechos de Autor</h4>
+        <ul>
+          <li>Protegen obras literarias, artísticas y científicas</li>
+          <li>En México: Ley Federal del Derecho de Autor (LFDA)</li>
+          <li>Registro ante INDAUTOR (opcional, declarativo)</li>
+          <li>Duración: vida del autor + 100 años en México (reforma 2023)</li>
+          <li>Software: obra literaria protegida por derechos de autor</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>🏭 Propiedad Industrial</h4>
+        <ul>
+          <li>Patentes: invenciones nuevas, de actividad inventiva y aplicación industrial</li>
+          <li>Marcas: signos distintivos de productos/servicios</li>
+          <li>Secretos industriales: información confidencial de valor comercial</li>
+          <li>En México: IMPI (Instituto Mexicano de la Propiedad Industrial)</li>
+          <li>Ley de Propiedad Industrial (2020)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="full-card">
+      <h3>🤖 IA Generativa y Autoría (2024)</h3>
+      <p>¿Puede una IA ser autora de una obra? La posición mayoritaria —incluyendo la OMPI (2024) y la USPTO— es que <strong>la IA no puede ser titular de derechos de autor</strong>; sólo las personas físicas o jurídicas pueden serlo. Sin embargo, las obras generadas con asistencia de IA plantean preguntas sobre el grado de contribución humana necesario. El caso <em>Thaler v. Vidal</em> (EE.UU., 2023) confirmó que la IA no puede ser inventora para fines de patente.</p>
+      <div class="tags" style="margin-top:12px">
+        <span class="tag purple">IA generativa</span>
+        <span class="tag purple">Autoría humana</span>
+        <span class="tag purple">OMPI 2024</span>
+        <span class="tag purple">Thaler v. Vidal</span>
+      </div>
+    </div>
+
+    <div class="full-card">
+      <h3>🖼️ NFTs y Propiedad Intelectual</h3>
+      <p>Los NFTs (Non-Fungible Tokens) son certificados digitales de autenticidad sobre blockchain. Comprar un NFT <strong>no transfiere automáticamente</strong> los derechos de autor de la obra subyacente, a menos que el contrato lo estipule expresamente. En México, el marco jurídico vigente (LFDA) es aplicable, pero no contempla expresamente los NFTs ni los activos digitales nativos.</p>
+    </div>
+
+    <button class="refs-toggle" onclick="toggleRefs(this)">📚 Referencias de la unidad ▾</button>
+    <div class="refs-content">
+      <ul>
+        <li>OMPI. (2024). <em>World Intellectual Property Indicators 2024</em>. <a href="https://www.wipo.int/publications/es/details.jsp?id=4698" target="_blank">wipo.int</a></li>
+        <li>IMPI. (2024). <a href="https://www.gob.mx/impi" target="_blank">gob.mx/impi</a></li>
+        <li>Del Carmen, L. M. &amp; Alvarado, A. La protección de los programas de cómputo y las bases de datos. <a href="http://www.ordenjuridico.gob.mx/Congreso/pdf/94.pdf" target="_blank">ordenjuridico.gob.mx</a></li>
+        <li>García, I. I. C. La criptografía como solución a la seguridad informática. <a href="http://www.ordenjuridico.gob.mx/Congreso/pdf/113.pdf" target="_blank">ordenjuridico.gob.mx</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn" onclick="goTo(4)">← Unidad 4</button>
+      <button class="btn primary" onclick="goTo(6)">Unidad 6 →</button>
+    </div>
+  </section>
+
+  <!-- ══ UNIDAD 6 ════════════════════════════════════ -->
+  <section class="section" data-id="6">
+    <div class="unit-header">
+      <div class="unit-num">Unidad 6</div>
+      <h2>©️ Propiedad Intelectual y Derechos de Autor</h2>
+      <div class="metaphor">"El copyright es un candado en la puerta del estudio del artista; el copyleft es una puerta abierta con un cartel que dice: 'Entra, usa, mejora, pero comparte igual'. Ambos modelos coexisten y se necesitan."</div>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <h4>⚖️ Derechos Morales vs Patrimoniales</h4>
+        <ul>
+          <li><strong>Morales:</strong> inalienables, irrenunciables (paternidad, integridad de la obra)</li>
+          <li><strong>Patrimoniales:</strong> transmisibles (reproducción, distribución, comunicación pública)</li>
+          <li>En México: duración 100 años post mortem auctoris (reforma 2023)</li>
+          <li>Convenio de Berna: protección automática desde la creación</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>🔓 Modelos de Licenciamiento</h4>
+        <ul>
+          <li><strong>Copyright ©:</strong> todos los derechos reservados</li>
+          <li><strong>Creative Commons (CC):</strong> algunos derechos reservados</li>
+          <li><strong>GPL / LGPL / AGPL:</strong> copyleft fuerte (software libre)</li>
+          <li><strong>MIT / Apache / BSD:</strong> licencias permisivas</li>
+          <li><strong>Dominio público:</strong> sin restricciones de uso</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="full-card">
+      <h3>⚡ Casos 2023-2024: IA vs Derechos de Autor</h3>
+      <ul>
+        <li><strong>Getty Images vs. Stability AI (2023):</strong> Getty demanda por entrenamiento con millones de imágenes protegidas sin licencia ni compensación.</li>
+        <li><strong>The New York Times vs. OpenAI/Microsoft (2023):</strong> demanda por reproducción literal de artículos en entrenamiento de GPT.</li>
+        <li><strong>Sarah Silverman vs. Meta/OpenAI (2023):</strong> autores demandan por uso de libros en entrenamiento sin consentimiento.</li>
+      </ul>
+      <div class="alert" style="margin-top:16px">
+        ⚠️ <span>Estos casos definirán el marco jurídico del entrenamiento de IA con obras protegidas. Los tribunales estadounidenses aún no han emitido sentencias definitivas.</span>
+      </div>
+    </div>
+
+    <div class="full-card">
+      <h3>🏴‍☠️ Piratería Digital en México</h3>
+      <p>La piratería digital (música, cine, software, libros) genera pérdidas estimadas en miles de millones de pesos anuales en México. La <strong>LFDA</strong> prevé sanciones penales (Arts. 424-429 del CPF) y civiles. La Estrategia Digital Nacional 2021-2024 incluye acciones de educación en propiedad intelectual y combate a sitios de piratería digital en coordinación con IMPI e INDAUTOR.</p>
+    </div>
+
+    <button class="refs-toggle" onclick="toggleRefs(this)">📚 Referencias de la unidad ▾</button>
+    <div class="refs-content">
+      <ul>
+        <li>Creative Commons. (2024). <a href="https://creativecommons.org/licenses/" target="_blank">creativecommons.org</a></li>
+        <li>INDAUTOR. (2024). <a href="https://www.indautor.gob.mx" target="_blank">indautor.gob.mx</a></li>
+        <li>Angulo, M. (2014). Copyright o Copyleft. <em>Forbes México</em>. <a href="https://www.forbes.com.mx/copyright-o-copyleft/" target="_blank">forbes.com.mx</a></li>
+        <li>IMPI. La propiedad industrial en México. <a href="https://www.gob.mx/se/articulos/la-propiedad-industrial-en-mexico-196503" target="_blank">gob.mx</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn" onclick="goTo(5)">← Unidad 5</button>
+      <button class="btn primary" onclick="goTo(7)">Unidad 7 →</button>
+    </div>
+  </section>
+
+  <!-- ══ UNIDAD 7 ════════════════════════════════════ -->
+  <section class="section" data-id="7">
+    <div class="unit-header">
+      <div class="unit-num">Unidad 7</div>
+      <h2>📄 Contratos Informáticos</h2>
+      <div class="metaphor">"Un contrato informático mal redactado es como un firewall con agujeros: parece que protege, pero el verdadero riesgo está oculto adentro, en las cláusulas que nadie leyó."</div>
+    </div>
+
+    <div class="full-card">
+      <h3>📝 Concepto</h3>
+      <p>Según Aguilar Calderón (2017): <em>"Los contratos informáticos son acuerdos de voluntades que tienen como objeto bienes o servicios relacionados con la informática: hardware, software, servicios de procesamiento, consultoría, mantenimiento y comunicaciones"</em>.</p>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <h4>📦 Tipos de contratos informáticos</h4>
+        <ul>
+          <li><strong>Licencia de software:</strong> uso no exclusivo de un programa</li>
+          <li><strong>SaaS / Cloud:</strong> servicio en la nube (AWS, Azure, GCP)</li>
+          <li><strong>Desarrollo a medida:</strong> creación de software personalizado</li>
+          <li><strong>Mantenimiento TI:</strong> soporte técnico y actualizaciones</li>
+          <li><strong>Outsourcing TI:</strong> externalización de servicios tecnológicos</li>
+          <li><strong>e-Commerce:</strong> compraventa electrónica</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>☁️ Cláusulas críticas en contratos Cloud</h4>
+        <ul>
+          <li><strong>SLA (Service Level Agreement):</strong> disponibilidad garantizada (ej. 99.9%)</li>
+          <li><strong>Portabilidad de datos:</strong> derecho a recuperar datos al terminar</li>
+          <li><strong>Jurisdicción:</strong> ley aplicable y tribunales competentes</li>
+          <li><strong>Seguridad:</strong> estándares ISO 27001, SOC 2</li>
+          <li><strong>Subcontratación:</strong> quién más accede a los datos</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="full-card">
+      <h3>🔏 Firma Electrónica en México</h3>
+      <ul>
+        <li><strong>e.firma (antes FIEL):</strong> firma electrónica avanzada del SAT, con plena validez jurídica</li>
+        <li><strong>NOM-151-SCFI-2016:</strong> conservación de mensajes de datos y digitalización de documentos</li>
+        <li><strong>Ley de Firma Electrónica Avanzada (2012):</strong> regula el uso en actos jurídicos</li>
+        <li><strong>Equivalencia funcional:</strong> la firma electrónica tiene el mismo valor que la autógrafa cuando cumple los requisitos de ley</li>
+      </ul>
+    </div>
+
+    <div class="full-card">
+      <h3>⛓️ Smart Contracts (Contratos Inteligentes)</h3>
+      <p>Los <em>smart contracts</em> son programas que se auto-ejecutan en blockchain cuando se cumplen condiciones predefinidas (ej. "si el pago se recibe, transferir la propiedad digital"). En México, <strong>no existe aún una regulación específica</strong> para contratos inteligentes, pero la Ley FinTech (2018) reconoce activos virtuales, sentando bases para su eventual regulación. La doctrina discute su naturaleza como instrumento jurídico vinculante.</p>
+      <div class="tags" style="margin-top:12px">
+        <span class="tag blue">Ethereum</span>
+        <span class="tag blue">Blockchain</span>
+        <span class="tag blue">Auto-ejecución</span>
+        <span class="tag blue">Ley FinTech 2018</span>
+      </div>
+    </div>
+
+    <button class="refs-toggle" onclick="toggleRefs(this)">📚 Referencias de la unidad ▾</button>
+    <div class="refs-content">
+      <ul>
+        <li>Aguilar Calderón, P. (2017). Los contratos informáticos. <em>RITI Journal</em>, 5, 129.</li>
+        <li>XIII Contratos Informáticos. UNAM. <a href="https://archivos.juridicas.unam.mx/www/bjv/libros/4/1941/15.pdf" target="_blank">juridicas.unam.mx</a></li>
+        <li>SAT México — e.firma. <a href="https://www.sat.gob.mx/tramites/efirma" target="_blank">sat.gob.mx</a></li>
+        <li>Ley FinTech México (2018). Diario Oficial de la Federación.</li>
+      </ul>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn" onclick="goTo(6)">← Unidad 6</button>
+      <button class="btn primary" onclick="goTo(8)">Unidad 8 →</button>
+    </div>
+  </section>
+
+  <!-- ══ UNIDAD 8 ════════════════════════════════════ -->
+  <section class="section" data-id="8">
+    <div class="unit-header">
+      <div class="unit-num">Unidad 8</div>
+      <h2>🚨 Delitos Informáticos</h2>
+      <div class="metaphor">"Los delitos informáticos son el crimen organizado del siglo XXI: invisibles, transfronterizos y con un retorno de inversión criminal que en algunos indicadores supera al narcotráfico tradicional."</div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card"><div class="value">$20B</div><div class="label">Daños globales por ransomware en 2023</div></div>
+      <div class="stat-card"><div class="value">3.4B</div><div class="label">Correos de phishing enviados diariamente</div></div>
+      <div class="stat-card"><div class="value">+30%</div><div class="label">Aumento de ciberataques en LATAM 2023</div></div>
+    </div>
+
+    <div class="full-card">
+      <h3>🔍 Definición</h3>
+      <p>Camacho Losa define el delito informático como <em>"toda acción dolosa que provoca un perjuicio a personas o entidades, en la que los sistemas informáticos son los instrumentos o el objeto del delito"</em>. El Art. 7 del Código Penal Federal establece: <em>"Delito es el acto u omisión que sancionan las leyes penales"</em>.</p>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <h4>💣 Ransomware</h4>
+        <ul>
+          <li>Cifra datos y exige rescate en criptomonedas</li>
+          <li>RaaS: Ransomware as a Service (modelo de negocio criminal)</li>
+          <li>Caso: CONTI vs. Costa Rica (2022) — declaró emergencia nacional</li>
+          <li>LockBit: grupo detenido por Europol/FBI (febrero 2024)</li>
+          <li>México: ataques al IMSS, IPN, gobiernos estatales</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>🎣 Phishing y Fraude Digital</h4>
+        <ul>
+          <li>Phishing: correos fraudulentos que suplantan entidades</li>
+          <li>Smishing: SMS fraudulentos</li>
+          <li>Vishing: llamadas telefónicas de ingeniería social</li>
+          <li>BEC (Business Email Compromise): fraude a empresas</li>
+          <li>Fraude SPEI: sistema de pagos interbancarios de México</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>👤 Delitos contra personas</h4>
+        <ul>
+          <li>Sextorsión: extorsión con material íntimo</li>
+          <li>Grooming: acoso sexual a menores en línea</li>
+          <li>Cyberbullying: acoso cibernético</li>
+          <li>Violencia digital de género (Ley Olimpia, 2021)</li>
+          <li>Robo de identidad digital</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>🌐 Amenazas emergentes</h4>
+        <ul>
+          <li>Deepfakes: videos falsos con IA (fraude, desinformación)</li>
+          <li>Criptomonedas y lavado de dinero</li>
+          <li>Ataques a infraestructura crítica (energía, salud)</li>
+          <li>Supply chain attacks (SolarWinds, XZ Utils 2024)</li>
+          <li>Cryptojacking: minado ilícito de criptomonedas</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="full-card">
+      <h3>⚖️ Marco Penal Mexicano</h3>
+      <ul>
+        <li><strong>Art. 211 bis CPF:</strong> acceso ilícito a sistemas informáticos (hasta 2 años prisión y hasta 300 días multa)</li>
+        <li><strong>Art. 211 bis 1-7 CPF:</strong> agravantes por tipo de sistema (financiero, seguridad nacional)</li>
+        <li><strong>Ley Olimpia (2021):</strong> violencia digital de género — 3 a 6 años de prisión</li>
+        <li><strong>Art. 187 CPF:</strong> acceso ilícito a equipos de telecomunicaciones</li>
+        <li><strong>Reformas 2024:</strong> propuestas para tipificar deepfakes maliciosos y ataques a infraestructura crítica</li>
+      </ul>
+    </div>
+
+    <div class="alert">
+      ⚠️ <span><strong>Guacamaya Leaks (2022):</strong> El grupo hacktivista Guacamaya filtró 6 terabytes de correos de la Secretaría de la Defensa Nacional (SEDENA). Expuso operaciones militares, espionaje y datos de salud del presidente. Evidenció vulnerabilidades críticas en la ciberseguridad del Estado mexicano.</span>
+    </div>
+
+    <button class="refs-toggle" onclick="toggleRefs(this)">📚 Referencias de la unidad ▾</button>
+    <div class="refs-content">
+      <ul>
+        <li>Código Penal Federal México — Arts. 211 bis. <a href="https://www.diputados.gob.mx/LeyesBiblio/pdf/CPF.pdf" target="_blank">diputados.gob.mx</a></li>
+        <li>UNODC. (2024). <em>Cybercrime Module</em>. <a href="https://www.unodc.org/e4j/es/cybercrime/index.html" target="_blank">unodc.org</a></li>
+        <li>UNAM Seguridad. Delitos informáticos en México. <a href="https://revista.seguridad.unam.mx/numero26/delitos-inform-ticos-en-m-xico" target="_blank">seguridad.unam.mx</a></li>
+        <li>Europol. (2024). <em>IOCTA 2024: Internet Organised Crime Threat Assessment</em>. <a href="https://www.europol.europa.eu/publications-events/main-reports/iocta-report" target="_blank">europol.europa.eu</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn" onclick="goTo(7)">← Unidad 7</button>
+      <button class="btn primary" onclick="goTo(9)">Unidad 9 →</button>
+    </div>
+  </section>
+
+  <!-- ══ UNIDAD 9 ════════════════════════════════════ -->
+  <section class="section" data-id="9">
+    <div class="unit-header">
+      <div class="unit-num">Unidad 9</div>
+      <h2>📋 Normatividad Informática</h2>
+      <div class="metaphor">"La normatividad informática es el código fuente del orden digital: sin estándares claros, cada sistema habla su propio lenguaje y la interoperabilidad —técnica y jurídica— resulta imposible."</div>
+    </div>
+
+    <div class="full-card">
+      <h3>🇲🇽 Marco Normativo Mexicano</h3>
+      <ul>
+        <li><strong>Constitución (CPEUM):</strong> Art. 6 (libre expresión e información), Art. 7 (libertad de imprenta), Art. 16 (privacidad e inviolabilidad de comunicaciones), Art. 73 Fr. XXI (facultad del Congreso)</li>
+        <li><strong>LFPDPPP (2010):</strong> datos personales en sector privado</li>
+        <li><strong>LGTAIP (2015):</strong> transparencia y acceso a información pública</li>
+        <li><strong>Código Penal Federal:</strong> Arts. 211 bis (delitos informáticos)</li>
+        <li><strong>Ley de Firma Electrónica Avanzada (2012)</strong></li>
+        <li><strong>NOM-151-SCFI-2016:</strong> mensajes de datos y digitalización</li>
+        <li><strong>Ley FinTech (2018):</strong> activos virtuales y tecnologías financieras</li>
+        <li><strong>Propuesta Ley de Ciberseguridad (2024):</strong> en proceso legislativo, contempla CERT nacional, obligaciones de reporte de incidentes</li>
+      </ul>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <h4>🏆 ISO/IEC 27001:2022</h4>
+        <ul>
+          <li>Estándar internacional de SGSI (Sistema de Gestión de Seguridad de la Información)</li>
+          <li>Actualizado en 2022: 93 controles en 4 temas (vs. 114 en 14 dominios)</li>
+          <li>Aplica a cualquier organización sin importar tamaño</li>
+          <li>Certificación por organismos acreditados</li>
+          <li>Base para auditorías y licitaciones gubernamentales</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>🛡️ NIST CSF 2.0 (2024)</h4>
+        <ul>
+          <li>Marco de Ciberseguridad del NIST, versión 2.0 publicada en febrero 2024</li>
+          <li>6 funciones: Govern, Identify, Protect, Detect, Respond, Recover</li>
+          <li>Nueva función "Govern": enfoque en gobernanza y liderazgo ejecutivo</li>
+          <li>Ampliado para todo tipo de organizaciones (no solo infraestructura crítica)</li>
+          <li>Referencia global para programas de ciberseguridad</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="full-card">
+      <h3>🏦 Regulación Sectorial</h3>
+      <ul>
+        <li><strong>Sector financiero (CNBV):</strong> Disposiciones de carácter general para SOFOMES, bancos, casas de bolsa — incluyen gestión de riesgos TI, continuidad operativa y reporte de incidentes cibernéticos</li>
+        <li><strong>Telecomunicaciones (IFT):</strong> Lineamientos de gestión de riesgos de ciberseguridad para concesionarios (2022)</li>
+        <li><strong>Salud (COFEPRIS):</strong> protección de datos de salud; dispositivos médicos conectados</li>
+        <li><strong>Energía (CENACE/CFE):</strong> protección de infraestructura crítica digital</li>
+      </ul>
+    </div>
+
+    <div class="alert alert-info">
+      ℹ️ <span><strong>Habeas Data:</strong> Recurso constitucional o legal que permite a cualquier persona acceder a la información que sobre ella existe en bases de datos públicas o privadas, y exigir su actualización, corrección o eliminación. Reconocido en múltiples constituciones latinoamericanas (Brasil, Colombia, Argentina). En México se ejerce a través del procedimiento ARCO ante el INAI.</span>
+    </div>
+
+    <button class="refs-toggle" onclick="toggleRefs(this)">📚 Referencias de la unidad ▾</button>
+    <div class="refs-content">
+      <ul>
+        <li>NIST. (2024). <em>Cybersecurity Framework 2.0</em>. <a href="https://www.nist.gov/cyberframework" target="_blank">nist.gov/cyberframework</a></li>
+        <li>ISO/IEC 27001:2022. <a href="https://www.iso.org/standard/27001" target="_blank">iso.org</a></li>
+        <li>Argüelles Arellano, M. del C. (2016). Challenges of cyber law in Mexico. <em>Computación y Sistemas</em>, 20(4), 827–831. doi:10.13053/cys-20-4-2515</li>
+        <li>INAI. (2024). Marco normativo. <a href="https://www.inai.org.mx" target="_blank">inai.org.mx</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn" onclick="goTo(8)">← Unidad 8</button>
+      <button class="btn primary" onclick="goTo(10)">Unidad 10 →</button>
+    </div>
+  </section>
+
+  <!-- ══ UNIDAD 10 ═══════════════════════════════════ -->
+  <section class="section" data-id="10">
+    <div class="unit-header">
+      <div class="unit-num">Unidad 10</div>
+      <h2>🌍 Situación Internacional de los Delitos Informáticos</h2>
+      <div class="metaphor">"El ciberespacio es el quinto dominio de guerra —junto a tierra, mar, aire y espacio—, tan estratégico como los demás pero sin fronteras físicas, sin uniforme enemigo y sin reglas de combate claras todavía."</div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card"><div class="value">$10.5T</div><div class="label">Costo proyectado del cibercrimen en 2025</div></div>
+      <div class="stat-card"><div class="value">195</div><div class="label">Países signatarios potenciales del Convenio ONU</div></div>
+      <div class="stat-card"><div class="value">68</div><div class="label">Países firmantes del Convenio de Budapest</div></div>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <h4>📜 Convenio de Budapest (2001)</h4>
+        <ul>
+          <li>Primer tratado internacional sobre cibercrimen</li>
+          <li>Consejo de Europa; abierto a países no miembros</li>
+          <li>Tipifica: delitos contra confidencialidad, integridad, disponibilidad; fraude informático; pornografía infantil; infracciones a derechos de autor</li>
+          <li>Cooperación judicial internacional: preservación rápida de datos, intercambio de evidencia digital</li>
+          <li><strong>México: no ha ratificado (2024)</strong> — debate sobre soberanía vs. cooperación</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>🇺🇳 Convención ONU sobre Ciberdelincuencia (2024)</h4>
+        <ul>
+          <li>Aprobada por la Asamblea General de la ONU en agosto 2024</li>
+          <li>Resolución A/RES/78/265</li>
+          <li>Polémica: China y Rusia influyeron en ampliar el alcance a contenidos (censura vs. seguridad)</li>
+          <li>Críticas de sociedad civil: posible uso para persecución de periodistas y activistas</li>
+          <li>Abierta a firma desde 2025; requiere 40 ratificaciones para entrar en vigor</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="full-card">
+      <h3>⚔️ Ciberguerra y Actores Estatales</h3>
+      <ul>
+        <li><strong>Stuxnet (2010):</strong> primer ciberarma conocida, atacó centrífugas nucleares iraníes (EE.UU./Israel)</li>
+        <li><strong>NotPetya (2017):</strong> ataque de Rusia contra Ucrania que causó $10B en daños globales</li>
+        <li><strong>SolarWinds (2020):</strong> APT ruso comprometió cadena de suministro de software, afectando al gobierno de EE.UU.</li>
+        <li><strong>Ataques a Ucrania (2022-2024):</strong> ataques coordinados a infraestructura eléctrica, telecomunicaciones y gobierno durante la invasión</li>
+        <li><strong>Grupos APT (Advanced Persistent Threat):</strong> actores patrocinados por estados (APT28/Fancy Bear-Rusia, APT41-China, Lazarus-Corea del Norte)</li>
+      </ul>
+    </div>
+
+    <div class="full-card">
+      <h3>🚔 Operaciones Policiales Internacionales (2024)</h3>
+      <ul>
+        <li><strong>Operación Cronos (feb. 2024):</strong> Europol/FBI derribaron la infraestructura de LockBit, el grupo de ransomware más activo del mundo; 2 arrestados, 34 servidores incautados</li>
+        <li><strong>Operación Endgame (may. 2024):</strong> desmantelamiento de botnets Emotet, IcedID, SystemBC — la mayor operación anti-botnet de la historia</li>
+        <li><strong>INTERPOL — Operación Africa Cyber Surge II (2023):</strong> 14 países africanos, 1000+ cibercriminales identificados</li>
+      </ul>
+    </div>
+
+    <div class="alert alert-info">
+      ℹ️ <span><strong>México y Budapest:</strong> En 2023, el Senado mexicano discutió nuevamente la adhesión al Convenio de Budapest. Los argumentos a favor incluyen la mejora en cooperación internacional; los argumentos en contra señalan posibles conflictos con la soberanía nacional y la ausencia de garantías suficientes para derechos humanos en el texto original.</span>
+    </div>
+
+    <div class="full-card">
+      <h3>📊 Iniciativas Regionales en América Latina</h3>
+      <ul>
+        <li><strong>OEA:</strong> Estrategia Interamericana de Ciberseguridad; Red CSIRT de las Américas</li>
+        <li><strong>MERCOSUR:</strong> Reunión Especializada en Ciencia y Tecnología — trabajo en armonización legislativa</li>
+        <li><strong>Países más avanzados en LATAM:</strong> Brasil (Marco Civil da Internet, LGPD), Colombia (Ley 1273/2009), Argentina (Ley 26.388)</li>
+        <li><strong>Red LACNIC CSIRT:</strong> coordinación de respuesta a incidentes en la región</li>
+      </ul>
+    </div>
+
+    <button class="refs-toggle" onclick="toggleRefs(this)">📚 Referencias de la unidad ▾</button>
+    <div class="refs-content">
+      <ul>
+        <li>ONU. (2024). Convención sobre Ciberdelincuencia. Res. A/RES/78/265. <a href="https://www.un.org" target="_blank">un.org</a></li>
+        <li>Consejo de Europa. Convenio sobre la Ciberdelincuencia (Budapest, 2001). <a href="https://rm.coe.int/1680081561" target="_blank">coe.int</a></li>
+        <li>Europol. (2024). <em>IOCTA 2024</em>. <a href="https://www.europol.europa.eu/publications-events/main-reports/iocta-report" target="_blank">europol.europa.eu</a></li>
+        <li>Cybersecurity Ventures. (2024). <em>Cybercrime Report 2025</em>. <a href="https://cybersecurityventures.com" target="_blank">cybersecurityventures.com</a></li>
+        <li>Covarrubias, J. L. (2020). El estatus de México y el Convenio de Budapest. <em>Foro Jurídico</em>. <a href="https://forojuridico.mx" target="_blank">forojuridico.mx</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn" onclick="goTo(9)">← Unidad 9</button>
+      <button class="btn" onclick="goTo(0)" style="border-color:var(--green);color:var(--green)">🏠 Inicio</button>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  const SECTIONS = [
+    { id:0, label:"Portada", icon:"🏠" },
+    { id:1, label:"U1. Introducción al Derecho", icon:"⚖️" },
+    { id:2, label:"U2. Sociedad de la Información", icon:"🌐" },
+    { id:3, label:"U3. Derecho de la Información", icon:"📡" },
+    { id:4, label:"U4. Datos Personales", icon:"🛡️" },
+    { id:5, label:"U5. Propiedad Intelectual", icon:"💡" },
+    { id:6, label:"U6. Derechos de Autor", icon:"©️" },
+    { id:7, label:"U7. Contratos Informáticos", icon:"📄" },
+    { id:8, label:"U8. Delitos Informáticos", icon:"🚨" },
+    { id:9, label:"U9. Normatividad", icon:"📋" },
+    { id:10, label:"U10. Situación Internacional", icon:"🌍" },
+  ];
+
+  let current = 0;
+
+  // Build sidebar
+  const navList = document.getElementById('nav-list');
+  SECTIONS.forEach(s => {
+    const el = document.createElement('div');
+    el.className = 'nav-item' + (s.id === 0 ? ' active' : '');
+    el.dataset.id = s.id;
+    el.innerHTML = `<span class="num">${s.icon}</span><span>${s.label}</span>`;
+    el.addEventListener('click', () => goTo(s.id));
+    navList.appendChild(el);
+  });
+
+  function goTo(id) {
+    // hide current
+    document.querySelector('.section.active')?.classList.remove('active');
+    document.querySelector('.nav-item.active')?.classList.remove('active');
+    // show target
+    document.querySelector(`.section[data-id="${id}"]`).classList.add('active');
+    document.querySelector(`.nav-item[data-id="${id}"]`).classList.add('active');
+    current = id;
+    // progress
+    const pct = id === 0 ? 0 : Math.round((id / 10) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    // scroll top
+    window.scrollTo({ top:0, behavior:'smooth' });
+    // close mobile sidebar
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.remove('open');
+  }
+
+  function toggleRefs(btn) {
+    const content = btn.nextElementSibling;
+    content.classList.toggle('open');
+    btn.textContent = btn.textContent.includes('▾')
+      ? btn.textContent.replace('▾','▴')
+      : btn.textContent.replace('▴','▾');
+  }
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('open');
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' && current < 10) goTo(current + 1);
+    if (e.key === 'ArrowLeft' && current > 0) goTo(current - 1);
+  });
+</script>
+</body>
+</html>

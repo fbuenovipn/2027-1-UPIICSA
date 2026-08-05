@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amenazas y Vulnerabilidades</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0e1a;--bg2:#111827;--bg3:#1a2235;--cyan:#00d4ff;--green:#39ff14;--red:#ff4757;--orange:#ff6b35;--purple:#a855f7;--text:#e2e8f0;--muted:#94a3b8;--border:rgba(0,212,255,.18);--glass:rgba(255,255,255,.03);--sw:270px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+#sidebar{position:fixed;top:0;left:0;width:var(--sw);height:100vh;background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;z-index:100;transition:.3s}
+.logo{padding:20px 18px 14px;border-bottom:1px solid var(--border)}
+.logo h2{font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--cyan);font-family:'JetBrains Mono',monospace}
+.logo p{font-size:.68rem;color:var(--muted);margin-top:3px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:10px 16px;cursor:pointer;transition:.2s;border-left:3px solid transparent;font-size:.79rem;color:var(--muted)}
+.nav-item:hover{background:var(--glass);color:var(--text)}
+.nav-item.active{border-left-color:var(--cyan);background:rgba(0,212,255,.07);color:var(--cyan)}
+.nav-item .ic{min-width:18px}
+#pbar{position:fixed;top:0;left:var(--sw);right:0;height:3px;background:var(--bg3);z-index:99}
+#pfill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--orange));transition:.4s;width:0}
+#main{margin-left:var(--sw);padding:44px 48px 80px;min-height:100vh;max-width:980px}
+.sec{display:none;animation:fi .4s ease}
+.sec.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.hero{background:linear-gradient(135deg,#001420,#0a1422 50%,#0a0e1a);border:1px solid rgba(0,212,255,.25);border-radius:16px;padding:52px 44px;margin-bottom:36px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-40%;right:-8%;width:460px;height:460px;background:radial-gradient(circle,rgba(0,212,255,.07) 0%,transparent 70%);pointer-events:none}
+.badge{display:inline-block;background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.35);color:var(--cyan);font-size:.7rem;padding:4px 12px;border-radius:20px;font-family:'JetBrains Mono',monospace;letter-spacing:.05em;margin-bottom:18px}
+.hero h1{font-size:2.2rem;font-weight:700;line-height:1.2;margin-bottom:14px}
+.hero h1 span{color:var(--cyan)}
+.hero p{color:var(--muted);font-size:1rem;line-height:1.7;max-width:580px}
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:28px 0}
+.sc{background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center}
+.sc .v{font-size:1.65rem;font-weight:700;color:var(--cyan);font-family:'JetBrains Mono',monospace}
+.sc .l{font-size:.71rem;color:var(--muted);margin-top:4px}
+.uh{background:linear-gradient(135deg,var(--bg3),var(--bg2));border:1px solid var(--border);border-radius:12px;padding:28px;margin-bottom:22px}
+.uh .un{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--cyan);text-transform:uppercase;letter-spacing:.12em}
+.uh h2{font-size:1.55rem;margin:7px 0 10px}
+.met{background:rgba(0,212,255,.05);border-left:3px solid var(--cyan);padding:13px 16px;border-radius:0 8px 8px 0;font-style:italic;color:var(--muted);font-size:.87rem;line-height:1.6}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}
+.card{background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:18px;transition:.2s}
+.card:hover{border-color:rgba(0,212,255,.35);background:rgba(0,212,255,.03)}
+.card h4{font-size:.81rem;color:var(--cyan);margin-bottom:8px}
+.card ul{font-size:.8rem;color:var(--muted);line-height:1.7;padding-left:15px}
+.card ul li{margin-bottom:4px}
+.fc{background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:22px;margin:14px 0}
+.fc h3{font-size:.93rem;color:var(--text);margin-bottom:10px}
+.fc p,.fc ul{font-size:.82rem;color:var(--muted);line-height:1.7}
+.fc ul{padding-left:16px}
+.fc ul li{margin-bottom:5px}
+.tags{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0}
+.tag{font-size:.69rem;padding:3px 9px;border-radius:12px;font-family:'JetBrains Mono',monospace}
+.tc{background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);color:var(--cyan)}
+.tg{background:rgba(57,255,20,.08);border:1px solid rgba(57,255,20,.2);color:var(--green)}
+.tr{background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);color:var(--cyan)}
+.to{background:rgba(255,107,53,.08);border:1px solid rgba(255,107,53,.2);color:var(--orange)}
+.tp{background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.2);color:var(--purple)}
+.alert{border-radius:10px;padding:14px 18px;margin:14px 0;font-size:.81rem;display:flex;gap:9px;align-items:flex-start}
+.ar{background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.3);color:var(--cyan)}
+.ai{background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.3);color:var(--cyan)}
+.ao{background:rgba(255,107,53,.07);border:1px solid rgba(255,107,53,.3);color:var(--orange)}
+.rt{background:none;border:1px solid var(--border);color:var(--muted);padding:9px 16px;border-radius:8px;cursor:pointer;font-size:.77rem;margin-top:20px;transition:.2s;display:flex;align-items:center;gap:7px;font-family:'Inter',sans-serif}
+.rt:hover{border-color:var(--cyan);color:var(--cyan)}
+.rc{display:none;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:18px;margin-top:7px}
+.rc.open{display:block}
+.rc ul{padding-left:16px}
+.rc li{font-size:.75rem;color:var(--muted);margin-bottom:7px;line-height:1.5}
+.rc a{color:var(--cyan);text-decoration:none}
+.rc a:hover{text-decoration:underline}
+.nb{display:flex;justify-content:space-between;margin-top:44px;padding-top:22px;border-top:1px solid var(--border)}
+.btn{background:var(--glass);border:1px solid var(--border);color:var(--text);padding:9px 22px;border-radius:8px;cursor:pointer;font-size:.82rem;transition:.2s;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:7px}
+.btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.btn.pri{background:rgba(0,212,255,.1);border-color:var(--cyan);color:var(--cyan)}
+.btn.pri:hover{background:rgba(0,212,255,.18)}
+#ham{display:none;position:fixed;top:12px;left:12px;z-index:200;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;cursor:pointer;flex-direction:column;gap:5px}
+#ham span{display:block;width:22px;height:2px;background:var(--cyan);border-radius:2px}
+#ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99}
+/* phases timeline */
+.phases{display:flex;gap:0;margin:16px 0;overflow-x:auto;padding-bottom:8px}
+.phase{flex:1;min-width:100px;background:var(--glass);border:1px solid var(--border);padding:14px 12px;text-align:center;position:relative}
+.phase:not(:last-child)::after{content:'→';position:absolute;right:-12px;top:50%;transform:translateY(-50%);color:var(--cyan);font-size:1rem;z-index:1}
+.phase:first-child{border-radius:8px 0 0 8px}
+.phase:last-child{border-radius:0 8px 8px 0}
+.phase .pnum{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--cyan);text-transform:uppercase}
+.phase .ptitle{font-size:.75rem;font-weight:600;margin:4px 0 2px;color:var(--text)}
+.phase .pdesc{font-size:.68rem;color:var(--muted)}
+@media(max-width:768px){#ham{display:flex}#sidebar{transform:translateX(-100%)}#sidebar.open{transform:translateX(0)}#ov.open{display:block}#main{margin-left:0;padding:24px 18px 60px}#pbar{left:0}.sgrid,.cards{grid-template-columns:1fr}.hero{padding:28px 20px}.hero h1{font-size:1.5rem}.phases{flex-direction:column}.phase:not(:last-child)::after{display:none}}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
+.home-btn{display:block;margin:8px 16px 4px;padding:7px 12px;background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);border-radius:6px;color:var(--cyan);font-size:.76rem;text-decoration:none;text-align:center;transition:.2s}.home-btn:hover{background:rgba(0,212,255,.15);border-color:var(--cyan)}
+</style>
+</head>
+<body>
+<div id="ham" onclick="tog()"><span></span><span></span><span></span></div>
+<div id="ov" onclick="tog()"></div>
+<div id="pbar"><div id="pfill"></div></div>
+<nav id="sidebar"><div class="logo"><h2>⚠️ Amenazas &amp; Vulnerabilidades</h2><p>Maestría en Seguridad Informática</p></div><a href="index.html" class="home-btn">← Inicio</a><div id="nl"></div></nav>
+<main id="main">
+
+<!-- PORTADA -->
+<section class="sec active" data-id="0">
+<div class="hero">
+  <div class="badge">// Módulo 6 — Maestría en Seguridad Informática</div>
+  <h1>Amenazas y <span>Vulnerabilidades</span></h1>
+  <p>Identifica, analiza y mitiga las amenazas que enfrentan los sistemas de información. Desde el análisis de riesgos hasta el hacking ético, domina la ofensiva para fortalecer la defensiva.</p>
+</div>
+<div class="sgrid">
+  <div class="sc"><div class="v">29K+</div><div class="l">CVEs publicados en 2023 (récord histórico)</div></div>
+  <div class="sc"><div class="v">$4.88M</div><div class="l">Costo promedio de una brecha de datos 2024</div></div>
+  <div class="sc"><div class="v">11 U.</div><div class="l">Unidades temáticas del curso</div></div>
+</div>
+<div class="fc"><h3>🎯 Objetivo del curso</h3><p>Al finalizar, identificarás amenazas y vulnerabilidades en la infraestructura lógica y física de las organizaciones, desarrollando análisis de riesgos, políticas de seguridad, estrategias defensivas y pruebas de penetración éticas en sistemas, redes y aplicaciones web.</p></div>
+<div class="cards">
+  <div class="card"><h4>🛡️ Bloque I — Fundamentos</h4><ul><li>U1: Ciberseguridad y sociedad de la información</li><li>U2: Riesgos propios de sistemas de información</li><li>U3: Políticas de seguridad</li><li>U4: Estrategias de seguridad</li></ul></div>
+  <div class="card"><h4>⚔️ Bloque II — Técnicas y Hacking Ético</h4><ul><li>U5: Mecanismos de seguridad activa</li><li>U6: Acceso remoto y seguridad perimetral</li><li>U7: Hacking ético — fundamentos</li><li>U8: Fases del hacking en sistemas y redes</li><li>U9: Fases del hacking en redes Wi-Fi</li><li>U10: Fases del hacking en ataques web</li><li>U11: Herramientas y contraseñas</li></ul></div>
+</div>
+</section>
+
+<!-- U1 -->
+<section class="sec" data-id="1">
+<div class="uh"><div class="un">Unidad 1</div><h2>🌐 Ciberseguridad y Sociedad de la Información</h2>
+<div class="met">"La ciberseguridad es el sistema inmune del organismo digital: cuando falla, no importa cuán poderoso sea el resto del cuerpo — un patógeno invisible puede colapsarlo desde adentro."</div></div>
+<div class="sgrid">
+  <div class="sc"><div class="v">+600%</div><div class="l">Aumento de ciberataques desde 2020 (WEF 2024)</div></div>
+  <div class="sc"><div class="v">3.5M</div><div class="l">Puestos de ciberseguridad sin cubrir globalmente</div></div>
+  <div class="sc"><div class="v">95%</div><div class="l">de brechas causadas por error humano (IBM)</div></div>
+</div>
+<div class="fc"><h3>🔐 ¿Qué es la Ciberseguridad?</h3>
+<p>La ciberseguridad es el conjunto de técnicas, prácticas y herramientas diseñadas para proteger sistemas, redes, programas y datos frente a ataques, daños o accesos no autorizados. La norma <strong>ISO/IEC 27032:2023</strong> la define como la preservación de la confidencialidad, integridad y disponibilidad de la información en el ciberespacio.</p>
+<div class="tags" style="margin-top:10px">
+  <span class="tag tc">Confidencialidad</span><span class="tag tc">Integridad</span><span class="tag tc">Disponibilidad</span><span class="tag to">No repudio</span><span class="tag tp">Autenticidad</span>
+</div></div>
+<div class="cards">
+  <div class="card"><h4>📊 Triada CIA</h4><ul>
+    <li><strong>Confidencialidad:</strong> solo los autorizados acceden a la información</li>
+    <li><strong>Integridad:</strong> la información no es alterada sin autorización</li>
+    <li><strong>Disponibilidad:</strong> la información está accesible cuando se necesita</li>
+    <li>Extensión moderna: + Autenticidad + No repudio + Privacidad</li>
+  </ul></div>
+  <div class="card"><h4>🏛️ Marco regulatorio clave</h4><ul>
+    <li><strong>ISO/IEC 27001:2022</strong> — SGSI, 93 controles</li>
+    <li><strong>NIST CSF 2.0 (2024)</strong> — 6 funciones incluyendo "Govern"</li>
+    <li><strong>EU NIS2 Directive (2023)</strong> — infraestructura crítica</li>
+    <li><strong>NIST SP 800-53 Rev. 5</strong> — controles para sistemas federales</li>
+    <li><strong>CIS Controls v8</strong> — 18 controles prioritarios</li>
+  </ul></div>
+</div>
+<div class="fc"><h3>🤖 IA en Ciberseguridad 2024</h3><ul>
+  <li><strong>IA defensiva:</strong> detección de anomalías en tiempo real, análisis de comportamiento de usuarios (UEBA), respuesta automatizada a incidentes (SOAR)</li>
+  <li><strong>IA ofensiva:</strong> generación automática de malware polimórfico, phishing hiperpersonalizado con LLMs, deepfakes para ingeniería social</li>
+  <li><strong>WormGPT / FraudGPT:</strong> LLMs sin restricciones vendidos en Dark Web para generar malware y correos de fraude</li>
+  <li><strong>Microsoft Security Copilot (2024):</strong> primer asistente IA de nivel enterprise para analistas SOC</li>
+</ul></div>
+<div class="alert ar"><span>⚠️</span><span><strong>WEF Global Risks Report 2024:</strong> La inseguridad cibernética se posicionó como el 4° riesgo global más severo a corto plazo, y los ciberataques a infraestructura crítica como el 5° riesgo más preocupante en los próximos 10 años.</span></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>NIST. (2024). <em>Cybersecurity Framework 2.0</em>. <a href="https://www.nist.gov/cyberframework" target="_blank">nist.gov/cyberframework</a></li>
+  <li>ISO/IEC 27032:2023. Cybersecurity — Guidelines for Internet Security. <a href="https://www.iso.org/standard/27032" target="_blank">iso.org</a></li>
+  <li>WEF. (2024). <em>Global Risks Report 2024</em>. <a href="https://www.weforum.org/reports/global-risks-report-2024/" target="_blank">weforum.org</a></li>
+  <li>IBM Security. (2024). <em>Cost of a Data Breach Report 2024</em>. <a href="https://www.ibm.com/reports/data-breach" target="_blank">ibm.com</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(0)">← Portada</button><button class="btn pri" onclick="go(2)">Unidad 2 →</button></div>
+</section>
+
+<!-- U2 -->
+<section class="sec" data-id="2">
+<div class="uh"><div class="un">Unidad 2</div><h2>⚠️ Riesgos Propios de los Sistemas de Información</h2>
+<div class="met">"El análisis de riesgos es el diagnóstico médico de la organización: sin él, tratas síntomas sin saber qué enfermedad tienes; con él, atacas la causa raíz antes de que sea terminal."</div></div>
+<div class="fc"><h3>📖 Conceptos fundamentales</h3><ul>
+  <li><strong>Amenaza:</strong> evento potencial que puede causar daño a un activo (ej. ransomware, terremoto, empleado negligente)</li>
+  <li><strong>Vulnerabilidad:</strong> debilidad en un sistema que puede ser explotada (ej. software sin parchear, contraseña débil, puerto abierto)</li>
+  <li><strong>Riesgo:</strong> probabilidad de que una amenaza explote una vulnerabilidad × impacto resultante</li>
+  <li><strong>Activo:</strong> cualquier elemento de valor para la organización (datos, hardware, software, personas, reputación)</li>
+  <li><strong>Control:</strong> medida implementada para reducir el riesgo (preventivo, detectivo, correctivo)</li>
+</ul></div>
+<div class="cards">
+  <div class="card"><h4>🔍 Tipos de amenazas 2024</h4><ul>
+    <li><strong>Malware:</strong> ransomware, spyware, wiper, rootkit</li>
+    <li><strong>Ingeniería social:</strong> phishing, vishing, smishing, BEC</li>
+    <li><strong>Amenazas internas:</strong> empleados, ex-empleados, proveedores</li>
+    <li><strong>APT:</strong> actores estado-nación (Lazarus, APT28, APT41)</li>
+    <li><strong>Supply chain:</strong> comprometer software de terceros</li>
+    <li><strong>IA-driven attacks:</strong> ataques automatizados con LLMs</li>
+  </ul></div>
+  <div class="card"><h4>📋 Metodologías de análisis de riesgos</h4><ul>
+    <li><strong>MAGERIT v3:</strong> metodología española, ISO-alineada</li>
+    <li><strong>OCTAVE Allegro:</strong> centrada en activos de información</li>
+    <li><strong>FAIR:</strong> análisis cuantitativo en términos financieros</li>
+    <li><strong>NIST RMF:</strong> Risk Management Framework SP 800-37</li>
+    <li><strong>ISO 31000:2018:</strong> estándar general de gestión de riesgos</li>
+  </ul></div>
+</div>
+<div class="fc"><h3>📊 Proceso de Análisis de Riesgos</h3>
+<div class="phases">
+  <div class="phase"><div class="pnum">01</div><div class="ptitle">Identificar</div><div class="pdesc">Activos críticos</div></div>
+  <div class="phase"><div class="pnum">02</div><div class="ptitle">Valorar</div><div class="pdesc">Impacto por activo</div></div>
+  <div class="phase"><div class="pnum">03</div><div class="ptitle">Amenazas</div><div class="pdesc">Probabilidad e impacto</div></div>
+  <div class="phase"><div class="pnum">04</div><div class="ptitle">Vulnerabilidades</div><div class="pdesc">Debilidades existentes</div></div>
+  <div class="phase"><div class="pnum">05</div><div class="ptitle">Riesgo</div><div class="pdesc">P × I = Nivel</div></div>
+  <div class="phase"><div class="pnum">06</div><div class="ptitle">Tratar</div><div class="pdesc">Aceptar/Mitigar/Transferir/Evitar</div></div>
+</div></div>
+<div class="fc"><h3>🐛 Tipos de código malicioso (Malware 2024)</h3><ul>
+  <li><strong>Ransomware-as-a-Service (RaaS):</strong> LockBit 3.0, BlackCat/ALPHV, Cl0p — modelo afiliado</li>
+  <li><strong>Wiper malware:</strong> destruye datos sin exigir rescate; usado en ciberguerra (HermeticWiper, AcidRain)</li>
+  <li><strong>Infostealer:</strong> Redline, Raccoon, Lumma — roban credenciales y cookies de sesión</li>
+  <li><strong>Rootkit/Bootkit:</strong> BlackLotus (2023) — primer bootkit UEFI que elude Secure Boot en Windows 11</li>
+  <li><strong>Malware IA-generado:</strong> código polimórfico generado con LLMs; evita firmas estáticas</li>
+</ul></div>
+<div class="alert ar"><span>⚠️</span><span><strong>CVE Record 2023:</strong> El año 2023 estableció un récord con más de 29,000 vulnerabilidades publicadas en la base de datos NVD (National Vulnerability Database), un incremento del 15% respecto a 2022. El tiempo promedio de explotación tras la publicación de un CVE crítico cayó a menos de 12 horas.</span></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>NIST NVD. (2024). National Vulnerability Database. <a href="https://nvd.nist.gov" target="_blank">nvd.nist.gov</a></li>
+  <li>ENISA. (2024). <em>Threat Landscape 2024</em>. <a href="https://www.enisa.europa.eu/topics/cyber-threats/enisa-threat-landscape" target="_blank">enisa.europa.eu</a></li>
+  <li>Mandiant. (2024). <em>M-Trends 2024 Report</em>. <a href="https://www.mandiant.com/m-trends" target="_blank">mandiant.com</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(1)">← Unidad 1</button><button class="btn pri" onclick="go(3)">Unidad 3 →</button></div>
+</section>
+
+<!-- U3 -->
+<section class="sec" data-id="3">
+<div class="uh"><div class="un">Unidad 3</div><h2>📋 Políticas de Seguridad</h2>
+<div class="met">"Una política de seguridad sin cultura de cumplimiento es como una ley sin jueces ni policías: existe en el papel, pero el crimen prospera porque nadie la aplica."</div></div>
+<div class="fc"><h3>📖 Definición y propósito</h3>
+<p>Una <strong>política de seguridad</strong> es un documento formal que establece los principios, reglas y directrices que una organización adopta para proteger sus activos de información. Define el QUÉ (objetivos) y delega al procedimiento el CÓMO. Según ISO 27001:2022, toda organización debe contar con una política de seguridad de la información aprobada por la alta dirección, publicada y comunicada a todas las partes interesadas.</p></div>
+<div class="cards">
+  <div class="card"><h4>🏛️ Jerarquía de documentos de seguridad</h4><ul>
+    <li><strong>Políticas:</strong> directrices de alto nivel (¿qué queremos proteger?)</li>
+    <li><strong>Estándares:</strong> requisitos específicos y medibles</li>
+    <li><strong>Procedimientos:</strong> pasos detallados para cumplir políticas</li>
+    <li><strong>Guías/Baseline:</strong> recomendaciones de configuración segura</li>
+    <li><strong>Planes:</strong> respuesta a incidentes, continuidad, recuperación</li>
+  </ul></div>
+  <div class="card"><h4>📝 Políticas esenciales (ISO 27001)</h4><ul>
+    <li>Política de Seguridad de la Información (PSI)</li>
+    <li>Política de Control de Acceso</li>
+    <li>Política de Uso Aceptable (AUP)</li>
+    <li>Política de Contraseñas</li>
+    <li>Política de Clasificación de la Información</li>
+    <li>Política de Gestión de Incidentes</li>
+    <li>Política de Teletrabajo y BYOD</li>
+  </ul></div>
+</div>
+<div class="fc"><h3>🔑 Principios clave de las políticas 2024</h3><ul>
+  <li><strong>Zero Trust (Confianza Cero):</strong> "nunca confíes, siempre verifica" — NIST SP 800-207; no asumir confianza por ubicación de red</li>
+  <li><strong>Need-to-know:</strong> acceso solo a la información necesaria para el rol</li>
+  <li><strong>Defensa en profundidad:</strong> múltiples capas de controles independientes</li>
+  <li><strong>Privacy by Design:</strong> privacidad integrada desde el diseño (GDPR Art. 25)</li>
+  <li><strong>Responsabilidad compartida:</strong> en entornos cloud, delimitar claramente qué protege el proveedor y qué el cliente</li>
+</ul></div>
+<div class="fc"><h3>🤝 Ciclo de vida de una política de seguridad</h3>
+<div class="phases">
+  <div class="phase"><div class="pnum">01</div><div class="ptitle">Diseño</div><div class="pdesc">Identificar necesidades y riesgos</div></div>
+  <div class="phase"><div class="pnum">02</div><div class="ptitle">Aprobación</div><div class="pdesc">Alta dirección y legal</div></div>
+  <div class="phase"><div class="pnum">03</div><div class="ptitle">Comunicación</div><div class="pdesc">Formación y difusión</div></div>
+  <div class="phase"><div class="pnum">04</div><div class="ptitle">Implementación</div><div class="pdesc">Controles técnicos y organizativos</div></div>
+  <div class="phase"><div class="pnum">05</div><div class="ptitle">Auditoría</div><div class="pdesc">Verificar cumplimiento</div></div>
+  <div class="phase"><div class="pnum">06</div><div class="ptitle">Revisión</div><div class="pdesc">Actualizar ante cambios</div></div>
+</div></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>ISO/IEC 27001:2022. Cláusula 5.2 — Política. <a href="https://www.iso.org/standard/27001" target="_blank">iso.org</a></li>
+  <li>NIST SP 800-207. (2020). Zero Trust Architecture. <a href="https://csrc.nist.gov/publications/detail/sp/800-207/final" target="_blank">csrc.nist.gov</a></li>
+  <li>SANS Institute. (2024). Security Policy Templates. <a href="https://www.sans.org/information-security-policy/" target="_blank">sans.org</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(2)">← Unidad 2</button><button class="btn pri" onclick="go(4)">Unidad 4 →</button></div>
+</section>
+
+<!-- U4 -->
+<section class="sec" data-id="4">
+<div class="uh"><div class="un">Unidad 4</div><h2>🛡️ Estrategias de Seguridad</h2>
+<div class="met">"Una estrategia de seguridad sin principios es como un ejército sin doctrina militar: cada soldado pelea a su manera y el enemigo que actúa coordinado siempre gana."</div></div>
+<div class="cards">
+  <div class="card"><h4>⚖️ Principio de Menor Privilegio</h4><ul>
+    <li>Dar solo los permisos mínimos necesarios para cada tarea</li>
+    <li>Reduce la superficie de ataque en caso de compromiso</li>
+    <li>Implementación: RBAC, PAM, JIT (Just-In-Time) access</li>
+    <li>Aplica a: usuarios, procesos, servicios, APIs</li>
+    <li>Herramientas: CyberArk, BeyondTrust, Azure PIM</li>
+  </ul></div>
+  <div class="card"><h4>🌍 Principio de Participación Universal</h4><ul>
+    <li>La seguridad es responsabilidad de TODOS en la organización</li>
+    <li>No solo del equipo TI: incluye dirección, RRHH, legal, finanzas</li>
+    <li>Security Awareness Training obligatorio (mínimo anual)</li>
+    <li>Simulaciones de phishing: KnowBe4, Proofpoint</li>
+    <li>Cultura de reporte sin represalias</li>
+  </ul></div>
+</div>
+<div class="fc"><h3>🏰 Estrategias defensivas clave 2024</h3><ul>
+  <li><strong>Defensa en profundidad:</strong> capas concéntricas (perímetro → red → endpoint → datos → identidad); si falla una capa, las demás contienen el daño</li>
+  <li><strong>Zero Trust Architecture (ZTA):</strong> verificación continua de identidad, dispositivo y contexto; "nunca en la lista de confianza solo por estar en la red corporativa"</li>
+  <li><strong>SASE (Secure Access Service Edge):</strong> convergencia de red y seguridad en la nube; Gartner la nombra estrategia dominante para 2025</li>
+  <li><strong>Threat Intelligence:</strong> inteligencia sobre amenazas proactiva; feeds MISP, VirusTotal, OSINT</li>
+  <li><strong>Purple Team:</strong> integración continua de equipos ofensivos (Red) y defensivos (Blue)</li>
+</ul></div>
+<div class="fc"><h3>🗺️ MITRE ATT&amp;CK Framework (2024)</h3>
+<p>Base de conocimiento de tácticas, técnicas y procedimientos (TTPs) usados por actores de amenaza reales. La versión 15 (2024) incluye 14 tácticas, 193 técnicas y 401 sub-técnicas para entornos Enterprise. Es el lenguaje estándar para describir comportamiento adversario y mapear controles defensivos. Herramientas como Elastic SIEM, Splunk y Microsoft Sentinel tienen detecciones mapeadas a MITRE ATT&amp;CK.</p>
+<div class="tags" style="margin-top:10px">
+  <span class="tag tr">Reconocimiento</span><span class="tag tr">Acceso inicial</span><span class="tag tr">Ejecución</span><span class="tag tr">Persistencia</span><span class="tag tr">Escalada de privilegios</span><span class="tag tr">Movimiento lateral</span><span class="tag tr">Exfiltración</span>
+</div></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>MITRE ATT&amp;CK v15. (2024). <a href="https://attack.mitre.org" target="_blank">attack.mitre.org</a></li>
+  <li>NIST SP 800-207. Zero Trust Architecture. <a href="https://csrc.nist.gov/publications/detail/sp/800-207/final" target="_blank">csrc.nist.gov</a></li>
+  <li>Gartner. (2024). <em>Strategic Roadmap for SASE Convergence</em>.</li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(3)">← Unidad 3</button><button class="btn pri" onclick="go(5)">Unidad 5 →</button></div>
+</section>
+
+<!-- U5 -->
+<section class="sec" data-id="5">
+<div class="uh"><div class="un">Unidad 5</div><h2>⚡ Mecanismos de Seguridad Activa</h2>
+<div class="met">"La seguridad activa es el sistema de alarma que detecta al intruso antes de que abra la caja fuerte; la pasiva es el seguro que paga después del robo. Necesitas ambas, pero la activa salva el tesoro."</div></div>
+<div class="cards">
+  <div class="card"><h4>🖥️ Seguridad en sistemas personales</h4><ul>
+    <li><strong>EDR/XDR:</strong> CrowdStrike Falcon, SentinelOne, Microsoft Defender for Endpoint</li>
+    <li><strong>Antivirus NG:</strong> detección por comportamiento, no solo firmas</li>
+    <li><strong>Cifrado de disco:</strong> BitLocker, FileVault, LUKS</li>
+    <li><strong>Gestores de contraseñas:</strong> 1Password, Bitwarden, KeePass</li>
+    <li><strong>Parcheo automático:</strong> WSUS, SCCM, Automox</li>
+  </ul></div>
+  <div class="card"><h4>🌐 Seguridad en la red corporativa</h4><ul>
+    <li><strong>NGFW:</strong> Palo Alto, Fortinet, Check Point — inspección DPI</li>
+    <li><strong>IDS/IPS:</strong> Snort 3, Suricata — detección y bloqueo en red</li>
+    <li><strong>NAC:</strong> Network Access Control — 802.1X, Cisco ISE</li>
+    <li><strong>Segmentación / Microsegmentación:</strong> VLAN, SDN, VMware NSX</li>
+    <li><strong>DNS Filtering:</strong> Cisco Umbrella, Cloudflare Gateway</li>
+  </ul></div>
+  <div class="card"><h4>📧 Seguridad en comunicaciones</h4><ul>
+    <li><strong>Email security:</strong> SPF, DKIM, DMARC — autenticación de correo</li>
+    <li><strong>Secure Email Gateway:</strong> Proofpoint, Mimecast</li>
+    <li><strong>Anti-phishing con IA:</strong> análisis semántico de asunto y cuerpo</li>
+    <li><strong>Cifrado E2E:</strong> S/MIME, PGP para correo corporativo</li>
+    <li><strong>DLP en email:</strong> prevención de fuga de datos</li>
+  </ul></div>
+  <div class="card"><h4>☁️ Seguridad activa en cloud</h4><ul>
+    <li><strong>CSPM:</strong> Prisma Cloud, Wiz — detectar configuraciones erróneas</li>
+    <li><strong>CWPP:</strong> protección de cargas de trabajo en tiempo real</li>
+    <li><strong>SSPM:</strong> gestión de postura de seguridad SaaS</li>
+    <li><strong>Cloud SIEM:</strong> Microsoft Sentinel, Splunk Cloud</li>
+    <li><strong>SOAR:</strong> automatización de respuesta a incidentes</li>
+  </ul></div>
+</div>
+<div class="alert ai"><span>ℹ️</span><span><strong>XDR (Extended Detection &amp; Response):</strong> Evolución del EDR que correlaciona datos de endpoint, red, email, identidad y cloud en una sola plataforma. Gartner lo señala como la arquitectura de detección dominante para 2025, reduciendo el tiempo medio de detección (MTTD) de días a minutos.</span></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>CISA. (2024). Known Exploited Vulnerabilities Catalog. <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" target="_blank">cisa.gov</a></li>
+  <li>CIS Benchmarks. (2024). Secure configuration guides. <a href="https://www.cisecurity.org/cis-benchmarks/" target="_blank">cisecurity.org</a></li>
+  <li>Gartner. (2024). Market Guide for XDR.</li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(4)">← Unidad 4</button><button class="btn pri" onclick="go(6)">Unidad 6 →</button></div>
+</section>
+
+<!-- U6 -->
+<section class="sec" data-id="6">
+<div class="uh"><div class="un">Unidad 6</div><h2>🔒 Acceso Remoto y Seguridad Perimetral</h2>
+<div class="met">"El perímetro de seguridad tradicional murió con el teletrabajo: ya no hay un castillo con un foso, sino miles de soldados trabajando desde sus casas. El nuevo perímetro es la identidad del usuario."</div></div>
+<div class="fc"><h3>🏰 El fin del perímetro tradicional</h3>
+<p>El modelo clásico de seguridad perimetral (firewall en el borde de la red, confianza implícita dentro de ella) quedó obsoleto con la adopción masiva de cloud, SaaS y teletrabajo. En 2024, el <strong>71% de los trabajadores del conocimiento</strong> trabaja de forma híbrida (McKinsey). El nuevo modelo es <strong>Zero Trust</strong>: verificar identidad y dispositivo en cada acceso, independientemente de la ubicación.</p></div>
+<div class="cards">
+  <div class="card"><h4>🌐 Tecnologías de acceso remoto seguro</h4><ul>
+    <li><strong>VPN SSL/TLS:</strong> túnel cifrado para acceso remoto (OpenVPN, Cisco AnyConnect)</li>
+    <li><strong>ZTNA (Zero Trust Network Access):</strong> reemplaza VPN; acceso por aplicación, no por red</li>
+    <li><strong>SD-WAN:</strong> WAN definida por software con seguridad integrada</li>
+    <li><strong>Bastion Host / Jump Server:</strong> punto de salto para acceso a sistemas críticos</li>
+    <li><strong>PAM:</strong> Privileged Access Management para accesos administrativos</li>
+  </ul></div>
+  <div class="card"><h4>🔥 Componentes del perímetro moderno</h4><ul>
+    <li><strong>NGFW:</strong> Next-Gen Firewall con IPS, AppID, SSL Inspection</li>
+    <li><strong>WAF:</strong> Web Application Firewall (AWS WAF, Cloudflare, ModSecurity)</li>
+    <li><strong>DMZ:</strong> zona desmilitarizada para servidores públicos</li>
+    <li><strong>Proxy inverso:</strong> Nginx, HAProxy — termina conexiones externas</li>
+    <li><strong>DDoS mitigation:</strong> Cloudflare, AWS Shield, Akamai</li>
+  </ul></div>
+</div>
+<div class="fc"><h3>🔐 Cifrado en comunicaciones</h3><ul>
+  <li><strong>TLS 1.3 (2024):</strong> estándar actual; TLS 1.0 y 1.1 deprecated por RFC 8996; TLS 1.2 en vía de deprecación</li>
+  <li><strong>IPSec / IKEv2:</strong> cifrado a nivel de red para VPN site-to-site</li>
+  <li><strong>SSH hardening:</strong> Ed25519, desactivar contraseñas, fail2ban</li>
+  <li><strong>Criptografía post-cuántica:</strong> NIST estandarizó ML-KEM (CRYSTALS-Kyber) y ML-DSA (CRYSTALS-Dilithium) en agosto 2024 como preparación para la amenaza de computadoras cuánticas</li>
+</ul></div>
+<div class="alert ao"><span>⚠️</span><span><strong>CVSS crítico 2024 — CVE-2024-3400:</strong> Vulnerabilidad de inyección de comandos en PAN-OS (Palo Alto) de calificación CVSS 10.0 (máxima). Afectó a miles de firewalls en el borde de la red, explotada activamente por APT antes de que el parche estuviera disponible (zero-day). Ejemplo perfecto de por qué el perímetro no puede ser el único control.</span></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>NIST. (2024). Post-Quantum Cryptography standards ML-KEM, ML-DSA. <a href="https://www.nist.gov/cybersecurity/post-quantum-cryptography" target="_blank">nist.gov</a></li>
+  <li>CISA. (2024). Zero Trust Maturity Model v2.0. <a href="https://www.cisa.gov/zero-trust-maturity-model" target="_blank">cisa.gov</a></li>
+  <li>RFC 8996. (2021). Deprecating TLS 1.0 and TLS 1.1. <a href="https://www.rfc-editor.org/rfc/rfc8996" target="_blank">rfc-editor.org</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(5)">← Unidad 5</button><button class="btn pri" onclick="go(7)">Unidad 7 →</button></div>
+</section>
+
+<!-- U7 -->
+<section class="sec" data-id="7">
+<div class="uh"><div class="un">Unidad 7</div><h2>🎭 Hacking Ético — Fundamentos</h2>
+<div class="met">"El hacker ético es el médico que se inocula el virus para entender cómo combatirlo: usa las mismas técnicas del atacante, pero con permiso firmado, límites claros y el objetivo de curar, no de enfermar."</div></div>
+<div class="sgrid">
+  <div class="sc"><div class="v">$1.1M</div><div class="l">Mayor bug bounty pagado (Apple, 2024)</div></div>
+  <div class="sc"><div class="v">300K+</div><div class="l">Hackers éticos en HackerOne (2024)</div></div>
+  <div class="sc"><div class="v">CEH, OSCP</div><div class="l">Certificaciones top de hacking ético</div></div>
+</div>
+<div class="fc"><h3>📖 Definición y tipos de hacker</h3>
+<p>El <strong>hacking ético</strong> consiste en intentos <em>autorizados</em> de obtener acceso no autorizado a sistemas, con el objetivo de identificar vulnerabilidades antes que los atacantes. También denominado <em>penetration testing</em> o <em>red teaming</em>. La diferencia clave con el hacking malicioso es: autorización explícita por escrito (Rules of Engagement) y objetivo defensivo.</p></div>
+<div class="cards">
+  <div class="card"><h4>🎨 Tipos de hacker (sombrero)</h4><ul>
+    <li><strong>White Hat (sombrero blanco):</strong> hacking ético con autorización</li>
+    <li><strong>Black Hat:</strong> atacante malicioso sin autorización</li>
+    <li><strong>Grey Hat:</strong> actúa sin autorización pero sin intención dañina</li>
+    <li><strong>Red Team:</strong> equipo ofensivo simulando atacantes reales</li>
+    <li><strong>Blue Team:</strong> equipo defensivo (SOC, incident response)</li>
+    <li><strong>Purple Team:</strong> colaboración continua Red+Blue</li>
+  </ul></div>
+  <div class="card"><h4>📋 Tipos de pruebas de penetración</h4><ul>
+    <li><strong>Black box:</strong> sin información previa (simula atacante externo)</li>
+    <li><strong>White box:</strong> acceso completo a código y arquitectura</li>
+    <li><strong>Grey box:</strong> información parcial (simula insider)</li>
+    <li><strong>Red Team Exercise:</strong> adversary simulation completa, sin restricciones de tiempo</li>
+    <li><strong>Bug Bounty:</strong> programa continuo de reporte de vulnerabilidades</li>
+  </ul></div>
+</div>
+<div class="fc"><h3>📜 Metodologías estándar 2024</h3><ul>
+  <li><strong>PTES</strong> (Penetration Testing Execution Standard): metodología completa de pentesting</li>
+  <li><strong>OWASP Testing Guide v4.2:</strong> guía para pruebas de seguridad en aplicaciones web</li>
+  <li><strong>NIST SP 800-115:</strong> Technical Guide to Information Security Testing</li>
+  <li><strong>TIBER-EU:</strong> framework europeo de Red Team basado en inteligencia de amenazas reales</li>
+  <li><strong>CBEST (UK) / TLPT (EU DORA):</strong> pruebas de penetración basadas en inteligencia para sector financiero</li>
+</ul></div>
+<div class="fc"><h3>⚖️ Marco legal del hacking ético</h3><ul>
+  <li><strong>Documento obligatorio:</strong> Rules of Engagement (ROE) + Scope Agreement firmados antes de iniciar</li>
+  <li><strong>México:</strong> Art. 211 bis CPF — acceso ilícito a sistemas; el pentesting SIN autorización es delito</li>
+  <li><strong>EE.UU.:</strong> Computer Fraud and Abuse Act (CFAA) — penaliza el acceso no autorizado</li>
+  <li><strong>Protección legal:</strong> la autorización escrita y detallada es la única protección legal del pentester</li>
+  <li><strong>Bug Bounty legal:</strong> plataformas como HackerOne, Bugcrowd proveen marco legal claro</li>
+</ul></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>EC-Council. (2024). CEH v13 — Certified Ethical Hacker. <a href="https://www.eccouncil.org/programs/certified-ethical-hacker-ceh/" target="_blank">eccouncil.org</a></li>
+  <li>Offensive Security. (2024). OSCP Certification. <a href="https://www.offsec.com/courses/pen-200/" target="_blank">offsec.com</a></li>
+  <li>OWASP. (2023). Testing Guide v4.2. <a href="https://owasp.org/www-project-web-security-testing-guide/" target="_blank">owasp.org</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(6)">← Unidad 6</button><button class="btn pri" onclick="go(8)">Unidad 8 →</button></div>
+</section>
+
+<!-- U8 -->
+<section class="sec" data-id="8">
+<div class="uh"><div class="un">Unidad 8</div><h2>🔍 Fases del Hacking Ético: Sistemas y Redes</h2>
+<div class="met">"El pentesting sigue la misma lógica que un detective: primero reúne información sin tocar nada, luego formula hipótesis, después las prueba con cuidado y finalmente documenta todo en el informe para el fiscal."</div></div>
+<div class="fc"><h3>🗺️ Las 5 fases del hacking ético</h3>
+<div class="phases">
+  <div class="phase"><div class="pnum">01</div><div class="ptitle">Reconocimiento</div><div class="pdesc">Pasivo y activo</div></div>
+  <div class="phase"><div class="pnum">02</div><div class="ptitle">Escaneo</div><div class="pdesc">Puertos, servicios, OS</div></div>
+  <div class="phase"><div class="pnum">03</div><div class="ptitle">Enumeración</div><div class="pdesc">Usuarios, shares, versiones</div></div>
+  <div class="phase"><div class="pnum">04</div><div class="ptitle">Explotación</div><div class="pdesc">Ganar acceso</div></div>
+  <div class="phase"><div class="pnum">05</div><div class="ptitle">Post-Explotación</div><div class="pdesc">Persistencia + informe</div></div>
+</div></div>
+<div class="cards">
+  <div class="card"><h4>🕵️ Fase 1: Reconocimiento</h4><ul>
+    <li><strong>OSINT pasivo:</strong> Shodan, Maltego, theHarvester, WHOIS, LinkedIn</li>
+    <li><strong>Google Dorks:</strong> búsquedas avanzadas para encontrar archivos expuestos</li>
+    <li><strong>Shodan (2024):</strong> 600M+ dispositivos indexados; busca puertos, banners, cámaras, ICS</li>
+    <li><strong>Reconnaissance activo:</strong> DNS enumeration, traceroute, ping sweep</li>
+    <li><strong>OSINT Framework:</strong> árbol de herramientas OSINT categorizado</li>
+  </ul></div>
+  <div class="card"><h4>📡 Fase 2-3: Escaneo y Enumeración</h4><ul>
+    <li><strong>Nmap:</strong> escaneo de puertos, detección de SO y servicios (-sV, -O, -A)</li>
+    <li><strong>Masscan:</strong> escaneo masivo de Internet a alta velocidad</li>
+    <li><strong>Nessus / OpenVAS:</strong> escáneres de vulnerabilidades</li>
+    <li><strong>Nuclei:</strong> plantillas YAML para detección de vulnerabilidades conocidas</li>
+    <li><strong>Enum4linux / CrackMapExec:</strong> enumeración de entornos Windows/AD</li>
+  </ul></div>
+  <div class="card"><h4>💥 Fase 4: Explotación</h4><ul>
+    <li><strong>Metasploit Framework:</strong> plataforma de explotación modular (Rapid7)</li>
+    <li><strong>ExploitDB / Searchsploit:</strong> base de exploits públicos</li>
+    <li><strong>CVE exploitation:</strong> uso de exploits para CVEs conocidos</li>
+    <li><strong>Credential attacks:</strong> pass-the-hash, Kerberoasting, AS-REP roasting</li>
+    <li><strong>Living off the Land (LotL):</strong> usar herramientas del SO para evadir detección</li>
+  </ul></div>
+  <div class="card"><h4>📝 Fase 5: Post-explotación e informe</h4><ul>
+    <li><strong>Privilege escalation:</strong> WinPEAS, LinPEAS, BeRoot</li>
+    <li><strong>Lateral movement:</strong> BloodHound/SharpHound para AD attack paths</li>
+    <li><strong>C2 Frameworks:</strong> Cobalt Strike, Sliver, Havoc (uso ético)</li>
+    <li><strong>Informe:</strong> resumen ejecutivo + técnico + evidencias + remediaciones por criticidad</li>
+    <li><strong>CVSS scoring:</strong> calificar hallazgos con CVSS 4.0 (2024)</li>
+  </ul></div>
+</div>
+<div class="alert ar"><span>⚠️</span><span><strong>Active Directory — objetivo #1 en 2024:</strong> El 90% de las organizaciones Fortune 500 usan Active Directory. BloodHound CE (Community Edition, 2024) permite visualizar grafos de ataque completos en AD: quién puede convertirse en Domain Admin siguiendo qué camino de permisos. Imprescindible tanto para atacantes como para defensores.</span></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>Offensive Security. (2024). Kali Linux Tools. <a href="https://www.kali.org/tools/" target="_blank">kali.org/tools</a></li>
+  <li>FIRST. (2024). CVSS v4.0 Specification. <a href="https://www.first.org/cvss/" target="_blank">first.org/cvss</a></li>
+  <li>BloodHound CE. (2024). <a href="https://github.com/SpecterOps/BloodHound" target="_blank">github.com/SpecterOps/BloodHound</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(7)">← Unidad 7</button><button class="btn pri" onclick="go(9)">Unidad 9 →</button></div>
+</section>
+
+<!-- U9 -->
+<section class="sec" data-id="9">
+<div class="uh"><div class="un">Unidad 9</div><h2>📡 Hacking Ético en Redes Wi-Fi</h2>
+<div class="met">"Una red Wi-Fi mal configurada es como dejar la puerta trasera del banco abierta: el cliente entra por la fachada principal y ve vigilantes, pero el ladrón conocedor entra por atrás sin ser visto."</div></div>
+<div class="cards">
+  <div class="card"><h4>🔐 Estándares de seguridad Wi-Fi</h4><ul>
+    <li><strong>WEP:</strong> obsoleto y completamente roto (2001); no usar nunca</li>
+    <li><strong>WPA:</strong> mejoró WEP pero vulnerable; obsoleto</li>
+    <li><strong>WPA2-PSK/Enterprise:</strong> estándar actual; vulnerable a PMKID attack</li>
+    <li><strong>WPA3 (2018):</strong> SAE reemplaza PSK; protección contra ataques offline; Enterprise con 192-bit</li>
+    <li><strong>Wi-Fi 7 (802.11be, 2024):</strong> WPA3 obligatorio; cifrado mejorado</li>
+  </ul></div>
+  <div class="card"><h4>⚔️ Ataques a redes Wi-Fi</h4><ul>
+    <li><strong>Evil Twin / Rogue AP:</strong> punto de acceso falso que suplanta al legítimo</li>
+    <li><strong>PMKID Attack:</strong> crackeo offline de WPA2 sin necesidad de capturar handshake</li>
+    <li><strong>KRACK (Key Reinstallation Attack):</strong> vulnerabilidad en protocolo 4-way handshake</li>
+    <li><strong>Deauth Attack:</strong> desautenticar clientes para capturar handshake</li>
+    <li><strong>WPS Pin Brute Force:</strong> Reaver, Bully contra WPS habilitado</li>
+    <li><strong>DragonBlood (WPA3):</strong> side-channel attacks contra SAE handshake</li>
+  </ul></div>
+</div>
+<div class="fc"><h3>🛠️ Herramientas de auditoría Wi-Fi</h3><ul>
+  <li><strong>Aircrack-ng Suite:</strong> airodump-ng (captura), aireplay-ng (inyección), aircrack-ng (crackeo)</li>
+  <li><strong>Hashcat:</strong> crackeo de hashes WPA2 por GPU; 300 GH/s en RTX 4090</li>
+  <li><strong>Wireshark:</strong> análisis de tráfico capturado (802.11 dissector)</li>
+  <li><strong>Kismet:</strong> detector de redes, IDS inalámbrico, captura pasiva</li>
+  <li><strong>Hcxtools / Hcxdumptool:</strong> captura y procesamiento de PMKID</li>
+  <li><strong>WiFi Pineapple (Hak5):</strong> plataforma de auditoría Wi-Fi para Red Teams</li>
+</ul></div>
+<div class="fc"><h3>🛡️ Defensas recomendadas 2024</h3><ul>
+  <li>Implementar <strong>WPA3-Enterprise</strong> con 802.1X y RADIUS en entornos corporativos</li>
+  <li><strong>Certificate-based authentication:</strong> evitar contraseñas compartidas</li>
+  <li><strong>Segmentación de red:</strong> VLAN separada para BYOD, IoT y corporativos</li>
+  <li><strong>Wireless IDS:</strong> detección de Rogue APs y ataques de deautenticación</li>
+  <li><strong>Desactivar WPS</strong> en todos los access points</li>
+  <li><strong>Monitoreo de clientes no autorizados:</strong> MAC address filtering + NAC</li>
+</ul></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>Wi-Fi Alliance. (2024). WPA3 Specification. <a href="https://www.wi-fi.org/discover-wi-fi/security" target="_blank">wi-fi.org</a></li>
+  <li>Aircrack-ng. (2024). <a href="https://www.aircrack-ng.org" target="_blank">aircrack-ng.org</a></li>
+  <li>Dragonblood Research. (2019). Vulnerabilities in WPA3. <a href="https://wpa3.mathyvanhoef.com" target="_blank">wpa3.mathyvanhoef.com</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(8)">← Unidad 8</button><button class="btn pri" onclick="go(10)">Unidad 10 →</button></div>
+</section>
+
+<!-- U10 -->
+<section class="sec" data-id="10">
+<div class="uh"><div class="un">Unidad 10</div><h2>🌐 Hacking Ético en Ataques Web</h2>
+<div class="met">"Una aplicación web vulnerable es como una caja registradora con la contraseña pegada con post-it: está a la vista de todos, y el primero en notarlo —atacante o pentester— decide el destino del negocio."</div></div>
+<div class="fc"><h3>🔝 OWASP Top 10 (2021) — vigente 2024</h3><ul>
+  <li><strong>A01 — Broken Access Control:</strong> el más frecuente; 94% de apps testadas tenían alguna falla de control de acceso</li>
+  <li><strong>A02 — Cryptographic Failures:</strong> datos sensibles expuestos por cifrado débil o ausente</li>
+  <li><strong>A03 — Injection:</strong> SQLi, NoSQLi, OS Command Injection, LDAP Injection</li>
+  <li><strong>A04 — Insecure Design:</strong> fallas de diseño que no pueden parchearse con implementación</li>
+  <li><strong>A05 — Security Misconfiguration:</strong> configuraciones por defecto, permisos excesivos, información expuesta</li>
+  <li><strong>A06 — Vulnerable &amp; Outdated Components:</strong> dependencias sin parches</li>
+  <li><strong>A07 — Auth Failures:</strong> contraseñas débiles, falta de MFA, sesiones mal manejadas</li>
+  <li><strong>A08 — Software &amp; Data Integrity Failures:</strong> ataques a cadena de suministro (Log4Shell fue de este tipo)</li>
+  <li><strong>A09 — Logging &amp; Monitoring Failures:</strong> incidentes no detectados por falta de logs</li>
+  <li><strong>A10 — SSRF:</strong> Server-Side Request Forgery — el servidor hace peticiones arbitrarias</li>
+</ul></div>
+<div class="cards">
+  <div class="card"><h4>🛠️ Herramientas de pentesting web</h4><ul>
+    <li><strong>Burp Suite Pro:</strong> proxy + scanner; estándar de la industria</li>
+    <li><strong>OWASP ZAP (Zaproxy):</strong> open source; integración CI/CD</li>
+    <li><strong>Nikto:</strong> escáner de vulnerabilidades web (servidores)</li>
+    <li><strong>SQLmap:</strong> automatización de inyecciones SQL</li>
+    <li><strong>Nuclei:</strong> plantillas para CVEs y misconfigs web</li>
+    <li><strong>ffuf / Gobuster:</strong> fuzzing de rutas, parámetros, subdominios</li>
+  </ul></div>
+  <div class="card"><h4>💉 Técnicas de inyección actuales</h4><ul>
+    <li><strong>SQL Injection:</strong> clásica pero vigente; blind, time-based, error-based</li>
+    <li><strong>NoSQL Injection:</strong> MongoDB, Redis; diferente sintaxis</li>
+    <li><strong>XSS (Cross-Site Scripting):</strong> reflected, stored, DOM-based</li>
+    <li><strong>XXE (XML External Entity):</strong> lectura de archivos internos</li>
+    <li><strong>SSTI (Server-Side Template Injection):</strong> RCE en motores de plantillas</li>
+    <li><strong>Prompt Injection:</strong> nueva en sistemas con LLMs integrados (OWASP LLM Top 10)</li>
+  </ul></div>
+</div>
+<div class="fc"><h3>🤖 OWASP LLM Top 10 (2024) — Nueva frontera</h3>
+<p>Con la integración masiva de LLMs (Large Language Models) en aplicaciones web, OWASP publicó en 2024 el <strong>LLM Top 10</strong> específico para aplicaciones de IA:</p>
+<ul>
+  <li><strong>LLM01 — Prompt Injection:</strong> manipulación del modelo mediante entrada del usuario</li>
+  <li><strong>LLM02 — Insecure Output Handling:</strong> XSS/RCE por output no sanitizado del LLM</li>
+  <li><strong>LLM06 — Sensitive Information Disclosure:</strong> el modelo revela datos de entrenamiento o del sistema</li>
+  <li><strong>LLM09 — Overreliance:</strong> confiar ciegamente en output del LLM sin validación humana</li>
+</ul></div>
+<div class="alert ar"><span>⚠️</span><span><strong>Log4Shell (CVE-2021-44228) — lección vigente:</strong> Vulnerabilidad CVSS 10.0 en Apache Log4j2 que afectó a cientos de millones de dispositivos. En 2024, tres años después, el 13% de organizaciones aún tienen instancias vulnerables (Qualys). Ilustra que A06 (Componentes vulnerables) es un riesgo crónico, no puntual.</span></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>OWASP. (2021). Top 10 Web Application Security Risks. <a href="https://owasp.org/Top10/" target="_blank">owasp.org/Top10</a></li>
+  <li>OWASP. (2024). LLM Top 10. <a href="https://owasp.org/www-project-top-10-for-large-language-model-applications/" target="_blank">owasp.org</a></li>
+  <li>PortSwigger. (2024). Web Security Academy. <a href="https://portswigger.net/web-security" target="_blank">portswigger.net/web-security</a></li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(9)">← Unidad 9</button><button class="btn pri" onclick="go(11)">Unidad 11 →</button></div>
+</section>
+
+<!-- U11 -->
+<section class="sec" data-id="11">
+<div class="uh"><div class="un">Unidad 11</div><h2>🔑 Herramientas, SO y Vulnerabilidad de Contraseñas</h2>
+<div class="met">"Una contraseña es como la llave de tu casa: si la fabricas con papel, no importa cuántas cerraduras pongas. La política de contraseñas robusta es la metalurgia que hace la llave irrompible."</div></div>
+<div class="cards">
+  <div class="card"><h4>🐧 Distribuciones especializadas en seguridad</h4><ul>
+    <li><strong>Kali Linux 2024:</strong> 600+ herramientas preinstaladas; actualización continua</li>
+    <li><strong>Parrot OS Security:</strong> ligera; enfocada en privacidad y forense</li>
+    <li><strong>BlackArch Linux:</strong> 2900+ herramientas; repositorio AUR de seguridad</li>
+    <li><strong>REMnux:</strong> distribución especializada en análisis de malware</li>
+    <li><strong>FLARE VM (Windows):</strong> VM de análisis de malware en Windows</li>
+  </ul></div>
+  <div class="card"><h4>🔨 Herramientas esenciales 2024</h4><ul>
+    <li><strong>Nmap:</strong> escaneo de red (el estándar desde 1997, aún vigente)</li>
+    <li><strong>Metasploit Framework 6:</strong> explotación modular</li>
+    <li><strong>Wireshark 4:</strong> análisis de protocolos de red</li>
+    <li><strong>Burp Suite Pro 2024:</strong> pentesting web</li>
+    <li><strong>John the Ripper / Hashcat:</strong> crackeo de contraseñas</li>
+    <li><strong>Volatility 3:</strong> análisis forense de memoria RAM</li>
+  </ul></div>
+</div>
+<div class="fc"><h3>🔐 Vulnerabilidad de contraseñas en sistemas operativos</h3><ul>
+  <li><strong>Windows — SAM Database:</strong> hashes NTLM almacenados; atacables con Mimikatz (pass-the-hash)</li>
+  <li><strong>Windows — LSASS Dumping:</strong> volcado de credenciales en memoria con ProcDump o Task Manager</li>
+  <li><strong>Linux — /etc/shadow:</strong> hashes SHA-512; atacable con John/Hashcat si se obtiene el archivo</li>
+  <li><strong>macOS — Keychain:</strong> almacén de contraseñas; accesible con privilegios locales</li>
+  <li><strong>Windows Hello / TPM:</strong> autenticación biométrica + hardware; más resistente a ataques</li>
+</ul></div>
+<div class="fc"><h3>💪 Hardening de contraseñas — Recomendaciones NIST SP 800-63B (2024)</h3><ul>
+  <li><strong>Longitud sobre complejidad:</strong> contraseñas de mínimo 15 caracteres sin requisitos de complejidad forzada</li>
+  <li><strong>Eliminar rotación periódica obligatoria:</strong> solo cambiar si hay evidencia de compromiso</li>
+  <li><strong>Verificar contra listas de contraseñas comprometidas:</strong> Have I Been Pwned API (15B+ passwords)</li>
+  <li><strong>MFA obligatorio:</strong> TOTP (Google Authenticator), FIDO2/WebAuthn (llaves físicas Yubikey)</li>
+  <li><strong>Passkeys (2024):</strong> Apple, Google y Microsoft implementaron passkeys FIDO2; reemplaza contraseñas con biometría + clave privada local</li>
+  <li><strong>Gestores de contraseñas:</strong> Bitwarden (open source), 1Password, Dashlane</li>
+</ul></div>
+<div class="alert ai"><span>ℹ️</span><span><strong>Passkeys — el futuro sin contraseñas:</strong> La alianza FIDO2 y las principales plataformas (Apple, Google, Microsoft) están migrando hacia passkeys: credenciales criptográficas vinculadas al dispositivo, autenticadas con biometría. En 2024, más de 13 mil millones de cuentas soportan passkeys. Eliminan el riesgo de phishing de contraseñas y ataques de relleno de credenciales.</span></div>
+<button class="rt" onclick="tr(this)">📚 Referencias ▾</button>
+<div class="rc"><ul>
+  <li>NIST SP 800-63B. (2024 draft). Digital Identity Guidelines — Authentication. <a href="https://pages.nist.gov/800-63-4/" target="_blank">pages.nist.gov/800-63-4</a></li>
+  <li>FIDO Alliance. (2024). Passkeys overview. <a href="https://passkeys.dev" target="_blank">passkeys.dev</a></li>
+  <li>Kali Linux. (2024). Tools documentation. <a href="https://www.kali.org/tools/" target="_blank">kali.org/tools</a></li>
+  <li>Rodríguez Llerena, A. E. (2020). Herramientas fundamentales para el hacking ético. <em>Revista Cubana de Informática Médica</em>, 12(1), 116-131.</li>
+  <li>López Vallejo, M. R. (2017). Hacking ético. Vulnerabilidad de SO en el acceso por contraseñas. <em>Revista Publicando</em>, 4(10), 31-51.</li>
+</ul></div>
+<div class="nb"><button class="btn" onclick="go(10)">← Unidad 10</button><button class="btn" onclick="go(0)" style="border-color:var(--green);color:var(--green)">🏠 Inicio</button></div>
+</section>
+
+</main>
+<script>
+const S=[
+  {id:0,l:"Portada",ic:"🏠"},
+  {id:1,l:"U1. Ciberseguridad y Sociedad",ic:"🌐"},
+  {id:2,l:"U2. Riesgos de Sistemas de Info.",ic:"⚠️"},
+  {id:3,l:"U3. Políticas de Seguridad",ic:"📋"},
+  {id:4,l:"U4. Estrategias de Seguridad",ic:"🛡️"},
+  {id:5,l:"U5. Mecanismos de Seg. Activa",ic:"⚡"},
+  {id:6,l:"U6. Acceso Remoto y Perímetro",ic:"🔒"},
+  {id:7,l:"U7. Hacking Ético — Fundamentos",ic:"🎭"},
+  {id:8,l:"U8. Hacking: Sistemas y Redes",ic:"🔍"},
+  {id:9,l:"U9. Hacking: Redes Wi-Fi",ic:"📡"},
+  {id:10,l:"U10. Hacking: Ataques Web",ic:"🌐"},
+  {id:11,l:"U11. Herramientas y Contraseñas",ic:"🔑"},
+];
+let cur=0;
+const nl=document.getElementById('nl');
+S.forEach(s=>{
+  const e=document.createElement('div');
+  e.className='nav-item'+(s.id===0?' active':'');
+  e.dataset.id=s.id;
+  e.innerHTML=`<span class="ic">${s.ic}</span><span>${s.l}</span>`;
+  e.addEventListener('click',()=>go(s.id));
+  nl.appendChild(e);
+});
+function go(id){
+  document.querySelector('.sec.active')?.classList.remove('active');
+  document.querySelector('.nav-item.active')?.classList.remove('active');
+  document.querySelector(`.sec[data-id="${id}"]`).classList.add('active');
+  document.querySelector(`.nav-item[data-id="${id}"]`).classList.add('active');
+  cur=id;
+  document.getElementById('pfill').style.width=(id===0?0:Math.round(id/11*100))+'%';
+  window.scrollTo({top:0,behavior:'smooth'});
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('ov').classList.remove('open');
+}
+function tr(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.textContent=btn.textContent.includes('▾')?btn.textContent.replace('▾','▴'):btn.textContent.replace('▴','▾');
+}
+function tog(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('ov').classList.toggle('open');
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'&&cur<11)go(cur+1);
+  if(e.key==='ArrowLeft'&&cur>0)go(cur-1);
+});
+</script>
+</body>
+</html>
