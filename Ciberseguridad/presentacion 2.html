@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Cybersecurity Introduction — Presentación Interactiva</title>
+<style>
+:root{
+  --teal:#00b49a;--teal-glow:#1de8c8;--teal-dark:#004d4a;--teal-mid:#007a70;
+  --red:#ff4d6d;--yellow:#ffd166;--blue:#4cc9f0;--purple:#b5179e;
+  --bg:#050f0e;--bg2:#0a1f1d;--bg3:#0d2825;
+  --text:#e6f4f3;--muted:#7ab8b3;
+  --card-border:rgba(0,180,154,.2);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;display:flex;flex-direction:column}
+
+/* ── NAV BAR ── */
+#topbar{display:flex;align-items:center;justify-content:space-between;padding:.6rem 1.6rem;background:rgba(5,15,14,.95);border-bottom:1px solid var(--card-border);backdrop-filter:blur(8px);z-index:100;flex-shrink:0}
+.tb-title{font-size:.82rem;font-weight:600;color:var(--teal);letter-spacing:.08em;text-transform:uppercase}
+#progress-bar{flex:1;height:3px;background:rgba(0,180,154,.15);border-radius:2px;margin:0 1.5rem;position:relative}
+#progress-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--teal-glow));border-radius:2px;transition:width .4s ease}
+.tb-counter{font-size:.78rem;color:var(--muted);min-width:60px;text-align:right}
+
+/* ── SLIDE AREA ── */
+#stage{flex:1;position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:2rem;opacity:0;transform:translateX(60px);transition:opacity .4s ease,transform .4s ease;pointer-events:none}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.exit{opacity:0;transform:translateX(-60px)}
+
+/* ── BOTTOM CONTROLS ── */
+#controls{display:flex;align-items:center;justify-content:center;gap:1.2rem;padding:.9rem;background:rgba(5,15,14,.9);border-top:1px solid var(--card-border);flex-shrink:0}
+.btn{background:rgba(0,180,154,.1);border:1px solid var(--card-border);color:var(--text);padding:.5rem 1.4rem;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:500;transition:all .2s}
+.btn:hover{background:rgba(0,180,154,.22);border-color:var(--teal);color:var(--teal-glow)}
+.btn:disabled{opacity:.3;cursor:not-allowed}
+#slide-dots{display:flex;gap:.4rem;align-items:center;flex-wrap:wrap;max-width:600px;justify-content:center}
+.dot{width:7px;height:7px;border-radius:50%;background:rgba(0,180,154,.25);cursor:pointer;transition:all .2s;flex-shrink:0}
+.dot.active{background:var(--teal);transform:scale(1.4)}
+.dot.visited{background:rgba(0,180,154,.5)}
+
+/* ── LAYOUT HELPERS ── */
+.slide-inner{max-width:900px;width:100%}
+.slide-center{text-align:center}
+.tag{display:inline-block;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;padding:.25rem .8rem;border-radius:999px;border:1px solid;margin-bottom:1rem}
+.tag-teal{border-color:var(--teal);color:var(--teal-glow);background:rgba(0,180,154,.1)}
+.tag-red{border-color:var(--red);color:var(--red);background:rgba(255,77,109,.08)}
+.tag-yellow{border-color:var(--yellow);color:var(--yellow);background:rgba(255,209,102,.08)}
+.tag-blue{border-color:var(--blue);color:var(--blue);background:rgba(76,201,240,.08)}
+.tag-purple{border-color:var(--purple);color:var(--purple);background:rgba(181,23,158,.08)}
+
+h1.slide-h1{font-size:clamp(2rem,5vw,3.4rem);font-weight:800;line-height:1.1;letter-spacing:-.02em;margin-bottom:1rem}
+h1.slide-h1 span{background:linear-gradient(90deg,var(--teal),var(--teal-glow));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+h2.slide-h2{font-size:clamp(1.4rem,3.5vw,2rem);font-weight:700;margin-bottom:.5rem}
+h3.slide-h3{font-size:1.1rem;font-weight:600;color:var(--teal-glow);margin-bottom:.4rem}
+.sub{color:var(--muted);font-size:1rem;line-height:1.65;max-width:650px}
+.sub.center{margin:0 auto}
+
+/* ── CARDS ── */
+.cards{display:grid;gap:1rem;margin-top:1.4rem}
+.cards-2{grid-template-columns:repeat(2,1fr)}
+.cards-3{grid-template-columns:repeat(3,1fr)}
+.card{background:var(--bg2);border:1px solid var(--card-border);border-radius:14px;padding:1.2rem 1.4rem;transition:border-color .2s,box-shadow .2s}
+.card:hover{border-color:rgba(0,180,154,.45);box-shadow:0 8px 32px rgba(0,180,154,.1)}
+.card-icon{font-size:1.6rem;margin-bottom:.5rem}
+.card p{font-size:.875rem;color:var(--muted);line-height:1.55;margin-top:.3rem}
+.card strong{color:var(--text)}
+
+/* ── CIA TRIAD INTERACTIVE ── */
+.cia-wrap{display:flex;gap:1rem;margin-top:1.4rem;justify-content:center;flex-wrap:wrap}
+.cia-pill{flex:1;min-width:180px;max-width:240px;border-radius:16px;border:2px solid transparent;padding:1.2rem;cursor:pointer;transition:all .25s;text-align:center;background:var(--bg2)}
+.cia-pill.c-c{border-color:var(--blue)}
+.cia-pill.c-i{border-color:var(--yellow)}
+.cia-pill.c-a{border-color:var(--red)}
+.cia-pill:hover,.cia-pill.selected{transform:translateY(-4px)}
+.cia-pill.selected.c-c{background:rgba(76,201,240,.12)}
+.cia-pill.selected.c-i{background:rgba(255,209,102,.1)}
+.cia-pill.selected.c-a{background:rgba(255,77,109,.1)}
+.cia-detail{margin-top:1.2rem;background:var(--bg3);border:1px solid var(--card-border);border-radius:12px;padding:1rem 1.4rem;font-size:.88rem;color:var(--muted);min-height:70px;transition:all .3s;line-height:1.6}
+.cia-detail strong{color:var(--text);font-size:.95rem}
+
+/* ── TIMELINE ── */
+.timeline{display:flex;flex-direction:column;gap:.7rem;margin-top:1.2rem}
+.tl-item{display:flex;gap:1rem;align-items:flex-start}
+.tl-dot{width:36px;height:36px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1rem}
+.tl-body{flex:1}
+.tl-body h4{font-size:.9rem;font-weight:600;margin-bottom:.15rem}
+.tl-body p{font-size:.8rem;color:var(--muted);line-height:1.5}
+.tl-year{font-size:.7rem;color:var(--muted);letter-spacing:.06em}
+
+/* ── STATS ROW ── */
+.stats-row{display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap;margin-top:1.4rem}
+.stat-box{text-align:center;background:var(--bg2);border:1px solid var(--card-border);border-radius:12px;padding:1rem 1.5rem;min-width:120px}
+.stat-big{font-size:2rem;font-weight:800;display:block;background:linear-gradient(135deg,var(--teal),var(--teal-glow));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.stat-lbl{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:.2rem}
+
+/* ── QUIZ ── */
+.quiz-q{font-size:1rem;font-weight:600;margin-bottom:1rem;color:var(--text)}
+.quiz-opts{display:flex;flex-direction:column;gap:.6rem}
+.quiz-opt{background:var(--bg2);border:1px solid var(--card-border);border-radius:10px;padding:.75rem 1rem;cursor:pointer;font-size:.88rem;transition:all .2s;text-align:left;color:var(--text);width:100%}
+.quiz-opt:hover:not([disabled]){border-color:var(--teal);background:rgba(0,180,154,.1)}
+.quiz-opt.correct{border-color:#22c55e;background:rgba(34,197,94,.12);color:#22c55e}
+.quiz-opt.wrong{border-color:var(--red);background:rgba(255,77,109,.1);color:var(--red)}
+.quiz-feedback{margin-top:1rem;padding:.8rem 1rem;border-radius:10px;font-size:.88rem;line-height:1.5;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.ok{background:rgba(34,197,94,.1);border:1px solid #22c55e;color:#4ade80}
+.quiz-feedback.bad{background:rgba(255,77,109,.1);border:1px solid var(--red);color:#ff8fa3}
+
+/* ── MITRE TABLE ── */
+.mitre-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.5rem;margin-top:1rem}
+.mitre-cell{background:var(--bg2);border:1px solid var(--card-border);border-radius:8px;padding:.7rem .8rem;font-size:.75rem;cursor:pointer;transition:all .2s;text-align:center}
+.mitre-cell:hover{border-color:var(--teal);background:rgba(0,180,154,.1);color:var(--teal-glow)}
+.mitre-cell .phase{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.2rem}
+
+/* ── ATTACK DEMO ── */
+.attack-chain{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-top:1.2rem;justify-content:center}
+.attack-step{background:var(--bg2);border:1px solid var(--card-border);border-radius:10px;padding:.6rem 1rem;font-size:.8rem;text-align:center;min-width:100px;cursor:pointer;transition:all .25s}
+.attack-step:hover,.attack-step.lit{border-color:var(--red);background:rgba(255,77,109,.1);color:var(--red)}
+.attack-arrow{color:var(--muted);font-size:1.2rem}
+
+/* ── FRAMEWORKS TABLE ── */
+.fw-table{width:100%;border-collapse:collapse;margin-top:1rem;font-size:.82rem}
+.fw-table th{background:var(--bg3);color:var(--teal);padding:.55rem .8rem;text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em}
+.fw-table td{padding:.55rem .8rem;border-bottom:1px solid rgba(0,180,154,.08);color:var(--muted);vertical-align:top;line-height:1.5}
+.fw-table tr:hover td{background:rgba(0,180,154,.05);color:var(--text)}
+
+/* ── PROFILES ── */
+.profile-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.9rem;margin-top:1.2rem}
+.profile-card{border-radius:14px;padding:1.1rem;border:1px solid transparent;transition:all .25s;cursor:pointer;text-align:center}
+.profile-card:hover{transform:translateY(-3px)}
+.pc-red{border-color:rgba(255,77,109,.3);background:rgba(255,77,109,.07)}
+.pc-blue{border-color:rgba(76,201,240,.3);background:rgba(76,201,240,.07)}
+.pc-purple{border-color:rgba(181,23,158,.3);background:rgba(181,23,158,.07)}
+.pc-yellow{border-color:rgba(255,209,102,.3);background:rgba(255,209,102,.07)}
+.pc-green{border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.07)}
+.profile-card h4{font-size:.85rem;font-weight:700;margin:.4rem 0 .2rem}
+.profile-card p{font-size:.72rem;color:var(--muted);line-height:1.45}
+
+/* ── BG ANIMATION ── */
+.hero-bg{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.hero-bg-inner{position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(0,180,154,.1) 0%,transparent 70%)}
+.grid-lines{position:absolute;inset:0;background-image:linear-gradient(rgba(0,180,154,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,180,154,.04) 1px,transparent 1px);background-size:48px 48px}
+.slide-inner{position:relative;z-index:1}
+
+/* ── METAPHOR BOX ── */
+.metaphor{background:linear-gradient(135deg,rgba(0,180,154,.08),rgba(29,232,200,.05));border:1px solid rgba(0,180,154,.25);border-left:3px solid var(--teal);border-radius:10px;padding:1rem 1.2rem;margin-top:1rem;font-size:.88rem;line-height:1.6;color:var(--muted)}
+.metaphor::before{content:"💡 Metáfora: ";color:var(--teal-glow);font-weight:600}
+
+/* ── REAL CASE ── */
+.real-case{background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.2);border-left:3px solid var(--red);border-radius:10px;padding:1rem 1.2rem;margin-top:1rem;font-size:.85rem;line-height:1.6;color:var(--muted)}
+.real-case::before{content:"🔴 Caso Real: ";color:var(--red);font-weight:600}
+
+/* scrollable within slide */
+.scroll-inner{max-height:calc(100vh - 200px);overflow-y:auto;padding-right:.4rem}
+.scroll-inner::-webkit-scrollbar{width:4px}
+.scroll-inner::-webkit-scrollbar-track{background:transparent}
+.scroll-inner::-webkit-scrollbar-thumb{background:rgba(0,180,154,.3);border-radius:2px}
+
+@media(max-width:640px){
+  .cards-2,.cards-3{grid-template-columns:1fr}
+  .cia-wrap{flex-direction:column;align-items:center}
+  h1.slide-h1{font-size:1.9rem}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <span class="tb-title">Cybersecurity Introduction</span>
+  <div id="progress-bar"><div id="progress-fill" style="width:4%"></div></div>
+  <span class="tb-counter" id="counter">1 / 26</span>
+</div>
+
+<!-- STAGE -->
+<div id="stage">
+
+<!-- ════════════════════════════════════ SLIDE 01 — COVER -->
+<div class="slide active" id="s1">
+  <div class="hero-bg"><div class="hero-bg-inner"></div><div class="grid-lines"></div></div>
+  <div class="slide-inner slide-center">
+    <div class="tag tag-teal">Programa de Ciberseguridad · Módulo I</div>
+    <h1 class="slide-h1"><span>Cybersecurity</span><br/>Introduction</h1>
+    <p class="sub center">Fundamentos, amenazas, normativas y metodologías para comprender y aplicar la seguridad en el mundo digital.</p>
+    <div class="stats-row" style="margin-top:2rem">
+      <div class="stat-box"><span class="stat-big">8</span><div class="stat-lbl">Temas</div></div>
+      <div class="stat-box"><span class="stat-big">4</span><div class="stat-lbl">Semanas</div></div>
+      <div class="stat-box"><span class="stat-big">∞</span><div class="stat-lbl">Curiosidad</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ SLIDE 02 — QUÉ ES CIBERSEGURIDAD -->
+<div class="slide" id="s2">
+  <div class="slide-inner">
+    <div class="tag tag-teal">Semana 1 · Tema 1</div>
+    <h2 class="slide-h2">¿Qué es la Ciberseguridad?</h2>
+    <p class="sub">La práctica de proteger sistemas, redes y programas de <strong>ataques digitales</strong> cuyo objetivo es acceder, alterar o destruir información sensible.</p>
+    <div class="metaphor">Tu casa digital. Las puertas son contraseñas, las alarmas son firewalls, y el vecindario es Internet. La ciberseguridad define qué tan buenas son tus cerraduras.</div>
+    <div class="cards cards-3" style="margin-top:1.2rem">
+      <div class="card"><div class="card-icon">🔒</div><strong>Confidencialidad</strong><p>Solo quien debe ver la información, la ve.</p></div>
+      <div class="card"><div class="card-icon">✅</div><strong>Integridad</strong><p>La información no es alterada sin autorización.</p></div>
+      <div class="card"><div class="card-icon">⚡</div><strong>Disponibilidad</strong><p>Los sistemas están accesibles cuando se necesitan.</p></div>
+    </div>
+    <div class="real-case">En 2021, el ataque a Colonial Pipeline dejó sin combustible a millones de personas en la costa este de EE.UU. No fue una bomba, fue <em>ransomware</em>.</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ SLIDE 03 — CIA TRIAD INTERACTIVA -->
+<div class="slide" id="s3">
+  <div class="slide-inner">
+    <div class="tag tag-teal">Semana 1 · Tema 1</div>
+    <h2 class="slide-h2">La Tríada CIA — Interactivo</h2>
+    <p class="sub">Toca cada pilar para explorar su definición, ejemplo y cómo puede ser vulnerado.</p>
+    <div class="cia-wrap">
+      <div class="cia-pill c-c" onclick="selectCIA('c')" id="cia-c">
+        <div style="font-size:2rem">🔵</div>
+        <h4 style="font-size:.95rem;font-weight:700;color:#4cc9f0;margin-top:.4rem">Confidentiality</h4>
+        <p style="font-size:.75rem;color:var(--muted)">Privacidad de datos</p>
+      </div>
+      <div class="cia-pill c-i" onclick="selectCIA('i')" id="cia-i">
+        <div style="font-size:2rem">🟡</div>
+        <h4 style="font-size:.95rem;font-weight:700;color:#ffd166;margin-top:.4rem">Integrity</h4>
+        <p style="font-size:.75rem;color:var(--muted)">Exactitud de datos</p>
+      </div>
+      <div class="cia-pill c-a" onclick="selectCIA('a')" id="cia-a">
+        <div style="font-size:2rem">🔴</div>
+        <h4 style="font-size:.95rem;font-weight:700;color:#ff4d6d;margin-top:.4rem">Availability</h4>
+        <p style="font-size:.75rem;color:var(--muted)">Acceso continuo</p>
+      </div>
+    </div>
+    <div class="cia-detail" id="cia-detail">
+      <strong>Selecciona un pilar</strong> para ver su definición, un ejemplo real y cómo los atacantes lo vulneran.
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ SLIDE 04 — CIBERAMENAZAS -->
+<div class="slide" id="s4">
+  <div class="slide-inner">
+    <div class="tag tag-red">Semana 1 · Tema 2</div>
+    <h2 class="slide-h2">Panorama de Ciberamenazas</h2>
+    <p class="sub">Las amenazas evolucionan más rápido que las defensas. Conocerlas es el primer paso.</p>
+    <div class="scroll-inner">
+      <div class="cards cards-2" style="margin-top:1rem">
+        <div class="card"><div class="card-icon">🐛</div><strong>Malware</strong><p>Virus, troyanos, spyware. Software diseñado para dañar, espiar o controlar un sistema.</p></div>
+        <div class="card"><div class="card-icon">🎣</div><strong>Phishing</strong><p>Engaño por correo/SMS que simula ser una entidad legítima para robar credenciales.</p></div>
+        <div class="card"><div class="card-icon">🔐</div><strong>Ransomware</strong><p>Cifra tus archivos y pide rescate. WannaCry (2017) afectó 200,000 sistemas en 150 países.</p></div>
+        <div class="card"><div class="card-icon">💥</div><strong>DDoS</strong><p>Inunda un servidor con tráfico hasta tumbarlo. Como colapsar una autopista con autos de cartón.</p></div>
+        <div class="card"><div class="card-icon">🕵️</div><strong>APT</strong><p><em>Advanced Persistent Threat</em>. Actores sofisticados (frecuente: estados-nación) que se infiltran meses sin ser detectados.</p></div>
+        <div class="card"><div class="card-icon">🔓</div><strong>Zero-Day</strong><p>Vulnerabilidad desconocida para el fabricante. No hay parche disponible. Muy cotizadas en mercados clandestinos.</p></div>
+      </div>
+      <div class="real-case">SolarWinds 2020: hackers rusos comprometieron la cadena de suministro de software, infectando a 18,000 organizaciones incluyendo el Pentágono — sin disparar un solo tiro.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ SLIDE 05 — QUIZ 1 -->
+<div class="slide" id="s5">
+  <div class="slide-inner" style="max-width:650px">
+    <div class="tag tag-yellow">Quiz · Semana 1</div>
+    <h2 class="slide-h2">Pon a prueba tu conocimiento</h2>
+    <div class="quiz-q">Un atacante cifra los archivos de un hospital y exige $1M para devolver el acceso. ¿Qué pilar de la tríada CIA ataca principalmente?</div>
+    <div class="quiz-opts">
+      <button class="quiz-opt" onclick="checkQ1(this,'wrong')">A) Confidencialidad — roba la información</button>
+      <button class="quiz-opt" onclick="checkQ1(this,'wrong')">B) Integridad — altera los datos</button>
+      <button class="quiz-opt" onclick="checkQ1(this,'correct')">C) Disponibilidad — bloquea el acceso a los datos</button>
+      <button class="quiz-opt" onclick="checkQ1(this,'wrong')">D) Autenticación — suplanta identidades</button>
+    </div>
+    <div class="quiz-feedback ok" id="qf1-ok">
+      ✅ <strong>Correcto.</strong> El ransomware ataca la <em>disponibilidad</em>: aunque los datos siguen ahí, nadie puede acceder a ellos. El hospital pierde la capacidad de operar. En 2020, un ataque de ransomware a un hospital alemán estuvo vinculado a la primera muerte directamente atribuida a un ciberataque.
+    </div>
+    <div class="quiz-feedback bad" id="qf1-bad">
+      ❌ <strong>Incorrecto.</strong> Aunque el ransomware puede también filtrar datos, su arma principal es el cifrado que <em>bloquea el acceso</em>: disponibilidad. Inténtalo de nuevo — solo se puede responder una vez.
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ SLIDE 06 — KILL CHAIN -->
+<div class="slide" id="s6">
+  <div class="slide-inner">
+    <div class="tag tag-red">Semana 1 · Tema 2</div>
+    <h2 class="slide-h2">Cyber Kill Chain — Cómo piensa un atacante</h2>
+    <p class="sub">Lockheed Martin modeló los ataques como una cadena de 7 pasos. Romper <em>cualquier</em> eslabón detiene el ataque.</p>
+    <div class="attack-chain" id="kill-chain">
+      <div class="attack-step" onclick="litStep(this,'Reconocimiento: el atacante investiga el objetivo. LinkedIn, Google, Shodan.')">🔎<br/>Reconoc.</div>
+      <div class="attack-arrow">→</div>
+      <div class="attack-step" onclick="litStep(this,'Armamento: crea o compra el exploit/malware adaptado a la víctima.')">⚙️<br/>Armamento</div>
+      <div class="attack-arrow">→</div>
+      <div class="attack-step" onclick="litStep(this,'Entrega: envía el payload (email phishing, USB, web maliciosa).')">📧<br/>Entrega</div>
+      <div class="attack-arrow">→</div>
+      <div class="attack-step" onclick="litStep(this,'Explotación: el exploit se ejecuta al abrir un adjunto o visitar la web.')">💣<br/>Explotación</div>
+      <div class="attack-arrow">→</div>
+      <div class="attack-step" onclick="litStep(this,'Instalación: instala backdoor o RAT para persistencia.')">🚪<br/>Instalación</div>
+      <div class="attack-arrow">→</div>
+      <div class="attack-step" onclick="litStep(this,'C2: el atacante controla la máquina remotamente desde su servidor.')">📡<br/>Comando&C2</div>
+      <div class="attack-arrow">→</div>
+      <div class="attack-step" onclick="litStep(this,'Acción: robo de datos, cifrado (ransomware), destrucción o movimiento lateral.')">🎯<br/>Acción</div>
+    </div>
+    <div class="cia-detail" id="kc-detail" style="margin-top:1rem">Toca cada fase para ver qué ocurre en ese paso.</div>
+    <div class="metaphor" style="margin-top:.8rem">Es como un robo a banco: primero planeas la huida, luego las cámaras, luego entras. Si la policía te para en cualquier punto, el robo falla.</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ SLIDE 07 — NORMATIVAS INTRO -->
+<div class="slide" id="s7">
+  <div class="slide-inner slide-center">
+    <div class="tag tag-blue">Semana 2</div>
+    <h1 class="slide-h1">Normativas &<br/><span>Cumplimiento</span></h1>
+    <p class="sub center">Las reglas del juego. Los marcos regulatorios definen qué se debe proteger, cómo, y qué pasa si no lo haces.</p>
+    <div class="stats-row">
+      <div class="stat-box"><span class="stat-big" style="font-size:1.4rem">ISO 27001</span><div class="stat-lbl">SGSI Global</div></div>
+      <div class="stat-box"><span class="stat-big" style="font-size:1.4rem">NIST CSF</span><div class="stat-lbl">Marco EE.UU.</div></div>
+      <div class="stat-box"><span class="stat-big" style="font-size:1.4rem">GDPR</span><div class="stat-lbl">Privacidad UE</div></div>
+      <div class="stat-box"><span class="stat-big" style="font-size:1.4rem">PCI-DSS</span><div class="stat-lbl">Pagos</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ SLIDE 08 — ISO 27001 -->
+<div class="slide" id="s8">
+  <div class="slide-inner">
+    <div class="tag tag-blue">Semana 2 · Tema 3</div>
+    <h2 class="slide-h2">ISO/IEC 27001 — El Sistema de Gestión</h2>
+    <p class="sub">Estándar internacional para el <strong>Sistema de Gestión de Seguridad de la Información (SGSI)</strong>. No es una lista de herramientas; es un ciclo de mejora continua.</p>
+    <div class="metaphor">ISO 27001 es como la norma ISO 9001 del automóvil: no te dice qué motor poner, sino cómo garantizar que tu proceso de fabricación produce autos seguros consistentemente.</div>
+    <div class="cards cards-2" style="margin-top:1rem">
+      <div class="card"><div class="card-icon">📋</div><strong>114 controles</strong><p>Organizados en 14 dominios: desde políticas hasta criptografía y relaciones con proveedores.</p></div>
+      <div class="card"><div class="card-icon">🔄</div><strong>Ciclo PDCA</strong><p>Plan → Do → Check → Act. La seguridad no es un proyecto, es un proceso continuo.</p></div>
+      <div class="card"><div class="card-icon">🏆</div><strong>Certificación</strong><p>Una auditoría externa verifica el cumplimiento. La tienen Amazon, Google, Microsoft y miles de empresas.</p></div>
+      <div class="card"><div class="card-icon">📊</div><strong>Análisis de Riesgo</strong><p>Obliga a identificar activos, amenazas, vulnerabilidades e impacto antes de decidir controles.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ SLIDE 09 — NIST CSF -->
+<div class="slide" id="s9">
+  <div class="slide-inner">
+    <div class="tag tag-blue">Semana 2 · Tema 3</div>
+    <h2 class="slide-h2">NIST Cybersecurity Framework</h2>
+    <p class="sub">Creado por el Instituto Nacional de Estándares de EE.UU. Organiza la seguridad en <strong>6 funciones clave</strong>. Flexible y ampliamente adoptado globalmente.</p>
+    <div class="cards cards-3" style="margin-top:1rem">
+      <div class="card" style="border-color:rgba(76,201,240,.3)"><strong style="color:#4cc9f0">GOVERN</strong><p>Política, roles, estrategia de riesgo organizacional. (Nuevo en v2.0, 2024)</p></div>
+      <div class="card" style="border-color:rgba(255,209,102,.3)"><strong style="color:#ffd166">IDENTIFY</strong><p>¿Qué activos tienes? ¿Cuáles son críticos? Inventario y contexto.</p></div>
+      <div class="card" style="border-color:rgba(0,180,154,.3)"><strong style="color:#00b49a">PROTECT</strong><p>Controles preventivos: acceso, formación, cifrado, backups.</p></div>
+      <div class="card" style="border-color:rgba(255,77,109,.3)"><strong style="color:#ff4d6d">DETECT</strong><p>Monitoreo continuo para descubrir anomalías antes de que escalen.</p></div>
+      <div class="card" style="border-color:rgba(181,23,158,.3)"><strong style="color:#b5179e">RESPOND</strong><p>Plan de respuesta a incidentes: contención, erradicación, comunicación.</p></div>
+      <div class="card" style="border-color:rgba(34,197,94,.3)"><strong style="color:#22c55e">RECOVER</strong><p>Restaurar operaciones. Lecciones aprendidas. No si, sino cuándo.</p></div>
+    </div>
+    <div class="metaphor" style="margin-top:.8rem">Como un cuerpo de bomberos: Govern es la dirección, Identify es el mapa de la ciudad, Protect son los hidrantes, Detect son las alarmas, Respond apaga el fuego, Recover reconstruye.</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ SLIDE 10 — GDPR -->
+<div class="slide" id="s10">
+  <div class="slide-inner">
+    <div class="tag tag-blue">Semana 2 · Tema 3</div>
+    <h2 class="slide-h2">GDPR — El Escudo de la Privacidad</h2>
+    <p class="sub">Reglamento General de Protección de Datos (UE, 2018). Aplica a <em>cualquier</em> organización que procese datos de ciudadanos europeos, sin importar dónde esté ubicada.</p>
+    <div class="cards cards-2" style="margin-top:1rem">
+      <div class="card"><div class="card-icon">🙋</div><strong>Derechos del titular</strong><p>Acceso, rectificación, supresión ("derecho al olvido"), portabilidad, oposición al tratamiento.</p></div>
+      <div class="card"><div class="card-icon">⚠️</div><strong>Multas devastadoras</strong><p>Hasta €20M o 4% de la facturación global anual. Meta fue multada con €1.2B en 2023.</p></div>
+      <div class="card"><div class="card-icon">🔔</div><strong>72 horas</strong><p>Para notificar una brecha de datos a la autoridad reguladora. El silencio no es opción.</p></div>
+      <div class="card"><div class="card-icon">📝</div><strong>Privacy by Design</strong><p>La privacidad no se agrega al final: se diseña desde el inicio del sistema o producto.</p></div>
+    </div>
+    <div class="real-case">Amazon fue multada con €746M por GDPR en 2021. Google con €50M. La privacidad ya no es solo ética — es negocio.</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ SLIDE 11 — COMPARATIVA FRAMEWORKS -->
+<div class="slide" id="s11">
+  <div class="slide-inner">
+    <div class="tag tag-blue">Semana 2 · Tema 3</div>
+    <h2 class="slide-h2">¿Qué marco usar y cuándo?</h2>
+    <div class="scroll-inner">
+      <table class="fw-table">
+        <thead><tr><th>Marco</th><th>Origen</th><th>Aplica cuando…</th><th>Fortaleza</th></tr></thead>
+        <tbody>
+          <tr><td><strong style="color:#4cc9f0">ISO 27001</strong></td><td>Internacional (ISO/IEC)</td><td>Quieres certificación formal del SGSI</td><td>Reconocido globalmente, auditable</td></tr>
+          <tr><td><strong style="color:#ffd166">NIST CSF</strong></td><td>EE.UU. (NIST)</td><td>Necesitas lenguaje común con gobierno o clientes enterprise</td><td>Flexible, gratuito, muy descriptivo</td></tr>
+          <tr><td><strong style="color:#ff4d6d">GDPR</strong></td><td>Unión Europea</td><td>Procesas datos personales de ciudadanos UE</td><td>Enfocado en privacidad y derechos del individuo</td></tr>
+          <tr><td><strong style="color:#b5179e">PCI-DSS</strong></td><td>Sector financiero</td><td>Aceptas, procesas o almacenas datos de tarjetas</td><td>Muy específico para pagos, requerido por bancos</td></tr>
+          <tr><td><strong style="color:#22c55e">SOC 2</strong></td><td>EE.UU. (AICPA)</td><td>Ofreces servicios en la nube a empresas</td><td>Confianza de clientes enterprise B2B</td></tr>
+        </tbody>
+      </table>
+      <div class="metaphor" style="margin-top:1rem">No son competidores: muchas empresas combinan ISO 27001 + NIST CSF internamente y cumplen GDPR/PCI-DSS como requisito externo. Como tener licencia de manejo (ISO) y respetar el reglamento de tránsito local (GDPR).</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ SLIDE 12 — ESTRATEGIAS CUMPLIMIENTO -->
+<div class="slide" id="s12">
+  <div class="slide-inner">
+    <div class="tag tag-blue">Semana 2 · Tema 4</div>
+    <h2 class="slide-h2">Estrategias para el Cumplimiento</h2>
+    <p class="sub">Cumplir una normativa no es llenar formularios. Requiere una estrategia sostenible.</p>
+    <div class="scroll-inner">
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot" style="background:rgba(0,180,154,.15);color:var(--teal)">1</div>
+          <div class="tl-body"><h4>Gap Analysis</h4><p>Compara tu estado actual contra los requisitos del marco. ¿Qué tienes? ¿Qué falta? Sin este diagnóstico inicial no hay hoja de ruta.</p></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:rgba(76,201,240,.15);color:#4cc9f0">2</div>
+          <div class="tl-body"><h4>Clasificación de Activos y Datos</h4><p>No todo necesita el mismo nivel de protección. Un correo interno ≠ una base de datos de pacientes. Clasifica: Público, Interno, Confidencial, Secreto.</p></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:rgba(255,209,102,.15);color:#ffd166">3</div>
+          <div class="tl-body"><h4>Políticas y Procedimientos</h4><p>Las políticas dicen QUÉ. Los procedimientos dicen CÓMO. Las guías dicen CUÁNDO. Sin documentación, el cumplimiento es anecdótico.</p></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:rgba(255,77,109,.15);color:#ff4d6d">4</div>
+          <div class="tl-body"><h4>Capacitación Continua</h4><p>El 82% de las brechas involucran error humano (Verizon DBIR 2023). La tecnología sola no alcanza. Usuarios capacitados son la mejor defensa.</p></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:rgba(181,23,158,.15);color:#b5179e">5</div>
+          <div class="tl-body"><h4>Auditorías y Pruebas Periódicas</h4><p>Pentest anual, simulacros de phishing, revisión de controles. El cumplimiento es un estado, no un destino.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ SLIDE 13 — QUIZ 2 -->
+<div class="slide" id="s13">
+  <div class="slide-inner" style="max-width:650px">
+    <div class="tag tag-yellow">Quiz · Semana 2</div>
+    <h2 class="slide-h2">Normativas en Contexto</h2>
+    <div class="quiz-q">Una startup mexicana lanza una app que recopila datos de usuarios en España. ¿Qué regulación es obligatoria aplicar?</div>
+    <div class="quiz-opts">
+      <button class="quiz-opt" onclick="checkQ2(this,'wrong')">A) Solo la ley mexicana de datos (LFPDPPP)</button>
+      <button class="quiz-opt" onclick="checkQ2(this,'correct')">B) GDPR, porque procesa datos de ciudadanos europeos</button>
+      <button class="quiz-opt" onclick="checkQ2(this,'wrong')">C) ISO 27001, es el estándar más reconocido globalmente</button>
+      <button class="quiz-opt" onclick="checkQ2(this,'wrong')">D) Ninguna, México no es parte de la UE</button>
+    </div>
+    <div class="quiz-feedback ok" id="qf2-ok">
+      ✅ <strong>Correcto.</strong> El GDPR tiene <em>alcance extraterritorial</em>: aplica a cualquier organización que procese datos de personas en la UE, independientemente de dónde esté la empresa. Ignorarlo puede costar hasta el 4% de la facturación global anual.
+    </div>
+    <div class="quiz-feedback bad" id="qf2-bad">
+      ❌ <strong>Incorrecto.</strong> El GDPR tiene alcance extraterritorial. Si tus usuarios están en la UE, aplica sin importar dónde esté tu empresa. Muchas startups latinoamericanas han tenido que adaptar sus apps por este motivo.
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ SLIDE 14 — METODOLOGÍAS INTRO -->
+<div class="slide" id="s14">
+  <div class="slide-inner slide-center">
+    <div class="tag tag-purple">Semana 3</div>
+    <h1 class="slide-h1">Metodologías &<br/><span>Perfiles</span></h1>
+    <p class="sub center">Las metodologías son el método científico de la ciberseguridad: formas sistemáticas de encontrar, evaluar y remediar problemas de seguridad.</p>
+    <div class="cards cards-3" style="margin-top:1.5rem;text-align:left">
+      <div class="card"><div class="card-icon">🗺️</div><strong>MITRE ATT&CK</strong><p>Base de conocimiento de tácticas y técnicas reales de atacantes.</p></div>
+      <div class="card"><div class="card-icon">🔍</div><strong>OWASP</strong><p>Los 10 riesgos más críticos en aplicaciones web. El estándar de la industria.</p></div>
+      <div class="card"><div class="card-icon">🧪</div><strong>PTES</strong><p>Penetration Testing Execution Standard. Guía paso a paso para pentesters.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ SLIDE 15 — MITRE ATT&CK -->
+<div class="slide" id="s15">
+  <div class="slide-inner">
+    <div class="tag tag-purple">Semana 3 · Tema 5</div>
+    <h2 class="slide-h2">MITRE ATT&CK — El Atlas del Atacante</h2>
+    <p class="sub">Base de conocimiento con más de <strong>400 técnicas</strong> documentadas de grupos APT reales. Defensores lo usan para simular ataques y detectar brechas.</p>
+    <div class="mitre-grid" id="mitre-grid">
+      <div class="mitre-cell" onclick="showMitre(this,'Reconnaissance','El atacante recopila info antes de atacar: escaneos, redes sociales, registros públicos.')"><div class="phase">TA0043</div>Reconocimiento</div>
+      <div class="mitre-cell" onclick="showMitre(this,'Resource Development','Crea o compra infraestructura: dominios falsos, cuentas comprometidas, exploits.')"><div class="phase">TA0042</div>Recursos</div>
+      <div class="mitre-cell" onclick="showMitre(this,'Initial Access','Punto de entrada: phishing, exploit web, credenciales robadas, USB malicioso.')"><div class="phase">TA0001</div>Acceso Inicial</div>
+      <div class="mitre-cell" onclick="showMitre(this,'Execution','Ejecuta código malicioso: PowerShell, scripts, macros de Office, WMI.')"><div class="phase">TA0002</div>Ejecución</div>
+      <div class="mitre-cell" onclick="showMitre(this,'Persistence','Permanece en el sistema tras reinicios: claves de registro, tareas programadas, backdoors.')"><div class="phase">TA0003</div>Persistencia</div>
+      <div class="mitre-cell" onclick="showMitre(this,'Privilege Escalation','Eleva privilegios para controlar más del sistema. De usuario a administrador o SYSTEM.')"><div class="phase">TA0004</div>Escalada Privilegios</div>
+      <div class="mitre-cell" onclick="showMitre(this,'Defense Evasion','Evita ser detectado: deshabilita AV, ofusca código, borra logs, usa LOLBins.')"><div class="phase">TA0005</div>Evasión</div>
+      <div class="mitre-cell" onclick="showMitre(this,'Lateral Movement','Se mueve por la red hacia sistemas más valiosos. Pass-the-Hash, RDP, SMB.')"><div class="phase">TA0008</div>Movimiento Lateral</div>
+      <div class="mitre-cell" onclick="showMitre(this,'Exfiltration','Saca datos al exterior: DNS tunneling, HTTPS, servicios cloud como Dropbox o S3.')"><div class="phase">TA0010</div>Exfiltración</div>
+    </div>
+    <div class="cia-detail" id="mitre-detail" style="margin-top:.8rem">Toca una táctica para ver qué hace el atacante en esa fase.</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ SLIDE 16 — OWASP TOP 10 -->
+<div class="slide" id="s16">
+  <div class="slide-inner">
+    <div class="tag tag-purple">Semana 3 · Tema 5</div>
+    <h2 class="slide-h2">OWASP Top 10 — 2021</h2>
+    <p class="sub">El estándar global de riesgos en aplicaciones web. Si desarrollas software, debes conocerlos.</p>
+    <div class="scroll-inner">
+      <div class="timeline">
+        <div class="tl-item"><div class="tl-dot" style="background:rgba(255,77,109,.15);color:#ff4d6d;font-size:.7rem">A01</div><div class="tl-body"><h4>Broken Access Control</h4><p>Un usuario accede a recursos de otro usuario. Cambiar el ID en la URL y ver facturas ajenas.</p></div></div>
+        <div class="tl-item"><div class="tl-dot" style="background:rgba(255,77,109,.15);color:#ff4d6d;font-size:.7rem">A02</div><div class="tl-body"><h4>Cryptographic Failures</h4><p>Datos sensibles sin cifrar o cifrado débil (MD5, SHA1). Contraseñas en texto claro en BD.</p></div></div>
+        <div class="tl-item"><div class="tl-dot" style="background:rgba(255,77,109,.15);color:#ff4d6d;font-size:.7rem">A03</div><div class="tl-body"><h4>Injection (SQL, NoSQL, Command)</h4><p><code style="background:rgba(255,77,109,.1);padding:.1rem .3rem;border-radius:3px">'; DROP TABLE users; --</code> El clásico de clásicos. Sigue siendo el #3.</p></div></div>
+        <div class="tl-item"><div class="tl-dot" style="background:rgba(255,209,102,.15);color:#ffd166;font-size:.7rem">A04</div><div class="tl-body"><h4>Insecure Design</h4><p>Problemas de arquitectura que ningún control puede remediar post-facto. Nuevo en 2021.</p></div></div>
+        <div class="tl-item"><div class="tl-dot" style="background:rgba(255,209,102,.15);color:#ffd166;font-size:.7rem">A07</div><div class="tl-body"><h4>Identification & Auth Failures</h4><p>Contraseñas débiles, sin MFA, sesiones sin expirar. Puerta giratoria sin guardia.</p></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ SLIDE 17 — PERFILES -->
+<div class="slide" id="s17">
+  <div class="slide-inner">
+    <div class="tag tag-purple">Semana 3 · Tema 6</div>
+    <h2 class="slide-h2">Perfiles y Equipos de Ciberseguridad</h2>
+    <p class="sub">La ciberseguridad no es un trabajo de una sola persona. Es un ecosistema de roles especializados.</p>
+    <div class="profile-grid">
+      <div class="profile-card pc-red"><div style="font-size:1.8rem">🔴</div><h4>Red Team</h4><p>Atacantes éticos. Simulan adversarios reales para encontrar vulnerabilidades antes que los malos.</p></div>
+      <div class="profile-card pc-blue"><div style="font-size:1.8rem">🔵</div><h4>Blue Team</h4><p>Defensores. Monitorean, detectan y responden a incidentes. Operan el SOC.</p></div>
+      <div class="profile-card pc-purple"><div style="font-size:1.8rem">🟣</div><h4>Purple Team</h4><p>Fusión Red+Blue. Colaboran para mejorar defensas usando técnicas ofensivas.</p></div>
+      <div class="profile-card pc-yellow"><div style="font-size:1.8rem">🟡</div><h4>SOC Analyst</h4><p>Monitoreo 24/7 de alertas SIEM. Triage, escalación y primera respuesta a incidentes.</p></div>
+      <div class="profile-card pc-green"><div style="font-size:1.8rem">🟢</div><h4>CISO</h4><p>Chief Information Security Officer. Alinea la estrategia de seguridad con el negocio.</p></div>
+      <div class="profile-card" style="border-color:rgba(0,180,154,.3);background:rgba(0,180,154,.07)"><div style="font-size:1.8rem">⚪</div><h4>Pentester</h4><p>Pruebas de penetración controladas. Reporta vulnerabilidades con evidencia y remediación.</p></div>
+    </div>
+    <div class="metaphor" style="margin-top:.8rem">Es como un hospital: el Red Team son los epidemiólogos que simulan brotes, el Blue Team son los médicos de guardia, y el CISO es el director que decide la política de salud.</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ SLIDE 18 — QUIZ 3 -->
+<div class="slide" id="s18">
+  <div class="slide-inner" style="max-width:650px">
+    <div class="tag tag-yellow">Quiz · Semana 3</div>
+    <h2 class="slide-h2">Roles en Acción</h2>
+    <div class="quiz-q">Una empresa contrata a expertos externos para que intenten hackear sus sistemas — sin que los empleados de TI sean informados — para evaluar qué tan buenas son sus defensas. ¿Qué tipo de equipo/ejercicio es este?</div>
+    <div class="quiz-opts">
+      <button class="quiz-opt" onclick="checkQ3(this,'wrong')">A) Blue Team — están defendiendo la red</button>
+      <button class="quiz-opt" onclick="checkQ3(this,'wrong')">B) Purple Team — es una colaboración entre atacantes y defensores</button>
+      <button class="quiz-opt" onclick="checkQ3(this,'correct')">C) Red Team — simulan un ataque real sin avisar a los defensores</button>
+      <button class="quiz-opt" onclick="checkQ3(this,'wrong')">D) Pentest estándar — es lo mismo que contratar un pentester</button>
+    </div>
+    <div class="quiz-feedback ok" id="qf3-ok">
+      ✅ <strong>Correcto.</strong> Un ejercicio de Red Team completo es más amplio que un pentest: simula un adversario real con objetivos, técnicas y tiempo. La clave aquí es que el Blue Team no sabe que está siendo atacado — eso lo hace mucho más realista y valioso.
+    </div>
+    <div class="quiz-feedback bad" id="qf3-bad">
+      ❌ <strong>Incorrecto.</strong> Un Red Team simula un ataque real y completo. La diferencia con un pentest es el alcance y la simulación de adversario completo. El hecho de que los defensores no sean notificados es el elemento clave que lo distingue.
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ SLIDE 19 — SEMANA 4 INTRO -->
+<div class="slide" id="s19">
+  <div class="slide-inner slide-center">
+    <div class="tag tag-teal">Semana 4</div>
+    <h1 class="slide-h1">Ciberseguridad<br/><span>Aplicada</span></h1>
+    <p class="sub center">Conectamos todo: cómo se aplican los fundamentos, normativas y metodologías en situaciones reales — y cómo la nube cambia las reglas del juego.</p>
+    <div class="cards cards-2" style="margin-top:1.5rem;text-align:left">
+      <div class="card"><div class="card-icon">🔧</div><strong>Tema 7: Ciberseg. Aplicada</strong><p>Hardening, Zero Trust, Incident Response en la práctica.</p></div>
+      <div class="card"><div class="card-icon">☁️</div><strong>Tema 8: Cloud Security</strong><p>Modelo de responsabilidad compartida, IAM, cifrado en la nube.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ SLIDE 20 — ZERO TRUST -->
+<div class="slide" id="s20">
+  <div class="slide-inner">
+    <div class="tag tag-teal">Semana 4 · Tema 7</div>
+    <h2 class="slide-h2">Zero Trust — "Nunca confíes, siempre verifica"</h2>
+    <p class="sub">El modelo perimetral (firewall como muralla) está muerto en la era del trabajo remoto y la nube. Zero Trust asume que la red interna también puede estar comprometida.</p>
+    <div class="metaphor">La seguridad perimetral es como tener un foso alrededor del castillo: si cruzas el puente, eres de confianza. Zero Trust es como necesitar identificarte en cada puerta, pasillo y habitación — aunque ya estés dentro.</div>
+    <div class="cards cards-3" style="margin-top:1.2rem">
+      <div class="card"><div class="card-icon">🪪</div><strong>Verifica identidad</strong><p>MFA para todo. No importa si estás en la oficina o en casa.</p></div>
+      <div class="card"><div class="card-icon">🔐</div><strong>Mínimo privilegio</strong><p>Cada usuario/sistema accede solo a lo que necesita, cuando lo necesita.</p></div>
+      <div class="card"><div class="card-icon">📡</div><strong>Micro-segmentación</strong><p>La red se divide en zonas pequeñas. Si un segmento es comprometido, no se propaga.</p></div>
+    </div>
+    <div class="real-case">Google implementó Zero Trust internamente (BeyondCorp) después de la Operación Aurora 2010. Hoy es el estándar para organizaciones maduras.</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ SLIDE 21 — INCIDENT RESPONSE -->
+<div class="slide" id="s21">
+  <div class="slide-inner">
+    <div class="tag tag-teal">Semana 4 · Tema 7</div>
+    <h2 class="slide-h2">Respuesta a Incidentes — Las 6 Fases NIST</h2>
+    <p class="sub">No es cuestión de <em>si</em> habrá un incidente, sino de <em>cuándo</em>. Un plan de respuesta reduce el daño de horas a minutos.</p>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot" style="background:rgba(76,201,240,.15);color:#4cc9f0">1</div>
+        <div class="tl-body"><h4>Preparación</h4><p>Políticas, herramientas SIEM/EDR, equipo formado, runbooks definidos. <em>Antes</em> del incidente.</p></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:rgba(255,209,102,.15);color:#ffd166">2</div>
+        <div class="tl-body"><h4>Detección & Análisis</h4><p>Correlación de logs, alertas SIEM, análisis de malware. ¿Qué pasó? ¿Cuándo? ¿Qué sistemas?</p></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:rgba(255,77,109,.15);color:#ff4d6d">3</div>
+        <div class="tl-body"><h4>Contención</h4><p>Cortar el sistema de la red (no apagarlo), bloquear IPs/cuentas. Preservar evidencia.</p></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:rgba(181,23,158,.15);color:#b5179e">4</div>
+        <div class="tl-body"><h4>Erradicación</h4><p>Eliminar el malware, cerrar backdoors, parchear la vulnerabilidad explotada.</p></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:rgba(0,180,154,.15);color:var(--teal)">5</div>
+        <div class="tl-body"><h4>Recuperación</h4><p>Restaurar desde backups limpios, monitoreo intensivo post-recuperación.</p></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:rgba(34,197,94,.15);color:#22c55e">6</div>
+        <div class="tl-body"><h4>Lecciones Aprendidas</h4><p>Post-mortem sin culpas. ¿Qué falló? ¿Qué funcionó? Mejora el plan. El ciclo empieza de nuevo.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ SLIDE 22 — CLOUD SECURITY -->
+<div class="slide" id="s22">
+  <div class="slide-inner">
+    <div class="tag tag-teal">Semana 4 · Tema 8</div>
+    <h2 class="slide-h2">Seguridad en la Nube — Modelo de Responsabilidad Compartida</h2>
+    <p class="sub">El proveedor cloud (AWS/Azure/GCP) no lo protege todo. Entender qué es <em>tuyo</em> vs. qué es <em>suyo</em> es crítico.</p>
+    <div class="metaphor">Es como rentar un departamento: el dueño del edificio asegura la estructura, el elevador y la entrada principal. Tú aseguras tu puerta, tus pertenencias y a quién le das llaves.</div>
+    <div class="cards cards-2" style="margin-top:1.2rem">
+      <div class="card" style="border-color:rgba(255,77,109,.3)">
+        <div class="card-icon">🏗️</div>
+        <strong style="color:#ff4d6d">Proveedor responsable de…</strong>
+        <p>Infraestructura física, hipervisores, red global, seguridad de centros de datos, hardware.</p>
+      </div>
+      <div class="card" style="border-color:rgba(0,180,154,.4)">
+        <div class="card-icon">👤</div>
+        <strong style="color:var(--teal)">Tú responsable de…</strong>
+        <p>Datos, usuarios, configuraciones, permisos IAM, cifrado de datos, seguridad de aplicaciones, S3 buckets públicos.</p>
+      </div>
+    </div>
+    <div class="real-case">El 99% de las fallas de seguridad en la nube son culpa del cliente, no del proveedor (Gartner). S3 buckets mal configurados expusieron datos de Capital One (2019): 100 millones de clientes afectados.</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ SLIDE 23 — IAM Y BEST PRACTICES -->
+<div class="slide" id="s23">
+  <div class="slide-inner">
+    <div class="tag tag-teal">Semana 4 · Tema 8</div>
+    <h2 class="slide-h2">Principios Clave de Seguridad Cloud</h2>
+    <div class="scroll-inner">
+      <div class="cards cards-2" style="margin-top:.8rem">
+        <div class="card"><div class="card-icon">🔑</div><strong>IAM Estricto</strong><p>Roles, políticas de mínimo privilegio. Nunca usar root en operaciones diarias. MFA en todas las cuentas privilegiadas.</p></div>
+        <div class="card"><div class="card-icon">🔒</div><strong>Cifrado by Default</strong><p>Datos en reposo (AES-256) y en tránsito (TLS 1.3). Las claves se gestionan separadas de los datos (KMS).</p></div>
+        <div class="card"><div class="card-icon">📊</div><strong>Logging & Monitoring</strong><p>CloudTrail, CloudWatch, GuardDuty. Si no ves qué pasa, no puedes defender. Centraliza todos los logs.</p></div>
+        <div class="card"><div class="card-icon">🚧</div><strong>Network Controls</strong><p>Security Groups, NACLs, VPCs privadas. Principio de Deny All por defecto — abrir solo lo necesario.</p></div>
+        <div class="card"><div class="card-icon">🔄</div><strong>Backups & DR</strong><p>Regla 3-2-1: 3 copias, 2 medios distintos, 1 offsite. Prueba los backups — un backup no probado no existe.</p></div>
+        <div class="card"><div class="card-icon">🛡️</div><strong>CSPM</strong><p>Cloud Security Posture Management. Herramientas como Prisma Cloud escanean configuraciones incorrectas continuamente.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ SLIDE 24 — QUIZ 4 -->
+<div class="slide" id="s24">
+  <div class="slide-inner" style="max-width:650px">
+    <div class="tag tag-yellow">Quiz · Semana 4</div>
+    <h2 class="slide-h2">Cloud Security</h2>
+    <div class="quiz-q">Un desarrollador sube accidentalmente su access key de AWS a un repositorio público en GitHub. ¿Cuál es el primer paso correcto a tomar?</div>
+    <div class="quiz-opts">
+      <button class="quiz-opt" onclick="checkQ4(this,'wrong')">A) Borrar el commit de GitHub inmediatamente</button>
+      <button class="quiz-opt" onclick="checkQ4(this,'wrong')">B) Cambiar la contraseña de la cuenta AWS</button>
+      <button class="quiz-opt" onclick="checkQ4(this,'correct')">C) Revocar la access key inmediatamente en AWS IAM</button>
+      <button class="quiz-opt" onclick="checkQ4(this,'wrong')">D) Hacer el repositorio privado</button>
+    </div>
+    <div class="quiz-feedback ok" id="qf4-ok">
+      ✅ <strong>Correcto.</strong> Borrar de GitHub es necesario pero insuficiente: los bots ya escanearon el repositorio en segundos (es un hecho documentado — hay bots que monitorizan GitHub en tiempo real buscando credenciales). La clave debe ser <em>revocada antes de hacer cualquier otra cosa</em>. Después: revisar logs de CloudTrail para detectar uso no autorizado.
+    </div>
+    <div class="quiz-feedback bad" id="qf4-bad">
+      ❌ <strong>Incorrecto.</strong> La clave correcta es revocar el access key en IAM primero. Borrar de GitHub es secundario: los bots que buscan credenciales expuestas en GitHub actúan en segundos. La contraseña de la cuenta AWS no está relacionada con las access keys.
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ SLIDE 25 — CARRERAS Y CERTIFICACIONES -->
+<div class="slide" id="s25">
+  <div class="slide-inner">
+    <div class="tag tag-teal">Ruta Profesional</div>
+    <h2 class="slide-h2">Certificaciones y Ruta de Aprendizaje</h2>
+    <p class="sub">El mercado de ciberseguridad tiene <strong>3.5 millones de posiciones sin cubrir</strong> globalmente (ISC² 2023). La demanda supera la oferta.</p>
+    <div class="scroll-inner">
+      <table class="fw-table">
+        <thead><tr><th>Certificación</th><th>Nivel</th><th>Enfoque</th><th>Emisor</th></tr></thead>
+        <tbody>
+          <tr><td><strong style="color:#22c55e">CompTIA Security+</strong></td><td>Entrada</td><td>Fundamentos, primer empleo</td><td>CompTIA</td></tr>
+          <tr><td><strong style="color:#4cc9f0">CEH</strong></td><td>Intermedio</td><td>Hacking ético, metodologías ofensivas</td><td>EC-Council</td></tr>
+          <tr><td><strong style="color:#ffd166">OSCP</strong></td><td>Intermedio-Avanzado</td><td>Pentesting práctico, 24h de examen en vivo</td><td>Offensive Security</td></tr>
+          <tr><td><strong style="color:#b5179e">CISSP</strong></td><td>Avanzado</td><td>Gestión, arquitectura, 5 años experiencia</td><td>ISC²</td></tr>
+          <tr><td><strong style="color:#ff4d6d">CISM</strong></td><td>Avanzado</td><td>Gestión de seguridad de la información</td><td>ISACA</td></tr>
+          <tr><td><strong style="color:var(--teal)">AWS Security Specialty</strong></td><td>Avanzado</td><td>Seguridad específica en AWS</td><td>Amazon</td></tr>
+        </tbody>
+      </table>
+      <div class="metaphor" style="margin-top:.8rem">Las certificaciones son el idioma del mercado laboral de ciberseguridad. Security+ te abre la puerta; OSCP te pone en la lista corta de los pentesters; CISSP te lleva a la sala de dirección.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ SLIDE 26 — CIERRE -->
+<div class="slide" id="s26">
+  <div class="hero-bg"><div class="hero-bg-inner"></div><div class="grid-lines"></div></div>
+  <div class="slide-inner slide-center">
+    <div class="tag tag-teal">Resumen del Módulo</div>
+    <h1 class="slide-h1">Lo que <span>aprendiste</span></h1>
+    <div class="cards cards-2" style="text-align:left;margin-top:1.4rem">
+      <div class="card"><strong>🔒 Semana 1</strong><p>Tríada CIA, tipos de amenazas, Cyber Kill Chain. La seguridad empieza por entender cómo piensan los atacantes.</p></div>
+      <div class="card"><strong>📋 Semana 2</strong><p>ISO 27001, NIST CSF, GDPR, PCI-DSS. El cumplimiento no es opcional — es estratégico y tiene consecuencias legales.</p></div>
+      <div class="card"><strong>🗺️ Semana 3</strong><p>MITRE ATT&CK, OWASP Top 10, perfiles Red/Blue/Purple. Metodologías sistemáticas para encontrar y remediar vulnerabilidades.</p></div>
+      <div class="card"><strong>☁️ Semana 4</strong><p>Zero Trust, Incident Response, Cloud Security. La seguridad es un proceso continuo, no un producto que se compra.</p></div>
+    </div>
+    <p class="sub center" style="margin-top:1.5rem;font-size:.9rem">
+      <strong style="color:var(--teal-glow)">"Security is not a product, but a process."</strong><br/>— Bruce Schneier
+    </p>
+  </div>
+</div>
+
+</div><!-- /stage -->
+
+<!-- CONTROLS -->
+<div id="controls">
+  <button class="btn" id="btn-prev" onclick="navigate(-1)" disabled>← Anterior</button>
+  <div id="slide-dots"></div>
+  <button class="btn" id="btn-next" onclick="navigate(1)">Siguiente →</button>
+</div>
+
+<script>
+const TOTAL = 26;
+let current = 1;
+const visited = new Set([1]);
+
+function getSlide(n){ return document.getElementById('s'+n); }
+
+function navigate(dir){
+  const next = current + dir;
+  if(next<1||next>TOTAL) return;
+  const old = getSlide(current);
+  old.classList.add(dir>0?'exit':'');
+  old.classList.remove('active');
+  if(dir<0) old.style.transform='translateX(60px)';
+  setTimeout(()=>{ old.classList.remove('exit'); old.style.transform=''; },400);
+  current = next;
+  visited.add(current);
+  const nw = getSlide(current);
+  nw.style.transform = dir>0?'translateX(60px)':'translateX(-60px)';
+  nw.classList.add('active');
+  setTimeout(()=>{ nw.style.transform=''; },20);
+  updateUI();
+}
+
+function goTo(n){
+  if(n===current) return;
+  navigate(n>current?1:-1);
+  if(n!==current) setTimeout(()=>goTo(n),50);
+}
+
+function updateUI(){
+  document.getElementById('counter').textContent = current+' / '+TOTAL;
+  document.getElementById('progress-fill').style.width = ((current/TOTAL)*100)+'%';
+  document.getElementById('btn-prev').disabled = current===1;
+  document.getElementById('btn-next').disabled = current===TOTAL;
+  document.querySelectorAll('.dot').forEach((d,i)=>{
+    d.classList.toggle('active',i+1===current);
+    d.classList.toggle('visited',visited.has(i+1));
+  });
+}
+
+// Build dots
+const dotsEl = document.getElementById('slide-dots');
+for(let i=1;i<=TOTAL;i++){
+  const d = document.createElement('div');
+  d.className='dot'+(i===1?' active visited':'');
+  d.title='Diapositiva '+i;
+  d.onclick=()=>goTo(i);
+  dotsEl.appendChild(d);
+}
+
+// Keyboard nav
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown') navigate(1);
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp') navigate(-1);
+});
+
+// ── CIA TRIAD ──
+const ciaData = {
+  c: {
+    title:'Confidencialidad (Confidentiality)',
+    text:'Solo las personas autorizadas pueden acceder a la información. Se implementa mediante cifrado, control de acceso y clasificación de datos.',
+    example:'Ejemplo: Una base de datos de salarios cifrada con AES-256. Solo RRHH puede acceder.',
+    breach:'Ataque típico: Phishing que roba credenciales, SQL Injection para extraer tablas, o un insider malicioso.',
+    color:'#4cc9f0'
+  },
+  i: {
+    title:'Integridad (Integrity)',
+    text:'Los datos no son modificados sin autorización, ni en tránsito ni en reposo. Se garantiza con hashes, firmas digitales y controles de versión.',
+    example:'Ejemplo: Un hash SHA-256 en el instalador de software permite verificar que no fue alterado.',
+    breach:'Ataque típico: Man-in-the-Middle que modifica transacciones, o un atacante que altera logs de auditoría.',
+    color:'#ffd166'
+  },
+  a: {
+    title:'Disponibilidad (Availability)',
+    text:'Los sistemas y datos están accesibles cuando los usuarios autorizados los necesitan. Requiere redundancia, backups y planes de recuperación.',
+    example:'Ejemplo: Un banco que garantiza 99.99% uptime de su banca en línea mediante clusters de servidores.',
+    breach:'Ataque típico: DDoS que satura los servidores, ransomware que cifra archivos críticos, o corte de energía sin UPS.',
+    color:'#ff4d6d'
+  }
+};
+
+function selectCIA(type){
+  ['c','i','a'].forEach(t=>{
+    const el = document.getElementById('cia-'+t);
+    el.classList.toggle('selected', t===type);
+  });
+  const d = ciaData[type];
+  document.getElementById('cia-detail').innerHTML =
+    `<strong style="color:${d.color}">${d.title}</strong><br/>${d.text}<br/><br/>
+     <span style="color:var(--text)">📌 ${d.example}</span><br/>
+     <span style="color:#ff8fa3">⚔️ ${d.breach}</span>`;
+}
+
+// ── KILL CHAIN ──
+function litStep(el, text){
+  document.querySelectorAll('.attack-step').forEach(s=>s.classList.remove('lit'));
+  el.classList.add('lit');
+  document.getElementById('kc-detail').innerHTML = '<strong style="color:var(--red)">'+el.querySelector('br').nextSibling.textContent+'</strong> — '+text;
+}
+
+// ── MITRE ──
+function showMitre(el, title, desc){
+  document.querySelectorAll('.mitre-cell').forEach(c=>c.style.borderColor='');
+  el.style.borderColor='var(--teal)';
+  document.getElementById('mitre-detail').innerHTML = '<strong style="color:var(--teal-glow)">'+title+'</strong> — '+desc;
+}
+
+// ── QUIZ HELPERS ──
+function runQuiz(btn, result, correctId, wrongId){
+  const container = btn.closest('.quiz-opts');
+  container.querySelectorAll('.quiz-opt').forEach(b=>{ b.disabled=true; b.style.opacity='.5'; });
+  btn.style.opacity='1';
+  btn.classList.add(result);
+  document.getElementById(result==='correct'?correctId:wrongId).classList.add('show');
+}
+function checkQ1(b,r){ runQuiz(b,r,'qf1-ok','qf1-bad'); }
+function checkQ2(b,r){ runQuiz(b,r,'qf2-ok','qf2-bad'); }
+function checkQ3(b,r){ runQuiz(b,r,'qf3-ok','qf3-bad'); }
+function checkQ4(b,r){ runQuiz(b,r,'qf4-ok','qf4-bad'); }
+</script>
+</body>
+</html>

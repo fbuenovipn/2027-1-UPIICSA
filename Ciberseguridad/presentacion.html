@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Cloud &amp; Network Security</title>
+<style>
+:root{
+  --teal:#00c9a7;--teal2:#00e5c0;--teal-dark:#003d35;
+  --red:#ff4d6d;--yellow:#ffd166;--blue:#4cc9f0;--purple:#b5179e;--orange:#f4a261;
+  --bg:#050f0e;--bg2:#0a1f1c;--bg3:#0d2a26;
+  --text:#e6f4f2;--muted:#7ab8b2;--border:rgba(0,201,167,.18);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;display:flex;flex-direction:column}
+/* NAV */
+#topbar{display:flex;align-items:center;justify-content:space-between;padding:.55rem 1.6rem;background:rgba(5,15,14,.96);border-bottom:1px solid var(--border);backdrop-filter:blur(8px);flex-shrink:0;gap:1rem}
+.tb-title{font-size:.78rem;font-weight:700;color:var(--teal);letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
+#pbar{flex:1;height:3px;background:rgba(0,201,167,.12);border-radius:2px}
+#pfill{height:100%;background:linear-gradient(90deg,var(--teal),var(--teal2));border-radius:2px;transition:width .4s}
+.tb-cnt{font-size:.75rem;color:var(--muted);white-space:nowrap}
+/* STAGE */
+#stage{flex:1;position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:2rem 2.5rem;opacity:0;transform:translateX(60px);transition:opacity .4s,transform .4s;pointer-events:none}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.exit{opacity:0;transform:translateX(-60px)}
+/* CONTROLS */
+#controls{display:flex;align-items:center;justify-content:center;gap:1rem;padding:.75rem;background:rgba(5,15,14,.92);border-top:1px solid var(--border);flex-shrink:0}
+.btn{background:rgba(0,201,167,.08);border:1px solid var(--border);color:var(--text);padding:.45rem 1.2rem;border-radius:8px;cursor:pointer;font-size:.82rem;font-weight:500;transition:all .2s}
+.btn:hover{background:rgba(0,201,167,.2);border-color:var(--teal);color:var(--teal2)}
+.btn:disabled{opacity:.3;cursor:not-allowed}
+#dots{display:flex;gap:.35rem;flex-wrap:wrap;max-width:560px;justify-content:center}
+.dot{width:6px;height:6px;border-radius:50%;background:rgba(0,201,167,.2);cursor:pointer;transition:all .2s;flex-shrink:0}
+.dot.active{background:var(--teal);transform:scale(1.5)}
+.dot.visited{background:rgba(0,201,167,.45)}
+/* LAYOUT */
+.inner{max-width:920px;width:100%}
+.center{text-align:center}
+/* TAGS */
+.tag{display:inline-block;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;padding:.22rem .75rem;border-radius:999px;border:1px solid;margin-bottom:.9rem}
+.t-teal{border-color:var(--teal);color:var(--teal2);background:rgba(0,201,167,.08)}
+.t-red{border-color:var(--red);color:var(--red);background:rgba(255,77,109,.07)}
+.t-yellow{border-color:var(--yellow);color:var(--yellow);background:rgba(255,209,102,.07)}
+.t-blue{border-color:var(--blue);color:var(--blue);background:rgba(76,201,240,.07)}
+.t-purple{border-color:var(--purple);color:var(--purple);background:rgba(181,23,158,.07)}
+.t-orange{border-color:var(--orange);color:var(--orange);background:rgba(244,162,97,.07)}
+/* TYPOGRAPHY */
+h1.big{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.1;letter-spacing:-.02em;margin-bottom:1rem}
+h1.big span{background:linear-gradient(90deg,var(--teal),var(--teal2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+h2.sec{font-size:clamp(1.4rem,3vw,2rem);font-weight:700;margin-bottom:.5rem}
+h3.sub3{font-size:1.05rem;font-weight:600;color:var(--teal2);margin-bottom:.35rem}
+.muted{color:var(--muted);font-size:.92rem;line-height:1.7;max-width:680px}
+.muted.ctr{margin:0 auto}
+/* CARDS */
+.grid{display:grid;gap:.9rem;margin-top:1.2rem}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:1fr 1fr 1fr}
+.g4{grid-template-columns:1fr 1fr 1fr 1fr}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.1rem 1.3rem;transition:border-color .2s,box-shadow .2s}
+.card:hover{border-color:rgba(0,201,167,.4);box-shadow:0 6px 28px rgba(0,201,167,.08)}
+.card .ico{font-size:1.5rem;margin-bottom:.4rem}
+.card p{font-size:.84rem;color:var(--muted);line-height:1.55;margin-top:.3rem}
+.card strong{color:var(--text)}
+.card-t{border-top:3px solid var(--teal)}
+.card-r{border-top:3px solid var(--red)}
+.card-b{border-top:3px solid var(--blue)}
+.card-y{border-top:3px solid var(--yellow)}
+.card-p{border-top:3px solid var(--purple)}
+.card-o{border-top:3px solid var(--orange)}
+/* METAPHOR BOX */
+.metaphor{background:linear-gradient(135deg,rgba(0,201,167,.07),rgba(76,201,240,.05));border:1px solid rgba(0,201,167,.25);border-left:3px solid var(--teal);border-radius:10px;padding:1rem 1.3rem;font-size:.88rem;color:var(--muted);line-height:1.65;margin-top:1rem}
+.metaphor strong{color:var(--teal2)}
+/* DIAGRAM */
+.diagram{display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap;margin-top:1.2rem}
+.dbox{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:.7rem 1rem;font-size:.8rem;text-align:center;min-width:90px}
+.darr{color:var(--teal);font-size:1.2rem}
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:.83rem;margin-top:1rem}
+.tbl th{background:#0d2a26;color:var(--teal2);padding:.7rem 1rem;text-align:left;border-bottom:1px solid var(--border)}
+.tbl td{padding:.65rem 1rem;border-bottom:1px solid rgba(0,201,167,.07);color:var(--muted)}
+.tbl tr:hover td{background:rgba(0,201,167,.04)}
+/* INTERACTIVE IAM */
+.iam-layers{display:flex;flex-direction:column;gap:.5rem;width:100%;max-width:640px;margin:1rem auto 0}
+.iam-layer{border-radius:10px;padding:.7rem 1.2rem;cursor:pointer;border:1px solid transparent;transition:all .25s;font-size:.85rem}
+.iam-layer:hover{transform:translateX(6px)}
+.iam-detail{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:.9rem 1.2rem;font-size:.84rem;color:var(--muted);min-height:60px;margin-top:.8rem;transition:all .3s;line-height:1.6}
+/* PILL COMPARE */
+.compare{display:flex;gap:.8rem;margin-top:1.1rem;flex-wrap:wrap}
+.pill-item{flex:1;min-width:160px;background:var(--bg2);border:2px solid var(--border);border-radius:14px;padding:1rem;text-align:center;cursor:pointer;transition:all .25s}
+.pill-item:hover{transform:translateY(-4px)}
+.pill-item.sel-t{border-color:var(--teal);background:rgba(0,201,167,.09)}
+.pill-item.sel-b{border-color:var(--blue);background:rgba(76,201,240,.09)}
+.pill-item.sel-p{border-color:var(--purple);background:rgba(181,23,158,.09)}
+.pill-item .pill-ico{font-size:1.8rem;margin-bottom:.4rem}
+.pill-detail{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:.85rem 1.1rem;font-size:.84rem;color:var(--muted);min-height:65px;margin-top:.8rem;line-height:1.6}
+/* COVER */
+.cover-bg{background:radial-gradient(ellipse at 20% 60%,#003d35 0%,var(--bg) 65%)}
+.badge-row{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;margin-top:1.4rem}
+.badge{padding:.35rem .9rem;border-radius:20px;font-size:.75rem;font-weight:700;border:1px solid}
+/* AGENDA */
+.agenda{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-top:1.2rem;width:100%}
+.ag-item{background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:.8rem 1rem;display:flex;gap:.8rem;align-items:center}
+.ag-num{font-size:1.4rem;font-weight:900;color:var(--teal);line-height:1;flex-shrink:0}
+.ag-item h3{font-size:.88rem;color:var(--text);font-weight:600;margin-bottom:.15rem}
+.ag-item p{font-size:.75rem;color:var(--muted)}
+/* PORT SCANNER VISUAL */
+.ports{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:1rem;max-width:560px}
+.port-box{width:52px;height:40px;border-radius:7px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:600;cursor:pointer;transition:all .2s}
+.port-open{border-color:var(--red);color:var(--red);background:rgba(255,77,109,.09)}
+.port-closed{border-color:var(--teal);color:var(--teal);background:rgba(0,201,167,.06)}
+.port-filtered{border-color:var(--yellow);color:var(--yellow);background:rgba(255,209,102,.07)}
+/* CRYPTO VISUAL */
+.crypto-flow{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;justify-content:center;margin-top:1.1rem}
+.cblock{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:.6rem .9rem;font-size:.78rem;text-align:center}
+.carr{color:var(--teal);font-size:1.3rem}
+/* PENTEST STEPS */
+.steps{display:flex;flex-direction:column;gap:.5rem;margin-top:1rem}
+.step{display:flex;gap:.9rem;align-items:flex-start;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:.75rem 1rem}
+.step-num{background:var(--teal);color:#000;font-weight:800;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0}
+.step p{font-size:.84rem;color:var(--muted);line-height:1.5}
+.step strong{color:var(--text)}
+/* SECTION HEADER SLIDES */
+.sec-slide{background:radial-gradient(ellipse at 60% 30%,#003d35 0%,var(--bg) 65%)}
+/* VULN LIST */
+.vuln-item{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--red);border-radius:10px;padding:.75rem 1rem;margin-bottom:.5rem}
+.vuln-item h3{font-size:.9rem;color:var(--red);margin-bottom:.2rem}
+.vuln-item p{font-size:.8rem;color:var(--muted);line-height:1.5}
+/* MINI BADGE */
+.mbadge{display:inline-block;padding:.18rem .55rem;border-radius:6px;font-size:.7rem;font-weight:700;margin-right:.3rem}
+.mb-g{background:rgba(0,201,167,.15);color:var(--teal2)}
+.mb-r{background:rgba(255,77,109,.15);color:var(--red)}
+.mb-y{background:rgba(255,209,102,.15);color:var(--yellow)}
+@media(max-width:700px){.g2,.g3,.g4{grid-template-columns:1fr}.agenda{grid-template-columns:1fr}.compare{flex-direction:column}}
+</style>
+</head>
+<body>
+<div id="topbar">
+  <span class="tb-title">Cloud &amp; Network Security</span>
+  <div id="pbar"><div id="pfill" style="width:0%"></div></div>
+  <span class="tb-cnt" id="cnt">1 / 30</span>
+</div>
+
+<div id="stage">
+
+<!-- SLIDE 0: COVER -->
+<div class="slide active cover-bg">
+<div class="inner center">
+  <div class="tag t-teal">Curso completo · 8 temas</div>
+  <h1 class="big"><span>Cloud &amp; Network</span><br>Security</h1>
+  <p class="muted ctr">Domina la seguridad de infraestructuras en la nube: desde identidad y redes hasta criptografía, vulnerabilidades y pruebas de penetración.</p>
+  <div class="badge-row">
+    <span class="badge" style="border-color:var(--teal);color:var(--teal)">IAM</span>
+    <span class="badge" style="border-color:var(--blue);color:var(--blue)">VPC · VPN · VPS</span>
+    <span class="badge" style="border-color:var(--yellow);color:var(--yellow)">Firewalls &amp; APIs</span>
+    <span class="badge" style="border-color:var(--red);color:var(--red)">Pentest</span>
+    <span class="badge" style="border-color:var(--purple);color:var(--purple)">Criptografía</span>
+    <span class="badge" style="border-color:var(--orange);color:var(--orange)">CloudWatch · S3</span>
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 1: AGENDA -->
+<div class="slide">
+<div class="inner">
+  <div class="tag t-teal">Contenido del curso</div>
+  <h2 class="sec">8 Temas esenciales</h2>
+  <div class="agenda">
+    <div class="ag-item"><span class="ag-num">01</span><div><h3>Identity &amp; Access Management</h3><p>IAM, autenticación multifactor, modelos de control</p></div></div>
+    <div class="ag-item"><span class="ag-num">02</span><div><h3>VPC vs VPN vs VPS</h3><p>Redes privadas, enrutamiento, subredes en AWS</p></div></div>
+    <div class="ag-item"><span class="ag-num">03</span><div><h3>APIs, Puertos y Firewalls</h3><p>Escaneo, almacenamiento S3, control de acceso</p></div></div>
+    <div class="ag-item"><span class="ag-num">04</span><div><h3>Monitoreo de aplicaciones</h3><p>CloudWatch, CloudTrail, Config, Trusted Advisor</p></div></div>
+    <div class="ag-item"><span class="ag-num">05</span><div><h3>Bases de datos en la nube</h3><p>Tipos, motores, seguridad y replicación</p></div></div>
+    <div class="ag-item"><span class="ag-num">06</span><div><h3>Criptografía orientada a cloud</h3><p>Cifrado simétrico, asimétrico, TLS, KMS</p></div></div>
+    <div class="ag-item"><span class="ag-num">07</span><div><h3>Vulnerabilidades en la nube</h3><p>OWASP Cloud Top 10, misconfigurations, CSPM</p></div></div>
+    <div class="ag-item"><span class="ag-num">08</span><div><h3>Pentest en la nube</h3><p>Metodología, herramientas, reporte de hallazgos</p></div></div>
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 2: TEMA 1 - IAM INTRO -->
+<div class="slide sec-slide">
+<div class="inner center">
+  <div class="tag t-teal">Tema 01</div>
+  <h1 class="big">Identity &amp; Access<br><span>Management (IAM)</span></h1>
+  <p class="muted ctr">¿Quién eres? ¿A qué tienes derecho? Dos preguntas que toda organización debe responder antes de dar acceso a cualquier recurso digital.</p>
+  <div class="metaphor" style="max-width:560px;margin:1.2rem auto 0;text-align:left">
+    <strong>Metáfora del edificio corporativo:</strong> IAM es el sistema de control de acceso de un edificio. La tarjeta de empleado te identifica (autenticación), pero solo abre las puertas de tu piso y departamento (autorización). Sin ese sistema, cualquiera entraría a cualquier sala.
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 3: IAM COMPONENTES -->
+<div class="slide">
+<div class="inner">
+  <div class="tag t-teal">Tema 01 · IAM</div>
+  <h2 class="sec">Los 4 pilares de un IAM</h2>
+  <p class="muted" style="margin-bottom:.5rem">Haz clic en cada capa para explorar su función.</p>
+  <div class="iam-layers" id="iam-layers">
+    <div class="iam-layer" style="background:rgba(76,201,240,.08);border-color:rgba(76,201,240,.3)" onclick="selectLayer(0)">
+      <strong style="color:var(--blue)">🔑 Autenticación</strong> — Verifica que eres quien dices ser
+    </div>
+    <div class="iam-layer" style="background:rgba(0,201,167,.08);border-color:rgba(0,201,167,.3)" onclick="selectLayer(1)">
+      <strong style="color:var(--teal)">🛡️ Autorización</strong> — Define qué puedes hacer una vez autenticado
+    </div>
+    <div class="iam-layer" style="background:rgba(255,209,102,.08);border-color:rgba(255,209,102,.3)" onclick="selectLayer(2)">
+      <strong style="color:var(--yellow)">👥 Administración de usuarios</strong> — Ciclo de vida de cuentas y roles
+    </div>
+    <div class="iam-layer" style="background:rgba(181,23,158,.08);border-color:rgba(181,23,158,.3)" onclick="selectLayer(3)">
+      <strong style="color:var(--purple)">🗄️ Repositorio central</strong> — Directorio único que sincroniza identidades
+    </div>
+  </div>
+  <div class="iam-detail" id="iam-detail">Selecciona un pilar para ver su descripción detallada.</div>
+</div>
+</div>
+
+<!-- SLIDE 4: IAM MFA + MODELOS -->
+<div class="slide">
+<div class="inner">
+  <div class="tag t-teal">Tema 01 · IAM</div>
+  <h2 class="sec">MFA y modelos de control de acceso</h2>
+  <div class="grid g3">
+    <div class="card card-b">
+      <div class="ico">🔐</div>
+      <h3 class="sub3">RBAC</h3>
+      <p><strong>Control basado en roles.</strong> Un desarrollador ve el código; el CEO ve los reportes financieros. El rol determina el acceso.</p>
+    </div>
+    <div class="card card-y">
+      <div class="ico">🗝️</div>
+      <h3 class="sub3">DAC</h3>
+      <p><strong>Control discrecional.</strong> El dueño del recurso decide quién puede acceder, como compartir un archivo de Google Drive.</p>
+    </div>
+    <div class="card card-p">
+      <div class="ico">🏛️</div>
+      <h3 class="sub3">MAC</h3>
+      <p><strong>Control obligatorio.</strong> Clasificaciones de seguridad (confidencial, secreto). Usado en entornos militares y gubernamentales.</p>
+    </div>
+  </div>
+  <div class="metaphor">
+    <strong>MFA — La doble cerradura:</strong> Una sola contraseña es como cerrar tu casa solo con el picaporte. MFA agrega un candado extra: incluso si alguien roba la llave (contraseña), sigue necesitando el candado (OTP, biométrico, token físico) para entrar.
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 5: TEMA 2 - VPC/VPN/VPS INTRO -->
+<div class="slide sec-slide">
+<div class="inner center">
+  <div class="tag t-blue">Tema 02</div>
+  <h1 class="big"><span>VPC vs VPN vs VPS</span></h1>
+  <p class="muted ctr">Tres siglas que suenan casi igual pero resuelven problemas muy distintos. Conocerlas evita configuraciones inseguras que exponen tu infraestructura.</p>
+</div>
+</div>
+
+<!-- SLIDE 6: VPC/VPN/VPS COMPARATIVA -->
+<div class="slide">
+<div class="inner">
+  <div class="tag t-blue">Tema 02 · Redes</div>
+  <h2 class="sec">¿Cuál es cuál?</h2>
+  <p class="muted" style="margin-bottom:.3rem">Selecciona cada opción para entender su propósito.</p>
+  <div class="compare">
+    <div class="pill-item" id="pill-vpc" onclick="selectPill('vpc')">
+      <div class="pill-ico">🏙️</div>
+      <strong>VPC</strong>
+      <p style="font-size:.75rem;color:var(--muted);margin-top:.3rem">Virtual Private Cloud</p>
+    </div>
+    <div class="pill-item" id="pill-vpn" onclick="selectPill('vpn')">
+      <div class="pill-ico">🔒</div>
+      <strong>VPN</strong>
+      <p style="font-size:.75rem;color:var(--muted);margin-top:.3rem">Virtual Private Network</p>
+    </div>
+    <div class="pill-item" id="pill-vps" onclick="selectPill('vps')">
+      <div class="pill-ico">🖥️</div>
+      <strong>VPS</strong>
+      <p style="font-size:.75rem;color:var(--muted);margin-top:.3rem">Virtual Private Server</p>
+    </div>
+  </div>
+  <div class="pill-detail" id="pill-detail">Selecciona VPC, VPN o VPS para ver la explicación.</div>
+</div>
+</div>
+
+<!-- SLIDE 7: VPC EN AWS -->
+<div class="slide">
+<div class="inner">
+  <div class="tag t-blue">Tema 02 · AWS VPC</div>
+  <h2 class="sec">Anatomía de una VPC en AWS</h2>
+  <div class="diagram">
+    <div class="dbox" style="border-color:var(--blue)">🌐<br><small>Internet</small></div>
+    <span class="darr">→</span>
+    <div class="dbox" style="border-color:var(--teal)">🚪<br><small>Internet<br>Gateway</small></div>
+    <span class="darr">→</span>
+    <div class="dbox" style="border-color:var(--yellow)">📋<br><small>Route Table</small></div>
+    <span class="darr">→</span>
+    <div class="dbox" style="border-color:var(--orange)">🌐<br><small>Subred<br>Pública</small></div>
+    <br style="flex-basis:100%"/>
+    <div class="dbox" style="border-color:var(--purple);margin-top:.5rem">🔒<br><small>Subred<br>Privada</small></div>
+    <span class="darr" style="margin-top:.5rem">←→</span>
+    <div class="dbox" style="border-color:var(--orange);margin-top:.5rem">🗄️<br><small>BD / Apps</small></div>
+    <span class="darr" style="margin-top:.5rem">←→</span>
+    <div class="dbox" style="border-color:var(--teal);margin-top:.5rem">🛡️<br><small>Security<br>Group</small></div>
+  </div>
+  <div class="metaphor">
+    <strong>Metáfora del fraccionamiento privado:</strong> La VPC es un fraccionamiento con barda y caseta de seguridad. Las subredes son las calles internas. La subred pública es la calle principal visible desde fuera; la privada es donde viven los servidores sensibles, sin salida directa a internet.
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 8: TEMA 3 - APIs/PUERTOS/FIREWALLS -->
+<div class="slide sec-slide">
+<div class="inner center">
+  <div class="tag t-yellow">Tema 03</div>
+  <h1 class="big">APIs, Puertos<br><span>&amp; Firewalls</span></h1>
+  <p class="muted ctr">Las puertas de entrada de tus aplicaciones. Asegurarlas es la diferencia entre un sistema robusto y una brecha de seguridad esperando a ser explotada.</p>
+</div>
+</div>
+
+<!-- SLIDE 9: PUERTOS Y ESCANEO -->
+<div class="slide">
+<div class="inner">
+  <div class="tag t-yellow">Tema 03 · Puertos</div>
+  <h2 class="sec">Escaneo de puertos</h2>
+  <p class="muted">Los puertos son como las ventanas de una casa. Un escáner (Nmap) revisa cuáles están abiertas, cerradas o con cortina.</p>
+  <div class="ports" id="ports-viz"></div>
+  <div class="grid g3" style="margin-top:1rem">
+    <div class="card card-r"><h3 class="sub3" style="color:var(--red)">🔴 Abierto</h3><p>Servicio escuchando. Potencial punto de entrada si no está protegido.</p></div>
+    <div class="card card-t"><h3 class="sub3">🟢 Cerrado</h3><p>No hay servicio activo. El puerto responde pero rechaza conexiones.</p></div>
+    <div class="card card-y"><h3 class="sub3" style="color:var(--yellow)">🟡 Filtrado</h3><p>El firewall bloquea la respuesta. Estado incierto para el atacante.</p></div>
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 10: S3 + FIREWALL -->
+<div class="slide">
+<div class="inner">
+  <div class="tag t-yellow">Tema 03 · S3 &amp; Firewalls</div>
+  <h2 class="sec">Amazon S3 y control de acceso</h2>
+  <div class="grid g2">
+    <div class="card card-t">
+      <div class="ico">🗳️</div>
+      <h3 class="sub3">Amazon S3</h3>
+      <p><strong>Almacenamiento por objetos.</strong> Los datos se guardan en <em>buckets</em>. Cada objeto puede tener hasta 5 TB. Disponibilidad del <strong>99.99%</strong>.</p>
+      <p style="margin-top:.5rem">Cifrado en tránsito (TLS) y en reposo (SSE). Control con IAM + políticas de bucket + Amazon Macie.</p>
+    </div>
+    <div class="card card-r">
+      <div class="ico">🧱</div>
+      <h3 class="sub3">Firewall</h3>
+      <p><strong>Portero digital.</strong> Inspecciona el tráfico por reglas: IP origen/destino, puerto, protocolo.</p>
+      <p style="margin-top:.5rem"><span class="mbadge mb-g">WAF</span>Capa aplicación · <span class="mbadge mb-r">NGFW</span>Inspección profunda · <span class="mbadge mb-y">SG</span>AWS Security Groups</p>
+    </div>
+  </div>
+  <div class="metaphor">
+    <strong>S3 como bodega inteligente:</strong> Imagina un almacén donde cada cajón tiene etiqueta, cerradura propia y un sistema de CCTV. S3 Block Public Access es el vigilante que impide que cualquiera abra cajones al azar desde fuera del edificio.
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 11: TEMA 4 - MONITOREO -->
+<div class="slide sec-slide">
+<div class="inner center">
+  <div class="tag t-orange">Tema 04</div>
+  <h1 class="big">Monitoreo de<br><span>Aplicaciones</span></h1>
+  <p class="muted ctr">No puedes proteger lo que no puedes ver. El monitoreo transforma miles de eventos en inteligencia accionable.</p>
+  <div class="metaphor" style="max-width:540px;margin:1.2rem auto 0;text-align:left">
+    <strong>Metáfora del cuarto de control:</strong> CloudWatch es el panel de instrumentos de un avión: altímetro, velocímetro, alertas. CloudTrail es la caja negra que registra todo lo que ocurrió.
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 12: HERRAMIENTAS AWS MONITOREO -->
+<div class="slide">
+<div class="inner">
+  <div class="tag t-orange">Tema 04 · Monitoreo</div>
+  <h2 class="sec">Las 4 herramientas clave de AWS</h2>
+  <div class="grid g2">
+    <div class="card card-o">
+      <div class="ico">📊</div>
+      <h3 class="sub3">CloudWatch</h3>
+      <p>Métricas en tiempo real de CPU, red, latencia. Alarmas automáticas + integración con 70+ servicios AWS. Retención hasta 15 meses.</p>
+    </div>
+    <div class="card card-b">
+      <div class="ico">📝</div>
+      <h3 class="sub3">CloudTrail</h3>
+      <p>Auditoría de <em>quién hizo qué y cuándo</em> en toda la cuenta AWS. Historial de 90 días gratuito. Todos los logs están cifrados en S3.</p>
+    </div>
+    <div class="card card-t">
+      <div class="ico">⚙️</div>
+      <h3 class="sub3">AWS Config</h3>
+      <p>Monitorea configuraciones de recursos. Detecta cambios no autorizados y evalúa cumplimiento de políticas automáticamente.</p>
+    </div>
+    <div class="card card-y">
+      <div class="ico">🤖</div>
+      <h3 class="sub3">Trusted Advisor</h3>
+      <p>Asesor automático de seguridad, costos, rendimiento y tolerancia a fallos. Código de colores: 🔴 acción · 🟡 investigar · 🟢 OK.</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 13: VPC FLOW LOGS -->
+<div class="slide">
+<div class="inner">
+  <div class="tag t-orange">Tema 04 · VPC Flow Logs</div>
+  <h2 class="sec">VPC Flow Logs: el CCTV de la red</h2>
+  <p class="muted">Registra todo el tráfico IP que entra y sale de las interfaces de red de tu VPC. Indispensable para detectar intrusiones y diagnosticar problemas.</p>
+  <div class="diagram" style="margin-top:1rem">
+    <div class="dbox">📦<br><small>Tráfico<br>entrante</small></div>
+    <span class="darr">→</span>
+    <div class="dbox" style="border-color:var(--orange)">🔍<br><small>VPC<br>Flow Log</small></div>
+    <span class="darr">→</span>
+    <div class="dbox">🗳️<br><small>S3 /<br>CloudWatch</small></div>
+    <span class="darr">→</span>
+    <div class="dbox" style="border-color:var(--teal)">📊<br><small>Análisis /<br>Alerta</small></div>
+  </div>
+  <div class="grid g2" style="margin-top:1rem">
+    <div class="card"><h3 class="sub3">¿Qué SÍ registra?</h3><p>IP origen/destino, puerto, protocolo, bytes transferidos, acción (ACCEPT/REJECT), timestamp.</p></div>
+    <div class="card card-r"><h3 class="sub3" style="color:var(--red)">¿Qué NO registra?</h3><p>Tráfico DNS interno de Amazon, activación de licencias Windows, tráfico DHCP, IPs reservadas del router VPC.</p></div>
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 14: TEMA 5 - BASES DE DATOS -->
+<div class="slide sec-slide">
+<div class="inner center">
+  <div class="tag t-purple">Tema 05</div>
+  <h1 class="big">Bases de datos<br><span>en la nube</span></h1>
+  <p class="muted ctr">El activo más valioso de cualquier empresa es su información. Cómo se almacena, replica y protege define el nivel de resiliencia del sistema.</p>
+</div>
+</div>
+
+<!-- SLIDE 15: TIPOS DE BD -->
+<div class="slide">
+<div class="inner">
+  <div class="tag t-purple">Tema 05 · Bases de datos</div>
+  <h2 class="sec">Relacional vs No relacional</h2>
+  <div class="grid g2">
+    <div class="card card-b">
+      <div class="ico">📋</div>
+      <h3 class="sub3">Relacional (SQL)</h3>
+      <p><strong>Tablas, filas y columnas.</strong> Ideal para datos estructurados con relaciones. Ejemplos: MySQL, PostgreSQL, Amazon RDS.</p>
+      <p style="margin-top:.4rem">Consistencia ACID. Perfecto para finanzas, ERP, e-commerce con transacciones complejas.</p>
+    </div>
+    <div class="card card-p">
+      <div class="ico">📦</div>
+      <h3 class="sub3">No relacional (NoSQL)</h3>
+      <p><strong>Documentos, grafos, clave-valor.</strong> Escala horizontal masiva. Ejemplos: MongoDB, DynamoDB, Redis.</p>
+      <p style="margin-top:.4rem">Flexibilidad de esquema. Ideal para IoT, redes sociales, catálogos de productos.</p>
+    </div>
+  </div>
+  <div class="grid g3" style="margin-top:.8rem">
+    <div class="card" style="padding:.8rem"><h3 class="sub3" style="font-size:.85rem">Amazon RDS</h3><p style="font-size:.78rem">BD relacional gestionada. Backups automáticos, réplicas de lectura, Multi-AZ para alta disponibilidad.</p></div>
+    <div class="card" style="padding:.8rem"><h3 class="sub3" style="font-size:.85rem">DynamoDB</h3><p style="font-size:.78rem">NoSQL serverless de AWS. Latencia de un dígito en ms. Escala a millones de solicitudes por segundo.</p></div>
+    <div class="card" style="padding:.8rem"><h3 class="sub3" style="font-size:.85rem">Seguridad BD</h3><p style="font-size:.78rem">Cifrado en reposo (AES-256), en tránsito (TLS), auditoría con CloudTrail, acceso con roles IAM.</p></div>
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 16: REPLICACIÓN -->
+<div class="slide">
+<div class="inner">
+  <div class="tag t-purple">Tema 05 · Replicación</div>
+  <h2 class="sec">Replicación de datos y alta disponibilidad</h2>
+  <div class="metaphor">
+    <strong>Metáfora del libro de contabilidad:</strong> Imagina que llevas un libro de contabilidad y haces copia en una sucursal en otra ciudad cada noche. Si hay un incendio en tu oficina, la sucursal tiene la copia actualizada y el negocio continúa. Eso es la replicación Multi-AZ de AWS.
+  </div>
+  <div class="grid g2" style="margin-top:1rem">
+    <div class="card card-t">
+      <div class="ico">🔄</div>
+      <h3 class="sub3">Replicación Multi-AZ</h3>
+      <p>Copia síncrona en una segunda zona de disponibilidad. Failover automático en &lt;60s sin pérdida de datos.</p>
+    </div>
+    <div class="card card-b">
+      <div class="ico">🌍</div>
+      <h3 class="sub3">Replicación Cross-Region</h3>
+      <p>Copia asíncrona entre regiones geográficas distintas. Protege contra fallas catastróficas regionales.</p>
+    </div>
+    <div class="card card-y">
+      <div class="ico">📸</div>
+      <h3 class="sub3">Snapshots automáticos</h3>
+      <p>S3 guarda snapshots diarios. Restauración a cualquier punto en el tiempo dentro del período de retención.</p>
+    </div>
+    <div class="card card-p">
+      <div class="ico">🔐</div>
+      <h3 class="sub3">Cifrado S3 SSE</h3>
+      <p>Cada objeto se cifra con clave única. La clave maestra se gestiona en AWS KMS. Política de bucket fuerza el cifrado.</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 17: TEMA 6 - CRIPTOGRAFÍA -->
+<div class="slide sec-slide">
+<div class="inner center">
+  <div class="tag t-red">Tema 06</div>
+  <h1 class="big">Criptografía<br><span>orientada a cloud</span></h1>
+  <p class="muted ctr">Cifrar los datos no es opcional: es el seguro de vida de la información. Sin criptografía, cualquier dato interceptado es legible al instante.</p>
+</div>
+</div>
+
+<!-- SLIDE 18: TIPOS DE CIFRADO -->
+<div class="slide">
+<div class="inner">
+  <div class="tag t-red">Tema 06 · Criptografía</div>
+  <h2 class="sec">Simétrico vs Asimétrico</h2>
+  <div class="grid g2">
+    <div class="card card-y">
+      <div class="ico">🗝️</div>
+      <h3 class="sub3">Cifrado Simétrico</h3>
+      <p><strong>Una sola llave para cifrar y descifrar.</strong> Muy rápido. Problema: ¿cómo compartir la llave de forma segura?</p>
+      <p style="margin-top:.4rem">Algoritmos: <span class="mbadge mb-g">AES-256</span> <span class="mbadge mb-y">ChaCha20</span></p>
+      <p style="margin-top:.3rem;font-size:.78rem">Uso: cifrado de archivos en S3, discos EBS, datos en reposo.</p>
+    </div>
+    <div class="card card-b">
+      <div class="ico">🔐🔓</div>
+      <h3 class="sub3">Cifrado Asimétrico</h3>
+      <p><strong>Dos llaves: pública (cifra) y privada (descifra).</strong> La pública se comparte libremente; la privada nunca sale de tu control.</p>
+      <p style="margin-top:.4rem">Algoritmos: <span class="mbadge mb-r">RSA-2048</span> <span class="mbadge mb-y">ECDSA</span></p>
+      <p style="margin-top:.3rem;font-size:.78rem">Uso: certificados TLS/HTTPS, SSH, firmas digitales.</p>
+    </div>
+  </div>
+  <div class="crypto-flow">
+    <div class="cblock">📄<br><small>Texto plano</small></div>
+    <span class="carr">→</span>
+    <div class="cblock" style="border-color:var(--yellow)">🔑<br><small>Cifrado<br>AES/RSA</small></div>
+    <span class="carr">→</span>
+    <div class="cblock" style="border-color:var(--red)">🔒<br><small>Texto<br>cifrado</small></div>
+    <span class="carr">→</span>
+    <div class="cblock" style="border-color:var(--teal)">🌐<br><small>Tránsito<br>TLS</small></div>
+    <span class="carr">→</span>
+    <div class="cblock" style="border-color:var(--blue)">🔓<br><small>Descifrado</small></div>
+    <span class="carr">→</span>
+    <div class="cblock">📄<br><small>Texto<br>original</small></div>
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 19: KMS + TLS -->
+<div class="slide">
+<div class="inner">
+  <div class="tag t-red">Tema 06 · KMS &amp; TLS</div>
+  <h2 class="sec">AWS KMS y TLS en la nube</h2>
+  <div class="grid g2">
+    <div class="card card-r">
+      <div class="ico">🏦</div>
+      <h3 class="sub3">AWS KMS (Key Management Service)</h3>
+      <p>Almacén centralizado de claves criptográficas. Las claves nunca salen de KMS en texto plano. Auditoría de uso vía CloudTrail.</p>
+      <p style="margin-top:.4rem;font-size:.8rem">Soporta: <span class="mbadge mb-g">CMK</span> claves propias · <span class="mbadge mb-r">AWS managed</span> · <span class="mbadge mb-y">HSM</span></p>
+    </div>
+    <div class="card card-b">
+      <div class="ico">🔒</div>
+      <h3 class="sub3">TLS (Transport Layer Security)</h3>
+      <p>Protocolo que cifra los datos <em>en tránsito</em>. HTTPS = HTTP + TLS. Versión actual: TLS 1.3.</p>
+      <p style="margin-top:.4rem;font-size:.8rem">Handshake: negocia algoritmo, intercambia certificados, genera clave de sesión efímera.</p>
+    </div>
+  </div>
+  <div class="metaphor">
+    <strong>Metáfora del sobre sellado con lacre:</strong> TLS es como enviar una carta en un sobre con sello de cera: cualquiera puede ver el sobre (IP destino), pero nadie puede leer el contenido sin romper el sello. AWS KMS es la caja fuerte donde guardas los sellos.
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 20: TEMA 7 - VULNERABILIDADES -->
+<div class="slide sec-slide">
+<div class="inner center">
+  <div class="tag t-red">Tema 07</div>
+  <h1 class="big">Vulnerabilidades en<br><span>aplicaciones en la nube</span></h1>
+  <p class="muted ctr">Cada mal-configuración es una puerta entreabierta. El 95% de las brechas en la nube son errores de configuración, no exploits sofisticados.</p>
+</div>
+</div>
+
+<!-- SLIDE 21: TOP VULNERABILIDADES CLOUD -->
+<div class="slide">
+<div class="inner">
+  <div class="tag t-red">Tema 07 · Vulnerabilidades</div>
+  <h2 class="sec">Cloud Top 6: errores más comunes</h2>
+  <div class="vuln-item">
+    <h3>🔴 Buckets S3 públicos sin querer</h3>
+    <p>Empresas han expuesto millones de registros por no activar "Block Public Access". Capital One (2019): 100M de registros expuestos.</p>
+  </div>
+  <div class="vuln-item">
+    <h3>🔴 Credenciales IAM hardcodeadas en código</h3>
+    <p>Subir AWS Access Keys a GitHub = regalo para atacantes en minutos. Usar roles IAM temporales, nunca claves estáticas en código.</p>
+  </div>
+  <div class="vuln-item">
+    <h3>🔴 Security Groups demasiado permisivos</h3>
+    <p>Puerto SSH (22) abierto al mundo (0.0.0.0/0). Regla de oro: mínimo privilegio. Abrir solo lo necesario, solo a quien lo necesita.</p>
+  </div>
+  <div class="vuln-item">
+    <h3>🔴 Falta de MFA en cuenta root</h3>
+    <p>La cuenta root es la llave maestra. Sin MFA, una contraseña robada da control total sobre toda la infraestructura.</p>
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 22: HERRAMIENTAS CSPM -->
+<div class="slide">
+<div class="inner">
+  <div class="tag t-red">Tema 07 · CSPM</div>
+  <h2 class="sec">Defensa: CSPM y controles preventivos</h2>
+  <div class="grid g3">
+    <div class="card card-t">
+      <div class="ico">🛡️</div>
+      <h3 class="sub3">AWS Security Hub</h3>
+      <p>Agrega hallazgos de GuardDuty, Inspector, Macie. Panel unificado con puntuación de seguridad.</p>
+    </div>
+    <div class="card card-r">
+      <div class="ico">🕵️</div>
+      <h3 class="sub3">Amazon GuardDuty</h3>
+      <p>Detección de amenazas con ML. Analiza CloudTrail, DNS y VPC Flow Logs para detectar comportamientos anómalos.</p>
+    </div>
+    <div class="card card-b">
+      <div class="ico">🔍</div>
+      <h3 class="sub3">Amazon Inspector</h3>
+      <p>Escanea EC2 y contenedores en busca de vulnerabilidades conocidas (CVEs) y malas configuraciones de red.</p>
+    </div>
+  </div>
+  <div class="metaphor" style="margin-top:.8rem">
+    <strong>Principio de mínimo privilegio:</strong> Es como las tarjetas de acceso de un hospital. El personal de limpieza no necesita entrar al quirófano, aunque trabaje en el mismo edificio. Cada usuario solo debe tener exactamente los permisos que necesita para hacer su trabajo, nada más.
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 23: TEMA 8 - PENTEST -->
+<div class="slide sec-slide">
+<div class="inner center">
+  <div class="tag t-teal">Tema 08</div>
+  <h1 class="big">Pentest<br><span>en la nube</span></h1>
+  <p class="muted ctr">La mejor forma de descubrir vulnerabilidades antes que un atacante es contratar a alguien para que piense como atacante. Eso es el penetration testing.</p>
+</div>
+</div>
+
+<!-- SLIDE 24: FASES DEL PENTEST -->
+<div class="slide">
+<div class="inner">
+  <div class="tag t-teal">Tema 08 · Pentest</div>
+  <h2 class="sec">Las 5 fases del pentest en la nube</h2>
+  <div class="steps">
+    <div class="step"><span class="step-num">1</span><div><p><strong>Reconocimiento (OSINT)</strong> — Recolectar información pública: subdominios, buckets S3 expuestos, IPs, tecnologías. Herramientas: Shodan, theHarvester, Amass.</p></div></div>
+    <div class="step"><span class="step-num">2</span><div><p><strong>Enumeración y escaneo</strong> — Identificar puertos abiertos, servicios activos, versiones. Nmap, Masscan, Nuclei para detección de vulnerabilidades conocidas.</p></div></div>
+    <div class="step"><span class="step-num">3</span><div><p><strong>Explotación</strong> — Intentar comprometer el sistema de forma controlada. Metasploit, Burp Suite para aplicaciones web, Pacu para entornos AWS.</p></div></div>
+    <div class="step"><span class="step-num">4</span><div><p><strong>Post-explotación y escalada de privilegios</strong> — Desde el acceso inicial, intentar escalar a administrador. Enumerar roles IAM, secrets en variables de entorno, metadata service.</p></div></div>
+    <div class="step"><span class="step-num">5</span><div><p><strong>Reporte y remediación</strong> — Documentar cada hallazgo con: descripción, impacto, evidencia, CVSS score y recomendación de remediación. Entregable fundamental.</p></div></div>
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 25: PENTEST AWS REGLAS -->
+<div class="slide">
+<div class="inner">
+  <div class="tag t-teal">Tema 08 · AWS Pentest</div>
+  <h2 class="sec">Pentest en AWS: reglas del juego</h2>
+  <div class="grid g2">
+    <div class="card card-t">
+      <div class="ico">✅</div>
+      <h3 class="sub3">Permitido sin notificar a AWS</h3>
+      <p>EC2, RDS, Aurora, CloudFront, API Gateway, Lambda, Elastic Beanstalk, Lightsail, ECS, Fargate. (Sobre tus propios recursos.)</p>
+    </div>
+    <div class="card card-r">
+      <div class="ico">❌</div>
+      <h3 class="sub3">Prohibido siempre</h3>
+      <p>DoS/DDoS, flooding de puertos, ataques a infraestructura compartida de AWS, simulación de instancias de otros clientes.</p>
+    </div>
+  </div>
+  <div class="grid g2" style="margin-top:.7rem">
+    <div class="card card-b">
+      <div class="ico">🛠️</div>
+      <h3 class="sub3">Herramientas cloud-native</h3>
+      <p>Pacu (AWS exploitation), ScoutSuite (auditoría multi-cloud), Prowler (compliance), CloudMapper (visualización VPC).</p>
+    </div>
+    <div class="card card-y">
+      <div class="ico">📋</div>
+      <h3 class="sub3">Tipos de pentest</h3>
+      <p><span class="mbadge mb-g">White-box</span> acceso total · <span class="mbadge mb-r">Black-box</span> sin info · <span class="mbadge mb-y">Grey-box</span> acceso parcial (más realista)</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 26: MODELO RESPONSABILIDAD COMPARTIDA -->
+<div class="slide">
+<div class="inner">
+  <div class="tag t-blue">Modelo clave</div>
+  <h2 class="sec">Responsabilidad compartida en AWS</h2>
+  <p class="muted">El error más peligroso: asumir que AWS protege todo. La realidad es una división clara de responsabilidades.</p>
+  <table class="tbl">
+    <tr><th>Responsabilidad</th><th>AWS</th><th>Cliente (tú)</th></tr>
+    <tr><td>Hardware físico / centros de datos</td><td>✅</td><td>—</td></tr>
+    <tr><td>Hipervisor y red física</td><td>✅</td><td>—</td></tr>
+    <tr><td>SO del servidor gestionado (RDS)</td><td>✅</td><td>—</td></tr>
+    <tr><td>SO de EC2 (IaaS)</td><td>—</td><td>✅</td></tr>
+    <tr><td>Configuración de Security Groups</td><td>—</td><td>✅</td></tr>
+    <tr><td>Gestión de usuarios IAM y permisos</td><td>—</td><td>✅</td></tr>
+    <tr><td>Cifrado de datos en aplicación</td><td>—</td><td>✅</td></tr>
+    <tr><td>Políticas de buckets S3</td><td>—</td><td>✅</td></tr>
+  </table>
+</div>
+</div>
+
+<!-- SLIDE 27: CIERRE / TAKEAWAYS -->
+<div class="slide cover-bg">
+<div class="inner center">
+  <div class="tag t-teal">Resumen del curso</div>
+  <h2 class="sec" style="font-size:clamp(1.5rem,3.5vw,2.2rem)">Los 8 pilares de Cloud Security</h2>
+  <div class="grid g4" style="margin-top:1rem">
+    <div class="card" style="padding:.8rem;text-align:center"><div style="font-size:1.3rem">🔑</div><p style="font-size:.78rem;margin-top:.3rem"><strong>IAM</strong><br>Identidad y acceso</p></div>
+    <div class="card" style="padding:.8rem;text-align:center"><div style="font-size:1.3rem">🏙️</div><p style="font-size:.78rem;margin-top:.3rem"><strong>VPC</strong><br>Red privada</p></div>
+    <div class="card" style="padding:.8rem;text-align:center"><div style="font-size:1.3rem">🧱</div><p style="font-size:.78rem;margin-top:.3rem"><strong>Firewall</strong><br>Puertos y APIs</p></div>
+    <div class="card" style="padding:.8rem;text-align:center"><div style="font-size:1.3rem">📊</div><p style="font-size:.78rem;margin-top:.3rem"><strong>Monitoreo</strong><br>Observabilidad</p></div>
+    <div class="card" style="padding:.8rem;text-align:center"><div style="font-size:1.3rem">🗄️</div><p style="font-size:.78rem;margin-top:.3rem"><strong>Bases datos</strong><br>Replicación</p></div>
+    <div class="card" style="padding:.8rem;text-align:center"><div style="font-size:1.3rem">🔒</div><p style="font-size:.78rem;margin-top:.3rem"><strong>Criptografía</strong><br>AES, TLS, KMS</p></div>
+    <div class="card" style="padding:.8rem;text-align:center"><div style="font-size:1.3rem">🛡️</div><p style="font-size:.78rem;margin-top:.3rem"><strong>Vulns</strong><br>CSPM, mínimo privilegio</p></div>
+    <div class="card" style="padding:.8rem;text-align:center"><div style="font-size:1.3rem">⚔️</div><p style="font-size:.78rem;margin-top:.3rem"><strong>Pentest</strong><br>5 fases</p></div>
+  </div>
+  <p class="muted ctr" style="margin-top:1.2rem">La seguridad en la nube no es un producto que se compra, es una <strong style="color:var(--teal2)">práctica continua</strong> que se construye capa por capa.</p>
+</div>
+</div>
+
+</div><!-- /stage -->
+
+<div id="controls">
+  <button class="btn" id="prev" onclick="move(-1)">← Anterior</button>
+  <div id="dots"></div>
+  <button class="btn" id="next" onclick="move(1)">Siguiente →</button>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let cur = 0;
+
+function goTo(n){
+  slides[cur].classList.remove('active');
+  slides[cur].classList.add('exit');
+  setTimeout(()=>slides[cur].classList.remove('exit'),420);
+  cur = Math.max(0, Math.min(n, total-1));
+  slides[cur].classList.add('active');
+  document.querySelectorAll('.dot').forEach((d,i)=>{
+    d.classList.toggle('active', i===cur);
+    if(i<cur) d.classList.add('visited');
+  });
+  document.getElementById('pfill').style.width = ((cur/(total-1))*100)+'%';
+  document.getElementById('cnt').textContent = (cur+1)+' / '+total;
+  document.getElementById('prev').disabled = cur===0;
+  document.getElementById('next').disabled = cur===total-1;
+}
+function move(d){ goTo(cur+d); }
+
+// Build dots
+const dotsEl = document.getElementById('dots');
+slides.forEach((_,i)=>{
+  const d = document.createElement('div');
+  d.className = 'dot'+(i===0?' active':'');
+  d.onclick = ()=>goTo(i);
+  dotsEl.appendChild(d);
+});
+document.getElementById('prev').disabled = true;
+
+// Keyboard nav
+document.addEventListener('keydown', e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown') move(1);
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp') move(-1);
+});
+
+// IAM layers interactive
+const layerDetails = [
+  '<strong style="color:var(--blue)">Autenticación</strong> — Verifica la identidad. Métodos: contraseña única, llave precompartida (WiFi corporativo), autenticación por comportamiento (IA detecta anomalías), biométricos (huella, iris, cara). El más seguro combina 2+ factores (MFA).',
+  '<strong style="color:var(--teal)">Autorización</strong> — Una vez dentro, ¿qué puedes hacer? Los roles, políticas y atributos determinan si puedes leer, escribir o eliminar cada recurso. Se verifica en cada petición, no solo al iniciar sesión.',
+  '<strong style="color:var(--yellow)">Administración de usuarios</strong> — Ciclo de vida completo: crear cuenta al ingreso, modificar al cambiar de rol, desactivar al salir de la empresa. El autoservicio delegado a managers reduce la carga del equipo de TI.',
+  '<strong style="color:var(--purple)">Repositorio central (LDAP/Active Directory)</strong> — Fuente única de verdad para todas las identidades. Sincroniza con la nube vía SAML o OIDC. Implementar LDAP v3 es esencial para compatibilidad y seguridad.'
+];
+function selectLayer(i){
+  document.getElementById('iam-detail').innerHTML = layerDetails[i];
+}
+
+// VPC/VPN/VPS pills
+const pillDetails = {
+  vpc: '<strong style="color:var(--teal)">VPC (Virtual Private Cloud)</strong> — Un segmento de red aislado dentro de AWS. Tú defines el rango IP (CIDR), subredes públicas/privadas, tablas de ruteo y gateways. Es tu propio data center virtual en la nube.',
+  vpn: '<strong style="color:var(--blue)">VPN (Virtual Private Network)</strong> — Túnel cifrado que conecta dos redes remotas. Ejemplo: tu laptop en casa se conecta de forma segura a la red corporativa. Protocolos: OpenVPN, WireGuard, IPsec. Cifra el tráfico de extremo a extremo.',
+  vps: '<strong style="color:var(--purple)">VPS (Virtual Private Server)</strong> — Un servidor virtual dedicado. Tienes acceso root completo, pero el hardware es compartido con otros clientes (aislados). Similar a EC2 en AWS. Ideal para hospedar aplicaciones, sitios web o APIs.'
+};
+function selectPill(type){
+  ['vpc','vpn','vps'].forEach(t=>{
+    const el = document.getElementById('pill-'+t);
+    el.className = 'pill-item';
+    if(t===type) el.classList.add(t==='vpc'?'sel-t':t==='vpn'?'sel-b':'sel-p');
+  });
+  document.getElementById('pill-detail').innerHTML = pillDetails[type];
+}
+
+// Port visualization
+const portsEl = document.getElementById('ports-viz');
+if(portsEl){
+  const commonPorts = [
+    {p:22,s:'open',l:'SSH'},{p:80,s:'open',l:'HTTP'},{p:443,s:'closed',l:'HTTPS'},
+    {p:21,s:'open',l:'FTP'},{p:3306,s:'filtered',l:'MySQL'},{p:5432,s:'closed',l:'PG'},
+    {p:8080,s:'open',l:'Alt-H'},{p:3389,s:'filtered',l:'RDP'},{p:25,s:'closed',l:'SMTP'},
+    {p:53,s:'closed',l:'DNS'},{p:110,s:'filtered',l:'POP3'},{p:6379,s:'open',l:'Redis'}
+  ];
+  commonPorts.forEach(({p,s,l})=>{
+    const b = document.createElement('div');
+    b.className = 'port-box port-'+s;
+    b.title = `Puerto ${p} — ${s}`;
+    b.innerHTML = `<span>${l}<br><small>${p}</small></span>`;
+    portsEl.appendChild(b);
+  });
+}
+</script>
+</body>
+</html>

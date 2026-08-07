@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Risk & Security Management</title>
+<style>
+:root{
+  --teal:#00c9a7;--teal2:#00e5c0;--teal-dark:#003d35;
+  --red:#ff4d6d;--yellow:#ffd166;--blue:#4cc9f0;--purple:#b5179e;--orange:#f4a261;--green:#06d6a0;
+  --bg:#050f0e;--bg2:#0a1f1c;--bg3:#0d2a26;
+  --text:#e6f4f2;--muted:#7ab8b2;--border:rgba(0,201,167,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif}
+#deck{width:100%;height:100vh;position:relative}
+.slide{
+  position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;
+  padding:2.5rem 3rem 5rem;text-align:center;
+  opacity:0;transform:translateY(18px);transition:opacity .4s ease,transform .4s ease;
+  pointer-events:none;overflow-y:auto;
+}
+.slide.active{opacity:1;transform:translateY(0);pointer-events:auto}
+.slide.exit{opacity:0;transform:translateY(-18px)}
+.slide.left-align{text-align:left;align-items:flex-start}
+
+/* COVER */
+.slide-cover{background:radial-gradient(ellipse at 60% 30%,#0d4a3a 0%,var(--bg) 70%)}
+.cover-badge{font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;color:var(--teal);margin-bottom:1.2rem;font-weight:600}
+.cover-title{font-size:clamp(2rem,5vw,3.8rem);font-weight:800;line-height:1.1;margin-bottom:.8rem;background:linear-gradient(135deg,var(--teal2),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.cover-sub{font-size:clamp(.9rem,1.8vw,1.15rem);color:var(--muted);max-width:600px;line-height:1.6}
+.cover-deco{width:120px;height:4px;background:linear-gradient(90deg,var(--teal),transparent);margin:1.5rem auto 0;border-radius:2px}
+
+/* SECTION COVER */
+.sec-cover{background:linear-gradient(135deg,var(--bg2) 0%,var(--bg3) 100%)}
+.sec-num{font-size:5rem;font-weight:900;color:rgba(0,201,167,.12);line-height:1;margin-bottom:.2rem}
+.sec-label{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--teal);margin-bottom:.6rem}
+.sec-title{font-size:clamp(1.4rem,3.5vw,2.4rem);font-weight:700;line-height:1.2;max-width:700px}
+
+/* CONTENT SLIDES */
+.slide-title{font-size:clamp(1.1rem,2.5vw,1.7rem);font-weight:700;color:var(--teal);margin-bottom:1.4rem;position:relative;padding-bottom:.6rem}
+.slide-title::after{content:'';position:absolute;bottom:0;left:0;width:48px;height:3px;background:linear-gradient(90deg,var(--teal),transparent);border-radius:2px}
+.slide.active .slide-title::after,.slide-title::after{left:50%;transform:translateX(-50%)}
+.left-align .slide-title::after{left:0;transform:none}
+
+/* GRID CARDS */
+.grid{display:grid;gap:1rem;width:100%;max-width:960px}
+.grid-2{grid-template-columns:repeat(2,1fr)}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.grid-4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:700px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:1.1rem 1.2rem;transition:border-color .2s}
+.card:hover{border-color:var(--teal)}
+.card-icon{font-size:1.6rem;margin-bottom:.5rem}
+.card-title{font-size:.85rem;font-weight:700;color:var(--teal);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.05em}
+.card-body{font-size:.82rem;color:var(--muted);line-height:1.5}
+
+/* LIST */
+.list{list-style:none;width:100%;max-width:800px;text-align:left}
+.list li{padding:.55rem .8rem .55rem 1.4rem;position:relative;font-size:.9rem;line-height:1.5;border-bottom:1px solid rgba(0,201,167,.07)}
+.list li::before{content:'›';position:absolute;left:.3rem;color:var(--teal);font-weight:700}
+.list li strong{color:var(--teal2)}
+
+/* TAGS */
+.tags{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;max-width:900px}
+.tag{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:.35rem .9rem;font-size:.8rem;color:var(--muted);transition:all .2s}
+.tag.accent{border-color:var(--teal);color:var(--teal)}
+.tag.red{border-color:var(--red);color:var(--red)}
+.tag.blue{border-color:var(--blue);color:var(--blue)}
+.tag.yellow{border-color:var(--yellow);color:var(--yellow)}
+.tag.purple{border-color:var(--purple);color:var(--purple)}
+.tag.green{border-color:var(--green);color:var(--green)}
+.tag.orange{border-color:var(--orange);color:var(--orange)}
+
+/* TABLE */
+.tbl{width:100%;max-width:900px;border-collapse:collapse;font-size:.82rem}
+.tbl th{background:var(--teal-dark);color:var(--teal2);padding:.6rem .9rem;text-align:left;font-weight:700;text-transform:uppercase;font-size:.72rem;letter-spacing:.07em}
+.tbl td{padding:.55rem .9rem;border-bottom:1px solid var(--border);color:var(--muted);vertical-align:top}
+.tbl tr:hover td{background:rgba(0,201,167,.04)}
+
+/* FLOW */
+.flow{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;justify-content:center;max-width:960px}
+.flow-step{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:.7rem 1rem;font-size:.82rem;font-weight:600;color:var(--text);text-align:center;min-width:110px}
+.flow-arrow{color:var(--teal);font-size:1.2rem;font-weight:700}
+
+/* HIGHLIGHT BOX */
+.hbox{background:var(--bg2);border-left:3px solid var(--teal);border-radius:0 12px 12px 0;padding:1rem 1.3rem;max-width:800px;width:100%;text-align:left;font-size:.88rem;line-height:1.6;color:var(--muted)}
+.hbox strong{color:var(--teal2)}
+.hbox.warn{border-color:var(--yellow)}
+.hbox.warn strong{color:var(--yellow)}
+.hbox.danger{border-color:var(--red)}
+.hbox.danger strong{color:var(--red)}
+
+/* MATRIX */
+.matrix-wrap{overflow-x:auto;max-width:600px}
+.matrix{border-collapse:collapse;font-size:.78rem}
+.matrix th,.matrix td{border:1px solid var(--border);padding:.45rem .7rem;text-align:center}
+.matrix th{background:var(--teal-dark);color:var(--teal2);font-size:.7rem}
+.m-vlow{background:rgba(6,214,160,.15);color:var(--green)}
+.m-low{background:rgba(0,201,167,.12);color:var(--teal)}
+.m-med{background:rgba(255,209,102,.12);color:var(--yellow)}
+.m-high{background:rgba(244,162,97,.15);color:var(--orange)}
+.m-vhigh{background:rgba(255,77,109,.15);color:var(--red)}
+
+/* PILL / BADGE */
+.pill{display:inline-block;padding:.2rem .7rem;border-radius:20px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.pill-teal{background:rgba(0,201,167,.15);color:var(--teal);border:1px solid rgba(0,201,167,.3)}
+.pill-red{background:rgba(255,77,109,.12);color:var(--red);border:1px solid rgba(255,77,109,.3)}
+.pill-yellow{background:rgba(255,209,102,.12);color:var(--yellow);border:1px solid rgba(255,209,102,.3)}
+.pill-blue{background:rgba(76,201,240,.12);color:var(--blue);border:1px solid rgba(76,201,240,.3)}
+.pill-purple{background:rgba(181,23,158,.12);color:var(--purple);border:1px solid rgba(181,23,158,.3)}
+.pill-orange{background:rgba(244,162,97,.12);color:var(--orange);border:1px solid rgba(244,162,97,.3)}
+.pill-green{background:rgba(6,214,160,.12);color:var(--green);border:1px solid rgba(6,214,160,.3)}
+
+/* BIG STAT */
+.stats{display:flex;gap:2rem;flex-wrap:wrap;justify-content:center;max-width:900px}
+.stat{text-align:center}
+.stat-num{font-size:2.8rem;font-weight:900;background:linear-gradient(135deg,var(--teal),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.stat-label{font-size:.78rem;color:var(--muted);margin-top:.3rem;max-width:120px}
+
+/* NAV */
+#nav{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:.7rem;z-index:100;background:rgba(5,15,14,.82);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:30px;padding:.45rem 1rem}
+#nav button{background:none;border:none;color:var(--teal);font-size:1.3rem;cursor:pointer;padding:.15rem .4rem;border-radius:6px;transition:background .2s;line-height:1}
+#nav button:hover{background:rgba(0,201,167,.12)}
+#track{width:140px;height:4px;background:rgba(255,255,255,.1);border-radius:2px;cursor:pointer;position:relative}
+#track-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--teal),var(--teal2));transition:width .35s ease;pointer-events:none}
+#slide-count{font-size:.73rem;color:var(--muted);min-width:44px;text-align:center;font-variant-numeric:tabular-nums}
+
+/* INDEX */
+.index-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.7rem;max-width:900px;width:100%}
+@media(max-width:700px){.index-grid{grid-template-columns:repeat(2,1fr)}}
+.index-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:.9rem 1rem;cursor:pointer;transition:all .2s;text-align:left}
+.index-card:hover{border-color:var(--teal);background:var(--bg3)}
+.index-card .ic-num{font-size:.65rem;color:var(--teal);text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:.3rem}
+.index-card .ic-title{font-size:.82rem;font-weight:600;color:var(--text);line-height:1.3}
+
+/* STEP ROW */
+.steps{display:flex;flex-direction:column;gap:.6rem;max-width:800px;width:100%;text-align:left}
+.step{display:flex;gap:.9rem;align-items:flex-start;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:.75rem 1rem}
+.step-num{min-width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--teal2));display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;color:#000;flex-shrink:0}
+.step-content strong{display:block;font-size:.85rem;color:var(--text);margin-bottom:.15rem}
+.step-content span{font-size:.78rem;color:var(--muted)}
+
+/* SEMAPHORE */
+.semaphore{display:flex;flex-direction:column;gap:.5rem;max-width:500px;width:100%}
+.sem-row{display:flex;align-items:center;gap:1rem;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:.6rem 1rem}
+.sem-dot{width:18px;height:18px;border-radius:50%;flex-shrink:0}
+.sem-label{font-size:.82rem;font-weight:700;color:var(--text);min-width:70px}
+.sem-desc{font-size:.78rem;color:var(--muted)}
+
+/* RESPONSIVE PADDING */
+@media(max-width:600px){
+  .slide{padding:1.5rem 1.2rem 5rem}
+  .grid-3{grid-template-columns:1fr 1fr}
+  .grid-4{grid-template-columns:1fr 1fr}
+  .stats{gap:1rem}
+}
+</style>
+</head>
+<body>
+<div id="deck">
+
+<!-- 0: COVER -->
+<section class="slide slide-cover active">
+  <div class="cover-badge">Ciberseguridad — Curso completo</div>
+  <div class="cover-title">Risk &amp; Security<br>Management</div>
+  <div class="cover-sub">Gestión de riesgos, políticas de seguridad, gobernanza, continuidad del negocio y respuesta a incidentes — 8 módulos.</div>
+  <div class="cover-deco"></div>
+</section>
+
+<!-- 1: ÍNDICE -->
+<section class="slide">
+  <div class="slide-title">Contenido del Curso</div>
+  <div class="index-grid">
+    <div class="index-card"><div class="ic-num">Tema 1</div><div class="ic-title">Políticas, Planes y Procedimientos</div></div>
+    <div class="index-card"><div class="ic-num">Tema 2</div><div class="ic-title">Identificación de Activos</div></div>
+    <div class="index-card"><div class="ic-num">Tema 3</div><div class="ic-title">Gobernanza de Seguridad</div></div>
+    <div class="index-card"><div class="ic-num">Tema 4</div><div class="ic-title">Estrategias y Métricas</div></div>
+    <div class="index-card"><div class="ic-num">Tema 5</div><div class="ic-title">Elementos y Evaluación del Riesgo</div></div>
+    <div class="index-card"><div class="ic-num">Tema 6</div><div class="ic-title">Controles y Respuesta al Riesgo</div></div>
+    <div class="index-card"><div class="ic-num">Tema 7</div><div class="ic-title">BCP y DRP</div></div>
+    <div class="index-card"><div class="ic-num">Tema 8</div><div class="ic-title">Respuesta a Incidentes</div></div>
+  </div>
+</section>
+
+<!-- ═══════════════ TEMA 1 ═══════════════ -->
+<!-- 2: T1 COVER -->
+<section class="slide sec-cover">
+  <div class="sec-num">01</div>
+  <div class="sec-label">Tema 1</div>
+  <div class="sec-title">Diseño de Políticas, Planes y Procedimientos de Seguridad</div>
+</section>
+
+<!-- 3: T1 ¿Qué es una política? -->
+<section class="slide left-align">
+  <div class="slide-title">¿Qué es una Política de Seguridad?</div>
+  <div class="hbox" style="margin-bottom:1rem"><strong>Metáfora:</strong> La política es la constitución de la organización digital. Define los derechos, deberes y límites. Sin constitución, cada quien improvisa.</div>
+  <div class="grid grid-3" style="max-width:900px">
+    <div class="card"><div class="card-icon">📜</div><div class="card-title">Propósito</div><div class="card-body">Define qué se protege y por qué. Establece el "para qué" de cada control.</div></div>
+    <div class="card"><div class="card-icon">🎯</div><div class="card-title">Alcance</div><div class="card-body">Delimita a quién aplica: empleados, contratistas, sistemas y geografías.</div></div>
+    <div class="card"><div class="card-icon">⚖️</div><div class="card-title">Clasificación</div><div class="card-body">Determina la sensibilidad de la información y los controles correspondientes.</div></div>
+    <div class="card"><div class="card-icon">👤</div><div class="card-title">Responsabilidades</div><div class="card-body">Asigna roles y obligaciones específicas de cumplimiento.</div></div>
+    <div class="card"><div class="card-icon">🔄</div><div class="card-title">Revisión</div><div class="card-body">Define la frecuencia de actualización. Las políticas caducan si no se revisan.</div></div>
+    <div class="card"><div class="card-icon">🚨</div><div class="card-title">Sanciones</div><div class="card-body">Establece consecuencias por incumplimiento, dando peso real a las normas.</div></div>
+  </div>
+</section>
+
+<!-- 4: T1 Estándares -->
+<section class="slide">
+  <div class="slide-title">Estándares de Seguridad</div>
+  <div class="grid grid-3" style="max-width:900px">
+    <div class="card"><div class="card-icon">🏛️</div><div class="card-title">ISO 27001</div><div class="card-body">Marco internacional para Sistemas de Gestión de Seguridad de la Información (SGSI). Certifiable.</div></div>
+    <div class="card"><div class="card-icon">🇺🇸</div><div class="card-title">NIST CSF</div><div class="card-body">Marco del gobierno de EE.UU. para ciberseguridad. Cinco funciones: Identificar, Proteger, Detectar, Responder, Recuperar.</div></div>
+    <div class="card"><div class="card-icon">🔍</div><div class="card-title">SOC 2</div><div class="card-body">Estándar de auditoría para proveedores de servicios. Basado en 5 criterios: Seguridad, Disponibilidad, Integridad, Confidencialidad y Privacidad.</div></div>
+    <div class="card"><div class="card-icon">📊</div><div class="card-title">COSO</div><div class="card-body">Marco para gestión de riesgos empresariales y control interno. Popular en finanzas y auditoría.</div></div>
+    <div class="card"><div class="card-icon">🏢</div><div class="card-title">COBIT</div><div class="card-body">Marco de gobernanza y gestión de TI. Alinea tecnología con objetivos del negocio.</div></div>
+    <div class="card"><div class="card-icon">💡</div><div class="card-title">¿Cuál elegir?</div><div class="card-body">No son excluyentes. ISO 27001 + NIST CSF cubre el 80% de las necesidades de la mayoría de organizaciones.</div></div>
+  </div>
+</section>
+
+<!-- 5: T1 Procedimientos -->
+<section class="slide left-align">
+  <div class="slide-title">Procedimientos de Seguridad (11 categorías)</div>
+  <div class="grid grid-2" style="max-width:900px">
+    <ul class="list">
+      <li><strong>Gestión de acceso</strong> — quién puede entrar y a qué</li>
+      <li><strong>Gestión de incidentes</strong> — cómo responder ante eventos</li>
+      <li><strong>Gestión de cambios</strong> — control de modificaciones en sistemas</li>
+      <li><strong>Backups y recuperación</strong> — copias de seguridad periódicas</li>
+      <li><strong>Gestión de vulnerabilidades</strong> — escaneo y parcheo continuo</li>
+      <li><strong>Clasificación de activos</strong> — inventario y etiquetado</li>
+    </ul>
+    <ul class="list">
+      <li><strong>Seguridad física</strong> — control de acceso a instalaciones</li>
+      <li><strong>Criptografía</strong> — cifrado de datos en reposo y tránsito</li>
+      <li><strong>Auditoría y logs</strong> — trazabilidad de acciones</li>
+      <li><strong>Gestión de terceros</strong> — proveedores y cadena de suministro</li>
+      <li><strong>Continuidad del negocio</strong> — operar bajo condiciones adversas</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 6: T1 Modelado de amenazas -->
+<section class="slide">
+  <div class="slide-title">Modelado de Amenazas</div>
+  <div class="hbox" style="margin-bottom:1.2rem"><strong>Metáfora:</strong> Modelar amenazas es como hacer un simulacro de incendio antes de que ocurra: identifies las salidas, los riesgos y quién hace qué — sin esperar al desastre real.</div>
+  <div class="grid grid-2" style="max-width:800px">
+    <div class="card"><div class="card-title"><span class="pill pill-teal">STRIDE</span></div><div class="card-body">Microsoft. Clasifica 6 tipos: <strong>S</strong>poofing, <strong>T</strong>ampering, <strong>R</strong>epudiation, <strong>I</strong>nformation Disclosure, <strong>D</strong>oS, <strong>E</strong>levation of Privilege.</div></div>
+    <div class="card"><div class="card-title"><span class="pill pill-blue">PASTA</span></div><div class="card-body">Process for Attack Simulation &amp; Threat Analysis. 7 etapas orientadas al negocio. Conecta amenazas técnicas con impacto empresarial.</div></div>
+    <div class="card"><div class="card-title"><span class="pill pill-purple">TRIKE</span></div><div class="card-body">Enfoque basado en riesgo. Parte de los requerimientos del sistema y evalúa si el riesgo es aceptable para los stakeholders.</div></div>
+    <div class="card"><div class="card-title"><span class="pill pill-orange">VAST</span></div><div class="card-body">Visual, Agile &amp; Simple Threat modeling. Pensado para equipos DevOps. Escala a sistemas complejos con dos tipos de modelos: de aplicación y operacional.</div></div>
+  </div>
+</section>
+
+<!-- ═══════════════ TEMA 2 ═══════════════ -->
+<!-- 7: T2 COVER -->
+<section class="slide sec-cover">
+  <div class="sec-num">02</div>
+  <div class="sec-label">Tema 2</div>
+  <div class="sec-title">Identificación y Clasificación de Activos y Sistemas Críticos</div>
+</section>
+
+<!-- 8: T2 Tipos de activos -->
+<section class="slide">
+  <div class="slide-title">Tipos de Activos de Información</div>
+  <div class="hbox" style="margin-bottom:1.2rem"><strong>Metáfora:</strong> Un activo de seguridad es como el inventario de una joyería: no puedes proteger lo que no sabes que tienes. El ladrón sí lo sabe.</div>
+  <div class="grid grid-3" style="max-width:900px">
+    <div class="card"><div class="card-icon">💻</div><div class="card-title">Hardware</div><div class="card-body">Servidores, laptops, routers, dispositivos IoT, almacenamiento físico.</div></div>
+    <div class="card"><div class="card-icon">🖥️</div><div class="card-title">Software</div><div class="card-body">Sistemas operativos, aplicaciones, bases de datos, herramientas de desarrollo.</div></div>
+    <div class="card"><div class="card-icon">📁</div><div class="card-title">Datos</div><div class="card-body">Información de clientes, contratos, propiedad intelectual, bases de datos operativas.</div></div>
+    <div class="card"><div class="card-icon">👥</div><div class="card-title">Personas</div><div class="card-body">Empleados, contratistas, administradores. El vector humano es el más explotado.</div></div>
+    <div class="card"><div class="card-icon">🌐</div><div class="card-title">Servicios</div><div class="card-body">Cloud, APIs de terceros, servicios de email, plataformas SaaS críticas.</div></div>
+    <div class="card"><div class="card-icon">🏭</div><div class="card-title">Instalaciones</div><div class="card-body">Data centers, salas de servidores, infraestructura física de telecomunicaciones.</div></div>
+  </div>
+</section>
+
+<!-- 9: T2 Clasificación de datos -->
+<section class="slide">
+  <div class="slide-title">Clasificación de Datos</div>
+  <div class="grid grid-4" style="max-width:900px;margin-bottom:1.2rem">
+    <div class="card" style="border-color:rgba(6,214,160,.4)"><div class="card-title" style="color:var(--green)">Público</div><div class="card-body">Sin restricción. Comunicados de prensa, documentación pública.</div></div>
+    <div class="card" style="border-color:rgba(76,201,240,.4)"><div class="card-title" style="color:var(--blue)">Interno</div><div class="card-body">Solo empleados. Manuales, políticas internas, organigramas.</div></div>
+    <div class="card" style="border-color:rgba(255,209,102,.4)"><div class="card-title" style="color:var(--yellow)">Confidencial</div><div class="card-body">Acceso restringido. Información financiera, datos personales, contratos.</div></div>
+    <div class="card" style="border-color:rgba(255,77,109,.4)"><div class="card-title" style="color:var(--red)">Secreto</div><div class="card-body">Máxima protección. Propiedad intelectual crítica, secretos comerciales.</div></div>
+  </div>
+  <div class="hbox warn"><strong>Regla de oro:</strong> Si tienes duda sobre la clasificación de un dato, siempre clasifícalo un nivel arriba. Es más fácil degradar que recuperar información expuesta.</div>
+</section>
+
+<!-- 10: T2 ISO 27001 controles -->
+<section class="slide left-align">
+  <div class="slide-title">ISO 27001 Annex A — 114 Controles</div>
+  <div class="grid grid-2" style="max-width:900px">
+    <ul class="list" style="font-size:.8rem">
+      <li><strong>A.5</strong> Políticas de seguridad de la información</li>
+      <li><strong>A.6</strong> Organización de la seguridad</li>
+      <li><strong>A.7</strong> Seguridad en recursos humanos</li>
+      <li><strong>A.8</strong> Gestión de activos</li>
+      <li><strong>A.9</strong> Control de acceso</li>
+      <li><strong>A.10</strong> Criptografía</li>
+      <li><strong>A.11</strong> Seguridad física y ambiental</li>
+    </ul>
+    <ul class="list" style="font-size:.8rem">
+      <li><strong>A.12</strong> Seguridad en operaciones</li>
+      <li><strong>A.13</strong> Seguridad en comunicaciones</li>
+      <li><strong>A.14</strong> Adquisición/Desarrollo/Mantenimiento</li>
+      <li><strong>A.15</strong> Relaciones con proveedores</li>
+      <li><strong>A.16</strong> Gestión de incidentes</li>
+      <li><strong>A.17</strong> Continuidad del negocio</li>
+      <li><strong>A.18</strong> Cumplimiento normativo</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 11: T2 Roles -->
+<section class="slide">
+  <div class="slide-title">Roles de Gestión de Activos</div>
+  <div class="grid grid-3" style="max-width:800px;margin-bottom:1.2rem">
+    <div class="card" style="border-color:var(--teal)"><div class="card-icon">👑</div><div class="card-title">Propietario</div><div class="card-body">Define la clasificación, los permisos de acceso y la política de uso del activo. Responsable final.</div></div>
+    <div class="card" style="border-color:var(--blue)"><div class="card-icon">🔐</div><div class="card-title">Custodio</div><div class="card-body">Implementa y mantiene los controles técnicos indicados por el propietario. Seguridad operativa.</div></div>
+    <div class="card" style="border-color:var(--muted)"><div class="card-icon">👤</div><div class="card-title">Usuario</div><div class="card-body">Accede al activo según los permisos otorgados. Responsable de uso aceptable.</div></div>
+  </div>
+  <div class="hbox"><strong>Security Baselines:</strong> Conjunto de configuraciones mínimas de seguridad que todos los sistemas deben cumplir. Son el "piso mínimo" antes de entrar a producción. Ejemplo: cifrado en reposo habilitado, MFA activo, logs activados.</div>
+</section>
+
+<!-- ═══════════════ TEMA 3 ═══════════════ -->
+<!-- 12: T3 COVER -->
+<section class="slide sec-cover">
+  <div class="sec-num">03</div>
+  <div class="sec-label">Tema 3</div>
+  <div class="sec-title">Gobernanza de la Seguridad en las Organizaciones</div>
+</section>
+
+<!-- 13: T3 Beneficios -->
+<section class="slide">
+  <div class="slide-title">Beneficios de la Gobernanza de Seguridad</div>
+  <div class="grid grid-2" style="max-width:800px;margin-bottom:1.2rem">
+    <div class="card"><div class="card-icon">✅</div><div class="card-title">Datos Confiables</div><div class="card-body">Garantiza que la información que circula en la organización es íntegra y verificable.</div></div>
+    <div class="card"><div class="card-icon">🎯</div><div class="card-title">Versión Única de la Verdad</div><div class="card-body">Elimina inconsistencias entre áreas. Todos trabajan con los mismos datos autorizados.</div></div>
+    <div class="card"><div class="card-icon">📋</div><div class="card-title">Cumplimiento Normativo</div><div class="card-body">GDPR, LGPD, HIPAA, PCI-DSS: la gobernanza convierte el cumplimiento en un proceso, no en un sprint de pánico.</div></div>
+    <div class="card"><div class="card-icon">💰</div><div class="card-title">Reducción de Costos</div><div class="card-body">Prevenir un incidente cuesta 10x menos que responder a uno. La gobernanza es la inversión con mayor ROI en seguridad.</div></div>
+  </div>
+</section>
+
+<!-- 14: T3 Alineación con el negocio -->
+<section class="slide">
+  <div class="slide-title">Alineación Ciberseguridad — Negocio</div>
+  <div class="hbox" style="margin-bottom:1.2rem"><strong>Metáfora:</strong> La ciberseguridad sin alineación con el negocio es como un guardaespaldas que no sabe a quién está protegiendo ni a dónde va. Protege con energía, pero en la dirección equivocada.</div>
+  <div class="tags">
+    <span class="tag accent">Involucrar al C-Suite desde el inicio</span>
+    <span class="tag accent">Definir apetito de riesgo organizacional</span>
+    <span class="tag accent">Métricas que hablen en lenguaje de negocio</span>
+    <span class="tag accent">Integrar seguridad en objetivos estratégicos</span>
+    <span class="tag accent">Presupuesto basado en riesgo, no en tradición</span>
+    <span class="tag">Comité de seguridad con representantes de negocio</span>
+    <span class="tag">Reportes ejecutivos mensuales (no solo técnicos)</span>
+    <span class="tag">Capacitación contextualizada por rol</span>
+  </div>
+</section>
+
+<!-- 15: T3 Procesos organizacionales -->
+<section class="slide">
+  <div class="slide-title">Procesos Organizacionales Clave</div>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><div class="step-content"><strong>Gestión de Riesgos Continua</strong><span>Proceso iterativo de identificar, evaluar y tratar riesgos. No es un ejercicio anual, es una práctica permanente integrada en las operaciones.</span></div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Gestión de Cumplimiento</strong><span>Monitorear el estado de cumplimiento frente a regulaciones, contratos y políticas internas. Auditorías periódicas internas y externas.</span></div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-content"><strong>Gestión del Cambio con Visión de Seguridad</strong><span>Cada cambio tecnológico o de proceso debe pasar un filtro de seguridad. "Security by Design" desde la concepción, no como parche final.</span></div></div>
+  </div>
+</section>
+
+<!-- ═══════════════ TEMA 4 ═══════════════ -->
+<!-- 16: T4 COVER -->
+<section class="slide sec-cover">
+  <div class="sec-num">04</div>
+  <div class="sec-label">Tema 4</div>
+  <div class="sec-title">Estrategias de Seguridad y Principales Métricas</div>
+</section>
+
+<!-- 17: T4 SDLC -->
+<section class="slide">
+  <div class="slide-title">Ciclo de Vida de Desarrollo Seguro (SDLC)</div>
+  <div class="flow" style="margin-bottom:1.2rem">
+    <div class="flow-step">📋<br><small>Requisitos</small></div><div class="flow-arrow">→</div>
+    <div class="flow-step">🎨<br><small>Diseño</small></div><div class="flow-arrow">→</div>
+    <div class="flow-step">💻<br><small>Desarrollo</small></div><div class="flow-arrow">→</div>
+    <div class="flow-step">🧪<br><small>Pruebas</small></div><div class="flow-arrow">→</div>
+    <div class="flow-step">🚀<br><small>Despliegue</small></div><div class="flow-arrow">→</div>
+    <div class="flow-step">⚙️<br><small>Operación</small></div><div class="flow-arrow">→</div>
+    <div class="flow-step">🗑️<br><small>Retiro</small></div>
+  </div>
+  <div class="hbox"><strong>Regla del costo de los defectos:</strong> Un bug de seguridad encontrado en Requisitos cuesta $1 corregirlo. En Diseño: $6. En Desarrollo: $15. En Producción: $100+. La seguridad temprana no es un costo, es un ahorro masivo.</div>
+</section>
+
+<!-- 18: T4 DevOps y métricas -->
+<section class="slide">
+  <div class="slide-title">DevSecOps y Arquitectura de Datos</div>
+  <div class="grid grid-2" style="max-width:900px">
+    <div class="card"><div class="card-icon">♾️</div><div class="card-title">DevSecOps</div><div class="card-body">Integra seguridad en cada iteración del pipeline CI/CD. Pruebas SAST/DAST automatizadas, análisis de dependencias, secretos escaneados antes del commit.</div></div>
+    <div class="card"><div class="card-icon">📊</div><div class="card-title">Pruebas Funcionales</div><div class="card-body">Verifican que el sistema hace lo que debe: pruebas unitarias, integración, regresión, humo.</div></div>
+    <div class="card"><div class="card-icon">🔒</div><div class="card-title">Pruebas No Funcionales</div><div class="card-body">Verifican cómo lo hace: performance, seguridad (pentesting), usabilidad, disponibilidad.</div></div>
+    <div class="card"><div class="card-icon">🗄️</div><div class="card-title">Arquitectura de Datos</div><div class="card-body"><strong>Data Warehouse:</strong> análisis histórico estructurado.<br><strong>Data Mart:</strong> subconjunto por área.<br><strong>Data Lake:</strong> datos crudos, cualquier formato.</div></div>
+  </div>
+</section>
+
+<!-- ═══════════════ TEMA 5 ═══════════════ -->
+<!-- 19: T5 COVER -->
+<section class="slide sec-cover">
+  <div class="sec-num">05</div>
+  <div class="sec-label">Tema 5</div>
+  <div class="sec-title">Elementos del Riesgo, Evaluación e Impacto</div>
+</section>
+
+<!-- 20: T5 Terminología -->
+<section class="slide">
+  <div class="slide-title">Terminología Esencial del Riesgo</div>
+  <div class="grid grid-3" style="max-width:900px">
+    <div class="card"><div class="card-title"><span class="pill pill-red">Riesgo</span></div><div class="card-body">Probabilidad de que una amenaza explote una vulnerabilidad causando daño. Puede ser positivo o negativo.</div></div>
+    <div class="card"><div class="card-title"><span class="pill pill-orange">Amenaza</span></div><div class="card-body">Circunstancia desfavorable que puede ocurrir. Natural, accidental o intencionada. Tiene consecuencias negativas sobre los activos.</div></div>
+    <div class="card"><div class="card-title"><span class="pill pill-yellow">Vulnerabilidad</span></div><div class="card-body">Debilidad del sistema que puede ser explotada. No hay sistema invulnerable: nuevas herramientas crean nuevas brechas cada día.</div></div>
+    <div class="card"><div class="card-title"><span class="pill pill-blue">Exposición</span></div><div class="card-body">Condición de desventaja por la ubicación o localización de una persona, objeto o sistema expuesto a un riesgo.</div></div>
+    <div class="card"><div class="card-title"><span class="pill pill-purple">Susceptibilidad</span></div><div class="card-body">Grado de fragilidad interna para enfrentar una amenaza. Organización susceptible amplifica el impacto de cualquier incidente.</div></div>
+    <div class="card"><div class="card-title"><span class="pill pill-teal">Resiliencia</span></div><div class="card-body">Capacidad de resistir y recuperarse de la adversidad. Siempre va acompañada de un plan de contingencia y continuidad.</div></div>
+  </div>
+</section>
+
+<!-- 21: T5 Clasificación de amenazas -->
+<section class="slide left-align">
+  <div class="slide-title">Identificación y Clasificación de Amenazas</div>
+  <div style="display:flex;gap:1rem;width:100%;max-width:900px;flex-wrap:wrap">
+    <div style="flex:1;min-width:220px">
+      <div style="font-size:.75rem;color:var(--teal);text-transform:uppercase;font-weight:700;margin-bottom:.6rem;letter-spacing:.08em">Fuentes de amenaza</div>
+      <div class="grid" style="grid-template-columns:1fr;gap:.5rem">
+        <div class="card" style="border-color:var(--blue)"><div class="card-title" style="color:var(--blue)">Natural</div><div class="card-body" style="font-size:.78rem">Terremotos, inundaciones, erupciones, incendios forestales, eventos atmosféricos.</div></div>
+        <div class="card" style="border-color:var(--yellow)"><div class="card-title" style="color:var(--yellow)">No intencional</div><div class="card-body" style="font-size:.78rem">Cortos circuitos, fallas en sistemas y equipos, inundaciones por fallo hidráulico.</div></div>
+        <div class="card" style="border-color:var(--red)"><div class="card-title" style="color:var(--red)">Social</div><div class="card-body" style="font-size:.78rem">Atentados, robo, accidentes de vehículos, revueltas.</div></div>
+      </div>
+    </div>
+    <div style="flex:1;min-width:220px">
+      <div style="font-size:.75rem;color:var(--teal);text-transform:uppercase;font-weight:700;margin-bottom:.6rem;letter-spacing:.08em">Clasificación por comportamiento</div>
+      <div class="semaphore">
+        <div class="sem-row"><div class="sem-dot" style="background:var(--green)"></div><div class="sem-label" style="color:var(--green)">Posible</div><div class="sem-desc">Puede suceder. Nunca ha ocurrido.</div></div>
+        <div class="sem-row"><div class="sem-dot" style="background:var(--yellow)"></div><div class="sem-label" style="color:var(--yellow)">Probable</div><div class="sem-desc">Se espera que suceda. Ya ocurrió antes.</div></div>
+        <div class="sem-row"><div class="sem-dot" style="background:var(--red)"></div><div class="sem-label" style="color:var(--red)">Eminente</div><div class="sem-desc">Alta probabilidad de ocurrir. Evidencia detectable.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 22: T5 Fases análisis de riesgo -->
+<section class="slide">
+  <div class="slide-title">6 Fases del Análisis de Riesgo (INCIBE)</div>
+  <div class="flow" style="flex-wrap:wrap;gap:.6rem;margin-bottom:1.2rem">
+    <div class="flow-step" style="background:rgba(0,201,167,.1);border-color:var(--teal)">1<br><small>Definir<br>alcance</small></div><div class="flow-arrow">→</div>
+    <div class="flow-step">2<br><small>Identificar<br>activos</small></div><div class="flow-arrow">→</div>
+    <div class="flow-step">3<br><small>Identificar<br>amenazas</small></div><div class="flow-arrow">→</div>
+    <div class="flow-step">4<br><small>Identificar<br>vulnerabil.</small></div><div class="flow-arrow">→</div>
+    <div class="flow-step">5<br><small>Evaluar<br>riesgo</small></div><div class="flow-arrow">→</div>
+    <div class="flow-step" style="background:rgba(0,201,167,.1);border-color:var(--teal)">6<br><small>Tratar<br>riesgo</small></div>
+  </div>
+  <div class="hbox"><strong>Contramedidas típicas:</strong> Controles de acceso robustos · Copias de seguridad · Políticas de contraseñas seguras · Protección de email · Capacitación a empleados · Monitorización constante y respuesta inmediata.</div>
+</section>
+
+<!-- 23: T5 ISO 27005 y NIST 800-39 -->
+<section class="slide">
+  <div class="slide-title">Marcos de Gestión de Riesgo</div>
+  <div class="grid grid-2" style="max-width:900px">
+    <div class="card"><div class="card-title"><span class="pill pill-teal">ISO 27005</span></div><div class="card-body">Familia ISO 27000. Gestión de riesgos de seguridad de la información.<br><br>
+    <strong>4 actividades:</strong><br>
+    1. Identificar el contexto (activos, amenazas, vulnerabilidades)<br>
+    2. Analizar los riesgos (impacto, probabilidad, controles)<br>
+    3. Valorar los riesgos (estado y priorización)<br>
+    4. Tratamiento (toma de decisiones + plan)</div></div>
+    <div class="card"><div class="card-title"><span class="pill pill-blue">NIST 800-39</span></div><div class="card-body">Marco integrado para gestión de riesgos. Basado en 3 procesos interconectados:<br><br>
+    <strong>Valoración:</strong> detectar activos, amenazas, vulnerabilidades y valorarlos.<br><br>
+    <strong>Respuesta:</strong> aceptar, mitigar, eliminar o transferir.<br><br>
+    <strong>Monitorización:</strong> vigilar cambios y efectividad de controles.</div></div>
+  </div>
+</section>
+
+<!-- ═══════════════ TEMA 6 ═══════════════ -->
+<!-- 24: T6 COVER -->
+<section class="slide sec-cover">
+  <div class="sec-num">06</div>
+  <div class="sec-label">Tema 6</div>
+  <div class="sec-title">Controles, Medidas de Prevención, Gestión y Respuesta al Riesgo</div>
+</section>
+
+<!-- 25: T6 Análisis cuantitativo vs cualitativo -->
+<section class="slide">
+  <div class="slide-title">Análisis de Riesgos: Cuantitativo vs Cualitativo</div>
+  <div class="grid grid-2" style="max-width:900px;margin-bottom:1rem">
+    <div class="card"><div class="card-title"><span class="pill pill-blue">Cuantitativo</span></div><div class="card-body">Asigna valor numérico al riesgo.<br><br><strong style="color:var(--teal2)">Probabilidad × Impacto = Riesgo</strong><br><br>Herramientas: Análisis de sensibilidad · Valor Monetario Esperado (EMV) · Modelado y simulación (Monte Carlo).</div></div>
+    <div class="card"><div class="card-title"><span class="pill pill-teal">Cualitativo</span></div><div class="card-body">Evalúa impacto y probabilidad en escalas descriptivas.<br><br>Herramientas: Matriz de riesgo · Juicio de expertos · Evaluación de urgencia · Identificación de probabilidad.</div></div>
+  </div>
+  <div class="matrix-wrap">
+    <table class="matrix">
+      <tr><th></th><th>Impacto Bajo</th><th>Impacto Medio</th><th>Impacto Alto</th></tr>
+      <tr><td><strong>Prob. Alta</strong></td><td class="m-med">Medio</td><td class="m-high">Alto</td><td class="m-vhigh">Muy Alto</td></tr>
+      <tr><td><strong>Prob. Media</strong></td><td class="m-low">Bajo</td><td class="m-med">Medio</td><td class="m-high">Alto</td></tr>
+      <tr><td><strong>Prob. Baja</strong></td><td class="m-vlow">Muy Bajo</td><td class="m-low">Bajo</td><td class="m-med">Medio</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- 26: T6 Estrategias de respuesta -->
+<section class="slide">
+  <div class="slide-title">4 Estrategias de Respuesta al Riesgo</div>
+  <div class="grid grid-4" style="max-width:900px;margin-bottom:1.2rem">
+    <div class="card" style="border-color:var(--red)"><div class="card-icon">🚫</div><div class="card-title" style="color:var(--red)">Evitar / Eliminar</div><div class="card-body">Implementar acciones que eliminen los factores que propician los riesgos. La opción más costosa, pero definitiva.</div></div>
+    <div class="card" style="border-color:var(--yellow)"><div class="card-icon">🛡️</div><div class="card-title" style="color:var(--yellow)">Reducir / Mitigar</div><div class="card-body">Aceptar el riesgo pero ejecutar acciones para minimizar su impacto o probabilidad.</div></div>
+    <div class="card" style="border-color:var(--blue)"><div class="card-icon">🤝</div><div class="card-title" style="color:var(--blue)">Transferir / Compartir</div><div class="card-body">Ceder la gestión del riesgo a quien está mejor preparado. Ej.: contratar un seguro cibernético o tercerizar servicios especializados.</div></div>
+    <div class="card" style="border-color:var(--muted)"><div class="card-icon">✋</div><div class="card-title" style="color:var(--muted)">Aceptar</div><div class="card-body">Cuando no hay opción viable o el costo de mitigar supera el impacto. Aprender a convivir con el riesgo residual.</div></div>
+  </div>
+  <div class="hbox"><strong>Factores de priorización:</strong> Nivel de riesgo (probabilidad × impacto) · Actitud organizacional (tolerancia, apetito, umbral) · Capacidad de gestión (urgencia y recursos disponibles).</div>
+</section>
+
+<!-- 27: T6 SDL y marcos proyectos -->
+<section class="slide">
+  <div class="slide-title">Ciclos de Desarrollo Seguro y Marcos de Proyectos</div>
+  <div class="grid grid-2" style="max-width:900px">
+    <div class="card"><div class="card-title">Ciclos de Desarrollo Seguro (SDL)</div><div class="card-body">
+      <span class="pill pill-teal" style="margin:.15rem">Microsoft SDL</span>
+      <span class="pill pill-blue" style="margin:.15rem">BSIMM</span>
+      <span class="pill pill-purple" style="margin:.15rem">CLASP (OWASP)</span>
+      <span class="pill pill-orange" style="margin:.15rem">SAAM</span>
+      <br><br>Integran pruebas de seguridad, análisis de arquitectura y revisión de código en cada iteración del desarrollo.
+    </div></div>
+    <div class="card"><div class="card-title">Marcos de Gestión de Proyectos</div><div class="card-body">
+      <span class="pill pill-teal" style="margin:.15rem">PRINCE2</span>
+      <span class="pill pill-blue" style="margin:.15rem">CCPM</span>
+      <span class="pill pill-green" style="margin:.15rem">Scrum</span>
+      <span class="pill pill-yellow" style="margin:.15rem">Lean</span>
+      <span class="pill pill-orange" style="margin:.15rem">XPM</span>
+      <span class="pill pill-muted" style="margin:.15rem;border-color:var(--muted);color:var(--muted)">Cascada</span>
+      <br><br>Todo marco debe cubrir: gestión de costos/tiempo, productividad, control de riesgos y eficacia de resultados.
+    </div></div>
+  </div>
+</section>
+
+<!-- ═══════════════ TEMA 7 ═══════════════ -->
+<!-- 28: T7 COVER -->
+<section class="slide sec-cover">
+  <div class="sec-num">07</div>
+  <div class="sec-label">Tema 7</div>
+  <div class="sec-title">BCP (Business Continuity Plan) y DRP (Disaster Recovery Plan)</div>
+</section>
+
+<!-- 29: T7 BCP -->
+<section class="slide">
+  <div class="slide-title">Plan de Continuidad del Negocio (BCP)</div>
+  <div class="hbox" style="margin-bottom:1.2rem"><strong>Metáfora:</strong> El BCP es como el manual de emergencias de un avión. Nadie quiere usarlo, pero si el motor falla, la tripulación ya sabe exactamente qué hacer — y los pasajeros sobreviven.</div>
+  <div class="grid grid-3" style="max-width:900px">
+    <div class="card"><div class="card-icon">⚡</div><div class="card-title">Alta Disponibilidad</div><div class="card-body">Garantizar acceso a aplicaciones y recursos críticos aun con fallos locales de hardware o software.</div></div>
+    <div class="card"><div class="card-icon">🔄</div><div class="card-title">Operaciones Continuas</div><div class="card-body">Asegurar funcionamiento durante mantenimiento planificado o interrupciones inesperadas.</div></div>
+    <div class="card"><div class="card-icon">🏥</div><div class="card-title">Recuperación de Desastres</div><div class="card-body">Método para recuperar datos del sitio principal a través de un sitio alternativo (DRP).</div></div>
+  </div>
+  <div class="hbox warn" style="margin-top:1rem"><strong>Caso real — UBER 2022:</strong> Vulnerabilidad expuso datos de millones de usuarios. Respuesta: cifrado más robusto de BD y reestructuración completa del departamento de ciberseguridad. Textbook BCP + DRP en acción.</div>
+</section>
+
+<!-- 30: T7 BIA -->
+<section class="slide left-align">
+  <div class="slide-title">BIA — Valoración de Impacto al Negocio</div>
+  <div class="grid grid-2" style="max-width:900px">
+    <div>
+      <div class="hbox" style="margin-bottom:.8rem"><strong>BIA:</strong> Método para analizar cómo un evento afecta a la empresa dentro de sus procesos, para obtener la información necesaria para generar un plan de recuperación.</div>
+      <ul class="list">
+        <li><strong>RTO</strong> (Recovery Time Objective): tiempo máximo tolerable para restablecer un proceso.</li>
+        <li><strong>RPO</strong> (Recovery Point Objective): máxima cantidad de pérdida de datos tolerable.</li>
+        <li><strong>Impacto financiero:</strong> cuánto cuesta cada hora de inactividad.</li>
+      </ul>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-content"><strong>Planificar el BIA</strong><span>Definir alcance, objetivo y partes interesadas a notificar.</span></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Reunir información</strong><span>Entrevistas, formularios, identificar procesos clave.</span></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-content"><strong>Analizar los datos</strong><span>¿Qué procesos son críticos? ¿Cuánto tiempo para recuperarlos?</span></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-content"><strong>Elaborar el informe</strong><span>Resumen ejecutivo, objetivos, metodología, hallados, RTO/RPO.</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ TEMA 8 ═══════════════ -->
+<!-- 31: T8 COVER -->
+<section class="slide sec-cover">
+  <div class="sec-num">08</div>
+  <div class="sec-label">Tema 8</div>
+  <div class="sec-title">Modelos Organizacionales para Respuesta a Incidentes</div>
+</section>
+
+<!-- 32: T8 Taxonomía y semáforo -->
+<section class="slide">
+  <div class="slide-title">Taxonomía de Incidentes y Semáforo de Criticidad</div>
+  <div style="display:flex;gap:1.2rem;width:100%;max-width:900px;flex-wrap:wrap;justify-content:center">
+    <div style="flex:1;min-width:240px">
+      <div style="font-size:.74rem;color:var(--teal);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem">Categorías principales</div>
+      <div class="tags" style="justify-content:flex-start">
+        <span class="tag red">Contenido abusivo</span>
+        <span class="tag orange">Código dañino</span>
+        <span class="tag yellow">Info Gathering</span>
+        <span class="tag orange">Intento de intrusión</span>
+        <span class="tag red">Intrusión</span>
+        <span class="tag yellow">Disponibilidad (DoS/DDoS)</span>
+        <span class="tag orange">Compromiso de info</span>
+        <span class="tag purple">Fraude / Phishing</span>
+        <span class="tag red">APT (Ataques Dirigidos)</span>
+        <span class="tag">Exploración de vulnerabilidades</span>
+      </div>
+    </div>
+    <div style="flex:1;min-width:220px">
+      <div style="font-size:.74rem;color:var(--teal);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem">Semáforo de criticidad</div>
+      <div class="semaphore">
+        <div class="sem-row"><div class="sem-dot" style="background:#ff3030"></div><div class="sem-label" style="color:#ff3030">Rojo</div><div class="sem-desc">Crítico — Respuesta inmediata</div></div>
+        <div class="sem-row"><div class="sem-dot" style="background:var(--orange)"></div><div class="sem-label" style="color:var(--orange)">Naranja</div><div class="sem-desc">Muy Alto</div></div>
+        <div class="sem-row"><div class="sem-dot" style="background:var(--yellow)"></div><div class="sem-label" style="color:var(--yellow)">Amarillo</div><div class="sem-desc">Alto</div></div>
+        <div class="sem-row"><div class="sem-dot" style="background:var(--green)"></div><div class="sem-label" style="color:var(--green)">Verde</div><div class="sem-desc">Medio</div></div>
+        <div class="sem-row"><div class="sem-dot" style="background:#888"></div><div class="sem-label" style="color:#888">Gris</div><div class="sem-desc">Bajo</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 33: T8 Ciclo de gestión de incidentes -->
+<section class="slide">
+  <div class="slide-title">Ciclo de Gestión de Incidentes (NIST)</div>
+  <div class="flow" style="margin-bottom:1.2rem">
+    <div class="flow-step" style="background:rgba(6,214,160,.12);border-color:var(--green)">🛡️<br><small>Planificación y<br>Preparación</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="background:rgba(76,201,240,.1);border-color:var(--blue)">🔍<br><small>Detección y<br>Análisis</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="background:rgba(255,77,109,.1);border-color:var(--red)">🚑<br><small>Contención,<br>Erradicación y<br>Recuperación</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="background:rgba(181,23,158,.1);border-color:var(--purple)">📝<br><small>Actividad<br>Post-Incidente</small></div>
+  </div>
+  <div class="grid grid-2" style="max-width:800px">
+    <div class="card"><div class="card-title">Preparación incluye</div><div class="card-body" style="font-size:.78rem">Plan de gestión de incidentes · Política de seguridad · Equipo de respuesta (CSIRT) · Monitorización activa · Formación permanente.</div></div>
+    <div class="card"><div class="card-title">Lecciones aprendidas (la más importante)</div><div class="card-body" style="font-size:.78rem">Identificar mejoras en planes y políticas · Evaluar efectividad del equipo de respuesta · Mejorar sistemas de monitorización. Sin esta fase, el siguiente incidente será peor.</div></div>
+  </div>
+</section>
+
+<!-- 34: T8 Contención, erradicación, recuperación -->
+<section class="slide left-align">
+  <div class="slide-title">Respuesta Técnica: Contención → Erradicación → Recuperación</div>
+  <div class="grid grid-3" style="max-width:950px">
+    <div class="card" style="border-color:var(--yellow)">
+      <div class="card-title" style="color:var(--yellow)">1. Contención</div>
+      <div class="card-body" style="font-size:.78rem">
+        <span class="pill pill-yellow" style="margin-bottom:.5rem;display:inline-block">Temporal</span><br>
+        Aislar equipos infectados · Cambiar reglas de firewall · Bloquear IPs/dominios · Aislar en Active Directory · Suspender servicios afectados · DNS sinkholing para tráfico malicioso.
+      </div>
+    </div>
+    <div class="card" style="border-color:var(--red)">
+      <div class="card-title" style="color:var(--red)">2. Erradicación</div>
+      <div class="card-body" style="font-size:.78rem">
+        <span class="pill pill-red" style="margin-bottom:.5rem;display:inline-block">Eliminar raíz</span><br>
+        Eliminar cuentas de atacantes · Borrar ficheros sospechosos · Escaneo antivirus · Borrado seguro de sistemas comprometidos · Contactar proveedores anti-DDoS · Cambio de contraseñas.
+      </div>
+    </div>
+    <div class="card" style="border-color:var(--teal)">
+      <div class="card-title" style="color:var(--teal)">3. Recuperación</div>
+      <div class="card-body" style="font-size:.78rem">
+        <span class="pill pill-teal" style="margin-bottom:.5rem;display:inline-block">Normalidad</span><br>
+        Restaurar desde backups limpios · Eliminar salvaguardas temporales · Reinstalar sistemas comprometidos · Aplicar hardening (baselines) · Verificar que backups no estén contaminados.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 35: CIERRE -->
+<section class="slide slide-cover">
+  <div class="cover-badge">Risk &amp; Security Management — Resumen</div>
+  <div class="cover-title" style="font-size:clamp(1.4rem,3.5vw,2.5rem)">La seguridad no es un destino,<br>es un proceso continuo</div>
+  <div style="display:flex;gap:2.5rem;flex-wrap:wrap;justify-content:center;margin:1.5rem 0">
+    <div class="stat"><div class="stat-num">8</div><div class="stat-label">Módulos del curso</div></div>
+    <div class="stat"><div class="stat-num">114</div><div class="stat-label">Controles ISO 27001</div></div>
+    <div class="stat"><div class="stat-num">4</div><div class="stat-label">Fases de respuesta a incidentes</div></div>
+    <div class="stat"><div class="stat-num">∞</div><div class="stat-label">Ciclo de mejora continua</div></div>
+  </div>
+  <div class="tags" style="max-width:700px">
+    <span class="tag accent">Políticas y Estándares</span>
+    <span class="tag accent">Gestión de Activos</span>
+    <span class="tag accent">Gobernanza</span>
+    <span class="tag accent">SDLC Seguro</span>
+    <span class="tag accent">Evaluación de Riesgo</span>
+    <span class="tag accent">ISO 27005 · NIST 800-39</span>
+    <span class="tag accent">BCP · DRP · BIA</span>
+    <span class="tag accent">Respuesta a Incidentes</span>
+  </div>
+  <div class="cover-deco"></div>
+</section>
+
+</div><!-- #deck -->
+
+<!-- NAV BAR -->
+<nav id="nav">
+  <button id="prev" onclick="move(-1)">‹</button>
+  <div id="track" onclick="trackClick(event)"><div id="track-fill"></div></div>
+  <span id="slide-count"></span>
+  <button id="next" onclick="move(1)">›</button>
+</nav>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+let cur = 0;
+const trackFill = document.getElementById('track-fill');
+const countEl = document.getElementById('slide-count');
+
+function updateNav(){
+  const pct = slides.length > 1 ? (cur / (slides.length - 1)) * 100 : 0;
+  trackFill.style.width = pct + '%';
+  countEl.textContent = (cur + 1) + ' / ' + slides.length;
+}
+
+function goTo(n){
+  slides[cur].classList.remove('active');
+  slides[cur].classList.add('exit');
+  const prev = cur;
+  setTimeout(() => slides[prev].classList.remove('exit'), 450);
+  cur = Math.max(0, Math.min(n, slides.length - 1));
+  slides[cur].classList.add('active');
+  updateNav();
+}
+
+function move(d){ goTo(cur + d); }
+
+function trackClick(e){
+  const rect = document.getElementById('track').getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  goTo(Math.round(pct * (slides.length - 1)));
+}
+
+document.addEventListener('keydown', e => {
+  if(e.key === 'ArrowRight' || e.key === 'ArrowDown') move(1);
+  if(e.key === 'ArrowLeft' || e.key === 'ArrowUp') move(-1);
+});
+
+// Touch swipe
+let touchX = null;
+document.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, {passive:true});
+document.addEventListener('touchend', e => {
+  if(touchX === null) return;
+  const dx = touchX - e.changedTouches[0].clientX;
+  if(Math.abs(dx) > 40) move(dx > 0 ? 1 : -1);
+  touchX = null;
+}, {passive:true});
+
+updateNav();
+</script>
+</body>
+</html>

@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Security Awareness</title>
+<style>
+:root{
+  --teal:#00c9a7;--teal2:#00e5c0;--teal-dark:#003d35;
+  --red:#ff4d6d;--yellow:#ffd166;--blue:#4cc9f0;--purple:#b5179e;--orange:#f4a261;--green:#06d6a0;
+  --bg:#050f0e;--bg2:#0a1f1c;--bg3:#0d2a26;
+  --text:#e6f4f2;--muted:#7ab8b2;--border:rgba(0,201,167,.18);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden;height:100vh;}
+#deck{position:relative;width:100%;height:100vh;}
+.slide{position:absolute;inset:0;padding:60px 80px 80px;opacity:0;transform:translateY(30px);transition:opacity .45s ease,transform .45s ease;pointer-events:none;overflow:hidden;}
+.slide.active{opacity:1;transform:translateY(0);pointer-events:all;}
+.slide.exit{opacity:0;transform:translateY(-30px);}
+
+/* Cover */
+.cover{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;background:radial-gradient(ellipse at 70% 40%,#0d4a3e 0%,var(--bg) 65%);}
+.cover-badge{font-size:.85rem;letter-spacing:.2em;color:var(--teal);text-transform:uppercase;margin-bottom:1rem;}
+.cover h1{font-size:clamp(2.5rem,5vw,4.5rem);font-weight:800;line-height:1.1;max-width:700px;}
+.cover h1 span{color:var(--teal);}
+.cover-sub{margin-top:1.5rem;font-size:1.1rem;color:var(--muted);max-width:520px;line-height:1.6;}
+.cover-themes{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:2rem;}
+.cover-themes span{background:var(--bg3);border:1px solid var(--border);padding:.35rem .8rem;border-radius:20px;font-size:.8rem;color:var(--teal2);}
+
+/* Section divider */
+.section-slide{display:flex;flex-direction:column;justify-content:center;background:radial-gradient(ellipse at 60% 50%,#0d3d35 0%,var(--bg) 70%);}
+.section-num{font-size:5rem;font-weight:900;color:rgba(0,201,167,.12);line-height:1;}
+.section-title{font-size:clamp(2rem,4vw,3.5rem);font-weight:700;color:var(--teal);margin-top:-.5rem;}
+.section-desc{margin-top:1rem;font-size:1.1rem;color:var(--muted);max-width:600px;line-height:1.7;}
+
+/* Content slides */
+.content-slide{display:grid;grid-template-rows:auto 1fr;}
+.slide-header{margin-bottom:1.5rem;}
+.slide-tag{display:inline-block;font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;color:var(--teal);border:1px solid rgba(0,201,167,.4);padding:.25rem .7rem;border-radius:12px;margin-bottom:.6rem;}
+.slide-title{font-size:clamp(1.4rem,2.5vw,2.2rem);font-weight:700;line-height:1.2;}
+.slide-body{display:grid;gap:1.2rem;align-content:start;}
+
+/* Cards */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:1.2rem;transition:border-color .3s;}
+.card:hover{border-color:var(--teal);}
+.card-icon{font-size:2rem;margin-bottom:.6rem;}
+.card h3{font-size:1rem;font-weight:700;color:var(--teal2);margin-bottom:.4rem;}
+.card p{font-size:.85rem;color:var(--muted);line-height:1.5;}
+.card.highlight{border-color:rgba(0,201,167,.5);background:linear-gradient(135deg,var(--bg2),#0d3028);}
+
+/* Two-col */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start;}
+.two-col.wide{grid-template-columns:1.3fr 1fr;}
+
+/* Info blocks */
+.info-block{background:var(--bg2);border-left:3px solid var(--teal);border-radius:0 12px 12px 0;padding:1rem 1.2rem;}
+.info-block h3{color:var(--teal2);font-size:.95rem;margin-bottom:.4rem;}
+.info-block p{font-size:.85rem;color:var(--muted);line-height:1.5;}
+
+/* Alert box */
+.alert{background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.3);border-radius:12px;padding:1rem 1.2rem;font-size:.88rem;line-height:1.5;}
+.alert strong{color:var(--red);}
+.tip{background:rgba(0,201,167,.07);border:1px solid rgba(0,201,167,.3);border-radius:12px;padding:1rem 1.2rem;font-size:.88rem;line-height:1.5;}
+.tip strong{color:var(--teal);}
+
+/* List */
+.check-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;}
+.check-list li{display:flex;gap:.7rem;align-items:flex-start;font-size:.88rem;line-height:1.5;color:var(--muted);}
+.check-list li::before{content:'✓';color:var(--teal);font-weight:700;flex-shrink:0;margin-top:.05rem;}
+.check-list li.bad::before{content:'✗';color:var(--red);}
+.check-list li.warn::before{content:'⚠';color:var(--yellow);}
+
+/* Pill selector */
+.pill-row{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1rem;}
+.pill{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:.35rem .9rem;font-size:.82rem;cursor:pointer;transition:all .25s;}
+.pill.active-pill{background:var(--teal);color:#000;border-color:var(--teal);font-weight:700;}
+.pill-content{display:none;}
+.pill-content.show{display:block;}
+
+/* Malware compare table */
+.mal-table{width:100%;border-collapse:collapse;font-size:.83rem;}
+.mal-table th{background:var(--bg3);color:var(--teal);padding:.6rem .8rem;text-align:left;border-bottom:1px solid var(--border);}
+.mal-table td{padding:.55rem .8rem;border-bottom:1px solid rgba(255,255,255,.05);color:var(--muted);vertical-align:top;}
+.mal-table tr:hover td{background:rgba(0,201,167,.04);}
+
+/* Attack cards */
+.attack-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;}
+.attack-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:.9rem;cursor:pointer;transition:all .25s;}
+.attack-card:hover{border-color:var(--teal);background:var(--bg3);}
+.attack-card .a-icon{font-size:1.5rem;margin-bottom:.4rem;}
+.attack-card .a-title{font-size:.9rem;font-weight:700;color:var(--teal2);margin-bottom:.3rem;}
+.attack-card .a-desc{font-size:.78rem;color:var(--muted);line-height:1.4;}
+
+/* Stat badges */
+.stat-row{display:flex;gap:1rem;flex-wrap:wrap;}
+.stat{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:.9rem 1.2rem;flex:1;min-width:140px;}
+.stat-num{font-size:2rem;font-weight:800;color:var(--teal);line-height:1;}
+.stat-label{font-size:.78rem;color:var(--muted);margin-top:.2rem;}
+
+/* Timeline */
+.timeline{display:flex;flex-direction:column;gap:.7rem;}
+.tl-item{display:flex;gap:1rem;align-items:flex-start;}
+.tl-dot{width:28px;height:28px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#000;flex-shrink:0;margin-top:.1rem;}
+.tl-body h4{font-size:.9rem;font-weight:700;color:var(--text);}
+.tl-body p{font-size:.82rem;color:var(--muted);line-height:1.4;}
+
+/* Progress bar */
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--teal),var(--teal2));transition:width .4s ease;z-index:100;}
+
+/* Nav */
+#nav{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:.7rem;z-index:100;background:rgba(5,15,14,.82);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:30px;padding:.45rem 1rem;}
+#track{width:140px;height:4px;background:rgba(255,255,255,.1);border-radius:2px;cursor:pointer;position:relative;}
+#track-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--teal),var(--teal2));transition:width .35s ease;pointer-events:none;}
+#dots{display:none;}
+.dot{display:none;}
+#prev,#next{background:none;border:none;color:var(--teal);width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:all .25s;flex-shrink:0;}
+#prev:hover,#next:hover{background:rgba(0,201,167,.2);}
+#slide-count{font-size:.78rem;color:var(--muted);min-width:44px;text-align:center;font-variant-numeric:tabular-nums;}
+
+/* Encryption demo */
+.enc-demo{background:var(--bg3);border-radius:12px;padding:1.2rem;font-family:monospace;font-size:.85rem;}
+.enc-demo .plain{color:var(--green);}
+.enc-demo .cipher{color:var(--red);}
+.enc-demo .key-str{color:var(--yellow);}
+
+/* Badge colors */
+.badge{display:inline-block;padding:.2rem .6rem;border-radius:10px;font-size:.75rem;font-weight:600;}
+.badge.red{background:rgba(255,77,109,.15);color:var(--red);border:1px solid rgba(255,77,109,.3);}
+.badge.teal{background:rgba(0,201,167,.12);color:var(--teal);border:1px solid rgba(0,201,167,.25);}
+.badge.yellow{background:rgba(255,209,102,.12);color:var(--yellow);border:1px solid rgba(255,209,102,.25);}
+.badge.blue{background:rgba(76,201,240,.12);color:var(--blue);border:1px solid rgba(76,201,240,.25);}
+
+/* Metaphor box */
+.metaphor{background:linear-gradient(135deg,rgba(0,201,167,.07),rgba(0,229,192,.03));border:1px dashed rgba(0,201,167,.35);border-radius:12px;padding:1rem 1.2rem;font-size:.87rem;line-height:1.6;font-style:italic;color:var(--teal2);}
+.metaphor::before{content:'💡 ';font-style:normal;}
+
+/* Overlay for attack detail */
+#detail-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;display:none;align-items:center;justify-content:center;}
+#detail-overlay.show{display:flex;}
+#detail-box{background:var(--bg2);border:1px solid var(--teal);border-radius:20px;padding:2rem;max-width:500px;width:90%;position:relative;}
+#detail-box h2{color:var(--teal);font-size:1.4rem;margin-bottom:.8rem;}
+#detail-box p{color:var(--muted);line-height:1.7;font-size:.92rem;}
+#detail-close{position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer;}
+
+/* Responsive tweaks */
+@media(max-width:768px){
+  .slide{padding:40px 30px 70px;}
+  .two-col{grid-template-columns:1fr;}
+  .attack-grid{grid-template-columns:1fr 1fr;}
+  .card-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<div id="deck">
+
+<!-- SLIDE 0: COVER -->
+<div class="slide active cover">
+  <div class="cover-badge">Curso de Ciberseguridad</div>
+  <h1>User Security<br><span>Awareness</span></h1>
+  <div class="cover-sub">Conoce las amenazas digitales del mundo real y aprende a proteger tus dispositivos, tu información y tu identidad en línea.</div>
+  <div class="cover-themes">
+    <span>Dispositivos IT</span><span>Malware</span><span>Procedimientos de seguridad</span>
+    <span>Navegación segura</span><span>Móviles</span><span>Ingeniería social</span>
+    <span>Ransomware</span><span>Cifrado de datos</span>
+  </div>
+</div>
+
+<!-- SLIDE 1: TEMA 1 SECTION -->
+<div class="slide section-slide">
+  <div class="section-num">01</div>
+  <div class="section-title">Tipos de dispositivos de tecnología de la información</div>
+  <div class="section-desc">Cada dispositivo que usas tiene un perfil de riesgo distinto. Identificarlos es el primer paso para protegerlos.</div>
+</div>
+
+<!-- SLIDE 2: Dispositivos usuario final -->
+<div class="slide content-slide">
+  <div class="slide-header">
+    <div class="slide-tag">Tema 1 · Dispositivos</div>
+    <div class="slide-title">Dispositivos de usuario final</div>
+  </div>
+  <div class="slide-body">
+    <div class="metaphor">Cada dispositivo es como una puerta a tu vida digital. Cuantas más puertas sin candado, más fácil entrar para un atacante.</div>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🖥️</div>
+        <h3>Computadora de escritorio</h3>
+        <p>Fija en un lugar, alta potencia. Conectividad por cable o WiFi. Requiere antivirus, firewall y contraseña de acceso.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">💻</div>
+        <h3>Laptop</h3>
+        <p>Portátil y versátil. El riesgo de robo físico es mayor. Requiere cifrado de disco además del software de protección.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📱</div>
+        <h3>Smartphone / Tablet</h3>
+        <p>Los más usados en el mundo. Corren iOS o Android. Riesgo de robo, apps maliciosas y WiFi peligrosa.</p>
+      </div>
+    </div>
+    <div class="tip"><strong>Regla de oro:</strong> Cualquier dispositivo con CPU y acceso a internet necesita protección activa — antivirus, contraseña robusta y actualizaciones al día.</div>
+  </div>
+</div>
+
+<!-- SLIDE 3: IoT y almacenamiento -->
+<div class="slide content-slide">
+  <div class="slide-header">
+    <div class="slide-tag">Tema 1 · IoT y Almacenamiento</div>
+    <div class="slide-title">Internet de las cosas y almacenamiento</div>
+  </div>
+  <div class="slide-body">
+    <div class="two-col">
+      <div>
+        <h3 style="color:var(--teal2);margin-bottom:.8rem;">🌐 Dispositivos IoT</h3>
+        <div class="check-list">
+          <li><strong>Smart TV</strong> — acceso a internet, apps; necesita antivirus específico (ej. ESET Smart TV Security).</li>
+          <li><strong>Asistentes de voz</strong> (Alexa, Google Home) — proteger cuenta de la plataforma móvil que los controla.</li>
+          <li><strong>Focos, cámaras inteligentes</strong> — protección vía seguridad de la red WiFi donde están conectados.</li>
+        </div>
+        <div class="alert" style="margin-top:.8rem;"><strong>Riesgo:</strong> Los dispositivos IoT rara vez reciben parches. Un foco "hackeado" puede ser puerta de entrada a toda tu red.</div>
+      </div>
+      <div>
+        <h3 style="color:var(--teal2);margin-bottom:.8rem;">💾 Almacenamiento</h3>
+        <div class="info-block" style="margin-bottom:.7rem;">
+          <h3>Disco duro externo (HDD/SSD)</h3>
+          <p>Conectar solo a equipos con antivirus activo. No prestar a desconocidos. Escanear siempre al conectar.</p>
+        </div>
+        <div class="info-block">
+          <h3>Nube (OneDrive, Google Drive)</h3>
+          <p>El antivirus del dispositivo origen protege los archivos antes de subirse. Activar autenticación en dos pasos en la cuenta de nube.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4: TEMA 2 SECTION -->
+<div class="slide section-slide">
+  <div class="section-num">02</div>
+  <div class="section-title">Tipos de software malicioso</div>
+  <div class="section-desc">El malware es el arma número uno de los atacantes. Conocer cada variante es conocer al enemigo.</div>
+</div>
+
+<!-- SLIDE 5: Malware overview -->
+<div class="slide content-slide">
+  <div class="slide-header">
+    <div class="slide-tag">Tema 2 · Malware</div>
+    <div class="slide-title">El universo del software malicioso</div>
+  </div>
+  <div class="slide-body">
+    <div class="metaphor">El malware es como un parásito: se disfraza de algo inofensivo para entrar, y una vez dentro hace daño desde adentro.</div>
+    <table class="mal-table">
+      <thead>
+        <tr><th>Tipo</th><th>Cómo entra</th><th>Qué hace</th><th>Peligro</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong style="color:var(--red)">Virus</strong></td><td>Adjunto de email, USB, descarga</td><td>Se pega a archivos ejecutables, se replica, daña datos</td><td><span class="badge red">Alto</span></td></tr>
+        <tr><td><strong style="color:var(--orange)">Gusano (Worm)</strong></td><td>Red, email, software pirata</td><td>Se copia solo, colapsa la red o computadora</td><td><span class="badge red">Alto</span></td></tr>
+        <tr><td><strong style="color:var(--yellow)">Troyano</strong></td><td>Juegos/software gratuito falso</td><td>Abre backdoor, forma botnets, roba info</td><td><span class="badge red">Muy alto</span></td></tr>
+        <tr><td><strong style="color:var(--blue)">Spyware</strong></td><td>Software pirata, freeware</td><td>Keylogger, webcam remota, roba contraseñas</td><td><span class="badge yellow">Medio-alto</span></td></tr>
+        <tr><td><strong style="color:var(--muted)">Adware</strong></td><td>Freeware, extensiones browser</td><td>Publicidad invasiva, cambia página de inicio</td><td><span class="badge blue">Bajo-medio</span></td></tr>
+      </tbody>
+    </table>
+    <div class="tip"><strong>Recuerda:</strong> Un solo archivo malicioso puede combinar virus + troyano + spyware al mismo tiempo. La protección integral (antivirus actualizado) es la única defensa efectiva.</div>
+  </div>
+</div>
+
+<!-- SLIDE 6: Botnet y defensa -->
+<div class="slide content-slide">
+  <div class="slide-header">
+    <div class="slide-tag">Tema 2 · Troyano / Botnet</div>
+    <div class="slide-title">Troyanos, botnets y cómo defenderte</div>
+  </div>
+  <div class="slide-body">
+    <div class="two-col">
+      <div>
+        <h3 style="color:var(--yellow);margin-bottom:.8rem;">⚠️ ¿Qué es una botnet?</h3>
+        <div class="info-block" style="border-color:var(--yellow);">
+          <h3>Estructura Botmaster → BOT → Víctima</h3>
+          <p>Un troyano convierte tu equipo en "bot". El botmaster controla miles de bots desde un C&C server para lanzar ataques DDoS, robar credenciales bancarias o enviar spam masivo.</p>
+        </div>
+        <div class="alert" style="margin-top:.8rem;"><strong>Caso real:</strong> El ransomware WannaCry (2017) afectó 200,000 equipos en 150 países usando una botnet. Daño estimado: $4,000 millones USD.</div>
+      </div>
+      <div>
+        <h3 style="color:var(--teal2);margin-bottom:.8rem;">🛡️ Cómo protegerte</h3>
+        <ul class="check-list">
+          <li>Mantén el antivirus actualizado y con escaneo automático programado.</li>
+          <li>Nunca abras adjuntos de remitentes desconocidos.</li>
+          <li>No instales software de fuentes no oficiales (tiendas oficiales solamente).</li>
+          <li>Desactiva Bluetooth cuando no lo uses.</li>
+          <li>Escanea siempre los USB antes de abrir archivos.</li>
+          <li>Haz respaldos periódicos para poder recuperarte sin pagar rescate.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7: TEMA 3 SECTION -->
+<div class="slide section-slide">
+  <div class="section-num">03</div>
+  <div class="section-title">Procedimientos de seguridad</div>
+  <div class="section-desc">La seguridad no es un producto, es un proceso. Buenos hábitos diarios valen más que el mejor antivirus.</div>
+</div>
+
+<!-- SLIDE 8: Riesgos y políticas -->
+<div class="slide content-slide">
+  <div class="slide-header">
+    <div class="slide-tag">Tema 3 · Riesgos</div>
+    <div class="slide-title">Riesgos cotidianos y políticas de seguridad</div>
+  </div>
+  <div class="slide-body">
+    <div class="metaphor">Un riesgo de seguridad es como dejar la puerta de tu casa entreabierta: no significa que entrarán, pero lo hace mucho más fácil.</div>
+    <div class="two-col">
+      <div>
+        <h3 style="color:var(--red);margin-bottom:.7rem;">🚨 Riesgos comunes</h3>
+        <ul class="check-list">
+          <li class="bad">Abrir archivos adjuntos de emails desconocidos.</li>
+          <li class="bad">Navegar en sitios de software gratuito dudosos.</li>
+          <li class="bad">Conectar USB desconocidos sin escanear.</li>
+          <li class="bad">Aceptar archivos por Bluetooth sin verificar.</li>
+          <li class="bad">Usar software pirata o crackeado.</li>
+          <li class="bad">Carpetas compartidas en red con permisos de escritura.</li>
+          <li class="bad">Conectarse a WiFi sin contraseña.</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="color:var(--teal2);margin-bottom:.7rem;">✅ Políticas de seguridad personal</h3>
+        <ul class="check-list">
+          <li>Antivirus + firewall instalados y actualizados.</li>
+          <li>Plugin de verificación de sitios en el navegador.</li>
+          <li>Contraseñas robustas: +8 caracteres, mayúsculas, números, especiales.</li>
+          <li>Actualizaciones automáticas del SO y aplicaciones.</li>
+          <li>Respaldos periódicos en disco externo Y nube.</li>
+          <li>No compartir credenciales por ningún medio digital.</li>
+          <li>Verificar siempre llamadas de "soporte técnico" o "banco".</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9: Software de seguridad -->
+<div class="slide content-slide">
+  <div class="slide-header">
+    <div class="slide-tag">Tema 3 · Software de seguridad</div>
+    <div class="slide-title">El ecosistema de protección</div>
+  </div>
+  <div class="slide-body">
+    <div class="card-grid">
+      <div class="card highlight">
+        <div class="card-icon">🛡️</div>
+        <h3>Antivirus / Antimalware</h3>
+        <p>Detecta y elimina virus, spyware, ransomware del SO y aplicaciones. Escaneo en tiempo real + programado.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔥</div>
+        <h3>Firewall</h3>
+        <p>Bloquea accesos no autorizados a tu red privada. Primera línea de defensa ante intrusiones externas.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌐</div>
+        <h3>Protección de navegador</h3>
+        <p>Extensión que bloquea sitios maliciosos antes de que carguen, basándose en reputación global.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔑</div>
+        <h3>Gestor de contraseñas</h3>
+        <p>Control centralizado de credenciales. Genera contraseñas fuertes únicas para cada sitio.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">👨‍👩‍👧</div>
+        <h3>Control parental</h3>
+        <p>Filtra contenido inapropiado para menores, establece horarios y genera informes de actividad.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">💾</div>
+        <h3>Backup automático</h3>
+        <p>Respaldo diario o semanal. La única defensa real contra ransomware: poder restaurar sin pagar.</p>
+      </div>
+    </div>
+    <div class="tip"><strong>Suites integrales:</strong> Norton 360, Kaspersky Endpoint Security, McAfee Total Protection y TotalAV integran todos estos módulos en un solo producto.</div>
+  </div>
+</div>
+
+<!-- SLIDE 10: TEMA 4 SECTION -->
+<div class="slide section-slide">
+  <div class="section-num">04</div>
+  <div class="section-title">Protección de la navegación en internet</div>
+  <div class="section-desc">El navegador es tu ventana al mundo — pero también puede ser la ventana por donde entran los atacantes.</div>
+</div>
+
+<!-- SLIDE 11: Navegación segura -->
+<div class="slide content-slide">
+  <div class="slide-header">
+    <div class="slide-tag">Tema 4 · Navegador</div>
+    <div class="slide-title">Navegación segura: configuración y sitios confiables</div>
+  </div>
+  <div class="slide-body">
+    <div class="two-col wide">
+      <div>
+        <h3 style="color:var(--teal2);margin-bottom:.8rem;">🔒 Niveles de seguridad del navegador</h3>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-dot" style="background:var(--red)">3</div>
+            <div class="tl-body"><h4>Estricto</h4><p>Máxima protección. Bloquea amenazas en todos los sitios. Puede inhabilitar algunas funciones legítimas. Recomendado en sitios de alto riesgo.</p></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot" style="background:var(--yellow)">2</div>
+            <div class="tl-body"><h4>Equilibrado (recomendado)</h4><p>Aplica mitigaciones solo en sitios poco visitados. La mayoría de sitios funcionan normalmente. Bloquea virus, gusanos y troyanos.</p></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot" style="background:var(--green)">1</div>
+            <div class="tl-body"><h4>Básico</h4><p>Mitigaciones mínimas. Los sitios funcionan con normalidad. Sigue bloqueando amenazas conocidas.</p></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3 style="color:var(--teal2);margin-bottom:.8rem;">🌐 ¿Cómo identificar un sitio seguro?</h3>
+        <ul class="check-list">
+          <li>La URL empieza con <strong>https://</strong> (la "s" = security).</li>
+          <li>El navegador muestra un <strong>candado</strong> en la barra de direcciones.</li>
+          <li>Certificado SSL válido (clic en el candado para verlo).</li>
+          <li class="bad">Símbolo de alerta rojo = peligroso, no visitar.</li>
+          <li class="warn">Símbolo de "i" en círculo = sin cifrado, no ingresar datos privados.</li>
+        </ul>
+        <div class="metaphor" style="margin-top:.8rem;">Un sitio con https es como enviar tu carta en un sobre sellado. Sin https, es como una postal: cualquiera puede leerla en el camino.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 12: Cookies y control parental -->
+<div class="slide content-slide">
+  <div class="slide-header">
+    <div class="slide-tag">Tema 4 · Cookies y Control Parental</div>
+    <div class="slide-title">Cookies, privacidad y protección infantil</div>
+  </div>
+  <div class="slide-body">
+    <div class="two-col">
+      <div>
+        <h3 style="color:var(--blue);margin-bottom:.7rem;">🍪 Cookies: lo que debes saber</h3>
+        <div class="info-block" style="border-color:var(--blue);">
+          <h3>¿Qué son?</h3>
+          <p>Pequeños archivos que los sitios guardan en tu navegador para recordar tu sesión, preferencias y hábitos de navegación.</p>
+        </div>
+        <div class="alert" style="margin-top:.7rem;"><strong>Riesgo real:</strong> El "envenenamiento de cookies" (cookie hijacking) permite a un atacante secuestrar tu sesión activa sin necesitar tu contraseña.</div>
+        <ul class="check-list" style="margin-top:.7rem;">
+          <li>Acepta cookies sin restricción solo en sitios de confianza.</li>
+          <li>Bloquea cookies de sitios de software gratuito y descargas.</li>
+          <li>Limpia cookies periódicamente desde la configuración del navegador.</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="color:var(--teal2);margin-bottom:.7rem;">👨‍👧 Control parental</h3>
+        <div class="info-block">
+          <h3>¿Por qué importa?</h3>
+          <p>El 48% de los padres utiliza control parental. Los niños pueden acceder sin querer a sitios con malware o contenido inapropiado.</p>
+        </div>
+        <ul class="check-list" style="margin-top:.7rem;">
+          <li>Bloquear dominios peligrosos por palabras clave.</li>
+          <li>Establecer horarios de uso del dispositivo.</li>
+          <li>Recibir informes de sitios visitados.</li>
+          <li>Herramientas: Norton Family, Kaspersky Safe Kids.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 13: TEMA 5 SECTION -->
+<div class="slide section-slide">
+  <div class="section-num">05</div>
+  <div class="section-title">Protección de dispositivos móviles</div>
+  <div class="section-desc">Tu teléfono sabe más de ti que tu computadora. Es tiempo de tomarlo tan en serio como tu laptop.</div>
+</div>
+
+<!-- SLIDE 14: Android vs iOS -->
+<div class="slide content-slide">
+  <div class="slide-header">
+    <div class="slide-tag">Tema 5 · Móviles</div>
+    <div class="slide-title">Android vs iOS: riesgos y protección</div>
+  </div>
+  <div class="slide-body">
+    <div class="two-col">
+      <div>
+        <h3 style="color:var(--green);margin-bottom:.7rem;">🤖 Android</h3>
+        <ul class="check-list">
+          <li class="bad">Malware, ransomware, adware en apps de fuentes no oficiales.</li>
+          <li class="bad">Filtraciones de datos privados por apps con permisos excesivos.</li>
+          <li class="bad">Vulnerabilidades del SO sin parches en dispositivos antiguos.</li>
+        </ul>
+        <div class="info-block" style="margin-top:.7rem;">
+          <h3>Protección Android (ej. Norton 360 Mobile)</h3>
+          <p><strong>Asesor de apps:</strong> escanea contra virus/ransomware antes de instalar.<br>
+          <strong>Protección web:</strong> bloquea sitios peligrosos en browser, SMS y redes sociales.<br>
+          <strong>Protección del dispositivo:</strong> alerta sobre vulnerabilidades del SO.</p>
+        </div>
+      </div>
+      <div>
+        <h3 style="color:var(--muted);margin-bottom:.7rem;">🍎 iOS</h3>
+        <div class="tip">Las apps de iOS están supervisadas por Apple → menor riesgo de malware en App Store. Pero NO es invulnerable.</div>
+        <ul class="check-list" style="margin-top:.7rem;">
+          <li class="bad">Redes WiFi peligrosas o bajo ataque.</li>
+          <li class="bad">Sitios web maliciosos en Safari.</li>
+          <li class="bad">Vulnerabilidades del SO sin actualizar.</li>
+          <li class="bad">Phishing por SMS, email, redes sociales.</li>
+        </ul>
+        <div class="info-block" style="margin-top:.7rem;">
+          <h3>Protección iOS</h3>
+          <p>Protección web + protección del dispositivo. El antivirus tradicional no aplica, pero la VPN y el browser protector sí.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 15: WiFi y BYOD -->
+<div class="slide content-slide">
+  <div class="slide-header">
+    <div class="slide-tag">Tema 5 · WiFi y trabajo</div>
+    <div class="slide-title">WiFi pública y dispositivos personales en el trabajo</div>
+  </div>
+  <div class="slide-body">
+    <div class="two-col">
+      <div>
+        <h3 style="color:var(--red);margin-bottom:.7rem;">📡 Peligros de la WiFi pública</h3>
+        <ul class="check-list">
+          <li class="bad">Redes sin contraseña montadas por atacantes (evil twin).</li>
+          <li class="bad">En cafeterías: el atacante en la misma red intercepta tu tráfico.</li>
+          <li class="bad">Conexión automática a redes disponibles = trampa fácil.</li>
+          <li class="bad">Abrir apps bancarias en WiFi pública → credenciales robadas.</li>
+        </ul>
+        <h3 style="color:var(--teal2);margin-top:.8rem;margin-bottom:.7rem;">✅ Reglas de WiFi segura</h3>
+        <ul class="check-list">
+          <li>Nunca conectarte a redes sin contraseña.</li>
+          <li>Desactiva la conexión automática a WiFi disponibles.</li>
+          <li>Usa datos móviles para operaciones bancarias.</li>
+          <li>Usa VPN en redes públicas (ej. Norton Secure VPN).</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="color:var(--orange);margin-bottom:.7rem;">💼 BYOD (Trae tu propio dispositivo)</h3>
+        <div class="alert">
+          <strong>Riesgo home office:</strong> El 50% de empleados usa dispositivos personales para trabajo. Si el dispositivo personal tiene malware, puede infectar la red corporativa.
+        </div>
+        <div class="info-block" style="margin-top:.7rem;">
+          <h3>Principio de mínimo privilegio</h3>
+          <p>La empresa solo da acceso a lo estrictamente necesario. Implementar VPN corporativa y sistemas aprobados reduce el riesgo sin impedir el trabajo.</p>
+        </div>
+        <ul class="check-list" style="margin-top:.7rem;">
+          <li>Mantén actualizados los parches del dispositivo personal.</li>
+          <li>Instala el software de protección corporativo aprobado.</li>
+          <li>Nunca mezcles archivos de trabajo con descargas de ocio.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 16: TEMA 6 SECTION -->
+<div class="slide section-slide">
+  <div class="section-num">06</div>
+  <div class="section-title">Ingeniería social</div>
+  <div class="section-desc">El componente que ningún antivirus puede parchear: el ser humano. La ingeniería social explota emociones, no código.</div>
+</div>
+
+<!-- SLIDE 17: Ingeniería social tipos -->
+<div class="slide content-slide">
+  <div class="slide-header">
+    <div class="slide-tag">Tema 6 · Social Engineering</div>
+    <div class="slide-title">Tipos de ataque de ingeniería social</div>
+  </div>
+  <div class="slide-body">
+    <div class="metaphor">Un estafador digital no hackea tu sistema, hackea tu mente. Actúa antes de que puedas pensar.</div>
+    <div class="attack-grid">
+      <div class="attack-card" onclick="showDetail('phishing','Phishing','La forma más antigua y exitosa. El atacante envía un email que simula ser tu banco o una marca conocida para que ingreses tus credenciales en un sitio falso. Usa miedo (\"tu cuenta será bloqueada\") o urgencia (\"oferta por tiempo limitado\").')">
+        <div class="a-icon">🎣</div>
+        <div class="a-title">Phishing</div>
+        <div class="a-desc">Email falso → sitio fraudulento → robo de credenciales.</div>
+      </div>
+      <div class="attack-card" onclick="showDetail('vishing','Vishing (Voice Phishing)','El atacante llama por teléfono haciéndose pasar por tu banco, soporte técnico o empresa de confianza. Crea urgencia (\"hubo un cargo sospechoso\") para que proporciones datos personales o bancarios sin verificar quién llama.')">
+        <div class="a-icon">📞</div>
+        <div class="a-title">Vishing</div>
+        <div class="a-desc">Llamada telefónica fraudulenta de supuesto banco o soporte.</div>
+      </div>
+      <div class="attack-card" onclick="showDetail('spear','Spear Phishing','Versión dirigida del phishing. El atacante investiga a la víctima (LinkedIn, redes sociales) y envía un email personalizado que parece legítimo. Al hacer clic, descarga malware que se propaga por la red corporativa. Muy difícil de detectar.')">
+        <div class="a-icon">🎯</div>
+        <div class="a-title">Spear Phishing</div>
+        <div class="a-desc">Phishing dirigido y personalizado a una persona u organización específica.</div>
+      </div>
+      <div class="attack-card" onclick="showDetail('baiting','Carnada (Baiting)','El atacante deja un USB infectado en un lugar visible (lobby de empresa, estacionamiento). La curiosidad humana hace el resto: alguien lo recoge, lo conecta, e instala el malware sin saberlo.')">
+        <div class="a-icon">🎁</div>
+        <div class="a-title">Carnada (Baiting)</div>
+        <div class="a-desc">USB infectado abandonado en lugar público para que alguien lo conecte.</div>
+      </div>
+      <div class="attack-card" onclick="showDetail('pretexto','Pretexto','El atacante crea una historia ficticia: \"tiene una herencia retenida de $500,000 USD, solo paga $500 de trámite\". O apela a la solidaridad: donativo para un enfermo. La víctima paga y el atacante desaparece.')">
+        <div class="a-icon">🎭</div>
+        <div class="a-title">Pretexto</div>
+        <div class="a-desc">Historia ficticia para engañar y extraer información o dinero.</div>
+      </div>
+      <div class="attack-card" onclick="showDetail('farming','Farming','Ataque de largo plazo. El atacante crea una relación \"amistosa\" con la víctima en redes sociales durante semanas o meses. Una vez ganada la confianza, extrae información para robo de identidad, chantaje u otros delitos.')">
+        <div class="a-icon">🌾</div>
+        <div class="a-title">Farming</div>
+        <div class="a-desc">Relación falsa a largo plazo para robo de identidad o chantaje.</div>
+      </div>
+    </div>
+    <p style="font-size:.78rem;color:var(--muted);text-align:center;margin-top:.3rem;">Haz clic en cada tarjeta para más detalles</p>
+  </div>
+</div>
+
+<!-- SLIDE 18: Defensa ingeniería social -->
+<div class="slide content-slide">
+  <div class="slide-header">
+    <div class="slide-tag">Tema 6 · Defensa</div>
+    <div class="slide-title">Cómo protegerte de la ingeniería social</div>
+  </div>
+  <div class="slide-body">
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-num">1M+</div>
+        <div class="stat-label">Cuentas Google comprometidas en el phishing a Google Docs (2017)</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">91%</div>
+        <div class="stat-label">de ciberataques comienzan con un email de phishing</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">0</div>
+        <div class="stat-label">antivirus que pueda protegerte si TÚ das tus credenciales voluntariamente</div>
+      </div>
+    </div>
+    <div class="two-col" style="margin-top:.5rem;">
+      <ul class="check-list">
+        <li>Configura redes sociales en modo privado: mínima exposición pública de datos.</li>
+        <li>Activa autenticación de dos pasos (2FA) en todas las cuentas importantes.</li>
+        <li>Usa contraseñas únicas por cada servicio (gestor de contraseñas).</li>
+        <li>Nunca proporciones credenciales por teléfono, email o chat.</li>
+      </ul>
+      <ul class="check-list">
+        <li>Si el banco llama, cuelga y llama tú al número oficial de la tarjeta.</li>
+        <li>Verifica el dominio del email: soporte@amaz0n.com ≠ amazon.com.</li>
+        <li>La urgencia excesiva es señal de alarma: tómate 5 minutos antes de actuar.</li>
+        <li>Sé escéptico con premios, herencias o donaciones urgentes.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 19: TEMA 7 SECTION -->
+<div class="slide section-slide">
+  <div class="section-num">07</div>
+  <div class="section-title">Ransomware</div>
+  <div class="section-desc">El secuestrador digital: cifra tus archivos y exige rescate. En 2023, los ataques de ransomware causaron pérdidas de $30,000 millones USD globales.</div>
+</div>
+
+<!-- SLIDE 20: Ransomware -->
+<div class="slide content-slide">
+  <div class="slide-header">
+    <div class="slide-tag">Tema 7 · Ransomware</div>
+    <div class="slide-title">El ransomware: cómo opera y sus consecuencias</div>
+  </div>
+  <div class="slide-body">
+    <div class="metaphor">El ransomware es como llegar a tu casa y encontrar todas las puertas cambiadas con nuevas cerraduras. Alguien más tiene las llaves y quiere dinero por devolvértelas.</div>
+    <div class="two-col">
+      <div>
+        <h3 style="color:var(--red);margin-bottom:.7rem;">🔐 Tipos de ransomware</h3>
+        <div class="info-block" style="border-color:var(--red);margin-bottom:.7rem;">
+          <h3>Ransomware de bloqueo</h3>
+          <p>Bloquea las funciones básicas del equipo (explorador, mouse). Los archivos NO se cifran, pero no puedes usarlos. Algo menos catastrófico.</p>
+        </div>
+        <div class="info-block" style="border-color:var(--red);">
+          <h3>Ransomware de cifrado</h3>
+          <p>Cifra todos tus documentos, fotos y videos con una clave que solo el atacante tiene. Cuenta regresiva: si no pagas antes del deadline, archivos eliminados permanentemente.</p>
+        </div>
+      </div>
+      <div>
+        <h3 style="color:var(--teal2);margin-bottom:.7rem;">⚡ Cómo se propaga</h3>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-dot">1</div>
+            <div class="tl-body"><h4>Vector de entrada</h4><p>Email con adjunto malicioso, enlace fraudulento, sitio comprometido o vulnerabilidad del SO.</p></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot">2</div>
+            <div class="tl-body"><h4>Instalación silenciosa</h4><p>El malware se instala en segundo plano, identifica y mapea todos los archivos de valor.</p></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot">3</div>
+            <div class="tl-body"><h4>Cifrado masivo</h4><p>Cifra documentos, fotos, videos. Aparece pantalla de rescate con timer y monto en criptomoneda.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 21: Protección ransomware -->
+<div class="slide content-slide">
+  <div class="slide-header">
+    <div class="slide-tag">Tema 7 · Prevención</div>
+    <div class="slide-title">Prevención y recuperación del ransomware</div>
+  </div>
+  <div class="slide-body">
+    <div class="alert" style="margin-bottom:1rem;"><strong>Regla crítica:</strong> El FBI y la mayoría de expertos recomiendan NO pagar el rescate. El 65% de quienes pagan nunca recuperan todos sus archivos, y quedan marcados como víctimas para futuros ataques.</div>
+    <div class="two-col">
+      <div>
+        <h3 style="color:var(--teal2);margin-bottom:.7rem;">🛡️ Prevención</h3>
+        <ul class="check-list">
+          <li>Antivirus con módulo anti-ransomware activado.</li>
+          <li>Actualizaciones del SO al día (WannaCry aprovechó un parche disponible hacía meses).</li>
+          <li>No abrir adjuntos de emails desconocidos, nunca.</li>
+          <li>No visitar sitios de software gratuito o descargas ilegales.</li>
+          <li>Macro de Office desactivada por defecto.</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="color:var(--orange);margin-bottom:.7rem;">💾 Plan de recuperación (3-2-1)</h3>
+        <div class="info-block" style="border-color:var(--orange);">
+          <h3>Regla de respaldo 3-2-1</h3>
+          <p><strong>3</strong> copias de tus datos importantes.<br>
+          <strong>2</strong> medios diferentes (ej. disco externo + nube).<br>
+          <strong>1</strong> copia offsite o desconectada de la red.</p>
+        </div>
+        <div class="tip" style="margin-top:.7rem;">Si tienes respaldo reciente: no pagues. Lleva el equipo con un técnico, formatea y restaura. Carlos Andrade recuperó su tesis así — solo perdió una semana de trabajo.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 22: TEMA 8 SECTION -->
+<div class="slide section-slide">
+  <div class="section-num">08</div>
+  <div class="section-title">Robo y pérdida de dispositivos</div>
+  <div class="section-desc">Cuando te roban el hardware, no solo pierdes el equipo — pierden acceso a tu vida digital completa. El cifrado es tu última línea de defensa.</div>
+</div>
+
+<!-- SLIDE 23: Autenticación y cifrado -->
+<div class="slide content-slide">
+  <div class="slide-header">
+    <div class="slide-tag">Tema 8 · Robo de dispositivos</div>
+    <div class="slide-title">Autenticación y cifrado: protege tus datos físicamente</div>
+  </div>
+  <div class="slide-body">
+    <div class="metaphor">La contraseña de tu laptop detiene a los vagos. El cifrado del disco detiene a los expertos: aunque saquen el disco duro, solo ven datos ilegibles.</div>
+    <div class="two-col">
+      <div>
+        <h3 style="color:var(--red);margin-bottom:.7rem;">⚠️ Lo que pasa cuando te roban sin cifrado</h3>
+        <ul class="check-list">
+          <li class="bad">Extraen el disco duro y lo conectan vía USB a otro equipo.</li>
+          <li class="bad">Leen todos tus archivos sin necesitar tu contraseña.</li>
+          <li class="bad">Restauran contraseñas del disco y acceden a tus cuentas de email y redes sociales.</li>
+          <li class="bad">Roban proyectos confidenciales, fotos, documentos personales.</li>
+        </ul>
+        <div class="alert" style="margin-top:.7rem;"><strong>Caso real del curso:</strong> Artemio perdió su laptop, los ladrones desmontaron el disco y publicaron su proyecto de película animada confidencial en YouTube.</div>
+      </div>
+      <div>
+        <h3 style="color:var(--teal2);margin-bottom:.7rem;">🔐 Cifrado de disco: tu seguro de vida</h3>
+        <div class="info-block" style="margin-bottom:.6rem;">
+          <h3>Windows: BitLocker</h3>
+          <p>Integrado en Windows 10/11 Pro. Cifra todo el disco. Si roban la laptop y extraen el disco: solo ven datos ilegibles. Mejora además el rendimiento mediante operaciones criptográficas del controlador.</p>
+        </div>
+        <div class="info-block" style="margin-bottom:.6rem;">
+          <h3>Mac: FileVault</h3>
+          <p>Integrado en macOS. Mismo principio que BitLocker.</p>
+        </div>
+        <div class="info-block">
+          <h3>Móviles: automático con PIN</h3>
+          <p>iPhone y Android cifran automáticamente cuando activas PIN/huella. Para tarjeta SD en Android: Configuración → Seguridad → Cifrar tarjeta.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 24: Algoritmos de cifrado -->
+<div class="slide content-slide">
+  <div class="slide-header">
+    <div class="slide-tag">Tema 8 · Criptografía básica</div>
+    <div class="slide-title">Cómo funciona el cifrado de datos</div>
+  </div>
+  <div class="slide-body">
+    <div class="enc-demo" style="margin-bottom:1rem;">
+      <div style="margin-bottom:.4rem;color:var(--muted);font-size:.78rem;">CIFRADO SIMÉTRICO (misma llave para cifrar y descifrar)</div>
+      <span class="plain">HOLA MUNDO</span>
+      <span style="color:var(--muted);margin:0 .5rem;">──[AES-256 🔑]──▶</span>
+      <span class="cipher">X9#kL2@pQ!</span>
+      <span style="color:var(--muted);margin:0 .5rem;">──[🔑 misma clave]──▶</span>
+      <span class="plain">HOLA MUNDO</span>
+    </div>
+    <div class="card-grid">
+      <div class="card">
+        <h3>🔑 Simétrico (AES-256, DES)</h3>
+        <p>Una sola llave para cifrar y descifrar. Muy rápido. Usado en BitLocker, cifrado de disco, VPN. AES-256 es el estándar del gobierno de EE.UU.</p>
+        <span class="badge teal" style="margin-top:.5rem;display:inline-block;">Disco duro, VPN, almacenamiento</span>
+      </div>
+      <div class="card">
+        <h3>🔏 Asimétrico (RSA, PKI)</h3>
+        <p>Llave pública para cifrar + llave privada para descifrar. Más lento pero más seguro para intercambios. Usado en HTTPS, emails firmados, certificados digitales.</p>
+        <span class="badge blue" style="margin-top:.5rem;display:inline-block;">HTTPS, email, firma digital</span>
+      </div>
+      <div class="card">
+        <h3>🆓 VeraCrypt (gratuito)</h3>
+        <p>Herramienta open source para cifrar discos duros en Windows, Mac y Linux. Alternativa gratuita a BitLocker. Crea contenedores cifrados o cifra particiones completas.</p>
+        <span class="badge yellow" style="margin-top:.5rem;display:inline-block;">Gratis · Open Source</span>
+      </div>
+    </div>
+    <div class="tip"><strong>Importante:</strong> Guarda tu clave de cifrado en un lugar seguro y offline. Sin ella, ni tú puedes recuperar tus datos. Considera un gestor de contraseñas o una nota física en lugar seguro.</div>
+  </div>
+</div>
+
+<!-- SLIDE 25: CIERRE -->
+<div class="slide content-slide">
+  <div class="slide-header">
+    <div class="slide-tag">Resumen del curso</div>
+    <div class="slide-title">Las 8 reglas de oro de la seguridad del usuario</div>
+  </div>
+  <div class="slide-body">
+    <div class="card-grid">
+      <div class="card highlight">
+        <div class="card-icon">1️⃣</div>
+        <h3>Protege todos tus dispositivos</h3>
+        <p>PC, laptop, smartphone, tablet y IoT. Todos necesitan algún nivel de protección activa.</p>
+      </div>
+      <div class="card highlight">
+        <div class="card-icon">2️⃣</div>
+        <h3>Antivirus + actualizaciones</h3>
+        <p>El 60% de los ataques exitosos explotan vulnerabilidades con parche disponible. Actualiza siempre.</p>
+      </div>
+      <div class="card highlight">
+        <div class="card-icon">3️⃣</div>
+        <h3>Contraseñas robustas + 2FA</h3>
+        <p>Mínimo 8 caracteres, mayúsculas, números y símbolos. Activa autenticación de dos pasos siempre.</p>
+      </div>
+      <div class="card highlight">
+        <div class="card-icon">4️⃣</div>
+        <h3>Desconfía de lo urgente</h3>
+        <p>Ingeniería social usa la urgencia como arma. Pausa, verifica por canales oficiales, luego actúa.</p>
+      </div>
+      <div class="card highlight">
+        <div class="card-icon">5️⃣</div>
+        <h3>WiFi segura o VPN</h3>
+        <p>Nunca operaciones bancarias en WiFi pública. Si es necesario, usa VPN. Desactiva conexión automática.</p>
+      </div>
+      <div class="card highlight">
+        <div class="card-icon">6️⃣</div>
+        <h3>Respaldos 3-2-1</h3>
+        <p>3 copias, 2 medios, 1 offsite. La única defensa real ante ransomware: poder restaurar sin pagar.</p>
+      </div>
+      <div class="card highlight">
+        <div class="card-icon">7️⃣</div>
+        <h3>Cifra tu disco</h3>
+        <p>BitLocker (Windows), FileVault (Mac) o VeraCrypt. Si te roban el equipo, tus datos quedan ilegibles.</p>
+      </div>
+      <div class="card highlight">
+        <div class="card-icon">8️⃣</div>
+        <h3>Educa y capacítate</h3>
+        <p>El eslabón más débil es el humano. La concientización continua es la mejor inversión en seguridad.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 26: FINAL -->
+<div class="slide cover">
+  <div class="cover-badge">User Security Awareness</div>
+  <h1>La seguridad<br>empieza <span>contigo</span></h1>
+  <div class="cover-sub">Ningún software puede protegerte si no conoces las amenazas. Ahora las conoces. Aplica lo aprendido todos los días.</div>
+  <div class="cover-themes">
+    <span>✓ Dispositivos identificados</span>
+    <span>✓ Malware comprendido</span>
+    <span>✓ Hábitos seguros</span>
+    <span>✓ Navegación protegida</span>
+    <span>✓ Móviles asegurados</span>
+    <span>✓ Ingeniería social detectada</span>
+    <span>✓ Ransomware prevenido</span>
+    <span>✓ Datos cifrados</span>
+  </div>
+</div>
+
+</div><!-- /deck -->
+
+<!-- Nav -->
+<nav id="nav">
+  <button id="prev" onclick="move(-1)">‹</button>
+  <div id="track" onclick="trackClick(event)"><div id="track-fill"></div></div>
+  <span id="slide-count"></span>
+  <button id="next" onclick="move(1)">›</button>
+</nav>
+
+<!-- Attack detail overlay -->
+<div id="detail-overlay" onclick="closeDetail(event)">
+  <div id="detail-box">
+    <button id="detail-close" onclick="closeDetail()">×</button>
+    <h2 id="d-title"></h2>
+    <p id="d-desc"></p>
+  </div>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const dotsEl = document.getElementById('dots');
+const progress = document.getElementById('progress');
+const countEl = document.getElementById('slide-count');
+let cur = 0;
+
+const trackFill = document.getElementById('track-fill');
+function buildDots(){}
+function updateDots(){}
+function updateNav(){
+  const pct = (cur/(slides.length-1))*100;
+  progress.style.width = pct+'%';
+  trackFill.style.width = pct+'%';
+  countEl.textContent = (cur+1)+' / '+slides.length;
+}
+function trackClick(e){
+  const rect = document.getElementById('track').getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  goTo(Math.round(pct*(slides.length-1)));
+}
+function goTo(n){
+  slides[cur].classList.remove('active');
+  slides[cur].classList.add('exit');
+  setTimeout(()=>slides[cur].classList.remove('exit'),450);
+  cur = Math.max(0, Math.min(n, slides.length-1));
+  slides[cur].classList.add('active');
+  updateNav();
+}
+function move(d){goTo(cur+d);}
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown') move(1);
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp') move(-1);
+});
+// Swipe
+let tsx=0;
+document.addEventListener('touchstart',e=>tsx=e.touches[0].clientX);
+document.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tsx;if(Math.abs(dx)>50)move(dx<0?1:-1);});
+
+const attacks={
+  phishing:{},vishing:{},spear:{},baiting:{},pretexto:{},farming:{}
+};
+function showDetail(id,title,desc){
+  document.getElementById('d-title').textContent=title;
+  document.getElementById('d-desc').textContent=desc;
+  document.getElementById('detail-overlay').classList.add('show');
+}
+function closeDetail(e){
+  if(!e||e.target===document.getElementById('detail-overlay')||e.currentTarget===document.getElementById('detail-close')){
+    document.getElementById('detail-overlay').classList.remove('show');
+  }
+}
+
+goTo(0);
+</script>
+</body>
+</html>
