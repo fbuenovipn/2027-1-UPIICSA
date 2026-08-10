@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Big Data — Infraestructura en la Nube</title>
+<style>
+:root{--bg:#0a0e1a;--surface:#111827;--card:#1e2a3a;--accent:#ef4444;--accent2:#f59e0b;--accent3:#00d4ff;--text:#e2e8f0;--muted:#94a3b8;--border:#2d3748;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow:hidden;}
+#progress-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s;z-index:200;}
+.top-nav{display:none;}
+.nav-title{font-size:.9rem;font-weight:700;color:var(--accent);}
+.nav-counter{font-size:.8rem;color:var(--muted);}
+/* SHARED TOPBAR */
+.shared-topbar{position:fixed;top:0;left:0;right:0;height:48px;z-index:200;background:rgba(10,14,26,.97);backdrop-filter:blur(12px);border-bottom:1px solid rgba(239,68,68,.2);display:flex;align-items:center;gap:1rem;padding:0 1rem;}
+.topbar-back{display:inline-flex;align-items:center;gap:.4rem;color:#94a3b8;text-decoration:none;font-size:.78rem;font-weight:600;padding:.3rem .75rem;border-radius:6px;border:1px solid rgba(255,255,255,.1);transition:all .2s;white-space:nowrap;}
+.topbar-back:hover{color:#ef4444;border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.07);}
+.topbar-sep{width:1px;height:20px;background:rgba(255,255,255,.1);flex-shrink:0;}
+.topbar-logo{font-size:.8rem;font-weight:700;color:#ef4444;letter-spacing:.5px;}
+.topbar-title{font-size:.8rem;color:#94a3b8;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.topbar-badge{font-size:.68rem;font-weight:700;padding:.2rem .55rem;border-radius:10px;background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.25);white-space:nowrap;}
+.hamburger{background:none;border:1px solid rgba(255,255,255,.15);color:#94a3b8;padding:.3rem .6rem;border-radius:6px;cursor:pointer;font-size:1rem;}
+#sidebar{position:fixed;left:0;top:48px;bottom:0;width:260px;background:var(--surface);border-right:1px solid var(--border);padding:1.2rem 1rem;overflow-y:auto;transform:translateX(-100%);transition:transform .3s;z-index:140;}
+#sidebar.open{transform:translateX(0);}
+#sidebar h3{font-size:.72rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:.8rem;}
+.sidebar-item{display:flex;align-items:center;gap:.7rem;padding:.55rem .8rem;border-radius:8px;cursor:pointer;font-size:.83rem;color:var(--muted);transition:all .2s;margin-bottom:.2rem;}
+.sidebar-item:hover{background:rgba(255,255,255,.04);color:var(--text);}
+.sidebar-item.active{background:rgba(239,68,68,.12);color:var(--accent);}
+.sidebar-num{font-size:.7rem;font-weight:700;width:20px;height:20px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sidebar-item.active .sidebar-num{background:var(--accent);color:#fff;}
+#slides-container{height:100vh;overflow:hidden;}
+.slide{height:100vh;overflow-y:auto;padding:68px 2rem 5rem;display:none;animation:fadeIn .4s ease;}
+.slide.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.slide-inner{max-width:920px;margin:0 auto;}
+.cover{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 130px);text-align:center;}
+.cover-badge{display:inline-block;padding:.35rem 1rem;border-radius:20px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:var(--accent);font-size:.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:1.5rem;}
+.cover h1{font-size:clamp(2rem,5vw,3.8rem);font-weight:800;line-height:1.1;margin-bottom:1rem;}
+.cover h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.cover p{color:var(--muted);font-size:1.05rem;max-width:600px;line-height:1.7;margin-bottom:2rem;}
+.cover-stats{display:flex;gap:2rem;flex-wrap:wrap;justify-content:center;}
+.cstat{text-align:center;}
+.cstat-n{font-size:1.8rem;font-weight:800;color:var(--accent);}
+.cstat-l{font-size:.75rem;color:var(--muted);}
+/* NODE DIAGRAM */
+.node-diagram{display:flex;align-items:center;justify-content:center;gap:2rem;flex-wrap:wrap;margin:1.5rem 0;}
+.node{width:56px;height:56px;border-radius:10px;border:2px solid;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;text-align:center;line-height:1.2;}
+.node-master{border-color:var(--accent);background:rgba(239,68,68,.12);color:var(--accent);}
+.node-worker{border-color:var(--accent2);background:rgba(245,158,11,.08);color:var(--accent2);}
+.node-arrow{color:var(--muted);font-size:1.2rem;}
+/* CONTENT */
+.slide-tag{display:inline-block;padding:.2rem .7rem;border-radius:20px;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:var(--accent);margin-bottom:.6rem;}
+.slide h2{font-size:clamp(1.5rem,3vw,2.2rem);font-weight:800;margin-bottom:.3rem;}
+.slide .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:1.8rem;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:1.2rem;}
+@media(max-width:700px){.two-col{grid-template-columns:1fr;}}
+.theory{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;}
+.theory h3{font-size:.8rem;text-transform:uppercase;letter-spacing:1px;color:var(--accent3);margin-bottom:.8rem;}
+.theory p{font-size:.88rem;color:var(--muted);line-height:1.7;margin-bottom:.6rem;}
+.theory p:last-child{margin-bottom:0;}
+.theory ul{list-style:none;display:flex;flex-direction:column;gap:.45rem;}
+.theory ul li{font-size:.85rem;color:var(--muted);padding-left:1.2rem;position:relative;line-height:1.55;}
+.theory ul li::before{content:'▸';position:absolute;left:0;color:var(--accent);}
+.theory strong{color:var(--text);}
+.metaphor{background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.2);border-left:4px solid var(--accent);border-radius:0 10px 10px 0;padding:1.2rem 1.4rem;margin-bottom:1.2rem;}
+.metaphor .m-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);margin-bottom:.5rem;}
+.metaphor .m-emoji{font-size:2rem;margin-bottom:.5rem;}
+.metaphor p{font-size:.88rem;color:var(--muted);line-height:1.65;}
+.case{background:rgba(0,212,255,.05);border:1px solid rgba(0,212,255,.2);border-radius:10px;padding:1.2rem 1.4rem;margin-bottom:1.2rem;}
+.case .c-badge{display:inline-block;font-size:.65rem;font-weight:700;text-transform:uppercase;padding:.15rem .5rem;border-radius:10px;background:rgba(16,185,129,.15);color:#10b981;margin-bottom:.5rem;}
+.case h4{font-size:.95rem;font-weight:700;margin-bottom:.4rem;}
+.case p{font-size:.85rem;color:var(--muted);line-height:1.6;}
+.code-block{background:#0d1117;border:1px solid #30363d;border-radius:10px;overflow:hidden;margin-bottom:1.2rem;}
+.code-header{background:#161b22;padding:.5rem 1rem;display:flex;align-items:center;gap:.5rem;font-size:.72rem;color:var(--muted);}
+.code-dots{display:flex;gap:.4rem;}
+.code-dot{width:10px;height:10px;border-radius:50%;}
+pre{padding:1.2rem;overflow-x:auto;font-family:'JetBrains Mono','Fira Code',monospace;font-size:.78rem;line-height:1.7;}
+.kw{color:#ff7b72;}
+.fn{color:#79c0ff;}
+.st{color:#a5d6ff;}
+.cm{color:#8b949e;}
+.nu{color:#f59e0b;}
+.sql-kw{color:#00d4ff;}
+.bash-kw{color:#ef4444;}
+/* ARCH DIAGRAM */
+.arch{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:1.2rem;font-family:monospace;font-size:.78rem;color:var(--muted);line-height:1.8;}
+.arch .ah{color:var(--accent);}
+.arch .ac{color:var(--accent3);}
+.arch .ag{color:#10b981;}
+/* ECOSYSTEM TABLE */
+.eco-table{width:100%;border-collapse:collapse;margin-bottom:1.2rem;font-size:.8rem;}
+.eco-table th{background:var(--card);padding:.6rem .8rem;text-align:left;color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid var(--border);}
+.eco-table td{padding:.6rem .8rem;border-bottom:1px solid rgba(45,55,72,.5);color:var(--muted);}
+.eco-table tr:hover td{background:rgba(255,255,255,.02);}
+.eco-table td:first-child{color:var(--text);font-weight:600;}
+/* PROJECT */
+.project-box{background:linear-gradient(135deg,rgba(239,68,68,.1),rgba(245,158,11,.06));border:1px solid rgba(239,68,68,.25);border-radius:14px;padding:1.8rem;}
+.project-box h3{font-size:1.1rem;font-weight:700;margin-bottom:.8rem;}
+.phases{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:.8rem;margin-top:1rem;}
+.phase{background:rgba(255,255,255,.04);border-radius:8px;padding:.8rem;font-size:.8rem;color:var(--muted);}
+.phase strong{display:block;color:var(--text);margin-bottom:.3rem;}
+.nav-btns{position:fixed;bottom:1.5rem;right:1.5rem;display:flex;gap:.6rem;z-index:150;}
+.nav-btn{width:44px;height:44px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:1rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;}
+.nav-btn:hover{border-color:var(--accent);color:var(--accent);}
+.highlight{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:1rem 1.2rem;margin-bottom:1rem;font-size:.88rem;color:var(--muted);line-height:1.6;}
+.highlight strong{color:#f87171;}
+</style>
+</head>
+<body>
+<div class="shared-topbar">
+  <a class="topbar-back" href="presentacion_data_science.html">← Inicio</a>
+  <div class="topbar-sep"></div>
+  <span class="topbar-logo">⚡ DataSci</span>
+  <div class="topbar-sep"></div>
+  <span class="topbar-title">Big Data: Infraestructura en la Nube</span>
+  <span class="topbar-badge">Curso 5 / 5</span>
+  <div style="margin-left:auto;">
+    <button class="hamburger" onclick="toggleSidebar()">☰</button>
+  </div>
+</div>
+<div id="progress-bar" style="width:14.3%"></div>
+
+<div class="top-nav">
+  <span class="nav-title">☁️ Big Data — Infraestructura en la Nube</span>
+  <span class="nav-counter" id="nav-counter">1 / 7</span>
+</div>
+
+<div id="sidebar">
+  <h3>Módulos del curso</h3>
+  <div class="sidebar-item active" onclick="goTo(0)"><span class="sidebar-num">★</span>Portada</div>
+  <div class="sidebar-item" onclick="goTo(1)"><span class="sidebar-num">1</span>Arquitectura Hadoop</div>
+  <div class="sidebar-item" onclick="goTo(2)"><span class="sidebar-num">2</span>Comandos HDFS</div>
+  <div class="sidebar-item" onclick="goTo(3)"><span class="sidebar-num">3</span>Azure HDInsight</div>
+  <div class="sidebar-item" onclick="goTo(4)"><span class="sidebar-num">4</span>Apache Hive y HiveQL</div>
+  <div class="sidebar-item" onclick="goTo(5)"><span class="sidebar-num">5</span>Ecosistemas Alternativos</div>
+  <div class="sidebar-item" onclick="goTo(6)"><span class="sidebar-num">✓</span>Proyecto Final</div>
+</div>
+
+<div id="slides-container">
+
+<!-- SLIDE 0 -->
+<div class="slide active" id="slide-0">
+<div class="slide-inner">
+<div class="cover">
+  <div class="cover-badge">Big Data — Módulo Avanzado</div>
+  <h1>Infraestructura y<br><span>Ecosistemas en la Nube</span></h1>
+  <p>La ingeniería detrás de los datos masivos: Hadoop, HDFS, HiveQL, Apache Spark y los principales ecosistemas cloud para Big Data a escala industrial.</p>
+  <div class="node-diagram">
+    <div class="node node-master">NAME<br>NODE</div>
+    <div class="node-arrow">⟷</div>
+    <div style="display:flex;flex-direction:column;gap:.5rem">
+      <div class="node node-worker">DATA<br>NODE 1</div>
+      <div class="node node-worker">DATA<br>NODE 2</div>
+      <div class="node node-worker">DATA<br>NODE 3</div>
+    </div>
+    <div class="node-arrow">···</div>
+    <div class="node node-worker" style="opacity:.5">DATA<br>NODE N</div>
+  </div>
+  <div class="cover-stats">
+    <div class="cstat"><div class="cstat-n">8.5B</div><div class="cstat-l">Búsquedas/día Google</div></div>
+    <div class="cstat"><div class="cstat-n">40K</div><div class="cstat-l">Nodos Hadoop en Yahoo</div></div>
+    <div class="cstat"><div class="cstat-n">100x</div><div class="cstat-l">Spark vs MapReduce</div></div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 1 -->
+<div class="slide" id="slide-1">
+<div class="slide-inner">
+  <div class="slide-tag">Módulo 1</div>
+  <h2>Arquitectura de Apache Hadoop</h2>
+  <p class="subtitle">Procesamiento distribuido sobre commodity hardware</p>
+
+  <div class="two-col">
+    <div class="theory">
+      <h3>Historia y motivación</h3>
+      <ul>
+        <li><strong>2003:</strong> Google publica paper sobre Google File System (GFS)</li>
+        <li><strong>2004:</strong> Google publica paper sobre MapReduce</li>
+        <li><strong>2006:</strong> Doug Cutting + Mike Cafarella crean Hadoop en Yahoo, basado en ambos papers</li>
+        <li><strong>El nombre:</strong> elefante de juguete del hijo de Doug Cutting</li>
+        <li><strong>Hoy:</strong> Apache Software Foundation, miles de empresas</li>
+      </ul>
+      <p style="margin-top:.7rem"><strong>El problema que resuelve:</strong> 1 petabyte de logs. Una computadora = 2 semanas. 1,000 computadoras modestas = 2 horas.</p>
+    </div>
+    <div class="theory">
+      <h3>Los 3 pilares</h3>
+      <p><strong>HDFS</strong> — Hadoop Distributed File System</p>
+      <ul>
+        <li>Divide archivos en bloques (128 MB default)</li>
+        <li>Replica cada bloque 3 veces en nodos distintos</li>
+        <li><strong>NameNode:</strong> directorio maestro con metadatos</li>
+        <li><strong>DataNodes:</strong> almacenan bloques reales</li>
+      </ul>
+      <p style="margin-top:.6rem"><strong>MapReduce</strong> — procesamiento paralelo</p>
+      <ul>
+        <li><strong>Map:</strong> aplica función a cada fragmento en paralelo</li>
+        <li><strong>Shuffle:</strong> agrupa resultados intermedios por clave</li>
+        <li><strong>Reduce:</strong> combina en respuesta final</li>
+      </ul>
+      <p style="margin-top:.6rem"><strong>YARN</strong> — gestor de recursos del clúster (v2.x+)</p>
+    </div>
+  </div>
+
+  <div class="arch">
+<span class="ah">[Cliente]</span>
+    ↓ solicitud
+<span class="ah">[NameNode]</span> ←→ <span class="cm">[Secondary NameNode — backup]</span>
+    ↓ coordina ubicación de bloques
+<span class="ac">[DataNode 1]</span>  <span class="ac">[DataNode 2]</span>  <span class="ac">[DataNode 3]</span>  ···  <span class="ac">[DataNode N]</span>
+<span class="cm">(bloque A, C)  (bloque A, B)  (bloque B, C)       (réplicas)</span>
+  </div>
+
+  <div class="metaphor">
+    <div class="m-label">Metáfora</div>
+    <div class="m-emoji">🏦</div>
+    <p><strong>Hadoop</strong> es un banco con miles de empleados modestos. En lugar de contratar un genio que resuelve todo (supercomputadora a $10M), contratas 1,000 empleados normales ($1,000 c/u). Cada uno resuelve su parte del problema, un coordinador combina los resultados. La <strong>replicación HDFS</strong> es como guardar 3 copias del testamento en distintas notarías: si una se incendia, el documento no se pierde.</p>
+  </div>
+
+  <div class="case">
+    <div class="c-badge">CASO REAL</div>
+    <h4>Yahoo — El caso de uso que creó Hadoop</h4>
+    <p>Yahoo tiene más de <strong>40,000 nodos Hadoop</strong> procesando 170 petabytes/mes: ranking de búsqueda, detección de spam, perfiles de publicidad y análisis de clics. Todo corriendo sobre servidores de uso general — la misma tecnología que cualquier empresa puede replicar hoy en la nube.</p>
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 2 -->
+<div class="slide" id="slide-2">
+<div class="slide-inner">
+  <div class="slide-tag">Módulo 2</div>
+  <h2>Comandos HDFS</h2>
+  <p class="subtitle">Gestionar el sistema de archivos distribuido desde la línea de comandos</p>
+
+  <div class="two-col">
+    <div class="theory">
+      <h3>Fundamentos</h3>
+      <p>HDFS usa una interfaz de línea de comandos similar a Unix/Linux. El comando base es <code style="background:#0d1117;padding:.1rem .4rem;border-radius:4px;font-family:monospace;color:#ef4444">hdfs dfs -&lt;comando&gt;</code>.</p>
+      <p>Los archivos en HDFS se acceden con la URI:<br><code style="background:#0d1117;padding:.1rem .4rem;border-radius:4px;font-family:monospace;color:#a5d6ff;font-size:.8rem">hdfs://namenode:9000/ruta/archivo</code></p>
+      <p>La principal diferencia con Unix: los comandos operan sobre un sistema de archivos distribuido que puede estar repartido entre cientos de máquinas en la red.</p>
+    </div>
+    <div class="theory">
+      <h3>Conexión SSH al clúster</h3>
+      <ul>
+        <li>Conexión básica: <code style="background:#0d1117;padding:.1rem .3rem;border-radius:3px;font-family:monospace;color:#ef4444;font-size:.78rem">ssh usuario@namenode.cluster</code></li>
+        <li>Con clave privada (AWS/Azure): <code style="background:#0d1117;padding:.1rem .3rem;border-radius:3px;font-family:monospace;color:#ef4444;font-size:.78rem">ssh -i ~/.ssh/key.pem hadoop@ec2-xx.aws.com</code></li>
+        <li>Túnel para UI HDFS (puerto 9870): <code style="background:#0d1117;padding:.1rem .3rem;border-radius:3px;font-family:monospace;color:#ef4444;font-size:.78rem">ssh -L 9870:localhost:9870 usuario@namenode</code></li>
+        <li>Luego abrir: <code style="background:#0d1117;padding:.1rem .3rem;border-radius:3px;font-family:monospace;color:#a5d6ff;font-size:.78rem">http://localhost:9870</code></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot" style="background:#ef4444"></div><div class="code-dot" style="background:#f59e0b"></div><div class="code-dot" style="background:#10b981"></div></div>comandos_hdfs.sh</div>
+    <pre><span class="cm"># ===== NAVEGACIÓN =====</span>
+hdfs dfs <span class="bash-kw">-ls</span> /user/datos/          <span class="cm"># listar directorio</span>
+hdfs dfs <span class="bash-kw">-ls -R</span> /user/datos/       <span class="cm"># recursivo</span>
+hdfs dfs <span class="bash-kw">-mkdir</span> /user/proyecto     <span class="cm"># crear directorio</span>
+hdfs dfs <span class="bash-kw">-mkdir -p</span> /user/raw/2024  <span class="cm"># crear con padres</span>
+
+<span class="cm"># ===== TRANSFERENCIA =====</span>
+hdfs dfs <span class="bash-kw">-put</span> datos.csv /user/proyecto/raw/       <span class="cm"># local → HDFS</span>
+hdfs dfs <span class="bash-kw">-copyFromLocal</span> datos.csv /user/proyecto/ <span class="cm"># equivalente</span>
+hdfs dfs <span class="bash-kw">-get</span> /user/proyecto/result.csv ./local/  <span class="cm"># HDFS → local</span>
+
+<span class="cm"># ===== OPERACIONES =====</span>
+hdfs dfs <span class="bash-kw">-cat</span> /user/proyecto/datos.csv   <span class="cm"># ver contenido</span>
+hdfs dfs <span class="bash-kw">-cp</span>  /source/file.csv /dest/     <span class="cm"># copiar en HDFS</span>
+hdfs dfs <span class="bash-kw">-mv</span>  /user/raw/old.csv /archive/ <span class="cm"># mover</span>
+hdfs dfs <span class="bash-kw">-rm</span>  /user/temp/file.csv         <span class="cm"># eliminar archivo</span>
+hdfs dfs <span class="bash-kw">-rm -r</span> /user/temp/              <span class="cm"># eliminar carpeta</span>
+
+<span class="cm"># ===== INFORMACIÓN =====</span>
+hdfs dfs <span class="bash-kw">-du -h</span>   /user/proyecto/        <span class="cm"># tamaño por archivo</span>
+hdfs dfs <span class="bash-kw">-du -s -h</span> /user/proyecto/       <span class="cm"># tamaño total</span>
+hdfs dfsadmin <span class="bash-kw">-report</span>                    <span class="cm"># reporte del clúster</span>
+hdfs fsck /user/ <span class="bash-kw">-files -blocks</span>          <span class="cm"># verificar integridad</span>
+
+<span class="cm"># ===== PERMISOS (Unix-like) =====</span>
+hdfs dfs <span class="bash-kw">-chmod</span> <span class="nu">755</span> /user/proyecto/
+hdfs dfs <span class="bash-kw">-chown</span> hadoop:hadoop /user/proyecto/</pre>
+  </div>
+
+  <div class="metaphor">
+    <div class="m-label">Metáfora</div>
+    <div class="m-emoji">💾</div>
+    <p>Los comandos HDFS son como Unix/Linux pero para un disco duro que existe en <strong>1,000 computadoras simultáneamente</strong>. <code style="color:#ef4444">ls</code> sigue siendo <code style="color:#ef4444">ls</code>, <code style="color:#ef4444">mkdir</code> sigue siendo <code style="color:#ef4444">mkdir</code> — pero cuando haces <code style="color:#ef4444">put</code>, tu archivo se divide en bloques y vuela a través de la red hacia docenas de máquinas al mismo tiempo, con 3 réplicas automáticas.</p>
+  </div>
+
+  <div class="case">
+    <div class="c-badge">CASO REAL</div>
+    <h4>Banxico — Repositorio de Datos Financieros</h4>
+    <p>El Banco de México gestiona su repositorio histórico en HDFS. Scripts automatizados corren cada noche usando estos mismos comandos para transferir <strong>+50 GB de transacciones diarias</strong> al clúster para procesamiento batch matutino, generando los reportes de política monetaria que se publican cada semana.</p>
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 3 -->
+<div class="slide" id="slide-3">
+<div class="slide-inner">
+  <div class="slide-tag">Módulo 3</div>
+  <h2>Microsoft Azure HDInsight</h2>
+  <p class="subtitle">Hadoop y Spark totalmente gestionados en la nube</p>
+
+  <div class="two-col">
+    <div class="theory">
+      <h3>¿Qué es HDInsight?</h3>
+      <p>Servicio PaaS de Microsoft que despliega clústeres Hadoop/Spark completamente gestionados: sin instalar software, sin parchear servidores, sin administrar redes.</p>
+      <p><strong>Tipos de clúster:</strong> Hadoop, HBase, Spark, Kafka, Interactive Query (Hive LLAP), Storm.</p>
+      <p><strong>Ventajas:</strong> alta disponibilidad automática, escalado dinámico, integración nativa con Azure Data Lake, Synapse y Power BI.</p>
+    </div>
+    <div class="theory">
+      <h3>Arquitectura HDInsight</h3>
+      <ul>
+        <li><strong>Head Nodes × 2</strong> (Alta Disponibilidad) — NameNode + ResourceManager</li>
+        <li><strong>Worker Nodes × n</strong> — DataNode + NodeManager, escalables</li>
+        <li><strong>Edge Node</strong> (opcional) — Jupyter, RStudio Server, acceso cliente</li>
+        <li><strong>ADLS Gen2</strong> — almacenamiento desacoplado del cómputo (paga solo por datos, no por cluster parado)</li>
+        <li><strong>Azure Monitor</strong> — logs y métricas del clúster</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot" style="background:#ef4444"></div><div class="code-dot" style="background:#f59e0b"></div><div class="code-dot" style="background:#10b981"></div></div>azure_hdinsight.sh</div>
+    <pre><span class="cm"># 1. Autenticarse en Azure</span>
+az login
+
+<span class="cm"># 2. Crear grupo de recursos</span>
+az group create \
+  <span class="bash-kw">--name</span> rg-bigdata-curso \
+  <span class="bash-kw">--location</span> eastus
+
+<span class="cm"># 3. Crear Azure Data Lake Storage Gen2</span>
+az storage account create \
+  <span class="bash-kw">--name</span> adlsbigdata2024 \
+  <span class="bash-kw">--resource-group</span> rg-bigdata-curso \
+  <span class="bash-kw">--kind</span> StorageV2 \
+  <span class="bash-kw">--hns</span> true    <span class="cm"># hierarchical namespace = ADLS Gen2</span>
+
+<span class="cm"># 4. Crear clúster HDInsight con Spark</span>
+az hdinsight create \
+  <span class="bash-kw">--name</span> cluster-spark-curso \
+  <span class="bash-kw">--resource-group</span> rg-bigdata-curso \
+  <span class="bash-kw">--type</span> Spark \
+  <span class="bash-kw">--version</span> <span class="nu">4.0</span> \
+  <span class="bash-kw">--http-password</span> <span class="st">'Admin@BigData2024!'</span> \
+  <span class="bash-kw">--http-user</span> admin \
+  <span class="bash-kw">--storage-account</span> adlsbigdata2024 \
+  <span class="bash-kw">--workernode-count</span> <span class="nu">3</span> \
+  <span class="bash-kw">--workernode-size</span> Standard_D4_v2
+
+<span class="cm"># 5. Verificar estado del clúster</span>
+az hdinsight show \
+  <span class="bash-kw">--name</span> cluster-spark-curso \
+  <span class="bash-kw">--resource-group</span> rg-bigdata-curso \
+  <span class="bash-kw">--query</span> <span class="st">'properties.clusterState'</span>
+
+<span class="cm"># Alternativa local sin costo: Docker</span>
+docker network create hadoop-net
+docker run -d <span class="bash-kw">--net</span>=hadoop-net <span class="bash-kw">--name</span> namenode \
+  -p <span class="nu">9870</span>:<span class="nu">9870</span> bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8</pre>
+  </div>
+
+  <div class="metaphor">
+    <div class="m-label">Metáfora</div>
+    <div class="m-emoji">🏟️</div>
+    <p><strong>Azure HDInsight</strong> es como rentar un estadio completo (con electricidad, seguridad y mantenimiento incluidos) en lugar de construir el tuyo. Pagas por el partido que juegas. Cuando termina la temporada, lo devuelves y dejas de pagar. Si mañana necesitas el doble de capacidad, está disponible en 15 minutos.</p>
+  </div>
+
+  <div class="case">
+    <div class="c-badge">CASO REAL</div>
+    <h4>Grupo Bimbo — Optimización de 52,000 Rutas</h4>
+    <p>Desplegó HDInsight para procesar datos de sus 52,000 rutas de distribución diarias en México y América Latina. El proceso batch de 6 horas se convirtió en análisis en tiempo real, permitiendo <strong>redirigir camiones al detectar roturas de inventario</strong> — reduciendo devoluciones de producto en 23%.</p>
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 4 -->
+<div class="slide" id="slide-4">
+<div class="slide-inner">
+  <div class="slide-tag">Módulo 4</div>
+  <h2>Apache Hive y HiveQL</h2>
+  <p class="subtitle">SQL sobre Hadoop — el poder del lenguaje que ya conoces a escala masiva</p>
+
+  <div class="two-col">
+    <div class="theory">
+      <h3>¿Qué es Hive?</h3>
+      <p>Capa de abstracción SQL sobre Hadoop. Convierte queries HQL en jobs MapReduce, Tez o Spark. Creado por <strong>Facebook (2007)</strong>, open-source en 2008.</p>
+      <p><strong>Data Lake vs Data Warehouse:</strong></p>
+      <ul>
+        <li><strong>Data Lake:</strong> todos los datos raw, schema al leer, flexible, barato</li>
+        <li><strong>Data Warehouse:</strong> datos transformados, schema al escribir, optimizado para queries analíticas</li>
+        <li><strong>Data Lakehouse:</strong> lo mejor de ambos (Apache Iceberg, Delta Lake)</li>
+      </ul>
+    </div>
+    <div class="theory">
+      <h3>Ventajas del particionamiento</h3>
+      <p>Una tabla sin particionar de 2 TB: cada query escanea <strong>todo el dataset</strong>.</p>
+      <p>La misma tabla particionada por año + mes: una query por "enero 2024" escanea <strong>solo ~15 GB</strong> en lugar de 2 TB.</p>
+      <p><strong>Formatos de almacenamiento:</strong></p>
+      <ul>
+        <li><strong>ORC</strong> — columnar, compresión SNAPPY, el más rápido para Hive</li>
+        <li><strong>Parquet</strong> — columnar, compatible con Spark/Flink/Athena</li>
+        <li><strong>TextFile</strong> — legible, más lento, para datos raw</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot" style="background:#ef4444"></div><div class="code-dot" style="background:#f59e0b"></div><div class="code-dot" style="background:#10b981"></div></div>analisis_ventas.hql</div>
+    <pre><span class="cm">-- Crear base de datos</span>
+<span class="sql-kw">CREATE DATABASE IF NOT EXISTS</span> analitica_2024
+  <span class="sql-kw">LOCATION</span> <span class="st">'/user/hive/warehouse/analitica_2024.db'</span>;
+<span class="sql-kw">USE</span> analitica_2024;
+
+<span class="cm">-- Tabla externa (datos en HDFS, Hive gestiona metadatos)</span>
+<span class="sql-kw">CREATE EXTERNAL TABLE IF NOT EXISTS</span> ventas_raw (
+    id_venta    <span class="sql-kw">STRING</span>, fecha      <span class="sql-kw">STRING</span>,
+    id_cliente  <span class="sql-kw">STRING</span>, id_prod    <span class="sql-kw">STRING</span>,
+    cantidad    <span class="sql-kw">INT</span>,    precio     <span class="sql-kw">DOUBLE</span>,
+    ciudad      <span class="sql-kw">STRING</span>
+) <span class="sql-kw">ROW FORMAT DELIMITED FIELDS TERMINATED BY</span> <span class="st">','</span>
+  <span class="sql-kw">STORED AS</span> TEXTFILE <span class="sql-kw">LOCATION</span> <span class="st">'/data/ventas/raw/'</span>
+  TBLPROPERTIES (<span class="st">"skip.header.line.count"</span>=<span class="st">"1"</span>);
+
+<span class="cm">-- Tabla interna particionada y comprimida</span>
+<span class="sql-kw">CREATE TABLE</span> ventas_procesadas (
+    id_venta STRING, id_cliente STRING,
+    id_prod  STRING, cantidad INT,
+    precio DOUBLE,  total DOUBLE
+) <span class="sql-kw">PARTITIONED BY</span> (anio <span class="sql-kw">INT</span>, mes <span class="sql-kw">INT</span>, ciudad <span class="sql-kw">STRING</span>)
+  <span class="sql-kw">STORED AS</span> ORC TBLPROPERTIES (<span class="st">"orc.compress"</span>=<span class="st">"SNAPPY"</span>);
+
+<span class="cm">-- Top 10 productos — Window functions avanzadas</span>
+<span class="sql-kw">SELECT</span>
+    ciudad, mes,
+    <span class="fn">SUM</span>(total) <span class="sql-kw">AS</span> ventas_mes,
+    <span class="fn">SUM</span>(<span class="fn">SUM</span>(total)) <span class="sql-kw">OVER</span> (
+        <span class="sql-kw">PARTITION BY</span> ciudad <span class="sql-kw">ORDER BY</span> mes
+    ) <span class="sql-kw">AS</span> acumulado_ciudad,
+    <span class="fn">RANK</span>() <span class="sql-kw">OVER</span> (
+        <span class="sql-kw">PARTITION BY</span> mes <span class="sql-kw">ORDER BY</span> <span class="fn">SUM</span>(total) <span class="sql-kw">DESC</span>
+    ) <span class="sql-kw">AS</span> ranking_mensual
+<span class="sql-kw">FROM</span> ventas_procesadas
+<span class="sql-kw">WHERE</span> anio = <span class="nu">2024</span>
+<span class="sql-kw">GROUP BY</span> ciudad, mes;</pre>
+  </div>
+
+  <div class="metaphor">
+    <div class="m-label">Metáfora</div>
+    <div class="m-emoji">🗣️</div>
+    <p><strong>Hive</strong> es el traductor entre tu lenguaje (SQL, que ya conoces) y el lenguaje de Hadoop (MapReduce, que es complejo). Tú hablas español, el intérprete traduce al chino, los resultados vuelven en español. Sin Hive, necesitarías escribir programas Java de 500 líneas para lo que en HQL son 10 líneas.</p>
+  </div>
+
+  <div class="case">
+    <div class="c-badge">CASO REAL</div>
+    <h4>Mercado Libre — Reportes Financieros Masivos</h4>
+    <p>Procesa reportes financieros con Hive sobre <strong>800 nodos</strong>. Una query de ventas mensuales en México sobre una tabla de <strong>2 billones de filas</strong> que tardaría días en MySQL se completa en 8 minutos con Hive+Tez. Procesa transacciones de 18 países simultáneamente cada cierre de mes.</p>
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 5 -->
+<div class="slide" id="slide-5">
+<div class="slide-inner">
+  <div class="slide-tag">Módulo 5</div>
+  <h2>Ecosistemas Alternativos</h2>
+  <p class="subtitle">De Hadoop a la nube nativa: la evolución del procesamiento masivo</p>
+
+  <div class="theory" style="margin-bottom:1rem">
+    <h3>La evolución</h3>
+    <p>Hadoop fue revolucionario en 2006 pero tiene limitaciones: lento (escribe en disco entre cada paso MapReduce), complejo de administrar y difícil de escalar dinámicamente. La industria evolucionó hacia alternativas más modernas.</p>
+  </div>
+
+  <table class="eco-table">
+    <thead>
+      <tr><th>Ecosistema</th><th>Tipo</th><th>Velocidad</th><th>Administración</th><th>Mejor para</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Hadoop + MapReduce</td><td>On-premise</td><td>Baja</td><td>Alta complejidad</td><td>Batch histórico legado</td></tr>
+      <tr><td style="color:#f59e0b">Apache Spark</td><td>On-prem/Cloud</td><td style="color:#10b981">Muy alta</td><td>Media</td><td>ML + Streaming + Batch</td></tr>
+      <tr><td style="color:#f59e0b">Amazon EMR</td><td>Cloud AWS</td><td style="color:#10b981">Muy alta</td><td>Baja (PaaS)</td><td>Spark/Hadoop managed</td></tr>
+      <tr><td style="color:#00d4ff">Google BigQuery</td><td>Serverless GCP</td><td style="color:#10b981">Extrema</td><td>Mínima</td><td>Analytics ad-hoc SQL</td></tr>
+      <tr><td style="color:#00d4ff">Snowflake</td><td>Cloud multi</td><td style="color:#10b981">Muy alta</td><td>Mínima</td><td>Data warehouse moderno</td></tr>
+      <tr><td style="color:#ef4444">Databricks</td><td>Cloud multi</td><td style="color:#10b981">Extrema</td><td>Baja</td><td>ML + Delta Lake</td></tr>
+    </tbody>
+  </table>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot" style="background:#ef4444"></div><div class="code-dot" style="background:#f59e0b"></div><div class="code-dot" style="background:#10b981"></div></div>pyspark_ventas.py</div>
+    <pre><span class="kw">from</span> pyspark.sql <span class="kw">import</span> SparkSession
+<span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> col, <span class="fn">sum</span> <span class="kw">as</span> spark_sum, avg, count
+
+spark = SparkSession.builder \
+    .appName(<span class="st">"Analisis Ventas MX"</span>) \
+    .config(<span class="st">"spark.sql.shuffle.partitions"</span>, <span class="st">"200"</span>) \
+    .getOrCreate()
+
+<span class="cm"># Leer desde HDFS o Azure Data Lake (lazy — no ejecuta aún)</span>
+df = spark.read.parquet(<span class="st">"hdfs:///data/ventas/2024/"</span>)
+<span class="fn">print</span>(<span class="st">f"Registros totales: {df.count():,}"</span>)
+
+<span class="cm"># Pipeline de transformaciones (lazy evaluation)</span>
+resultado = (df
+    .filter(col(<span class="st">"pais"</span>) == <span class="st">"Mexico"</span>)
+    .withColumn(<span class="st">"total"</span>, col(<span class="st">"cantidad"</span>) * col(<span class="st">"precio"</span>))
+    .groupBy(<span class="st">"estado"</span>, <span class="st">"categoria"</span>)
+    .agg(
+        spark_sum(<span class="st">"total"</span>).alias(<span class="st">"ingresos"</span>),
+        avg(<span class="st">"precio"</span>).alias(<span class="st">"precio_prom"</span>),
+        count(<span class="st">"*"</span>).alias(<span class="st">"transacciones"</span>)
+    )
+    .orderBy(col(<span class="st">"ingresos"</span>).desc()))
+
+<span class="cm"># Action: ejecuta TODO el plan de ejecución optimizado</span>
+resultado.show(<span class="nu">20</span>, truncate=<span class="kw">False</span>)
+resultado.write.mode(<span class="st">"overwrite"</span>) \
+    .partitionBy(<span class="st">"estado"</span>) \
+    .parquet(<span class="st">"hdfs:///output/resumen_ventas/"</span>)</pre>
+  </div>
+
+  <div class="two-col">
+    <div class="metaphor" style="margin-bottom:0">
+      <div class="m-label">Metáfora — Spark vs MapReduce</div>
+      <div class="m-emoji">🧩</div>
+      <p>MapReduce resuelve un rompecabezas tomando piezas del <strong>suelo</strong> (disco), trabajando con ellas y devolviéndolas al suelo entre cada paso. Spark lo resuelve en una <strong>mesa</strong> (RAM): no se agacha entre piezas. Por eso es 100x más rápido.</p>
+    </div>
+    <div class="metaphor" style="margin-bottom:0">
+      <div class="m-label">Metáfora — BigQuery</div>
+      <div class="m-emoji">🍕</div>
+      <p>BigQuery es <strong>Uber Eats para datos</strong>: no necesitas restaurante propio (servidor), no te importa cómo llega la comida (procesamiento distribuido invisible), solo pides (SQL query) y en segundos llega el resultado. Pagas por pedido, no por el restaurante.</p>
+    </div>
+  </div>
+
+  <div class="case">
+    <div class="c-badge">CASO REAL</div>
+    <h4>Fintech Mexicana — Pipeline Completo de Crédito Digital</h4>
+    <p>500K transacciones/día → <strong>Azure Event Hubs</strong> (ingesta streaming) → <strong>Azure Data Lake Gen2</strong> (Parquet raw) → <strong>Databricks + Spark</strong> (transformación y limpieza) → <strong>Snowflake</strong> (data warehouse analítico) → <strong>Power BI</strong> (dashboard clientes) → <strong>Azure ML</strong> (scoring de riesgo en tiempo real). Resultado: decisión de crédito en <strong>3 segundos</strong> con 94% de precisión.</p>
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 6 -->
+<div class="slide" id="slide-6">
+<div class="slide-inner">
+  <div class="slide-tag">Proyecto Final</div>
+  <h2>Pipeline Big Data — NYC Yellow Cab</h2>
+  <p class="subtitle">Diseña e implementa un pipeline de datos a escala real</p>
+
+  <div class="project-box">
+    <h3>🚕 Análisis de Taxis en Nueva York</h3>
+    <p style="color:var(--muted);font-size:.9rem;line-height:1.65;margin-bottom:1.2rem">
+      El NYC Taxi and Limousine Commission publica datos públicos de todos los viajes en taxi de Nueva York — más de <strong>100 millones de registros anuales</strong>. Tu misión: construir un pipeline Big Data completo desde ingesta hasta visualización, comparando herramientas clásicas y modernas.
+    </p>
+    <div class="phases">
+      <div class="phase"><strong>Fase 1: Ingesta</strong>Descargar dataset NYC Yellow Cab (nyc.gov). Cargar en HDFS local con Docker usando comandos hdfs dfs.</div>
+      <div class="phase"><strong>Fase 2: Hive</strong>Crear base de datos con tablas particionadas por mes y zona. Ejecutar al menos 5 queries HQL de análisis.</div>
+      <div class="phase"><strong>Fase 3: Spark</strong>Migrar el mismo análisis a PySpark. Medir y comparar tiempos de ejecución: ¿cuánto más rápido?</div>
+      <div class="phase"><strong>Fase 4: Análisis</strong>Responder: Top 5 zonas de mayor demanda, horas pico, correlación distancia/precio, patrones día de semana.</div>
+      <div class="phase"><strong>Fase 5: Visual</strong>Dashboard en Power BI o Tableau con los hallazgos principales. Mapa de calor de zonas + serie temporal.</div>
+      <div class="phase"><strong>Fase 6: Reporte</strong>Comparativa técnica: Hive vs Spark — velocidad, facilidad de uso, escalabilidad, costo.</div>
+    </div>
+  </div>
+
+  <div class="highlight">
+    <strong>El dato diferenciador:</strong> No es solo hacer que funcione — es entender <em>por qué</em> Spark supera a MapReduce en este caso, cuándo conviene usar BigQuery en lugar de Hive, y cómo el particionamiento de datos puede hacer la diferencia entre una query de 10 minutos y una de 10 segundos. Eso es pensar como ingeniero de datos.
+  </div>
+
+  <div class="two-col">
+    <div class="theory">
+      <h3>📦 Recursos del proyecto</h3>
+      <ul>
+        <li><strong>Dataset:</strong> nyc.gov/tlc → Trip Record Data</li>
+        <li><strong>Docker Hadoop:</strong> github.com/big-data-europe/docker-hadoop</li>
+        <li><strong>Alternativa cloud:</strong> Google Colab + PySpark</li>
+        <li><strong>Tamaño típico:</strong> ~2 GB por mes, ~25 GB por año</li>
+        <li><strong>Columnas clave:</strong> pickup/dropoff datetime, location IDs, fare amount, tip amount, trip distance</li>
+      </ul>
+    </div>
+    <div class="theory">
+      <h3>🎯 Preguntas de investigación</h3>
+      <ul>
+        <li>¿Qué zonas generan más viajes y más ingresos?</li>
+        <li>¿En qué horarios es mayor la demanda?</li>
+        <li>¿Cómo varía el comportamiento fin de semana vs semana?</li>
+        <li>¿Cuál es la distancia promedio y su relación con la propina?</li>
+        <li>¿Se puede predecir la demanda con 1 hora de anticipación?</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</div>
+
+</div><!-- end slides-container -->
+
+<div class="nav-btns">
+  <button class="nav-btn" onclick="prevSlide()">←</button>
+  <button class="nav-btn" onclick="nextSlide()">→</button>
+</div>
+
+<script>
+let current = 0;
+const total = 7;
+function goTo(n) {
+  document.getElementById('slide-' + current).classList.remove('active');
+  document.querySelectorAll('.sidebar-item')[current].classList.remove('active');
+  current = Math.max(0, Math.min(n, total - 1));
+  document.getElementById('slide-' + current).classList.add('active');
+  document.querySelectorAll('.sidebar-item')[current].classList.add('active');
+  document.getElementById('nav-counter').textContent = (current + 1) + ' / ' + total;
+  document.getElementById('progress-bar').style.width = ((current + 1) / total * 100) + '%';
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('slide-' + current).scrollTop = 0;
+}
+function nextSlide() { goTo(current + 1); }
+function prevSlide() { goTo(current - 1); }
+function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextSlide();
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   prevSlide();
+  if (e.key === 'Escape') document.getElementById('sidebar').classList.remove('open');
+});
+document.addEventListener('click', e => {
+  const sb = document.getElementById('sidebar');
+  if (sb.classList.contains('open') && !sb.contains(e.target) && !e.target.classList.contains('hamburger')) sb.classList.remove('open');
+});
+let tx = 0;
+document.addEventListener('touchstart', e => tx = e.touches[0].clientX);
+document.addEventListener('touchend', e => { const d = e.changedTouches[0].clientX - tx; if (Math.abs(d) > 50) d < 0 ? nextSlide() : prevSlide(); });
+</script>
+</body>
+</html>

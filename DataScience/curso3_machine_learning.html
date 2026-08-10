@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Machine Learning con Python</title>
+<style>
+:root{--bg:#0a0e1a;--surface:#111827;--card:#1e2a3a;--accent:#10b981;--accent2:#00d4ff;--accent3:#7c3aed;--text:#e2e8f0;--muted:#94a3b8;--border:#2d3748;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow:hidden;}
+/* PROGRESS */
+#progress-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s ease;z-index:200;}
+/* NAV */
+/* SHARED TOPBAR */
+.shared-topbar{position:fixed;top:0;left:0;right:0;height:48px;z-index:200;background:rgba(10,14,26,.97);backdrop-filter:blur(12px);border-bottom:1px solid rgba(16,185,129,.2);display:flex;align-items:center;gap:1rem;padding:0 1rem;}
+.topbar-back{display:inline-flex;align-items:center;gap:.4rem;color:#94a3b8;text-decoration:none;font-size:.78rem;font-weight:600;padding:.3rem .75rem;border-radius:6px;border:1px solid rgba(255,255,255,.1);transition:all .2s;white-space:nowrap;}
+.topbar-back:hover{color:#10b981;border-color:rgba(16,185,129,.4);background:rgba(16,185,129,.07);}
+.topbar-sep{width:1px;height:20px;background:rgba(255,255,255,.1);flex-shrink:0;}
+.topbar-logo{font-size:.8rem;font-weight:700;color:#10b981;letter-spacing:.5px;}
+.topbar-title{font-size:.8rem;color:#94a3b8;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.topbar-badge{font-size:.68rem;font-weight:700;padding:.2rem .55rem;border-radius:10px;background:rgba(16,185,129,.12);color:#10b981;border:1px solid rgba(16,185,129,.25);white-space:nowrap;}
+.top-nav{display:none;}
+/* SIDEBAR */
+#sidebar{position:fixed;left:0;top:48px;bottom:0;width:260px;background:var(--surface);border-right:1px solid var(--border);padding:1.2rem 1rem;overflow-y:auto;transform:translateX(-100%);transition:transform .3s ease;z-index:140;}
+#sidebar.open{transform:translateX(0);}
+#sidebar h3{font-size:.72rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:.8rem;}
+.sidebar-item{display:flex;align-items:center;gap:.7rem;padding:.55rem .8rem;border-radius:8px;cursor:pointer;font-size:.83rem;color:var(--muted);transition:all .2s;margin-bottom:.2rem;}
+.sidebar-item:hover{background:rgba(255,255,255,.04);color:var(--text);}
+.sidebar-item.active{background:rgba(16,185,129,.12);color:var(--accent);}
+.sidebar-num{font-size:.7rem;font-weight:700;width:20px;height:20px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sidebar-item.active .sidebar-num{background:var(--accent);color:#000;}
+/* SLIDES */
+#slides-container{height:100vh;overflow:hidden;}
+.slide{height:100vh;overflow-y:auto;padding:68px 2rem 5rem;display:none;animation:fadeIn .4s ease;}
+.slide.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.slide-inner{max-width:900px;margin:0 auto;}
+/* SLIDE COVER */
+.cover{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 130px);text-align:center;}
+.cover-badge{display:inline-block;padding:.35rem 1rem;border-radius:20px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:var(--accent);font-size:.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:1.5rem;}
+.cover h1{font-size:clamp(2.2rem,5vw,4rem);font-weight:800;line-height:1.1;margin-bottom:1rem;}
+.cover h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.cover p{color:var(--muted);font-size:1.1rem;max-width:560px;line-height:1.7;margin-bottom:2rem;}
+.cover-stats{display:flex;gap:2rem;flex-wrap:wrap;justify-content:center;}
+.cstat{text-align:center;}
+.cstat-n{font-size:1.8rem;font-weight:800;color:var(--accent);}
+.cstat-l{font-size:.75rem;color:var(--muted);}
+/* NEURAL NET SVG DECORATION */
+.neural-deco{margin:1.5rem 0;}
+/* SLIDE CONTENT */
+.slide-tag{display:inline-block;padding:.2rem .7rem;border-radius:20px;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:var(--accent);margin-bottom:.6rem;}
+.slide h2{font-size:clamp(1.5rem,3vw,2.2rem);font-weight:800;margin-bottom:.3rem;}
+.slide .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:1.8rem;}
+/* THEORY BOX */
+.theory{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;}
+.theory h3{font-size:.8rem;text-transform:uppercase;letter-spacing:1px;color:var(--accent2);margin-bottom:.8rem;}
+.theory p{font-size:.9rem;color:var(--muted);line-height:1.7;margin-bottom:.7rem;}
+.theory p:last-child{margin-bottom:0;}
+.theory ul{list-style:none;display:flex;flex-direction:column;gap:.5rem;}
+.theory ul li{font-size:.88rem;color:var(--muted);padding-left:1.2rem;position:relative;line-height:1.55;}
+.theory ul li::before{content:'▸';position:absolute;left:0;color:var(--accent);}
+.theory strong{color:var(--text);}
+/* TWO COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:1.2rem;}
+@media(max-width:700px){.two-col{grid-template-columns:1fr;}}
+/* METAPHOR */
+.metaphor{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-left:4px solid var(--accent);border-radius:0 10px 10px 0;padding:1.2rem 1.4rem;margin-bottom:1.2rem;}
+.metaphor .m-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);margin-bottom:.5rem;}
+.metaphor .m-emoji{font-size:2rem;margin-bottom:.5rem;}
+.metaphor p{font-size:.88rem;color:var(--muted);line-height:1.65;}
+/* CASE STUDY */
+.case{background:rgba(0,212,255,.05);border:1px solid rgba(0,212,255,.2);border-radius:10px;padding:1.2rem 1.4rem;margin-bottom:1.2rem;}
+.case .c-badge{display:inline-block;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:.15rem .5rem;border-radius:10px;background:rgba(16,185,129,.15);color:var(--accent);margin-bottom:.5rem;}
+.case h4{font-size:.95rem;font-weight:700;margin-bottom:.4rem;}
+.case p{font-size:.85rem;color:var(--muted);line-height:1.6;}
+/* CODE */
+.code-block{background:#0d1117;border:1px solid #30363d;border-radius:10px;overflow:hidden;margin-bottom:1.2rem;}
+.code-header{background:#161b22;padding:.5rem 1rem;display:flex;align-items:center;gap:.5rem;font-size:.72rem;color:var(--muted);}
+.code-dots{display:flex;gap:.4rem;}
+.code-dot{width:10px;height:10px;border-radius:50%;}
+pre{padding:1.2rem;overflow-x:auto;font-family:'JetBrains Mono','Fira Code',monospace;font-size:.8rem;line-height:1.7;}
+.kw{color:#ff7b72;}       /* keywords */
+.fn{color:#79c0ff;}       /* functions */
+.st{color:#a5d6ff;}       /* strings */
+.cm{color:#8b949e;}       /* comments */
+.nu{color:#f59e0b;}       /* numbers */
+.cl{color:#ffa657;}       /* class names */
+.de{color:#d2a8ff;}       /* decorators */
+/* TYPE TAGS */
+.type-tags{display:flex;gap:.5rem;flex-wrap:wrap;margin:1rem 0;}
+.type-tag{padding:.5rem 1rem;border-radius:8px;font-size:.8rem;font-weight:600;text-align:center;border:1px solid;}
+/* METRICS GRID */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.8rem;margin-bottom:1.2rem;}
+.metric-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;}
+.metric-card .m-val{font-size:1.6rem;font-weight:800;color:var(--accent);}
+.metric-card .m-name{font-size:.75rem;color:var(--muted);margin-top:.2rem;}
+/* CONFUSION MATRIX */
+.cm-grid{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;max-width:280px;margin:.8rem 0;}
+.cm-cell{padding:.7rem;border-radius:6px;text-align:center;font-size:.78rem;font-weight:600;}
+/* ALGO CARDS */
+.algo-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:1.2rem;}
+.algo-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.1rem;}
+.algo-card h4{font-size:.88rem;font-weight:700;margin-bottom:.4rem;}
+.algo-card p{font-size:.8rem;color:var(--muted);line-height:1.5;}
+/* PROJECT */
+.project-box{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(0,212,255,.06));border:1px solid rgba(16,185,129,.25);border-radius:14px;padding:1.8rem;}
+.project-box h3{font-size:1.1rem;font-weight:700;margin-bottom:.8rem;}
+.phases{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.8rem;margin-top:1rem;}
+.phase{background:rgba(255,255,255,.04);border-radius:8px;padding:.8rem;font-size:.8rem;color:var(--muted);}
+.phase strong{display:block;color:var(--text);margin-bottom:.3rem;}
+/* DIVIDERS */
+.info-row{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1rem;}
+.info-chip{font-size:.75rem;padding:.25rem .7rem;border-radius:6px;background:rgba(255,255,255,.05);color:var(--muted);}
+/* NAV BTNS */
+.nav-btns{position:fixed;bottom:1.5rem;right:1.5rem;display:flex;gap:.6rem;z-index:150;}
+.nav-btn{width:44px;height:44px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:1rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;}
+.nav-btn:hover{border-color:var(--accent);color:var(--accent);}
+/* HIGHLIGHT BOX */
+.highlight{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.25);border-radius:10px;padding:1rem 1.2rem;margin-bottom:1rem;font-size:.88rem;color:var(--muted);line-height:1.6;}
+.highlight strong{color:#a78bfa;}
+</style>
+</head>
+<body>
+<div class="shared-topbar">
+  <a class="topbar-back" href="presentacion_data_science.html">← Inicio</a>
+  <div class="topbar-sep"></div>
+  <span class="topbar-logo">⚡ DataSci</span>
+  <div class="topbar-sep"></div>
+  <span class="topbar-title">Machine Learning con Python</span>
+  <span class="topbar-badge">Curso 3 / 5</span>
+  <div style="margin-left:auto;">
+    <button class="hamburger" onclick="toggleSidebar()" style="background:none;border:1px solid rgba(255,255,255,.15);color:#94a3b8;padding:.3rem .6rem;border-radius:6px;cursor:pointer;font-size:1rem;">☰</button>
+  </div>
+</div>
+<div id="progress-bar" style="width:10%"></div>
+
+<div class="top-nav">
+  <span class="nav-title">🤖 Machine Learning con Python</span>
+  <span class="nav-counter" id="nav-counter">1 / 10</span>
+</div>
+
+<div id="sidebar">
+  <h3>Contenido del curso</h3>
+  <div class="sidebar-item active" onclick="goTo(0)"><span class="sidebar-num">★</span>Portada</div>
+  <div class="sidebar-item" onclick="goTo(1)"><span class="sidebar-num">1</span>¿Qué es ML?</div>
+  <div class="sidebar-item" onclick="goTo(2)"><span class="sidebar-num">2</span>Separación y Evaluación</div>
+  <div class="sidebar-item" onclick="goTo(3)"><span class="sidebar-num">3</span>Algoritmos No Supervisados</div>
+  <div class="sidebar-item" onclick="goTo(4)"><span class="sidebar-num">4</span>Regresión</div>
+  <div class="sidebar-item" onclick="goTo(5)"><span class="sidebar-num">5</span>Árboles y Random Forest</div>
+  <div class="sidebar-item" onclick="goTo(6)"><span class="sidebar-num">6</span>Redes Neuronales</div>
+  <div class="sidebar-item" onclick="goTo(7)"><span class="sidebar-num">7</span>Ensemble de Clasificadores</div>
+  <div class="sidebar-item" onclick="goTo(8)"><span class="sidebar-num">8</span>Procesamiento de Imágenes</div>
+  <div class="sidebar-item" onclick="goTo(9)"><span class="sidebar-num">✓</span>Proyecto Final</div>
+</div>
+
+<div id="slides-container">
+
+<!-- SLIDE 0: PORTADA -->
+<div class="slide active" id="slide-0">
+<div class="slide-inner">
+<div class="cover">
+  <div class="cover-badge">Curso de Data Science</div>
+  <h1>Machine Learning<br><span>con Python</span></h1>
+  <p>Aprende a entrenar modelos que predicen, clasifican y encuentran patrones — desde regresión lineal hasta redes neuronales profundas.</p>
+  <svg class="neural-deco" width="320" height="80" viewBox="0 0 320 80">
+    <circle cx="30" cy="20" r="7" fill="none" stroke="#10b981" stroke-width="1.5"/>
+    <circle cx="30" cy="40" r="7" fill="none" stroke="#10b981" stroke-width="1.5"/>
+    <circle cx="30" cy="60" r="7" fill="none" stroke="#10b981" stroke-width="1.5"/>
+    <circle cx="130" cy="15" r="7" fill="none" stroke="#00d4ff" stroke-width="1.5"/>
+    <circle cx="130" cy="35" r="7" fill="none" stroke="#00d4ff" stroke-width="1.5"/>
+    <circle cx="130" cy="55" r="7" fill="none" stroke="#00d4ff" stroke-width="1.5"/>
+    <circle cx="130" cy="70" r="7" fill="none" stroke="#00d4ff" stroke-width="1.5"/>
+    <circle cx="230" cy="25" r="7" fill="none" stroke="#7c3aed" stroke-width="1.5"/>
+    <circle cx="230" cy="55" r="7" fill="none" stroke="#7c3aed" stroke-width="1.5"/>
+    <circle cx="290" cy="40" r="8" fill="rgba(16,185,129,0.2)" stroke="#10b981" stroke-width="2"/>
+    <line x1="37" y1="20" x2="123" y2="15" stroke="#2d3748" stroke-width="1"/>
+    <line x1="37" y1="20" x2="123" y2="35" stroke="#2d3748" stroke-width="1"/>
+    <line x1="37" y1="20" x2="123" y2="55" stroke="#2d3748" stroke-width="1"/>
+    <line x1="37" y1="40" x2="123" y2="15" stroke="#2d3748" stroke-width="1"/>
+    <line x1="37" y1="40" x2="123" y2="35" stroke="#2d3748" stroke-width="1"/>
+    <line x1="37" y1="40" x2="123" y2="55" stroke="#2d3748" stroke-width="1"/>
+    <line x1="37" y1="60" x2="123" y2="35" stroke="#2d3748" stroke-width="1"/>
+    <line x1="37" y1="60" x2="123" y2="55" stroke="#2d3748" stroke-width="1"/>
+    <line x1="37" y1="60" x2="123" y2="70" stroke="#2d3748" stroke-width="1"/>
+    <line x1="137" y1="15" x2="223" y2="25" stroke="#2d3748" stroke-width="1"/>
+    <line x1="137" y1="35" x2="223" y2="25" stroke="#2d3748" stroke-width="1"/>
+    <line x1="137" y1="55" x2="223" y2="55" stroke="#2d3748" stroke-width="1"/>
+    <line x1="137" y1="70" x2="223" y2="55" stroke="#2d3748" stroke-width="1"/>
+    <line x1="237" y1="25" x2="282" y2="40" stroke="#10b981" stroke-width="1.5"/>
+    <line x1="237" y1="55" x2="282" y2="40" stroke="#10b981" stroke-width="1.5"/>
+    <text x="20" y="80" fill="#6b7280" font-size="9">Entrada</text>
+    <text x="112" y="80" fill="#6b7280" font-size="9">Capas ocultas</text>
+    <text x="270" y="80" fill="#6b7280" font-size="9">Salida</text>
+  </svg>
+  <div class="cover-stats">
+    <div class="cstat"><div class="cstat-n">8</div><div class="cstat-l">Algoritmos</div></div>
+    <div class="cstat"><div class="cstat-n">$209B</div><div class="cstat-l">Mercado ML 2025</div></div>
+    <div class="cstat"><div class="cstat-n">100%</div><div class="cstat-l">Python</div></div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 1 -->
+<div class="slide" id="slide-1">
+<div class="slide-inner">
+  <div class="slide-tag">Tema 1</div>
+  <h2>¿Qué es Machine Learning?</h2>
+  <p class="subtitle">Del programa explícito al aprendizaje automático</p>
+
+  <div class="two-col">
+    <div class="theory">
+      <h3>Definición y contexto</h3>
+      <p><strong>Arthur Samuel (1959):</strong> "Campo de estudio que da a las computadoras la capacidad de aprender sin ser programadas explícitamente."</p>
+      <p>ML es un subcampo de la Inteligencia Artificial. La jerarquía es: <strong>IA ⊃ ML ⊃ Deep Learning ⊃ IA Generativa</strong>.</p>
+      <p><strong>Diferencia clave:</strong><br>
+      Programación clásica: Datos + Reglas → Respuestas<br>
+      Machine Learning: Datos + Respuestas → Reglas</p>
+    </div>
+    <div class="theory">
+      <h3>Flujo de trabajo en ML</h3>
+      <ul>
+        <li><strong>1. Recopilar datos</strong> — fuentes relevantes, volumen suficiente</li>
+        <li><strong>2. Preprocesar</strong> — limpiar, normalizar, feature engineering</li>
+        <li><strong>3. Dividir</strong> — train / validation / test</li>
+        <li><strong>4. Entrenar</strong> — ajustar parámetros del modelo</li>
+        <li><strong>5. Evaluar</strong> — métricas en datos no vistos</li>
+        <li><strong>6. Optimizar</strong> — hyperparameter tuning</li>
+        <li><strong>7. Desplegar</strong> — modelo en producción</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="type-tags">
+    <div class="type-tag" style="background:rgba(16,185,129,.1);color:#10b981;border-color:rgba(16,185,129,.3)">🏷️ Supervisado<br><small style="font-weight:400;color:var(--muted)">Datos etiquetados<br>Clasifica y predice</small></div>
+    <div class="type-tag" style="background:rgba(0,212,255,.1);color:#00d4ff;border-color:rgba(0,212,255,.3)">🔍 No Supervisado<br><small style="font-weight:400;color:var(--muted)">Sin etiquetas<br>Encuentra estructura</small></div>
+    <div class="type-tag" style="background:rgba(124,58,237,.1);color:#a78bfa;border-color:rgba(124,58,237,.3)">🔀 Semi-supervisado<br><small style="font-weight:400;color:var(--muted)">Mezcla de ambos<br>Pocos etiquetados</small></div>
+    <div class="type-tag" style="background:rgba(245,158,11,.1);color:#f59e0b;border-color:rgba(245,158,11,.3)">🎮 Por Refuerzo<br><small style="font-weight:400;color:var(--muted)">Recompensa/castigo<br>AlphaGo, robots</small></div>
+  </div>
+
+  <div class="metaphor">
+    <div class="m-label">Metáfora</div>
+    <div class="m-emoji">🃏</div>
+    <p><strong>ML supervisado</strong> es enseñar a reconocer gatos con flashcards: muestras 1,000 fotos etiquetadas "gato" y el algoritmo aprende el patrón. <strong>ML no supervisado</strong> es darle 1,000 fotos sin etiquetas y pedirle que agrupe las similares por su cuenta — sin decirle qué es un gato.</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot" style="background:#ef4444"></div><div class="code-dot" style="background:#f59e0b"></div><div class="code-dot" style="background:#10b981"></div></div>intro_ml.py</div>
+    <pre><span class="kw">from</span> sklearn.datasets <span class="kw">import</span> load_iris
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+
+X, y = load_iris(return_X_y=<span class="kw">True</span>)
+<span class="cm"># División fundamental: 80% entrenamiento, 20% prueba</span>
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=<span class="nu">0.2</span>, random_state=<span class="nu">42</span>, stratify=y)
+
+<span class="cm"># Estandarizar: media=0, std=1 (fit SOLO en train)</span>
+scaler = StandardScaler()
+X_train_s = scaler.fit_transform(X_train)
+X_test_s  = scaler.transform(X_test)   <span class="cm"># ¡solo transform!</span>
+
+<span class="fn">print</span>(<span class="st">f"Train: {X_train.shape[0]} muestras | Test: {X_test.shape[0]} muestras"</span>)
+<span class="fn">print</span>(<span class="st">f"Clases: {set(y)} | Distribución train: {dict(zip(*np.unique(y_train, return_counts=True)))}"</span>)</pre>
+  </div>
+
+  <div class="case">
+    <div class="c-badge">CASO REAL</div>
+    <h4>Google Photos</h4>
+    <p>Usa ML supervisado entrenado con millones de imágenes etiquetadas para reconocer personas, lugares y objetos. El mismo proceso que aprendes aquí, operando a escala global en tiempo real.</p>
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 2 -->
+<div class="slide" id="slide-2">
+<div class="slide-inner">
+  <div class="slide-tag">Tema 2</div>
+  <h2>Separación, Validación y Evaluación</h2>
+  <p class="subtitle">¿Cómo saber si tu modelo realmente aprendió?</p>
+
+  <div class="two-col">
+    <div class="theory">
+      <h3>División de datos</h3>
+      <ul>
+        <li><strong>Train (70%)</strong> — ajusta los parámetros del modelo</li>
+        <li><strong>Validation (15%)</strong> — afina hiperparámetros sin contaminar test</li>
+        <li><strong>Test (15%)</strong> — evaluación final, se toca una sola vez</li>
+        <li><strong>K-Fold Cross Validation</strong> — k iteraciones, cada fold es validación una vez; el resultado final es el promedio ± desviación estándar</li>
+      </ul>
+    </div>
+    <div class="theory">
+      <h3>Overfitting vs Underfitting</h3>
+      <p><strong>Overfitting</strong> (sobreajuste): alta exactitud en train, baja en test. El modelo memorizó los datos de entrenamiento.</p>
+      <p><strong>Underfitting</strong> (subajuste): baja exactitud en ambos. El modelo es demasiado simple para capturar los patrones.</p>
+      <p><strong>Soluciones overfitting</strong>: más datos, regularización, dropout, cross-validation, reducir complejidad del modelo.</p>
+    </div>
+  </div>
+
+  <div class="metrics">
+    <div class="metric-card"><div class="m-val" style="color:#10b981">Accuracy</div><div class="m-name">TP+TN / Total<br>General correctness</div></div>
+    <div class="metric-card"><div class="m-val" style="color:#00d4ff">Precision</div><div class="m-name">TP / (TP+FP)<br>¿Qué tan exactas son las predicciones positivas?</div></div>
+    <div class="metric-card"><div class="m-val" style="color:#a78bfa">Recall</div><div class="m-name">TP / (TP+FN)<br>¿Cuántos positivos reales detectamos?</div></div>
+    <div class="metric-card"><div class="m-val" style="color:#f59e0b">F1-Score</div><div class="m-name">2·P·R/(P+R)<br>Balance precision-recall</div></div>
+  </div>
+
+  <div class="two-col">
+    <div class="theory">
+      <h3>Matriz de Confusión</h3>
+      <div class="cm-grid">
+        <div class="cm-cell" style="background:rgba(16,185,129,.2);color:#10b981">TP ✓<br><small>Verdadero Positivo</small></div>
+        <div class="cm-cell" style="background:rgba(239,68,68,.2);color:#f87171">FP ✗<br><small>Falso Positivo</small></div>
+        <div class="cm-cell" style="background:rgba(245,158,11,.2);color:#f59e0b">FN ✗<br><small>Falso Negativo</small></div>
+        <div class="cm-cell" style="background:rgba(16,185,129,.2);color:#10b981">TN ✓<br><small>Verdadero Negativo</small></div>
+      </div>
+      <p style="font-size:.8rem;color:var(--muted);margin-top:.5rem">En detección de fraude: un FN (fraude no detectado) es más costoso que un FP (alarma falsa).</p>
+    </div>
+    <div class="metaphor" style="margin-bottom:0">
+      <div class="m-label">Metáfora</div>
+      <div class="m-emoji">📚</div>
+      <p><strong>Overfitting</strong> es el estudiante que memoriza las respuestas del examen anterior. Saca 10 en ese examen, 4 en el siguiente. <strong>Cross-validation</strong> es practicar con ejercicios diferentes cada día — cuando llega el examen real, estás listo para cualquier pregunta.</p>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot" style="background:#ef4444"></div><div class="code-dot" style="background:#f59e0b"></div><div class="code-dot" style="background:#10b981"></div></div>evaluacion.py</div>
+    <pre><span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> cross_val_score, StratifiedKFold
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> classification_report
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+
+rf = RandomForestClassifier(n_estimators=<span class="nu">100</span>, random_state=<span class="nu">42</span>)
+cv = StratifiedKFold(n_splits=<span class="nu">5</span>, shuffle=<span class="kw">True</span>, random_state=<span class="nu">42</span>)
+
+scores = cross_val_score(rf, X, y, cv=cv, scoring=<span class="st">'f1_macro'</span>)
+<span class="fn">print</span>(<span class="st">f"F1 por fold: {scores.round(3)}"</span>)
+<span class="fn">print</span>(<span class="st">f"Media ± std: {scores.mean():.3f} ± {scores.std():.3f}"</span>)
+
+rf.fit(X_train_s, y_train)
+y_pred = rf.predict(X_test_s)
+<span class="fn">print</span>(classification_report(y_test, y_pred, target_names=target_names))</pre>
+  </div>
+
+  <div class="case">
+    <div class="c-badge">CASO REAL</div>
+    <h4>HSBC México — Detección de Fraude</h4>
+    <p>Valida sus modelos con cross-validation temporal: entrena con datos de enero-octubre, valida con noviembre-diciembre. Simula el entorno real de predicción futura. Prioriza recall sobre precision — un fraude no detectado (FN) cuesta más que una alarma falsa (FP).</p>
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 3 -->
+<div class="slide" id="slide-3">
+<div class="slide-inner">
+  <div class="slide-tag">Tema 3</div>
+  <h2>Algoritmos No Supervisados</h2>
+  <p class="subtitle">Descubrir estructura sin necesitar etiquetas</p>
+
+  <div class="two-col">
+    <div class="theory">
+      <h3>K-Means Clustering</h3>
+      <p><strong>Objetivo:</strong> agrupar n puntos en k clusters donde cada punto pertenece al cluster con el centroide más cercano.</p>
+      <p><strong>Algoritmo iterativo:</strong></p>
+      <ul>
+        <li>1. Inicializar k centroides aleatoriamente (o con K-Means++)</li>
+        <li>2. Asignar cada punto al centroide más cercano (distancia Euclidiana)</li>
+        <li>3. Recalcular centroides como promedio de cada cluster</li>
+        <li>4. Repetir pasos 2-3 hasta convergencia (centroides no se mueven)</li>
+      </ul>
+      <p><strong>Elegir k:</strong> Método del codo (inercia vs k) o índice de silueta (cohesión interna vs separación externa).</p>
+    </div>
+    <div class="theory">
+      <h3>Otros algoritmos</h3>
+      <ul>
+        <li><strong>DBSCAN</strong> — clusters de forma arbitraria, detecta outliers como ruido. No requiere especificar k.</li>
+        <li><strong>Hierarchical Clustering</strong> — dendrograma jerárquico, útil para exploración</li>
+        <li><strong>PCA</strong> — reducción de dimensionalidad, visualiza datos de alta dimensión en 2D/3D</li>
+        <li><strong>Isolation Forest</strong> — detección de anomalías, aísla outliers con árboles aleatorios</li>
+        <li><strong>t-SNE / UMAP</strong> — visualización no lineal de embeddings de alta dimensión</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="metaphor">
+    <div class="m-label">Metáfora</div>
+    <div class="m-emoji">🎉</div>
+    <p><strong>K-Means</strong> es organizar una fiesta sin lista de invitados: pones mesas al azar, cada persona se sienta con quien tiene más en común, mueves la mesa al centro de cada grupo, repites hasta que nadie quiere cambiarse de mesa. Cada iteración mejora la organización hasta encontrar el equilibrio natural.</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot" style="background:#ef4444"></div><div class="code-dot" style="background:#f59e0b"></div><div class="code-dot" style="background:#10b981"></div></div>clustering.py</div>
+    <pre><span class="kw">from</span> sklearn.cluster <span class="kw">import</span> KMeans
+<span class="kw">from</span> sklearn.decomposition <span class="kw">import</span> PCA
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> silhouette_score
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+<span class="cm"># Segmentación de clientes por RFM (Recencia, Frecuencia, Monto)</span>
+kmeans = KMeans(n_clusters=<span class="nu">4</span>, random_state=<span class="nu">42</span>, n_init=<span class="nu">10</span>)
+clusters = kmeans.fit_predict(X_rfm_scaled)
+
+<span class="cm"># Evaluar calidad con índice de silueta (-1 a 1, más alto = mejor)</span>
+sil = silhouette_score(X_rfm_scaled, clusters)
+<span class="fn">print</span>(<span class="st">f"Índice de silueta: {sil:.3f}"</span>)
+
+<span class="cm"># Método del codo para elegir k óptimo</span>
+inercias = []
+<span class="kw">for</span> k <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">1</span>, <span class="nu">11</span>):
+    km = KMeans(n_clusters=k, random_state=<span class="nu">42</span>, n_init=<span class="nu">10</span>)
+    inercias.append(km.fit(X_rfm_scaled).inertia_)
+
+<span class="cm"># Visualizar clusters con PCA (reducción a 2D)</span>
+pca = PCA(n_components=<span class="nu">2</span>)
+X_2d = pca.fit_transform(X_rfm_scaled)
+<span class="fn">print</span>(<span class="st">f"Varianza explicada: {pca.explained_variance_ratio_.sum():.1%}"</span>)</pre>
+  </div>
+
+  <div class="case">
+    <div class="c-badge">CASO REAL</div>
+    <h4>Liverpool (Tienda Departamental)</h4>
+    <p>Segmenta 8 millones de clientes con K-Means en 4 grupos: <strong>VIP</strong> (alto valor, frecuentes), <strong>Ocasionales</strong> (bajo riesgo), <strong>En riesgo de fuga</strong> (sin compra reciente) y <strong>Dormidos</strong> (inactivos +6 meses). Cada grupo recibe campañas de marketing y ofertas completamente distintas — incrementando conversión 34%.</p>
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 4 -->
+<div class="slide" id="slide-4">
+<div class="slide-inner">
+  <div class="slide-tag">Tema 4</div>
+  <h2>Regresión Lineal y Polinomial</h2>
+  <p class="subtitle">Predecir valores continuos con modelos paramétricos</p>
+
+  <div class="two-col">
+    <div class="theory">
+      <h3>Regresión Lineal</h3>
+      <p><strong>Simple:</strong> ŷ = β₀ + β₁x (una variable predictora)</p>
+      <p><strong>Múltiple:</strong> ŷ = β₀ + β₁x₁ + β₂x₂ + … + βₙxₙ</p>
+      <p><strong>Mínimos Cuadrados (OLS):</strong> minimiza Σ(yᵢ − ŷᵢ)² — la suma de errores al cuadrado.</p>
+      <p><strong>Supuestos clave:</strong> linealidad, homocedasticidad (varianza constante del error), independencia de residuos, no multicolinealidad.</p>
+    </div>
+    <div class="theory">
+      <h3>Regularización y Regresión Polinomial</h3>
+      <ul>
+        <li><strong>Ridge (L2):</strong> penaliza coeficientes grandes. Shrinkage sin eliminar variables.</li>
+        <li><strong>Lasso (L1):</strong> puede llevar coeficientes a exactamente 0. Selección automática de variables.</li>
+        <li><strong>ElasticNet:</strong> combinación de Ridge + Lasso.</li>
+        <li><strong>Regresión Polinomial:</strong> agrega términos xⁿ para capturar relaciones no lineales. Cuidado: grado alto = overfitting.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="metaphor">
+    <div class="m-label">Metáfora</div>
+    <div class="m-emoji">📏</div>
+    <p>La regresión lineal traza la <strong>mejor línea recta</strong> a través de una nube de puntos — la que minimiza la suma de las distancias verticales al cuadrado de cada punto a la línea. Es como tensar un hilo entre clavos dispersos buscando el equilibrio perfecto donde la tensión total sea mínima.</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot" style="background:#ef4444"></div><div class="code-dot" style="background:#f59e0b"></div><div class="code-dot" style="background:#10b981"></div></div>regresion.py</div>
+    <pre><span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LinearRegression, Ridge, Lasso
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> PolynomialFeatures
+<span class="kw">from</span> sklearn.pipeline <span class="kw">import</span> Pipeline
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> r2_score, mean_squared_error
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># Regresión múltiple</span>
+lr = LinearRegression()
+lr.fit(X_train, y_train)
+y_pred = lr.predict(X_test)
+<span class="fn">print</span>(<span class="st">f"R²:   {r2_score(y_test, y_pred):.3f}"</span>)
+<span class="fn">print</span>(<span class="st">f"RMSE: ${np.sqrt(mean_squared_error(y_test, y_pred)):,.0f}"</span>)
+
+<span class="cm"># Pipeline polinomial grado 3 + Ridge regularización</span>
+poly_ridge = Pipeline([
+    (<span class="st">'poly'</span>,  PolynomialFeatures(degree=<span class="nu">3</span>, include_bias=<span class="kw">False</span>)),
+    (<span class="st">'ridge'</span>, Ridge(alpha=<span class="nu">1.0</span>))
+])
+poly_ridge.fit(X_train, y_train)
+<span class="fn">print</span>(<span class="st">f"R² polinomial: {poly_ridge.score(X_test, y_test):.3f}"</span>)
+
+<span class="cm"># Lasso para selección de variables</span>
+lasso = Lasso(alpha=<span class="nu">0.01</span>)
+lasso.fit(X_train, y_train)
+activas = <span class="fn">sum</span>(lasso.coef_ != <span class="nu">0</span>)
+<span class="fn">print</span>(<span class="st">f"Variables activas Lasso: {activas} de {X_train.shape[1]}"</span>)</pre>
+  </div>
+
+  <div class="case">
+    <div class="c-badge">CASO REAL</div>
+    <h4>Infonavit — Valuación de Vivienda</h4>
+    <p>Predice precio de vivienda combinando m², ubicación, antigüedad, servicios cercanos y NSE (nivel socioeconómico) de la zona. El modelo de regresión múltiple con regularización Ridge (para manejar multicolinealidad entre variables correlacionadas) guía las tasas de crédito hipotecario para 5 millones de derechohabientes.</p>
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 5 -->
+<div class="slide" id="slide-5">
+<div class="slide-inner">
+  <div class="slide-tag">Tema 5</div>
+  <h2>Árboles de Decisión y Random Forest</h2>
+  <p class="subtitle">De la interpretabilidad a la robustez por diversidad</p>
+
+  <div class="two-col">
+    <div class="theory">
+      <h3>Árbol de Decisión</h3>
+      <p>Estructura jerárquica de preguntas binarias (nodos) que dividen el espacio de features hasta llegar a predicciones (hojas).</p>
+      <p><strong>Criterio de división:</strong> Gini Impurity (clasif.) o Varianza (regresión). En cada nodo, elige el split que maximiza la ganancia de información.</p>
+      <p><strong>Hiperparámetros clave:</strong> max_depth (profundidad máxima), min_samples_split (muestras mínimas para dividir), min_samples_leaf.</p>
+      <p><strong>Ventajas:</strong> interpretable, no requiere escalado, maneja categóricas.</p>
+    </div>
+    <div class="theory">
+      <h3>Random Forest</h3>
+      <p>Ensemble de N árboles, cada uno entrenado en un subconjunto aleatorio de datos (Bootstrap Aggregation = Bagging) y features (Feature Randomness).</p>
+      <p><strong>Predicción:</strong> clasificación = moda de N árboles; regresión = promedio.</p>
+      <p><strong>Por qué funciona:</strong> árboles diversos cometen errores diferentes. La diversidad cancela los errores individuales — la sabiduría de la multitud.</p>
+      <p><strong>Feature Importance:</strong> mide cuánto contribuye cada variable a reducir impureza en promedio.</p>
+    </div>
+  </div>
+
+  <div class="metaphor">
+    <div class="m-label">Metáfora</div>
+    <div class="m-emoji">🌳</div>
+    <p>Un árbol de decisión es el juego <strong>"20 preguntas"</strong>: ¿tiene más de 100 empleados? ¿está en el norte? ¿factura más de $1M? Cada respuesta te acerca a la predicción. <strong>Random Forest</strong> es jugar 500 partidas con diferentes expertos y tomar la respuesta más votada — los errores individuales se cancelan mutuamente.</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot" style="background:#ef4444"></div><div class="code-dot" style="background:#f59e0b"></div><div class="code-dot" style="background:#10b981"></div></div>random_forest.py</div>
+    <pre><span class="kw">from</span> sklearn.tree <span class="kw">import</span> DecisionTreeClassifier, export_text
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># Árbol simple — interpretable para explicar al negocio</span>
+dt = DecisionTreeClassifier(max_depth=<span class="nu">4</span>, random_state=<span class="nu">42</span>)
+dt.fit(X_train, y_train)
+<span class="fn">print</span>(export_text(dt, feature_names=feature_names))
+
+<span class="cm"># Random Forest — robusto para producción</span>
+rf = RandomForestClassifier(
+    n_estimators=<span class="nu">200</span>,   <span class="cm"># número de árboles</span>
+    max_depth=<span class="nu">10</span>,        <span class="cm"># controla overfitting</span>
+    min_samples_split=<span class="nu">5</span>, <span class="cm"># mínimo para dividir nodo</span>
+    max_features=<span class="st">'sqrt'</span>, <span class="cm"># features aleatorias por split</span>
+    random_state=<span class="nu">42</span>)
+rf.fit(X_train, y_train)
+
+importancias = (pd.Series(rf.feature_importances_, index=feature_names)
+                  .sort_values(ascending=<span class="kw">False</span>))
+<span class="fn">print</span>(<span class="st">"Top 5 variables más importantes:"</span>)
+<span class="fn">print</span>(importancias.head(<span class="nu">5</span>).round(<span class="nu">3</span>))
+<span class="fn">print</span>(<span class="st">f"Accuracy: {rf.score(X_test, y_test):.3f}"</span>)</pre>
+  </div>
+
+  <div class="case">
+    <div class="c-badge">CASO REAL</div>
+    <h4>SAT México — Priorización de Auditorías</h4>
+    <p>Usa árboles de decisión para priorizar contribuyentes a auditar entre millones de declaraciones fiscales. Las variables más importantes (feature importance): discrepancias ingreso/gasto detectadas, historial de correcciones voluntarias, sector económico y tamaño de empresa. El modelo corre en batch mensual y genera la lista priorizada para los auditores.</p>
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 6 -->
+<div class="slide" id="slide-6">
+<div class="slide-inner">
+  <div class="slide-tag">Tema 6</div>
+  <h2>Redes Neuronales Artificiales</h2>
+  <p class="subtitle">Inspiradas en el cerebro, entrenadas con datos</p>
+
+  <div class="two-col">
+    <div class="theory">
+      <h3>Fundamentos</h3>
+      <p><strong>Neurona artificial (Perceptrón):</strong> z = Σ(wᵢ·xᵢ) + b → activación(z) → output</p>
+      <p><strong>Funciones de activación:</strong></p>
+      <ul>
+        <li><strong>ReLU</strong> max(0,x) — capas ocultas, evita vanishing gradient</li>
+        <li><strong>Sigmoid</strong> 1/(1+e⁻ˣ) — salida binaria (0-1)</li>
+        <li><strong>Softmax</strong> — salida multiclase (probabilidades que suman 1)</li>
+        <li><strong>Tanh</strong> — centrada en 0, buena para capas ocultas pequeñas</li>
+      </ul>
+    </div>
+    <div class="theory">
+      <h3>Entrenamiento y regularización</h3>
+      <p><strong>Backpropagation:</strong> calcula gradiente del error capa por capa hacia atrás usando la regla de la cadena.</p>
+      <p><strong>Gradient Descent:</strong> ajusta pesos en la dirección de menor error. Learning rate controla el tamaño del paso.</p>
+      <p><strong>Optimizadores:</strong> SGD, Adam (adaptativo, el más usado), RMSprop.</p>
+      <p><strong>Regularización:</strong> Dropout (apaga neuronas aleatorias), Early Stopping, Batch Normalization, L2 en pesos.</p>
+    </div>
+  </div>
+
+  <div class="metaphor">
+    <div class="m-label">Metáfora</div>
+    <div class="m-emoji">🚗</div>
+    <p>Aprender a conducir: al principio cometes errores (error alto). El instructor te corrige (<strong>backpropagation</strong>), ajustas tu técnica (<strong>pesos actualizados</strong>), repites. El <strong>learning rate</strong> es cuán brusco ajustas al volante — muy alto: fuera de control; muy bajo: tardas años. <strong>Dropout</strong> es practicar con los ojos tapados a veces — te fuerza a no depender de una sola señal.</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot" style="background:#ef4444"></div><div class="code-dot" style="background:#f59e0b"></div><div class="code-dot" style="background:#10b981"></div></div>red_neuronal.py</div>
+    <pre><span class="kw">import</span> tensorflow <span class="kw">as</span> tf
+<span class="kw">from</span> tensorflow <span class="kw">import</span> keras
+
+<span class="cm"># Red neuronal para clasificación binaria (ej: fraude/no fraude)</span>
+model = keras.Sequential([
+    keras.layers.Dense(<span class="nu">128</span>, activation=<span class="st">'relu'</span>,
+                       input_shape=(X_train.shape[<span class="nu">1</span>],)),
+    keras.layers.Dropout(<span class="nu">0.3</span>),     <span class="cm"># apaga 30% de neuronas</span>
+    keras.layers.Dense(<span class="nu">64</span>, activation=<span class="st">'relu'</span>),
+    keras.layers.BatchNormalization(),
+    keras.layers.Dropout(<span class="nu">0.2</span>),
+    keras.layers.Dense(<span class="nu">32</span>, activation=<span class="st">'relu'</span>),
+    keras.layers.Dense(<span class="nu">1</span>, activation=<span class="st">'sigmoid'</span>) <span class="cm"># salida binaria</span>
+])
+
+model.compile(optimizer=<span class="st">'adam'</span>,
+              loss=<span class="st">'binary_crossentropy'</span>,
+              metrics=[<span class="st">'accuracy'</span>, keras.metrics.AUC()])
+
+history = model.fit(
+    X_train, y_train,
+    epochs=<span class="nu">50</span>, batch_size=<span class="nu">256</span>,
+    validation_split=<span class="nu">0.2</span>,
+    callbacks=[keras.callbacks.EarlyStopping(
+        monitor=<span class="st">'val_auc'</span>, patience=<span class="nu">5</span>,
+        restore_best_weights=<span class="kw">True</span>)])
+
+loss, acc, auc = model.evaluate(X_test, y_test, verbose=<span class="nu">0</span>)
+<span class="fn">print</span>(<span class="st">f"Test Accuracy: {acc:.3f} | AUC: {auc:.3f}"</span>)</pre>
+  </div>
+
+  <div class="case">
+    <div class="c-badge">CASO REAL</div>
+    <h4>BBVA México — Detección de Fraude en Tiempo Real</h4>
+    <p>Usa redes neuronales con 12 capas para analizar más de 200 variables por transacción (monto, hora, ubicación, historial, velocidad geográfica, device fingerprint). Responde en menos de <strong>50 milisegundos</strong> — mientras el cajero todavía procesa tu tarjeta. Detecta patrones que los analistas humanos nunca identificarían.</p>
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 7 -->
+<div class="slide" id="slide-7">
+<div class="slide-inner">
+  <div class="slide-tag">Tema 7</div>
+  <h2>Ensemble de Clasificadores</h2>
+  <p class="subtitle">La sabiduría colectiva supera al experto individual</p>
+
+  <div class="algo-cards">
+    <div class="algo-card">
+      <h4 style="color:#10b981">Bagging</h4>
+      <p>Modelos en <strong>paralelo</strong>, cada uno en subconjunto aleatorio de datos (Bootstrap). Reduce varianza. Ejemplo: Random Forest.</p>
+    </div>
+    <div class="algo-card">
+      <h4 style="color:#f59e0b">Boosting</h4>
+      <p>Modelos en <strong>serie</strong>, cada uno corrige errores del anterior. Reduce sesgo. Ejemplos: AdaBoost, GBM, XGBoost, LightGBM.</p>
+    </div>
+    <div class="algo-card">
+      <h4 style="color:#a78bfa">Stacking</h4>
+      <p>Usa predicciones de modelos base como <strong>features</strong> de un meta-modelo final. Combina diversidad y potencia.</p>
+    </div>
+    <div class="algo-card">
+      <h4 style="color:#00d4ff">Voting</h4>
+      <p>Combina modelos <strong>heterogéneos</strong>. Hard: moda de predicciones. Soft: promedio de probabilidades (mejor).</p>
+    </div>
+  </div>
+
+  <div class="metaphor">
+    <div class="m-label">Metáfora</div>
+    <div class="m-emoji">🏥</div>
+    <p><strong>Boosting</strong> es un equipo médico en urgencias: el primer doctor diagnostica, el segundo revisa sus errores y agrega información, el tercero refina aún más. Cada médico aprende de los errores del anterior. <strong>XGBoost</strong> hace este proceso 200 veces, aprendiendo velozmente de cada error previo.</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot" style="background:#ef4444"></div><div class="code-dot" style="background:#f59e0b"></div><div class="code-dot" style="background:#10b981"></div></div>ensemble.py</div>
+    <pre><span class="kw">from</span> xgboost <span class="kw">import</span> XGBClassifier
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> VotingClassifier, RandomForestClassifier
+<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LogisticRegression
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> roc_auc_score
+
+<span class="cm"># XGBoost — el favorito de las competencias de datos</span>
+xgb = XGBClassifier(
+    n_estimators=<span class="nu">200</span>,  learning_rate=<span class="nu">0.05</span>,
+    max_depth=<span class="nu">6</span>,        subsample=<span class="nu">0.8</span>,
+    colsample_bytree=<span class="nu">0.8</span>, eval_metric=<span class="st">'auc'</span>,
+    random_state=<span class="nu">42</span>)
+xgb.fit(X_train, y_train,
+        eval_set=[(X_test, y_test)], verbose=<span class="kw">False</span>)
+<span class="fn">print</span>(<span class="st">f"XGBoost AUC: {roc_auc_score(y_test, xgb.predict_proba(X_test)[:,1]):.4f}"</span>)
+
+<span class="cm"># Voting ensemble heterogéneo (soft = promedia probabilidades)</span>
+ensemble = VotingClassifier(
+    estimators=[
+        (<span class="st">'xgb'</span>, XGBClassifier(n_estimators=<span class="nu">100</span>)),
+        (<span class="st">'rf'</span>,  RandomForestClassifier(n_estimators=<span class="nu">100</span>)),
+        (<span class="st">'lr'</span>,  LogisticRegression(max_iter=<span class="nu">500</span>, C=<span class="nu">0.1</span>))
+    ], voting=<span class="st">'soft'</span>)
+ensemble.fit(X_train, y_train)
+auc_ens = roc_auc_score(y_test, ensemble.predict_proba(X_test)[:,<span class="nu">1</span>])
+<span class="fn">print</span>(<span class="st">f"Ensemble AUC: {auc_ens:.4f}"</span>)</pre>
+  </div>
+
+  <div class="case">
+    <div class="c-badge">CASO REAL</div>
+    <h4>Hackathon Banorte 2023 — Predicción de Churn</h4>
+    <p>El equipo ganador usó un ensemble de <strong>XGBoost + LightGBM + Red Neuronal</strong> en stacking para predecir deserción de clientes. AUC final: 0.94, superando el modelo interno del banco (AUC 0.81). Clave del éxito: modelos diversos con diferentes sesgos que se complementan entre sí.</p>
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 8 -->
+<div class="slide" id="slide-8">
+<div class="slide-inner">
+  <div class="slide-tag">Tema 8</div>
+  <h2>Procesamiento Digital de Imágenes</h2>
+  <p class="subtitle">Enseñar a las máquinas a ver</p>
+
+  <div class="two-col">
+    <div class="theory">
+      <h3>Fundamentos de imágenes</h3>
+      <p><strong>Imagen digital:</strong> matriz de píxeles. RGB = 3 matrices (canales R, G, B) de valores 0-255. Una imagen 224×224 px en color = 3 × 224 × 224 = 150,528 valores.</p>
+      <p><strong>OpenCV:</strong> librería estándar de visión computacional. Operaciones básicas: resize, rotate, blur (suavizado), Canny (bordes), threshold, morphology.</p>
+      <p><strong>HOG (Histogram of Oriented Gradients):</strong> descriptor clásico para ML sobre imágenes — captura la distribución de gradientes locales de intensidad.</p>
+    </div>
+    <div class="theory">
+      <h3>CNNs y Transfer Learning</h3>
+      <p><strong>CNN (Convolutional Neural Network):</strong> capas convolucionales detectan patrones locales (filtros) + capas de pooling reducen dimensión + capas densas clasifican.</p>
+      <p><strong>Transfer Learning:</strong> reusar pesos preentrenados en ImageNet (VGG16, ResNet50, MobileNetV2). Solo re-entrenar las últimas capas. Requiere muy pocos datos.</p>
+      <p><strong>Fine-tuning:</strong> descongelar capas profundas para adaptar al dominio específico (radiografías, productos, documentos).</p>
+    </div>
+  </div>
+
+  <div class="metaphor">
+    <div class="m-label">Metáfora</div>
+    <div class="m-emoji">👁️</div>
+    <p>Una CNN ve imágenes como capas de abstracción: <strong>capa 1</strong> detecta bordes, <strong>capa 2</strong> formas geométricas, <strong>capa 3</strong> partes de objetos (orejas, ruedas), <strong>capa final</strong> el objeto completo. <strong>Transfer Learning</strong> es contratar a alguien que ya sabe ver objetos (entrenado en ImageNet) y solo enseñarle los tuyos específicos — en horas en lugar de semanas.</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot" style="background:#ef4444"></div><div class="code-dot" style="background:#f59e0b"></div><div class="code-dot" style="background:#10b981"></div></div>imagenes.py</div>
+    <pre><span class="kw">import</span> cv2
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> tensorflow <span class="kw">as</span> tf
+<span class="kw">from</span> tensorflow.keras.applications <span class="kw">import</span> MobileNetV2
+
+<span class="cm"># Operaciones básicas con OpenCV</span>
+img      = cv2.imread(<span class="st">'producto.jpg'</span>)
+img_rgb  = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+img_blur = cv2.GaussianBlur(img_gray, (<span class="nu">5</span>, <span class="nu">5</span>), <span class="nu">0</span>)
+bordes   = cv2.Canny(img_blur, threshold1=<span class="nu">100</span>, threshold2=<span class="nu">200</span>)
+img_rsz  = cv2.resize(img_rgb, (<span class="nu">224</span>, <span class="nu">224</span>))
+
+<span class="cm"># Transfer Learning con MobileNetV2 (ligero y eficiente)</span>
+base = MobileNetV2(weights=<span class="st">'imagenet'</span>, include_top=<span class="kw">False</span>,
+                   input_shape=(<span class="nu">224</span>, <span class="nu">224</span>, <span class="nu">3</span>))
+base.trainable = <span class="kw">False</span>  <span class="cm"># congelar pesos de ImageNet</span>
+
+model_tl = tf.keras.Sequential([
+    base,
+    tf.keras.layers.GlobalAveragePooling2D(),
+    tf.keras.layers.Dense(<span class="nu">256</span>, activation=<span class="st">'relu'</span>),
+    tf.keras.layers.Dropout(<span class="nu">0.4</span>),
+    tf.keras.layers.Dense(num_clases, activation=<span class="st">'softmax'</span>)
+])
+model_tl.compile(optimizer=<span class="st">'adam'</span>,
+                 loss=<span class="st">'sparse_categorical_crossentropy'</span>,
+                 metrics=[<span class="st">'accuracy'</span>])
+<span class="fn">print</span>(<span class="st">f"Parámetros entrenables: {model_tl.trainable_variables.__len__():,}"</span>)</pre>
+  </div>
+
+  <div class="case">
+    <div class="c-badge">CASO REAL</div>
+    <h4>Conekta (Fintech Mexicana) — Verificación de Identidad</h4>
+    <p>Verifica identidad en onboarding digital comparando foto del INE con selfie del usuario en tiempo real usando OpenCV + CNN. Precisión: <strong>99.2%</strong> en menos de 2 segundos. Detecta manipulaciones de imagen (deepfakes, fotos de fotos) con análisis de textura y metadatos EXIF.</p>
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 9 -->
+<div class="slide" id="slide-9">
+<div class="slide-inner">
+  <div class="slide-tag">Proyecto Final</div>
+  <h2>Sistema de Clasificación de Imágenes</h2>
+  <p class="subtitle">Control de calidad industrial con visión computacional</p>
+
+  <div class="project-box">
+    <h3>🏭 Detección de Defectos en Manufactura</h3>
+    <p style="color:var(--muted);font-size:.9rem;line-height:1.65;margin-bottom:1.2rem">
+      Las líneas de manufactura modernas producen miles de piezas por hora. La inspección visual humana es lenta, costosa y variable. Tu misión: construir un sistema automático de clasificación usando ML y visión computacional.
+    </p>
+    <div class="phases">
+      <div class="phase"><strong>Fase 1: Datos</strong>Dataset: Intel Image Classification (Kaggle, 6 categorías, 25K imágenes) o MVTec AD para detección de defectos</div>
+      <div class="phase"><strong>Fase 2: Baseline</strong>Implementar KNN con HOG features como modelo de referencia. Establecer métricas base.</div>
+      <div class="phase"><strong>Fase 3: ML Clásico</strong>Random Forest + SVM con features extraídas manualmente. Comparar con baseline.</div>
+      <div class="phase"><strong>Fase 4: Deep Learning</strong>CNN propia desde cero. Curvas de aprendizaje. Análisis de overfitting.</div>
+      <div class="phase"><strong>Fase 5: Transfer Learning</strong>MobileNetV2 preentrenado en ImageNet. Fine-tuning. ¿Cuántos datos mínimos necesitas?</div>
+      <div class="phase"><strong>Fase 6: Reporte</strong>Matrices de confusión, curvas ROC, análisis de errores. ¿Qué tipo de defecto falla más?</div>
+    </div>
+  </div>
+
+  <div class="highlight">
+    <strong>Criterio de evaluación:</strong> No importa solo la accuracy — explica <em>por qué</em> un modelo supera a otro. Analiza qué tipo de imágenes falla cada modelo, cuánto tiempo tarda en entrenar y cuánto en inferencia. En producción real, un modelo 2% menos preciso pero 10x más rápido puede ser la elección correcta.
+  </div>
+
+  <div class="two-col">
+    <div class="theory">
+      <h3>📦 Datasets alternativos</h3>
+      <ul>
+        <li>MNIST Fashion (Kaggle) — 70K imágenes de ropa, 10 categorías</li>
+        <li>MVTec Anomaly Detection — defectos industriales reales</li>
+        <li>GTSRB — señales de tráfico alemanas (43 clases)</li>
+        <li>Food-101 — clasificación de platillos</li>
+        <li>Chest X-Ray — neumonía vs normal (aplicación médica)</li>
+      </ul>
+    </div>
+    <div class="theory">
+      <h3>🛠️ Stack recomendado</h3>
+      <ul>
+        <li>Google Colab (GPU gratuita T4)</li>
+        <li>TensorFlow 2.x + Keras</li>
+        <li>OpenCV para preprocesamiento</li>
+        <li>Scikit-learn para métricas</li>
+        <li>Matplotlib + Seaborn para visualizaciones</li>
+        <li>WandB o MLflow para tracking de experimentos</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</div>
+
+</div><!-- end slides-container -->
+
+<div class="nav-btns">
+  <button class="nav-btn" onclick="prevSlide()">←</button>
+  <button class="nav-btn" onclick="nextSlide()">→</button>
+</div>
+
+<script>
+let current = 0;
+const total = 10;
+
+function goTo(n) {
+  document.getElementById('slide-' + current).classList.remove('active');
+  document.querySelectorAll('.sidebar-item')[current].classList.remove('active');
+  current = Math.max(0, Math.min(n, total - 1));
+  document.getElementById('slide-' + current).classList.add('active');
+  document.querySelectorAll('.sidebar-item')[current].classList.add('active');
+  document.getElementById('nav-counter').textContent = (current + 1) + ' / ' + total;
+  document.getElementById('progress-bar').style.width = ((current + 1) / total * 100) + '%';
+  document.getElementById('sidebar').classList.remove('open');
+  window.scrollTo(0, 0);
+  document.getElementById('slide-' + current).scrollTop = 0;
+}
+
+function nextSlide() { goTo(current + 1); }
+function prevSlide() { goTo(current - 1); }
+function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextSlide();
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   prevSlide();
+  if (e.key === 'Escape') document.getElementById('sidebar').classList.remove('open');
+});
+
+document.addEventListener('click', function(e) {
+  const sb = document.getElementById('sidebar');
+  if (sb.classList.contains('open') && !sb.contains(e.target) && !e.target.classList.contains('hamburger')) {
+    sb.classList.remove('open');
+  }
+});
+
+// Touch swipe
+let touchX = 0;
+document.addEventListener('touchstart', e => touchX = e.touches[0].clientX);
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchX;
+  if (Math.abs(dx) > 50) dx < 0 ? nextSlide() : prevSlide();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Análisis de Datos con Python</title>
+<style>
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  background: #0a0e1a;
+  color: #e2e8f0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* ===== PROGRESS BAR ===== */
+#progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #7c3aed, #00d4ff);
+  transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+  z-index: 1000;
+  box-shadow: 0 0 8px #7c3aed80;
+}
+
+/* ===== SIDEBAR ===== */
+/* ── SHARED TOPBAR ── */
+.shared-topbar {
+  position: fixed; top: 0; left: 0; right: 0; height: 48px; z-index: 1100;
+  background: rgba(10,14,26,.97); backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(124,58,237,.2);
+  display: flex; align-items: center; gap: 1rem; padding: 0 1rem;
+}
+.topbar-back {
+  display: inline-flex; align-items: center; gap: .4rem;
+  color: #94a3b8; text-decoration: none; font-size: .78rem; font-weight: 600;
+  padding: .3rem .75rem; border-radius: 6px; border: 1px solid rgba(255,255,255,.1);
+  transition: all .2s; white-space: nowrap;
+}
+.topbar-back:hover { color: #a78bfa; border-color: rgba(124,58,237,.4); background: rgba(124,58,237,.07); }
+.topbar-sep { width: 1px; height: 20px; background: rgba(255,255,255,.1); flex-shrink: 0; }
+.topbar-logo { font-size: .8rem; font-weight: 700; color: #a78bfa; letter-spacing: .5px; }
+.topbar-title { font-size: .8rem; color: #94a3b8; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.topbar-badge {
+  font-size: .68rem; font-weight: 700; padding: .2rem .55rem; border-radius: 10px;
+  background: rgba(124,58,237,.12); color: #a78bfa; border: 1px solid rgba(124,58,237,.25);
+  white-space: nowrap;
+}
+#sidebar {
+  position: fixed;
+  top: 48px; left: 0;
+  width: 280px;
+  height: calc(100vh - 48px);
+  background: #111827;
+  border-right: 1px solid #1e2a3a;
+  z-index: 500;
+  transform: translateX(-280px);
+  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+  display: flex;
+  flex-direction: column;
+  padding: 60px 0 20px;
+  overflow-y: auto;
+}
+#sidebar.open { transform: translateX(0); }
+#sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid #1e2a3a;
+  margin-bottom: 8px;
+}
+#sidebar-header h3 {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #7c3aed;
+  font-weight: 700;
+}
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  border-left: 3px solid transparent;
+  font-size: 0.875rem;
+  color: #94a3b8;
+  line-height: 1.4;
+}
+.sidebar-item:hover { background: #1e2a3a; color: #e2e8f0; }
+.sidebar-item.active {
+  background: #1e2a3a;
+  border-left-color: #7c3aed;
+  color: #e2e8f0;
+  font-weight: 600;
+}
+.sidebar-num {
+  width: 24px; height: 24px;
+  border-radius: 6px;
+  background: #1e2a3a;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  color: #7c3aed;
+}
+.sidebar-item.active .sidebar-num { background: #7c3aed; color: #fff; }
+
+/* ===== SIDEBAR TOGGLE ===== */
+#sidebar-toggle {
+  position: fixed;
+  top: 62px; left: 14px;
+  width: 36px; height: 36px;
+  background: #111827;
+  border: 1px solid #1e2a3a;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 600;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+  gap: 5px;
+  transition: background 0.2s;
+}
+#sidebar-toggle:hover { background: #1e2a3a; }
+#sidebar-toggle span {
+  display: block;
+  width: 18px; height: 2px;
+  background: #e2e8f0;
+  border-radius: 2px;
+  transition: transform 0.3s, opacity 0.3s;
+}
+#sidebar-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+#sidebar-toggle.open span:nth-child(2) { opacity: 0; }
+#sidebar-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ===== SLIDE CONTAINER ===== */
+#slides-wrapper {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+.slide {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 60px;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.5s cubic-bezier(0.4,0,0.2,1),
+              transform 0.5s cubic-bezier(0.4,0,0.2,1);
+  pointer-events: none;
+  overflow-y: auto;
+}
+.slide.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+}
+.slide.exit-up {
+  opacity: 0;
+  transform: translateY(-30px);
+}
+.slide-inner {
+  max-width: 1000px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* ===== SLIDE COUNTER ===== */
+#slide-counter {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  color: #475569;
+  z-index: 400;
+  background: #111827cc;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid #1e2a3a;
+}
+
+/* ===== NAV BUTTONS ===== */
+.nav-btn {
+  position: fixed;
+  bottom: 50%;
+  transform: translateY(50%);
+  width: 44px; height: 44px;
+  background: #111827;
+  border: 1px solid #1e2a3a;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 400;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+  color: #e2e8f0;
+  font-size: 1.1rem;
+  user-select: none;
+}
+.nav-btn:hover {
+  background: #1e2a3a;
+  border-color: #7c3aed;
+  box-shadow: 0 0 12px #7c3aed40;
+}
+.nav-btn:disabled { opacity: 0.3; cursor: default; }
+#btn-prev { left: 16px; }
+#btn-next { right: 16px; }
+
+/* ===== TYPOGRAPHY ===== */
+.slide-title {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 6px;
+  background: linear-gradient(135deg, #e2e8f0, #7c3aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.slide-subtitle {
+  font-size: 1.05rem;
+  color: #64748b;
+  margin-bottom: 24px;
+  font-weight: 400;
+}
+.section-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #7c3aed;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+/* ===== GRID LAYOUTS ===== */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+.grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+}
+.grid-code-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 14px;
+}
+
+/* ===== CARDS ===== */
+.card {
+  background: #1e2a3a;
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid #2d3748;
+}
+.card h4 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #7c3aed;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.card p, .card li { font-size: 0.82rem; color: #94a3b8; line-height: 1.6; }
+.card ul { padding-left: 16px; }
+.card li { margin-bottom: 4px; }
+
+/* ===== METAPHOR CARD ===== */
+.metaphor-card {
+  background: #111827;
+  border-left: 4px solid #7c3aed;
+  border-radius: 0 10px 10px 0;
+  padding: 14px 16px;
+  margin-top: 14px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.metaphor-emoji { font-size: 2rem; flex-shrink: 0; line-height: 1; }
+.metaphor-body {}
+.metaphor-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #7c3aed;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.metaphor-text { font-size: 0.82rem; color: #cbd5e1; line-height: 1.6; font-style: italic; }
+
+/* ===== CASE STUDY CARD ===== */
+.case-card {
+  background: #111827;
+  border-radius: 10px;
+  padding: 12px 14px;
+  border: 1px solid #1a2e1a;
+  margin-top: 14px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.case-badge {
+  background: #10b98120;
+  color: #10b981;
+  border: 1px solid #10b98140;
+  border-radius: 20px;
+  padding: 2px 8px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.case-text { font-size: 0.8rem; color: #94a3b8; line-height: 1.6; }
+.case-text strong { color: #e2e8f0; }
+
+/* ===== CODE BLOCK ===== */
+.code-wrap {
+  background: #0d1117;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #21262d;
+  margin-top: 10px;
+}
+.code-header {
+  background: #161b22;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid #21262d;
+}
+.code-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+}
+.code-dot-r { background: #ff5f57; }
+.code-dot-y { background: #febc2e; }
+.code-dot-g { background: #28c840; }
+.code-lang {
+  margin-left: auto;
+  font-size: 0.65rem;
+  color: #484f58;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
+pre {
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-size: 0.78rem;
+  line-height: 1.65;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+.kw { color: #ff7b72; font-weight: 600; }        /* keywords: import, from, for, if, print, def */
+.fn { color: #d2a8ff; }                           /* functions */
+.st { color: #a5d6ff; }                           /* strings */
+.cm { color: #8b949e; font-style: italic; }       /* comments */
+.nm { color: #f0b429; }                           /* numbers */
+.op { color: #ff7b72; }                           /* operators */
+.var { color: #e2e8f0; }                          /* variables */
+.cls { color: #ffa657; }                          /* classes */
+
+/* ===== COVER SLIDE ===== */
+.cover-inner {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  gap: 20px;
+}
+.cover-title {
+  font-size: 3.2rem;
+  font-weight: 900;
+  line-height: 1.1;
+  background: linear-gradient(135deg, #e2e8f0 0%, #7c3aed 50%, #00d4ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 4px;
+}
+.cover-subtitle {
+  font-size: 1.3rem;
+  color: #64748b;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+}
+.cover-badge {
+  background: linear-gradient(135deg, #7c3aed20, #00d4ff10);
+  border: 1px solid #7c3aed40;
+  border-radius: 12px;
+  padding: 14px 24px;
+  max-width: 560px;
+  text-align: center;
+}
+.cover-badge-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #7c3aed;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.cover-badge-text {
+  font-size: 0.9rem;
+  color: #cbd5e1;
+  line-height: 1.5;
+}
+
+/* ===== ANIMATED BARS ===== */
+.chart-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 80px;
+  padding: 0 4px;
+  margin: 8px 0;
+}
+.bar {
+  width: 28px;
+  border-radius: 4px 4px 0 0;
+  animation: grow-up 1.2s cubic-bezier(0.4,0,0.2,1) forwards;
+  transform-origin: bottom;
+  transform: scaleY(0);
+}
+@keyframes grow-up {
+  to { transform: scaleY(1); }
+}
+.bar:nth-child(1) { height: 45%; background: #7c3aed; animation-delay: 0.1s; }
+.bar:nth-child(2) { height: 70%; background: #00d4ff; animation-delay: 0.2s; }
+.bar:nth-child(3) { height: 55%; background: #10b981; animation-delay: 0.3s; }
+.bar:nth-child(4) { height: 90%; background: #7c3aed; animation-delay: 0.4s; }
+.bar:nth-child(5) { height: 65%; background: #00d4ff; animation-delay: 0.5s; }
+.bar:nth-child(6) { height: 80%; background: #10b981; animation-delay: 0.6s; }
+.bar:nth-child(7) { height: 50%; background: #7c3aed; animation-delay: 0.7s; }
+
+/* ===== THEORY LIST ===== */
+.theory-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.theory-list li {
+  padding: 6px 0 6px 20px;
+  position: relative;
+  font-size: 0.83rem;
+  color: #94a3b8;
+  border-bottom: 1px solid #1e2a3a;
+  line-height: 1.5;
+}
+.theory-list li:last-child { border-bottom: none; }
+.theory-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #7c3aed;
+}
+.theory-list li strong { color: #e2e8f0; }
+
+/* ===== HIGHLIGHT BOXES ===== */
+.highlight-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+.highlight-box {
+  flex: 1;
+  background: #111827;
+  border-radius: 8px;
+  padding: 10px 12px;
+  border: 1px solid #1e2a3a;
+  text-align: center;
+}
+.highlight-box .hb-val {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #7c3aed;
+  display: block;
+}
+.highlight-box .hb-label {
+  font-size: 0.7rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.highlight-box.cyan .hb-val { color: #00d4ff; }
+.highlight-box.green .hb-val { color: #10b981; }
+
+/* ===== SCROLLABLE CONTENT ===== */
+.scroll-content {
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  padding-right: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: #1e2a3a transparent;
+}
+.scroll-content::-webkit-scrollbar { width: 4px; }
+.scroll-content::-webkit-scrollbar-track { background: transparent; }
+.scroll-content::-webkit-scrollbar-thumb { background: #1e2a3a; border-radius: 4px; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .slide { padding: 20px 16px; align-items: flex-start; padding-top: 60px; }
+  .cover-title { font-size: 2rem; }
+  .grid-2, .grid-code-meta { grid-template-columns: 1fr; }
+  .grid-3 { grid-template-columns: 1fr; }
+  #btn-prev { left: 4px; }
+  #btn-next { right: 4px; }
+  .slide-title { font-size: 1.5rem; }
+}
+
+/* ===== PROJECT SLIDE ===== */
+.pipeline-steps {
+  display: flex;
+  gap: 0;
+  margin-top: 16px;
+  overflow: hidden;
+  border-radius: 10px;
+}
+.pipeline-step {
+  flex: 1;
+  padding: 12px 10px;
+  background: #111827;
+  border-right: 1px solid #1e2a3a;
+  text-align: center;
+  position: relative;
+}
+.pipeline-step:last-child { border-right: none; }
+.pipeline-step:after {
+  content: '→';
+  position: absolute;
+  right: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #7c3aed;
+  font-size: 0.9rem;
+  z-index: 1;
+}
+.pipeline-step:last-child:after { display: none; }
+.ps-icon { font-size: 1.3rem; display: block; margin-bottom: 4px; }
+.ps-label { font-size: 0.7rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+</style>
+</head>
+<body>
+
+<!-- Shared top navigation bar -->
+<div class="shared-topbar">
+  <a class="topbar-back" href="presentacion_data_science.html">← Inicio</a>
+  <div class="topbar-sep"></div>
+  <span class="topbar-logo">⚡ DataSci</span>
+  <div class="topbar-sep"></div>
+  <span class="topbar-title">Análisis de Datos con Python</span>
+  <span class="topbar-badge">Curso 2 / 5</span>
+</div>
+
+<!-- Progress Bar -->
+<div id="progress-bar" style="width:0%"></div>
+
+<!-- Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Menu">
+  <span></span><span></span><span></span>
+</button>
+
+<!-- Sidebar -->
+<nav id="sidebar">
+  <div id="sidebar-header"><h3>Contenido del Curso</h3></div>
+  <div class="sidebar-item active" data-slide="0">
+    <div class="sidebar-num">0</div>
+    <span>Portada</span>
+  </div>
+  <div class="sidebar-item" data-slide="1">
+    <div class="sidebar-num">1</div>
+    <span>Estadística: Locación</span>
+  </div>
+  <div class="sidebar-item" data-slide="2">
+    <div class="sidebar-num">2</div>
+    <span>Estadística: Variabilidad</span>
+  </div>
+  <div class="sidebar-item" data-slide="3">
+    <div class="sidebar-num">3</div>
+    <span>Distribuciones y Visualización</span>
+  </div>
+  <div class="sidebar-item" data-slide="4">
+    <div class="sidebar-num">4</div>
+    <span>Variables Categóricas</span>
+  </div>
+  <div class="sidebar-item" data-slide="5">
+    <div class="sidebar-num">5</div>
+    <span>Correlación y Regresión</span>
+  </div>
+  <div class="sidebar-item" data-slide="6">
+    <div class="sidebar-num">6</div>
+    <span>Pruebas Estadísticas</span>
+  </div>
+  <div class="sidebar-item" data-slide="7">
+    <div class="sidebar-num">7</div>
+    <span>Pruebas A/B</span>
+  </div>
+  <div class="sidebar-item" data-slide="8">
+    <div class="sidebar-num">8</div>
+    <span>Introducción a NLP</span>
+  </div>
+  <div class="sidebar-item" data-slide="9">
+    <div class="sidebar-num">9</div>
+    <span>Proyecto Final</span>
+  </div>
+</nav>
+
+<!-- Slides Wrapper -->
+<div id="slides-wrapper">
+
+  <!-- SLIDE 0: PORTADA -->
+  <div class="slide active" data-index="0">
+    <div class="slide-inner">
+      <div class="cover-inner">
+        <div>
+          <div class="section-label" style="text-align:center; margin-bottom:12px;">Curso de Data Science · Unidad 2</div>
+          <div class="cover-title">Análisis de Datos<br>con Python</div>
+          <div class="cover-subtitle">Del número al conocimiento</div>
+        </div>
+        <div class="chart-bars">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </div>
+        <div class="cover-badge">
+          <div class="cover-badge-label">Competencia del Curso</div>
+          <div class="cover-badge-text">Aplica modelos estadísticos y visualización para generar reportes y análisis.</div>
+        </div>
+        <div class="highlight-row" style="max-width:400px; width:100%;">
+          <div class="highlight-box">
+            <span class="hb-val">9</span>
+            <span class="hb-label">Temas</span>
+          </div>
+          <div class="highlight-box cyan">
+            <span class="hb-val">5+</span>
+            <span class="hb-label">Casos reales</span>
+          </div>
+          <div class="highlight-box green">
+            <span class="hb-val">100k</span>
+            <span class="hb-label">Filas en dataset</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 1: Estadística Descriptiva: Locación -->
+  <div class="slide" data-index="1">
+    <div class="slide-inner scroll-content">
+      <div class="section-label">Estadística Descriptiva · Tema 1</div>
+      <div class="slide-title">Medidas de Locación</div>
+      <div class="slide-subtitle">Media, mediana, moda y cuándo usar cada una</div>
+      <div class="grid-code-meta">
+        <div>
+          <div class="card">
+            <h4>Medidas centrales</h4>
+            <ul class="theory-list">
+              <li><strong>Media:</strong> suma de valores ÷ n. Sensible a extremos.</li>
+              <li><strong>Mediana:</strong> valor central al ordenar. Robusta ante outliers.</li>
+              <li><strong>Moda:</strong> valor más frecuente. Útil para categóricas.</li>
+              <li><strong>Media truncada:</strong> elimina el x% de extremos antes de promediar.</li>
+              <li><strong>Media ponderada:</strong> cada valor tiene un peso diferente.</li>
+            </ul>
+          </div>
+          <div class="metaphor-card" style="margin-top:12px;">
+            <div class="metaphor-emoji">🏦</div>
+            <div class="metaphor-body">
+              <div class="metaphor-label">Metáfora</div>
+              <div class="metaphor-text">"La mediana es más honesta que la media cuando hay ricos en la sala. Si Carlos Slim entra a una habitación de 100 personas, el salario promedio se dispara — el salario mediano no se mueve."</div>
+            </div>
+          </div>
+          <div class="case-card">
+            <div class="case-badge">Caso Real</div>
+            <div class="case-text">El <strong>INEGI</strong> reporta salario <strong>mediano</strong> (no medio) porque en 2023 el mediano fue $7,310/mes versus un promedio $12,000+ distorsionado por extremos.</div>
+          </div>
+        </div>
+        <div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dot code-dot-r"></div>
+              <div class="code-dot code-dot-y"></div>
+              <div class="code-dot code-dot-g"></div>
+              <div class="code-lang">Python</div>
+            </div>
+            <pre><span class="kw">import</span> <span class="var">numpy</span> <span class="kw">as</span> <span class="var">np</span>
+<span class="kw">from</span> <span class="var">scipy</span> <span class="kw">import</span> <span class="var">stats</span>
+
+<span class="var">salarios</span> <span class="op">=</span> [<span class="nm">12000</span>, <span class="nm">14000</span>, <span class="nm">15000</span>,
+            <span class="nm">16000</span>, <span class="nm">18000</span>, <span class="nm">850000</span>]
+
+<span class="fn">print</span>(<span class="st">f"Media:          $<span class="op">{</span><span class="var">np</span>.<span class="fn">mean</span>(<span class="var">salarios</span>)<span class="op">:>10,.0f}</span>"</span>)
+<span class="fn">print</span>(<span class="st">f"Mediana:        $<span class="op">{</span><span class="var">np</span>.<span class="fn">median</span>(<span class="var">salarios</span>)<span class="op">:>10,.0f}</span>"</span>)
+<span class="fn">print</span>(<span class="st">f"Media truncada: $<span class="op">{</span><span class="var">stats</span>.<span class="fn">trim_mean</span>(<span class="var">salarios</span>, <span class="nm">0.1</span>)<span class="op">:>10,.0f}</span>"</span>)
+
+<span class="cm"># Salida esperada:</span>
+<span class="cm"># Media:          $  157,500</span>
+<span class="cm"># Mediana:        $   15,500</span>
+<span class="cm"># Media truncada: $   15,000</span></pre>
+          </div>
+          <div class="card" style="margin-top:12px;">
+            <h4>¿Cuándo usar cuál?</h4>
+            <ul class="theory-list">
+              <li><strong>Media:</strong> distribuciones simétricas sin outliers</li>
+              <li><strong>Mediana:</strong> datos con sesgo o valores extremos (ingresos, precios)</li>
+              <li><strong>Moda:</strong> variables categóricas (color favorito, partido político)</li>
+              <li><strong>Media truncada:</strong> calificaciones deportivas (saltos, patinaje)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: Estadística Descriptiva: Variabilidad -->
+  <div class="slide" data-index="2">
+    <div class="slide-inner scroll-content">
+      <div class="section-label">Estadística Descriptiva · Tema 2</div>
+      <div class="slide-title">Medidas de Variabilidad</div>
+      <div class="slide-subtitle">Rango, varianza, desviación estándar, IQR y percentiles</div>
+      <div class="grid-code-meta">
+        <div>
+          <div class="card">
+            <h4>Medidas de dispersión</h4>
+            <ul class="theory-list">
+              <li><strong>Rango:</strong> max − min. Simple pero sensible a outliers.</li>
+              <li><strong>Varianza (σ²):</strong> promedio de desviaciones al cuadrado.</li>
+              <li><strong>Desviación estándar (σ):</strong> raíz cuadrada de la varianza. Mismas unidades que los datos.</li>
+              <li><strong>Coef. de variación:</strong> (σ / μ) × 100. Compara dispersión entre escalas distintas.</li>
+              <li><strong>IQR:</strong> Q3 − Q1. Rango del 50% central. Robusto ante outliers.</li>
+              <li><strong>Percentiles:</strong> valor por debajo del cual cae el x% de los datos.</li>
+            </ul>
+          </div>
+          <div class="metaphor-card" style="margin-top:12px;">
+            <div class="metaphor-emoji">🌡️</div>
+            <div class="metaphor-body">
+              <div class="metaphor-label">Metáfora</div>
+              <div class="metaphor-text">"Dos ciudades con temperatura promedio 25°C: una siempre a 25°, la otra va de 5° a 45°. La desviación estándar te dice cuál es cuál — misma media, mundos distintos."</div>
+            </div>
+          </div>
+          <div class="case-card">
+            <div class="case-badge">Caso Real</div>
+            <div class="case-text">Las <strong>aseguradoras</strong> calculan primas con desviación estándar de comportamiento. Un conductor variable (20–180 km/h) paga más que uno estable aunque su velocidad promedio sea igual.</div>
+          </div>
+        </div>
+        <div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dot code-dot-r"></div>
+              <div class="code-dot code-dot-y"></div>
+              <div class="code-dot code-dot-g"></div>
+              <div class="code-lang">Python</div>
+            </div>
+            <pre><span class="kw">import</span> <span class="var">pandas</span> <span class="kw">as</span> <span class="var">pd</span>
+<span class="kw">import</span> <span class="var">seaborn</span> <span class="kw">as</span> <span class="var">sns</span>
+<span class="kw">import</span> <span class="var">matplotlib.pyplot</span> <span class="kw">as</span> <span class="var">plt</span>
+<span class="kw">import</span> <span class="var">numpy</span> <span class="kw">as</span> <span class="var">np</span>
+
+<span class="var">df</span> <span class="op">=</span> <span class="var">pd</span>.<span class="cls">DataFrame</span>({
+  <span class="st">'Ciudad_A'</span>: <span class="var">np</span>.<span class="var">random</span>.<span class="fn">normal</span>(<span class="nm">25</span>, <span class="nm">2</span>, <span class="nm">365</span>),
+  <span class="st">'Ciudad_B'</span>: <span class="var">np</span>.<span class="var">random</span>.<span class="fn">normal</span>(<span class="nm">25</span>, <span class="nm">12</span>, <span class="nm">365</span>)
+})
+
+<span class="fn">print</span>(<span class="var">df</span>.<span class="fn">describe</span>().<span class="fn">round</span>(<span class="nm">2</span>))
+
+<span class="cm"># Boxplot comparativo</span>
+<span class="var">df</span>.<span class="fn">boxplot</span>(<span class="var">figsize</span><span class="op">=</span>(<span class="nm">8</span>, <span class="nm">5</span>))
+<span class="var">plt</span>.<span class="fn">title</span>(<span class="st">'Variabilidad de temperatura'</span>)
+<span class="var">plt</span>.<span class="fn">ylabel</span>(<span class="st">'Temperatura (°C)'</span>)
+<span class="var">plt</span>.<span class="fn">show</span>()</pre>
+          </div>
+          <div class="card" style="margin-top:12px;">
+            <h4>Interpretación rápida</h4>
+            <ul class="theory-list">
+              <li>σ pequeña → datos concentrados cerca de la media</li>
+              <li>σ grande → datos muy dispersos, alta variabilidad</li>
+              <li>IQR estrecho → 50% central homogéneo</li>
+              <li>Boxplot con bigotes largos → presencia de outliers</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: Distribuciones y Visualización -->
+  <div class="slide" data-index="3">
+    <div class="slide-inner scroll-content">
+      <div class="section-label">Estadística Descriptiva · Tema 3</div>
+      <div class="slide-title">Distribuciones y Visualización</div>
+      <div class="slide-subtitle">Normal, sesgada, bimodal · Histograma vs KDE</div>
+      <div class="grid-code-meta">
+        <div>
+          <div class="card">
+            <h4>Tipos de distribuciones</h4>
+            <ul class="theory-list">
+              <li><strong>Normal (campana de Gauss):</strong> regla 68-95-99.7. Simétrica alrededor de la media.</li>
+              <li><strong>Sesgada positiva (derecha):</strong> cola larga a la derecha. Ingresos, precios.</li>
+              <li><strong>Sesgada negativa (izquierda):</strong> cola larga a la izquierda. Edad de jubilación.</li>
+              <li><strong>Bimodal:</strong> dos picos. Señal de dos subpoblaciones mezcladas.</li>
+              <li><strong>Histograma:</strong> frecuencia por intervalos. Discretiza la distribución.</li>
+              <li><strong>KDE:</strong> estimación de densidad suavizada. Continua y sin sesgo de bins.</li>
+            </ul>
+          </div>
+          <div class="metaphor-card" style="margin-top:12px;">
+            <div class="metaphor-emoji">🔔</div>
+            <div class="metaphor-body">
+              <div class="metaphor-label">Metáfora</div>
+              <div class="metaphor-text">"La distribución normal es la firma matemática del caos ordenado. Alturas humanas, errores de medición, calificaciones de un examen justo — aparece en casi todo. Es el atractor universal de los promedios."</div>
+            </div>
+          </div>
+          <div class="case-card">
+            <div class="case-badge">Caso Real</div>
+            <div class="case-text"><strong>Spotify</strong> detectó distribución bimodal en duración de canciones (~3 min pop, ~7 min progresivo). Esto guió el diseño del algoritmo de recomendación por segmentos.</div>
+          </div>
+        </div>
+        <div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dot code-dot-r"></div>
+              <div class="code-dot code-dot-y"></div>
+              <div class="code-dot code-dot-g"></div>
+              <div class="code-lang">Python</div>
+            </div>
+            <pre><span class="var">fig</span>, <span class="var">axes</span> <span class="op">=</span> <span class="var">plt</span>.<span class="fn">subplots</span>(<span class="nm">1</span>, <span class="nm">3</span>, <span class="var">figsize</span><span class="op">=</span>(<span class="nm">15</span>, <span class="nm">4</span>))
+
+<span class="cm"># Normal: alturas</span>
+<span class="var">sns</span>.<span class="fn">histplot</span>(<span class="var">np</span>.<span class="var">random</span>.<span class="fn">normal</span>(<span class="nm">170</span>, <span class="nm">8</span>, <span class="nm">1000</span>),
+  <span class="var">ax</span><span class="op">=</span><span class="var">axes</span>[<span class="nm">0</span>], <span class="var">kde</span><span class="op">=</span><span class="kw">True</span>, <span class="var">color</span><span class="op">=</span><span class="st">'#7c3aed'</span>)
+
+<span class="cm"># Sesgada derecha: ingresos</span>
+<span class="var">sns</span>.<span class="fn">histplot</span>(<span class="var">np</span>.<span class="var">random</span>.<span class="fn">exponential</span>(<span class="nm">50000</span>, <span class="nm">1000</span>),
+  <span class="var">ax</span><span class="op">=</span><span class="var">axes</span>[<span class="nm">1</span>], <span class="var">kde</span><span class="op">=</span><span class="kw">True</span>, <span class="var">color</span><span class="op">=</span><span class="st">'#00d4ff'</span>)
+
+<span class="cm"># Bimodal</span>
+<span class="var">bimodal</span> <span class="op">=</span> <span class="var">np</span>.<span class="fn">concatenate</span>([
+  <span class="var">np</span>.<span class="var">random</span>.<span class="fn">normal</span>(<span class="nm">25</span>, <span class="nm">3</span>, <span class="nm">500</span>),
+  <span class="var">np</span>.<span class="var">random</span>.<span class="fn">normal</span>(<span class="nm">55</span>, <span class="nm">3</span>, <span class="nm">500</span>)
+])
+<span class="var">sns</span>.<span class="fn">histplot</span>(<span class="var">bimodal</span>, <span class="var">ax</span><span class="op">=</span><span class="var">axes</span>[<span class="nm">2</span>],
+  <span class="var">kde</span><span class="op">=</span><span class="kw">True</span>, <span class="var">color</span><span class="op">=</span><span class="st">'#10b981'</span>)
+
+<span class="kw">for</span> <span class="var">ax</span>, <span class="var">t</span> <span class="kw">in</span> <span class="fn">zip</span>(<span class="var">axes</span>,
+    [<span class="st">'Normal'</span>, <span class="st">'Sesgada derecha'</span>, <span class="st">'Bimodal'</span>]):
+  <span class="var">ax</span>.<span class="fn">set_title</span>(<span class="var">t</span>)
+  <span class="var">ax</span>.<span class="fn">set_facecolor</span>(<span class="st">'#111827'</span>)
+<span class="var">plt</span>.<span class="fn">tight_layout</span>()
+<span class="var">plt</span>.<span class="fn">show</span>()</pre>
+          </div>
+          <div class="highlight-row" style="margin-top:12px;">
+            <div class="highlight-box">
+              <span class="hb-val">68%</span>
+              <span class="hb-label">μ ± 1σ</span>
+            </div>
+            <div class="highlight-box cyan">
+              <span class="hb-val">95%</span>
+              <span class="hb-label">μ ± 2σ</span>
+            </div>
+            <div class="highlight-box green">
+              <span class="hb-val">99.7%</span>
+              <span class="hb-label">μ ± 3σ</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: Variables Categóricas y Análisis Bivariado -->
+  <div class="slide" data-index="4">
+    <div class="slide-inner scroll-content">
+      <div class="section-label">Análisis Exploratorio · Tema 4</div>
+      <div class="slide-title">Variables Categóricas y Análisis Bivariado</div>
+      <div class="slide-subtitle">Escalas de medición · Tablas de contingencia · Relaciones entre variables</div>
+      <div class="grid-code-meta">
+        <div>
+          <div class="card">
+            <h4>Escalas de medición</h4>
+            <ul class="theory-list">
+              <li><strong>Nominal:</strong> categorías sin orden. Ciudad, color, género.</li>
+              <li><strong>Ordinal:</strong> categorías con orden. Nivel educativo, satisfacción (1-5).</li>
+              <li><strong>Intervalo:</strong> diferencias iguales, sin cero absoluto. Temperatura en °C.</li>
+              <li><strong>Razón:</strong> cero absoluto significativo. Peso, altura, ingresos.</li>
+            </ul>
+          </div>
+          <div class="card" style="margin-top:10px;">
+            <h4>Análisis bivariado</h4>
+            <ul class="theory-list">
+              <li><strong>Numérico–numérico:</strong> scatter plot + correlación de Pearson</li>
+              <li><strong>Categórico–numérico:</strong> boxplot por grupo</li>
+              <li><strong>Categórico–categórico:</strong> tabla de contingencia + heatmap</li>
+            </ul>
+          </div>
+          <div class="metaphor-card" style="margin-top:12px;">
+            <div class="metaphor-emoji">📦</div>
+            <div class="metaphor-body">
+              <div class="metaphor-label">Metáfora</div>
+              <div class="metaphor-text">"Las variables categóricas son como cajas de clasificación postal: no puedes sumar 'CDMX + Monterrey', pero sí contar cuántos paquetes llegan a cada ciudad y calcular el tiempo promedio de entrega por destino."</div>
+            </div>
+          </div>
+          <div class="case-card">
+            <div class="case-badge">Caso Real</div>
+            <div class="case-text"><strong>LinkedIn</strong> usa análisis bivariado en su Informe de Equidad cruzando género (categórica) con salario (numérica) en 50+ industrias para detectar y reportar brechas salariales.</div>
+          </div>
+        </div>
+        <div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dot code-dot-r"></div>
+              <div class="code-dot code-dot-y"></div>
+              <div class="code-dot code-dot-g"></div>
+              <div class="code-lang">Python</div>
+            </div>
+            <pre><span class="kw">import</span> <span class="var">pandas</span> <span class="kw">as</span> <span class="var">pd</span>
+<span class="kw">import</span> <span class="var">seaborn</span> <span class="kw">as</span> <span class="var">sns</span>
+<span class="kw">import</span> <span class="var">matplotlib.pyplot</span> <span class="kw">as</span> <span class="var">plt</span>
+
+<span class="cm"># Tabla de contingencia normalizada</span>
+<span class="var">tabla</span> <span class="op">=</span> <span class="var">pd</span>.<span class="fn">crosstab</span>(
+  <span class="var">df</span>[<span class="st">'genero'</span>],
+  <span class="var">df</span>[<span class="st">'departamento'</span>],
+  <span class="var">normalize</span><span class="op">=</span><span class="st">'index'</span>
+) <span class="op">*</span> <span class="nm">100</span>
+
+<span class="cm"># Heatmap de distribución</span>
+<span class="var">sns</span>.<span class="fn">heatmap</span>(<span class="var">tabla</span>, <span class="var">annot</span><span class="op">=</span><span class="kw">True</span>,
+  <span class="var">fmt</span><span class="op">=</span><span class="st">'.1f'</span>, <span class="var">cmap</span><span class="op">=</span><span class="st">'Purples'</span>,
+  <span class="var">linewidths</span><span class="op">=</span><span class="nm">0.5</span>)
+<span class="var">plt</span>.<span class="fn">title</span>(<span class="st">'Distribución por género y dpto (%)'</span>)
+
+<span class="cm"># Boxplot bivariado</span>
+<span class="var">sns</span>.<span class="fn">boxplot</span>(
+  <span class="var">data</span><span class="op">=</span><span class="var">df</span>,
+  <span class="var">x</span><span class="op">=</span><span class="st">'nivel_educativo'</span>,
+  <span class="var">y</span><span class="op">=</span><span class="st">'salario'</span>,
+  <span class="var">order</span><span class="op">=</span>[<span class="st">'Bachillerato'</span>, <span class="st">'Licenciatura'</span>,
+         <span class="st">'Maestría'</span>, <span class="st">'Doctorado'</span>],
+  <span class="var">palette</span><span class="op">=</span><span class="st">'viridis'</span>
+)
+<span class="var">plt</span>.<span class="fn">show</span>()</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: Correlación de Pearson y Regresión Lineal -->
+  <div class="slide" data-index="5">
+    <div class="slide-inner scroll-content">
+      <div class="section-label">Modelado Estadístico · Tema 5</div>
+      <div class="slide-title">Correlación de Pearson y Regresión Lineal</div>
+      <div class="slide-subtitle">Coeficiente r · Mínimos cuadrados · R² · Correlación ≠ Causalidad</div>
+      <div class="grid-code-meta">
+        <div>
+          <div class="card">
+            <h4>Correlación de Pearson (r)</h4>
+            <ul class="theory-list">
+              <li>Rango: <strong>−1 a +1</strong></li>
+              <li><strong>|r| &gt; 0.7:</strong> correlación fuerte</li>
+              <li><strong>0.4 – 0.7:</strong> correlación moderada</li>
+              <li><strong>|r| &lt; 0.4:</strong> correlación débil</li>
+              <li>r = 0 → no hay relación lineal (puede existir otra relación)</li>
+            </ul>
+          </div>
+          <div class="card" style="margin-top:10px;">
+            <h4>Regresión lineal simple</h4>
+            <ul class="theory-list">
+              <li>Modelo: <strong>y = β₀ + β₁x + ε</strong></li>
+              <li>β₀: intercepto (valor base)</li>
+              <li>β₁: pendiente (cambio en y por unidad de x)</li>
+              <li><strong>Mínimos cuadrados:</strong> minimiza la suma de (y − ŷ)²</li>
+              <li><strong>R²:</strong> proporción de varianza explicada por el modelo (0–1)</li>
+            </ul>
+          </div>
+          <div class="metaphor-card" style="margin-top:12px;">
+            <div class="metaphor-emoji">🌡️🍦</div>
+            <div class="metaphor-body">
+              <div class="metaphor-label">Metáfora</div>
+              <div class="metaphor-text">"r=0.95 significa que si mides la temperatura, puedes predecir las ventas de helado con 95% de acierto usando solo esa variable. r=0.02 significa que lanzar una moneda te daría el mismo resultado que tu modelo."</div>
+            </div>
+          </div>
+          <div class="case-card">
+            <div class="case-badge">Caso Real</div>
+            <div class="case-text"><strong>Bodega Aurrerá</strong> encontró r=0.87 entre temperatura exterior y ventas de cerveza. Usan el pronóstico del clima para predecir inventario con 3 días de anticipación.</div>
+          </div>
+        </div>
+        <div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dot code-dot-r"></div>
+              <div class="code-dot code-dot-y"></div>
+              <div class="code-dot code-dot-g"></div>
+              <div class="code-lang">Python</div>
+            </div>
+            <pre><span class="kw">from</span> <span class="var">sklearn.linear_model</span> <span class="kw">import</span> <span class="cls">LinearRegression</span>
+<span class="kw">from</span> <span class="var">scipy.stats</span> <span class="kw">import</span> <span class="fn">pearsonr</span>
+
+<span class="cm"># Correlación con valor p</span>
+<span class="var">r</span>, <span class="var">p</span> <span class="op">=</span> <span class="fn">pearsonr</span>(
+  <span class="var">df</span>[<span class="st">'horas_estudio'</span>],
+  <span class="var">df</span>[<span class="st">'calificacion'</span>]
+)
+<span class="fn">print</span>(<span class="st">f"r = <span class="op">{</span><span class="var">r</span>:.3f<span class="op">}</span>  (p = <span class="op">{</span><span class="var">p</span>:.4f<span class="op">}</span>)"</span>)
+<span class="fn">print</span>(<span class="st">f"<span class="op">{</span><span class="st">'Fuerte'</span> <span class="kw">if</span> <span class="fn">abs</span>(<span class="var">r</span>)<span class="op">&gt;</span><span class="nm">0.7</span> <span class="kw">else</span> <span class="st">'Moderada'</span><span class="op">}</span>"</span>)
+
+<span class="cm"># Regresión lineal</span>
+<span class="var">modelo</span> <span class="op">=</span> <span class="cls">LinearRegression</span>()
+<span class="var">modelo</span>.<span class="fn">fit</span>(<span class="var">df</span>[[<span class="st">'horas_estudio'</span>]],
+           <span class="var">df</span>[<span class="st">'calificacion'</span>])
+
+<span class="fn">print</span>(<span class="st">f"Por cada hora adicional de estudio:"</span>)
+<span class="fn">print</span>(<span class="st">f"  sube <span class="op">{</span><span class="var">modelo</span>.<span class="var">coef_</span>[<span class="nm">0</span>]:.2f<span class="op">}</span> puntos"</span>)
+<span class="fn">print</span>(<span class="st">f"R² = <span class="op">{</span><span class="var">modelo</span>.<span class="fn">score</span>(
+  <span class="var">df</span>[[<span class="st">'horas_estudio'</span>]],
+  <span class="var">df</span>[<span class="st">'calificacion'</span>]):.3f<span class="op">}</span>"</span>)
+
+<span class="cm"># ⚠️ Correlación ≠ Causalidad</span>
+<span class="cm"># r alto no implica que X causa Y</span></pre>
+          </div>
+          <div class="card" style="margin-top:12px; border-color:#ff5f5740; background:#1a1212;">
+            <h4 style="color:#ff7b72;">Advertencia importante</h4>
+            <p style="color:#fca5a5;">Correlación NO implica causalidad. El número de helados vendidos correlaciona con ahogamientos — ambos son causados por el calor, no uno por el otro. Siempre busca la variable oculta.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: Pruebas Estadísticas y TLC -->
+  <div class="slide" data-index="6">
+    <div class="slide-inner scroll-content">
+      <div class="section-label">Inferencia Estadística · Tema 6</div>
+      <div class="slide-title">Pruebas Estadísticas y Distribuciones Muestrales</div>
+      <div class="slide-subtitle">TLC · Intervalos de confianza · Prueba t · p-valor</div>
+      <div class="grid-code-meta">
+        <div>
+          <div class="card">
+            <h4>Conceptos clave</h4>
+            <ul class="theory-list">
+              <li><strong>Población vs muestra:</strong> inferimos la población a partir de la muestra.</li>
+              <li><strong>TLC:</strong> promedios de muestras grandes (n≥30) siguen distribución normal sin importar la distribución original.</li>
+              <li><strong>IC 95%:</strong> rango que contiene el parámetro real con 95% de confianza.</li>
+              <li><strong>p-valor:</strong> probabilidad de observar el resultado por azar asumiendo H₀ verdadera.</li>
+              <li><strong>Error tipo I (α):</strong> rechazar H₀ cuando es verdadera. Falso positivo.</li>
+              <li><strong>Error tipo II (β):</strong> no rechazar H₀ cuando es falsa. Falso negativo.</li>
+            </ul>
+          </div>
+          <div class="metaphor-card" style="margin-top:12px;">
+            <div class="metaphor-emoji">🎲</div>
+            <div class="metaphor-body">
+              <div class="metaphor-label">Metáfora</div>
+              <div class="metaphor-text">"El Teorema del Límite Central es la magia más importante de la estadística. No importa si tu población tiene forma de dinosaurio en histograma — si tomas muestras de tamaño 30+, sus promedios siempre forman una campana. Es física del caos."</div>
+            </div>
+          </div>
+          <div class="case-card">
+            <div class="case-badge">Caso Real</div>
+            <div class="case-text"><strong>Mercado Libre</strong> usa pruebas t para validar que los cambios en su algoritmo de búsqueda mejoran el CTR antes de aplicar el cambio globalmente (roll-out gradual).</div>
+          </div>
+        </div>
+        <div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dot code-dot-r"></div>
+              <div class="code-dot code-dot-y"></div>
+              <div class="code-dot code-dot-g"></div>
+              <div class="code-lang">Python</div>
+            </div>
+            <pre><span class="kw">from</span> <span class="var">scipy</span> <span class="kw">import</span> <span class="var">stats</span>
+<span class="kw">import</span> <span class="var">numpy</span> <span class="kw">as</span> <span class="var">np</span>
+
+<span class="cm"># ¿La capacitación mejoró las ventas?</span>
+<span class="var">antes</span>   <span class="op">=</span> [<span class="nm">85</span>, <span class="nm">92</span>, <span class="nm">78</span>, <span class="nm">90</span>, <span class="nm">88</span>, <span class="nm">76</span>, <span class="nm">95</span>, <span class="nm">83</span>]
+<span class="var">despues</span> <span class="op">=</span> [<span class="nm">91</span>, <span class="nm">98</span>, <span class="nm">85</span>, <span class="nm">95</span>, <span class="nm">93</span>, <span class="nm">82</span>, <span class="nm">101</span>, <span class="nm">89</span>]
+
+<span class="var">t</span>, <span class="var">p</span> <span class="op">=</span> <span class="var">stats</span>.<span class="fn">ttest_rel</span>(<span class="var">antes</span>, <span class="var">despues</span>)
+<span class="fn">print</span>(<span class="st">f"t-estadístico: <span class="op">{</span><span class="var">t</span>:.3f<span class="op">}</span>"</span>)
+<span class="fn">print</span>(<span class="st">f"p-valor:       <span class="op">{</span><span class="var">p</span>:.4f<span class="op">}</span>"</span>)
+
+<span class="kw">if</span> <span class="var">p</span> <span class="op">&lt;</span> <span class="nm">0.05</span>:
+  <span class="fn">print</span>(<span class="st">"Mejora significativa ✓"</span>)
+<span class="kw">else</span>:
+  <span class="fn">print</span>(<span class="st">"Sin evidencia de mejora ✗"</span>)
+
+<span class="cm"># IC 95% para la diferencia media</span>
+<span class="var">diffs</span> <span class="op">=</span> <span class="var">np</span>.<span class="fn">array</span>(<span class="var">despues</span>) <span class="op">-</span> <span class="var">np</span>.<span class="fn">array</span>(<span class="var">antes</span>)
+<span class="var">ic</span> <span class="op">=</span> <span class="var">stats</span>.<span class="var">t</span>.<span class="fn">interval</span>(
+  <span class="nm">0.95</span>,
+  <span class="var">df</span><span class="op">=</span><span class="fn">len</span>(<span class="var">diffs</span>) <span class="op">-</span> <span class="nm">1</span>,
+  <span class="var">loc</span><span class="op">=</span><span class="var">np</span>.<span class="fn">mean</span>(<span class="var">diffs</span>),
+  <span class="var">scale</span><span class="op">=</span><span class="var">stats</span>.<span class="fn">sem</span>(<span class="var">diffs</span>)
+)
+<span class="fn">print</span>(<span class="st">f"IC 95%: [<span class="op">{</span><span class="var">ic</span>[<span class="nm">0</span>]:.2f<span class="op">}</span>, <span class="op">{</span><span class="var">ic</span>[<span class="nm">1</span>]:.2f<span class="op">}</span>] pts"</span>)</pre>
+          </div>
+          <div class="highlight-row" style="margin-top:12px;">
+            <div class="highlight-box">
+              <span class="hb-val">α=0.05</span>
+              <span class="hb-label">Umbral estándar</span>
+            </div>
+            <div class="highlight-box cyan">
+              <span class="hb-val">n≥30</span>
+              <span class="hb-label">Activa TLC</span>
+            </div>
+            <div class="highlight-box green">
+              <span class="hb-val">95%</span>
+              <span class="hb-label">Confianza IC</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: Pruebas A/B -->
+  <div class="slide" data-index="7">
+    <div class="slide-inner scroll-content">
+      <div class="section-label">Experimentación · Tema 7</div>
+      <div class="slide-title">Pruebas A/B</div>
+      <div class="slide-subtitle">Experimentos controlados · Hipótesis · Tamaño de muestra · Errores comunes</div>
+      <div class="grid-code-meta">
+        <div>
+          <div class="card">
+            <h4>Diseño del experimento</h4>
+            <ul class="theory-list">
+              <li><strong>H₀:</strong> no hay diferencia entre grupos (hipótesis nula)</li>
+              <li><strong>H₁:</strong> existe diferencia significativa (hipótesis alternativa)</li>
+              <li><strong>Grupo control:</strong> versión original (A)</li>
+              <li><strong>Grupo tratamiento:</strong> versión modificada (B)</li>
+              <li><strong>Aleatorización:</strong> asignación aleatoria para eliminar sesgos</li>
+              <li><strong>Poder estadístico:</strong> probabilidad de detectar un efecto real (β=0.8)</li>
+            </ul>
+          </div>
+          <div class="card" style="margin-top:10px; border-color:#ff5f5740; background:#1a1212;">
+            <h4 style="color:#ff7b72;">Errores comunes</h4>
+            <ul class="theory-list" style="">
+              <li style="color:#fca5a5;"><strong style="color:#fca5a5;">P-hacking:</strong> parar la prueba cuando el p&lt;0.05 aparece</li>
+              <li style="color:#fca5a5;"><strong style="color:#fca5a5;">Múltiples comparaciones:</strong> sin corrección de Bonferroni</li>
+              <li style="color:#fca5a5;"><strong style="color:#fca5a5;">Muestra insuficiente:</strong> resultados espurios</li>
+              <li style="color:#fca5a5;"><strong style="color:#fca5a5;">Significancia práctica:</strong> p&lt;0.05 no implica impacto real</li>
+            </ul>
+          </div>
+          <div class="metaphor-card" style="margin-top:12px;">
+            <div class="metaphor-emoji">🔴🟢</div>
+            <div class="metaphor-body">
+              <div class="metaphor-label">Metáfora</div>
+              <div class="metaphor-text">"Una prueba A/B es el método científico aplicado al negocio: en lugar de opinar '¿cuál botón convierte más, el rojo o el verde?', lo pruebas con datos reales. La opinión del CEO no vale contra datos de 10,000 usuarios."</div>
+            </div>
+          </div>
+          <div class="case-card">
+            <div class="case-badge">Caso Real</div>
+            <div class="case-text"><strong>Booking.com</strong> ejecuta &gt;1,000 pruebas A/B simultáneas. El cambio del color del botón "Reservar" en México aumentó conversiones 12% — validado estadísticamente antes del roll-out global.</div>
+          </div>
+        </div>
+        <div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dot code-dot-r"></div>
+              <div class="code-dot code-dot-y"></div>
+              <div class="code-dot code-dot-g"></div>
+              <div class="code-lang">Python</div>
+            </div>
+            <pre><span class="kw">from</span> <span class="var">statsmodels.stats.proportion</span> <span class="kw">import</span> \
+  <span class="fn">proportions_ztest</span>
+<span class="kw">from</span> <span class="var">statsmodels.stats.power</span> <span class="kw">import</span> \
+  <span class="cls">NormalIndPower</span>
+
+<span class="cm"># Calcular tamaño de muestra necesario</span>
+<span class="var">analysis</span> <span class="op">=</span> <span class="cls">NormalIndPower</span>()
+<span class="var">n</span> <span class="op">=</span> <span class="var">analysis</span>.<span class="fn">solve_power</span>(
+  <span class="var">effect_size</span><span class="op">=</span><span class="nm">0.05</span>,
+  <span class="var">alpha</span><span class="op">=</span><span class="nm">0.05</span>,
+  <span class="var">power</span><span class="op">=</span><span class="nm">0.8</span>
+)
+<span class="fn">print</span>(<span class="st">f"Muestra por grupo: <span class="op">{</span><span class="fn">int</span>(<span class="var">n</span>):,<span class="op">}</span>"</span>)
+
+<span class="cm"># Resultados del experimento</span>
+<span class="var">conv_A</span>, <span class="var">n_A</span> <span class="op">=</span> <span class="nm">48</span>, <span class="nm">200</span>  <span class="cm"># botón rojo</span>
+<span class="var">conv_B</span>, <span class="var">n_B</span> <span class="op">=</span> <span class="nm">67</span>, <span class="nm">200</span>  <span class="cm"># botón verde</span>
+
+<span class="var">z</span>, <span class="var">p</span> <span class="op">=</span> <span class="fn">proportions_ztest</span>(
+  [<span class="var">conv_A</span>, <span class="var">conv_B</span>],
+  [<span class="var">n_A</span>, <span class="var">n_B</span>]
+)
+<span class="fn">print</span>(<span class="st">f"Tasa A: <span class="op">{</span><span class="var">conv_A</span><span class="op">/</span><span class="var">n_A</span>:.1%<span class="op">}</span>"</span>)
+<span class="fn">print</span>(<span class="st">f"Tasa B: <span class="op">{</span><span class="var">conv_B</span><span class="op">/</span><span class="var">n_B</span>:.1%<span class="op">}</span>"</span>)
+<span class="var">uplift</span> <span class="op">=</span> (<span class="var">conv_B</span><span class="op">/</span><span class="var">n_B</span> <span class="op">-</span> <span class="var">conv_A</span><span class="op">/</span><span class="var">n_A</span>) <span class="op">/</span> (<span class="var">conv_A</span><span class="op">/</span><span class="var">n_A</span>)
+<span class="fn">print</span>(<span class="st">f"Uplift: +<span class="op">{</span><span class="var">uplift</span>:.1%<span class="op">}</span>"</span>)
+<span class="fn">print</span>(<span class="st">f"p = <span class="op">{</span><span class="var">p</span>:.4f<span class="op">}</span> → <span class="op">{</span><span class="st">'Significativo'</span> <span class="kw">if</span> <span class="var">p</span><span class="op">&lt;</span><span class="nm">0.05</span> <span class="kw">else</span> <span class="st">'No sig.'</span><span class="op">}</span>"</span>)</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: NLP -->
+  <div class="slide" data-index="8">
+    <div class="slide-inner scroll-content">
+      <div class="section-label">Procesamiento de Texto · Tema 8</div>
+      <div class="slide-title">Introducción a NLP</div>
+      <div class="slide-subtitle">Tokenización · TF-IDF · Análisis de sentimientos · Naive Bayes</div>
+      <div class="grid-code-meta">
+        <div>
+          <div class="card">
+            <h4>Pipeline NLP</h4>
+            <ul class="theory-list">
+              <li><strong>Tokenización:</strong> dividir texto en palabras o frases.</li>
+              <li><strong>Stopwords:</strong> palabras sin contenido semántico (de, la, el). Se eliminan.</li>
+              <li><strong>Stemming:</strong> reducir a raíz ("corriendo" → "corr").</li>
+              <li><strong>Lematización:</strong> reducir a forma base con contexto ("fue" → "ser").</li>
+              <li><strong>TF-IDF:</strong> frecuencia del término × inverso de frecuencia en corpus. Pondera relevancia.</li>
+              <li><strong>Naive Bayes:</strong> clasificador probabilístico eficiente para texto.</li>
+            </ul>
+          </div>
+          <div class="metaphor-card" style="margin-top:12px;">
+            <div class="metaphor-emoji">📚</div>
+            <div class="metaphor-body">
+              <div class="metaphor-label">Metáfora</div>
+              <div class="metaphor-text">"Enseñar a una computadora a leer es como enseñar a un niño: primero aprende letras (tokens), luego ignora artículos (stopwords), luego reconoce que 'corriendo' y 'correr' son lo mismo (stemming) y finalmente entiende el contexto. El NLP comprime siglos de lingüística en líneas de código."</div>
+            </div>
+          </div>
+          <div class="case-card">
+            <div class="case-badge">Caso Real</div>
+            <div class="case-text"><strong>Rappi</strong> procesa +500,000 reseñas de restaurantes mensuales con NLP. Detecta automáticamente menciones de "frío", "tardó" o "incorrecto" para alertar restaurantes en tiempo real y proteger su NPS.</div>
+          </div>
+        </div>
+        <div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dot code-dot-r"></div>
+              <div class="code-dot code-dot-y"></div>
+              <div class="code-dot code-dot-g"></div>
+              <div class="code-lang">Python</div>
+            </div>
+            <pre><span class="kw">from</span> <span class="var">sklearn.feature_extraction.text</span> <span class="kw">import</span> \
+  <span class="cls">TfidfVectorizer</span>
+<span class="kw">from</span> <span class="var">sklearn.naive_bayes</span> <span class="kw">import</span> <span class="cls">MultinomialNB</span>
+<span class="kw">from</span> <span class="var">sklearn.pipeline</span> <span class="kw">import</span> <span class="cls">Pipeline</span>
+
+<span class="var">corpus</span> <span class="op">=</span> [
+  <span class="st">"excelente servicio rápido muy recomendado"</span>,
+  <span class="st">"pésima experiencia nunca más vuelvo"</span>,
+  <span class="st">"producto de calidad llegó a tiempo perfecto"</span>,
+  <span class="st">"terrible tardó tres semanas y llegó roto"</span>,
+  <span class="st">"increíble atención al cliente cinco estrellas"</span>
+]
+<span class="var">y</span> <span class="op">=</span> [<span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">1</span>]  <span class="cm"># 1=positivo, 0=negativo</span>
+
+<span class="var">pipeline</span> <span class="op">=</span> <span class="cls">Pipeline</span>([
+  (<span class="st">'tfidf'</span>, <span class="cls">TfidfVectorizer</span>(
+    <span class="var">max_features</span><span class="op">=</span><span class="nm">5000</span>,
+    <span class="var">ngram_range</span><span class="op">=</span>(<span class="nm">1</span>, <span class="nm">2</span>),
+    <span class="var">strip_accents</span><span class="op">=</span><span class="st">'unicode'</span>)),
+  (<span class="st">'nb'</span>, <span class="cls">MultinomialNB</span>(<span class="var">alpha</span><span class="op">=</span><span class="nm">0.1</span>))
+])
+<span class="var">pipeline</span>.<span class="fn">fit</span>(<span class="var">corpus</span>, <span class="var">y</span>)
+
+<span class="var">nueva</span> <span class="op">=</span> [<span class="st">"increíble calidad llegó rápido"</span>]
+<span class="var">pred</span> <span class="op">=</span> <span class="var">pipeline</span>.<span class="fn">predict</span>(<span class="var">nueva</span>)
+<span class="var">prob</span> <span class="op">=</span> <span class="var">pipeline</span>.<span class="fn">predict_proba</span>(<span class="var">nueva</span>)
+<span class="fn">print</span>(<span class="st">f"<span class="op">{</span><span class="st">'Positiva'</span> <span class="kw">if</span> <span class="var">pred</span>[<span class="nm">0</span>]<span class="op">==</span><span class="nm">1</span> <span class="kw">else</span> <span class="st">'Negativa'</span><span class="op">}</span>"</span>)
+<span class="fn">print</span>(<span class="st">f"Confianza: <span class="op">{</span><span class="fn">max</span>(<span class="var">prob</span>[<span class="nm">0</span>]):.1%<span class="op">}</span>"</span>)</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: Proyecto Final -->
+  <div class="slide" data-index="9">
+    <div class="slide-inner scroll-content">
+      <div class="section-label">Cierre del Curso · Tema 9</div>
+      <div class="slide-title">Proyecto Final</div>
+      <div class="slide-subtitle">Análisis Completo de Reseñas de E-commerce</div>
+      <div class="grid-2" style="margin-bottom:0;">
+        <div class="card">
+          <h4>Dataset</h4>
+          <ul class="theory-list">
+            <li><strong>Fuente:</strong> Brazilian E-Commerce Public Dataset (Olist, Kaggle)</li>
+            <li><strong>Tamaño:</strong> 100,000 pedidos reales</li>
+            <li><strong>Idioma:</strong> reseñas en portugués y español</li>
+            <li><strong>Variables:</strong> producto, precio, tiempo de entrega, calificación, texto de reseña</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>Entregable</h4>
+          <ul class="theory-list">
+            <li>Notebook Jupyter con narrativa de negocio</li>
+            <li>Visualizaciones comentadas e interpretadas</li>
+            <li>Modelo de sentimientos funcional</li>
+            <li><strong>3 recomendaciones accionables</strong> basadas en datos</li>
+          </ul>
+        </div>
+      </div>
+      <div style="margin-top:14px;">
+        <div class="section-label" style="margin-bottom:8px;">Pipeline del proyecto</div>
+        <div class="pipeline-steps">
+          <div class="pipeline-step">
+            <span class="ps-icon">🔍</span>
+            <span class="ps-label">EDA</span>
+          </div>
+          <div class="pipeline-step">
+            <span class="ps-icon">📊</span>
+            <span class="ps-label">Estadísticas</span>
+          </div>
+          <div class="pipeline-step">
+            <span class="ps-icon">📈</span>
+            <span class="ps-label">Visualización</span>
+          </div>
+          <div class="pipeline-step">
+            <span class="ps-icon">🔗</span>
+            <span class="ps-label">Bivariado</span>
+          </div>
+          <div class="pipeline-step">
+            <span class="ps-icon">💬</span>
+            <span class="ps-label">NLP</span>
+          </div>
+          <div class="pipeline-step">
+            <span class="ps-icon">📋</span>
+            <span class="ps-label">Dashboard</span>
+          </div>
+        </div>
+      </div>
+      <div class="grid-3" style="margin-top:14px;">
+        <div class="card">
+          <h4>Fase 1 · EDA</h4>
+          <ul class="theory-list">
+            <li>Carga y limpieza de datos</li>
+            <li>Tipos de variables</li>
+            <li>Valores nulos</li>
+            <li>describe() completo</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>Fase 2 · Análisis</h4>
+          <ul class="theory-list">
+            <li>Distribuciones por categoría</li>
+            <li>Análisis bivariado</li>
+            <li>Correlación calificación–entrega</li>
+            <li>Prueba t por segmento</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>Fase 3 · NLP</h4>
+          <ul class="theory-list">
+            <li>Preprocesamiento texto</li>
+            <li>TF-IDF vectorización</li>
+            <li>Clasificador sentimientos</li>
+            <li>Validación cruzada</li>
+          </ul>
+        </div>
+      </div>
+      <div class="case-card" style="margin-top:14px;">
+        <div class="case-badge">Meta</div>
+        <div class="case-text">Al finalizar el proyecto, el alumno habrá aplicado de forma integrada: estadística descriptiva, inferencia, visualización avanzada y NLP — el stack completo de un <strong>Data Analyst</strong> en la industria.</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /slides-wrapper -->
+
+<!-- Navigation Buttons -->
+<button class="nav-btn" id="btn-prev" aria-label="Anterior">&#8592;</button>
+<button class="nav-btn" id="btn-next" aria-label="Siguiente">&#8594;</button>
+
+<!-- Slide Counter -->
+<div id="slide-counter">1 / 10</div>
+
+<script>
+(function() {
+  'use strict';
+
+  const TOTAL = 10;
+  let current = 0;
+  let isAnimating = false;
+
+  const slides = document.querySelectorAll('.slide');
+  const sidebarItems = document.querySelectorAll('.sidebar-item');
+  const progressBar = document.getElementById('progress-bar');
+  const counter = document.getElementById('slide-counter');
+  const btnPrev = document.getElementById('btn-prev');
+  const btnNext = document.getElementById('btn-next');
+  const sidebar = document.getElementById('sidebar');
+  const sidebarToggle = document.getElementById('sidebar-toggle');
+
+  function goTo(index) {
+    if (index === current || isAnimating) return;
+    if (index < 0 || index >= TOTAL) return;
+
+    isAnimating = true;
+
+    const prev = slides[current];
+    const next = slides[index];
+
+    prev.classList.add('exit-up');
+
+    setTimeout(function() {
+      prev.classList.remove('active', 'exit-up');
+      next.classList.add('active');
+      isAnimating = false;
+    }, 480);
+
+    current = index;
+    updateUI();
+  }
+
+  function updateUI() {
+    // Progress bar
+    var pct = TOTAL <= 1 ? 100 : (current / (TOTAL - 1)) * 100;
+    progressBar.style.width = pct + '%';
+
+    // Counter
+    counter.textContent = (current + 1) + ' / ' + TOTAL;
+
+    // Sidebar items
+    sidebarItems.forEach(function(item, i) {
+      item.classList.toggle('active', i === current);
+    });
+
+    // Buttons
+    btnPrev.disabled = current === 0;
+    btnNext.disabled = current === TOTAL - 1;
+  }
+
+  // Button events
+  btnPrev.addEventListener('click', function() { goTo(current - 1); });
+  btnNext.addEventListener('click', function() { goTo(current + 1); });
+
+  // Keyboard events
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      goTo(current + 1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      goTo(current - 1);
+    }
+  });
+
+  // Sidebar items
+  sidebarItems.forEach(function(item) {
+    item.addEventListener('click', function() {
+      var idx = parseInt(item.getAttribute('data-slide'), 10);
+      goTo(idx);
+      // Close sidebar on mobile
+      if (window.innerWidth < 768) {
+        sidebar.classList.remove('open');
+        sidebarToggle.classList.remove('open');
+      }
+    });
+  });
+
+  // Sidebar toggle
+  sidebarToggle.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+    sidebarToggle.classList.toggle('open');
+  });
+
+  // Close sidebar clicking outside
+  document.addEventListener('click', function(e) {
+    if (sidebar.classList.contains('open') &&
+        !sidebar.contains(e.target) &&
+        !sidebarToggle.contains(e.target)) {
+      sidebar.classList.remove('open');
+      sidebarToggle.classList.remove('open');
+    }
+  });
+
+  // Touch/swipe support
+  var touchStartX = 0;
+  var touchStartY = 0;
+  document.addEventListener('touchstart', function(e) {
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+  }, { passive: true });
+  document.addEventListener('touchend', function(e) {
+    var dx = e.changedTouches[0].screenX - touchStartX;
+    var dy = e.changedTouches[0].screenY - touchStartY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+      if (dx < 0) goTo(current + 1);
+      else goTo(current - 1);
+    }
+  }, { passive: true });
+
+  // Init
+  updateUI();
+})();
+</script>
+</body>
+</html>

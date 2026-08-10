@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Procesamiento de Datos con Python</title>
+<style>
+  /* ── SHARED TOPBAR ── */
+  .shared-topbar {
+    position: fixed; top: 0; left: 0; right: 0; height: 48px; z-index: 1100;
+    background: rgba(10,14,26,.97); backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0,212,255,.15);
+    display: flex; align-items: center; gap: 1rem; padding: 0 1rem;
+  }
+  .topbar-back {
+    display: inline-flex; align-items: center; gap: .4rem;
+    color: #94a3b8; text-decoration: none; font-size: .78rem; font-weight: 600;
+    padding: .3rem .75rem; border-radius: 6px; border: 1px solid rgba(255,255,255,.1);
+    transition: all .2s; white-space: nowrap;
+  }
+  .topbar-back:hover { color: #00d4ff; border-color: rgba(0,212,255,.4); background: rgba(0,212,255,.07); }
+  .topbar-sep { width: 1px; height: 20px; background: rgba(255,255,255,.1); flex-shrink: 0; }
+  .topbar-logo { font-size: .8rem; font-weight: 700; color: #00d4ff; letter-spacing: .5px; }
+  .topbar-title { font-size: .8rem; color: #94a3b8; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .topbar-badge {
+    font-size: .68rem; font-weight: 700; padding: .2rem .55rem; border-radius: 10px;
+    background: rgba(0,212,255,.12); color: #00d4ff; border: 1px solid rgba(0,212,255,.25);
+    white-space: nowrap;
+  }
+
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --card: #1e2a3a;
+    --accent: #00d4ff;
+    --accent2: #7c3aed;
+    --accent3: #10b981;
+    --text: #e2e8f0;
+    --text-muted: #94a3b8;
+    --code-bg: #0d1117;
+    --border: rgba(255,255,255,0.08);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { height:100%; overflow:hidden; background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,-apple-system,sans-serif; }
+
+  /* ── PROGRESS BAR ── */
+  #progress-bar {
+    position:fixed; top:0; left:0; height:3px; background:linear-gradient(90deg,var(--accent),var(--accent2));
+    transition:width .4s ease; z-index:1000;
+  }
+
+  /* ── SIDEBAR ── */
+  #sidebar {
+    position:fixed; left:0; top:48px; height:calc(100vh - 48px); width:260px;
+    background:var(--surface); border-right:1px solid var(--border);
+    transform:translateX(-260px); transition:transform .35s ease;
+    z-index:900; display:flex; flex-direction:column; padding:20px 0;
+  }
+  #sidebar.open { transform:translateX(0); }
+  #sidebar-logo {
+    padding:0 24px 20px; border-bottom:1px solid var(--border);
+    font-size:.75rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:.1em;
+  }
+  #sidebar-logo span { display:block; font-size:1rem; color:var(--accent); font-weight:700; margin-top:4px; }
+  #sidebar-nav { flex:1; overflow-y:auto; padding:16px 0; }
+  .sidebar-item {
+    display:flex; align-items:center; gap:12px; padding:10px 24px;
+    cursor:pointer; transition:all .2s; font-size:.875rem; color:var(--text-muted);
+    border-left:3px solid transparent;
+  }
+  .sidebar-item:hover { background:rgba(0,212,255,.07); color:var(--text); }
+  .sidebar-item.active { border-left-color:var(--accent); color:var(--accent); background:rgba(0,212,255,.1); }
+  .sidebar-item .num {
+    width:24px; height:24px; border-radius:50%; background:var(--card);
+    display:flex; align-items:center; justify-content:center;
+    font-size:.7rem; font-weight:700; flex-shrink:0;
+  }
+  .sidebar-item.active .num { background:var(--accent); color:#000; }
+
+  /* ── SIDEBAR TOGGLE ── */
+  #sidebar-toggle {
+    position:fixed; top:60px; left:16px; z-index:950;
+    width:42px; height:42px; border-radius:10px; background:var(--card);
+    border:1px solid var(--border); cursor:pointer; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:5px; transition:all .2s;
+  }
+  #sidebar-toggle:hover { background:var(--accent); }
+  #sidebar-toggle span {
+    display:block; width:20px; height:2px; background:var(--text); border-radius:2px; transition:all .3s;
+  }
+  #sidebar-toggle.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+  #sidebar-toggle.open span:nth-child(2) { opacity:0; }
+  #sidebar-toggle.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
+
+  /* ── SLIDE CONTAINER ── */
+  #slides { width:100vw; height:100vh; position:relative; overflow:hidden; }
+  .slide {
+    position:absolute; inset:0; padding:60px 80px 80px;
+    overflow-y:auto; opacity:0; pointer-events:none;
+    transform:translateY(30px);
+    transition:opacity .45s ease, transform .45s ease;
+    scrollbar-width:thin; scrollbar-color:var(--card) transparent;
+  }
+  .slide.active {
+    opacity:1; pointer-events:all; transform:translateY(0);
+  }
+  .slide.exit {
+    opacity:0; transform:translateY(-30px);
+    transition:opacity .3s ease, transform .3s ease;
+  }
+
+  /* ── NAV BUTTONS ── */
+  .nav-btn {
+    position:fixed; top:50%; transform:translateY(-50%);
+    width:50px; height:50px; border-radius:50%; background:var(--card);
+    border:1px solid var(--border); cursor:pointer; z-index:800;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.2rem; color:var(--text); transition:all .2s;
+  }
+  .nav-btn:hover { background:var(--accent); color:#000; border-color:var(--accent); }
+  #btn-prev { left:16px; }
+  #btn-next { right:16px; }
+  .nav-btn:disabled { opacity:.2; cursor:default; }
+  .nav-btn:disabled:hover { background:var(--card); color:var(--text); border-color:var(--border); }
+
+  /* ── SLIDE COUNTER ── */
+  #slide-counter {
+    position:fixed; bottom:20px; right:24px; font-size:.8rem;
+    color:var(--text-muted); z-index:800; background:var(--surface);
+    padding:4px 12px; border-radius:20px; border:1px solid var(--border);
+  }
+
+  /* ── TYPOGRAPHY ── */
+  .topic-badge {
+    display:inline-flex; align-items:center; gap:8px;
+    background:rgba(124,58,237,.2); border:1px solid rgba(124,58,237,.4);
+    color:#a78bfa; padding:4px 14px; border-radius:20px;
+    font-size:.75rem; font-weight:600; text-transform:uppercase; letter-spacing:.1em;
+    margin-bottom:16px;
+  }
+  .slide-title {
+    font-size:2.4rem; font-weight:800; line-height:1.1;
+    background:linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    margin-bottom:8px;
+  }
+  .slide-subtitle {
+    font-size:1rem; color:var(--text-muted); margin-bottom:32px; max-width:700px;
+  }
+  .section-label {
+    font-size:.7rem; text-transform:uppercase; letter-spacing:.12em;
+    color:var(--accent); font-weight:700; margin-bottom:8px;
+  }
+
+  /* ── GRID LAYOUTS ── */
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+
+  /* ── CARDS ── */
+  .card {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:14px; padding:20px; transition:border-color .2s;
+  }
+  .card:hover { border-color:rgba(0,212,255,.2); }
+  .card h3 { font-size:1rem; color:var(--accent); margin-bottom:8px; }
+  .card p, .card li { font-size:.875rem; color:var(--text-muted); line-height:1.6; }
+  .card ul { padding-left:16px; }
+  .card li { margin-bottom:4px; }
+
+  /* ── METAPHOR CARD ── */
+  .metaphor-card {
+    background:rgba(0,212,255,.04); border:1px solid rgba(0,212,255,.2);
+    border-left:4px solid var(--accent); border-radius:12px;
+    padding:18px 20px; display:flex; gap:16px; align-items:flex-start;
+  }
+  .metaphor-icon { font-size:2.2rem; flex-shrink:0; line-height:1; }
+  .metaphor-text { font-size:.9rem; color:var(--text); font-style:italic; line-height:1.65; }
+  .metaphor-text strong { font-style:normal; color:var(--accent); }
+
+  /* ── CASE STUDY CARD ── */
+  .case-card {
+    background:rgba(16,185,129,.04); border:1px solid rgba(16,185,129,.2);
+    border-radius:12px; padding:18px 20px; position:relative; overflow:hidden;
+  }
+  .case-card::before {
+    content:''; position:absolute; top:0; right:0; width:120px; height:120px;
+    background:radial-gradient(circle, rgba(16,185,129,.1) 0%, transparent 70%);
+  }
+  .case-badge {
+    display:inline-block; background:var(--accent3); color:#000;
+    font-size:.65rem; font-weight:800; text-transform:uppercase; letter-spacing:.1em;
+    padding:3px 10px; border-radius:20px; margin-bottom:10px;
+  }
+  .case-card p { font-size:.875rem; color:var(--text-muted); line-height:1.65; }
+  .case-card strong { color:var(--accent3); }
+
+  /* ── CODE BLOCKS ── */
+  .code-wrap {
+    background:var(--code-bg); border:1px solid rgba(255,255,255,.1);
+    border-radius:12px; overflow:hidden;
+  }
+  .code-header {
+    background:rgba(255,255,255,.05); padding:10px 16px;
+    display:flex; align-items:center; gap:8px; border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  .code-dot { width:12px; height:12px; border-radius:50%; }
+  .code-dot.red { background:#ff5f57; }
+  .code-dot.yellow { background:#febc2e; }
+  .code-dot.green { background:#28c840; }
+  .code-lang { margin-left:auto; font-size:.7rem; color:var(--text-muted); }
+  .code-body { padding:16px 20px; font-family:'Consolas','Courier New',monospace; font-size:.82rem; line-height:1.7; overflow-x:auto; }
+  .kw { color:#ff79c6; }
+  .fn { color:#50fa7b; }
+  .str { color:#f1fa8c; }
+  .num { color:#bd93f9; }
+  .cm { color:#6272a4; font-style:italic; }
+  .bi { color:#8be9fd; }
+  .op { color:#ff79c6; }
+  .var { color:#f8f8f2; }
+  .attr { color:#ffb86c; }
+
+  /* ── INFO PILLS ── */
+  .pill-row { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+  .pill {
+    background:rgba(0,212,255,.1); border:1px solid rgba(0,212,255,.25);
+    color:var(--accent); font-size:.75rem; padding:4px 12px; border-radius:20px;
+  }
+  .pill.green { background:rgba(16,185,129,.1); border-color:rgba(16,185,129,.25); color:var(--accent3); }
+  .pill.purple { background:rgba(124,58,237,.1); border-color:rgba(124,58,237,.25); color:#a78bfa; }
+
+  /* ── THEORY BOX ── */
+  .theory-box {
+    background:var(--surface); border:1px solid var(--border);
+    border-top:3px solid var(--accent2); border-radius:12px; padding:20px;
+  }
+  .theory-box h4 { color:#a78bfa; font-size:.85rem; text-transform:uppercase; letter-spacing:.08em; margin-bottom:12px; }
+  .theory-box p, .theory-box li { font-size:.875rem; color:var(--text-muted); line-height:1.6; }
+  .theory-box ul { padding-left:18px; }
+  .theory-box li { margin-bottom:6px; }
+
+  /* ── PORTADA ── */
+  #slide-0 { display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:40px; }
+  .cover-eyebrow { font-size:.8rem; text-transform:uppercase; letter-spacing:.2em; color:var(--text-muted); margin-bottom:20px; }
+  .cover-title { font-size:3.5rem; font-weight:900; line-height:1.05; margin-bottom:12px;
+    background:linear-gradient(135deg,#fff 0%,var(--accent) 50%,var(--accent2) 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .cover-subtitle { font-size:1.3rem; color:var(--text-muted); margin-bottom:48px; }
+  .cover-icons { display:flex; gap:40px; justify-content:center; margin-bottom:48px; font-size:4rem; }
+  .float-icon { animation:float 3s ease-in-out infinite; }
+  .float-icon:nth-child(2) { animation-delay:.8s; }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
+  .btn-start {
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:#fff; border:none; padding:16px 48px; border-radius:50px;
+    font-size:1.1rem; font-weight:700; cursor:pointer; letter-spacing:.05em;
+    transition:transform .2s, box-shadow .2s;
+    box-shadow:0 0 30px rgba(0,212,255,.3);
+  }
+  .btn-start:hover { transform:translateY(-3px); box-shadow:0 0 50px rgba(0,212,255,.5); }
+  .competencia-pill {
+    background:rgba(16,185,129,.1); border:1px solid rgba(16,185,129,.3);
+    color:var(--accent3); padding:8px 24px; border-radius:8px; font-size:.85rem;
+    max-width:600px; text-align:center; margin-top:20px; line-height:1.5;
+  }
+
+  /* ── PROYECTO FINAL ── */
+  .rubric-row { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--border); }
+  .rubric-row:last-child { border-bottom:none; }
+  .rubric-row .weight {
+    background:var(--accent2); color:#fff; font-size:.7rem; font-weight:800;
+    padding:3px 10px; border-radius:20px; flex-shrink:0; min-width:44px; text-align:center;
+  }
+  .rubric-row span { font-size:.875rem; color:var(--text-muted); }
+
+  /* ── STEP FLOW ── */
+  .step-flow { display:flex; gap:0; align-items:stretch; flex-wrap:wrap; }
+  .step {
+    flex:1; min-width:120px; background:var(--card); border:1px solid var(--border);
+    border-radius:10px; padding:14px; text-align:center; position:relative;
+  }
+  .step:not(:last-child)::after {
+    content:'→'; position:absolute; right:-14px; top:50%; transform:translateY(-50%);
+    color:var(--accent); font-size:1.2rem; z-index:1;
+  }
+  .step .step-num {
+    width:28px; height:28px; border-radius:50%; background:var(--accent);
+    color:#000; font-weight:800; font-size:.8rem; display:flex; align-items:center;
+    justify-content:center; margin:0 auto 8px;
+  }
+  .step p { font-size:.78rem; color:var(--text-muted); }
+  .step strong { display:block; font-size:.82rem; color:var(--text); margin-bottom:4px; }
+
+  /* RESPONSIVE */
+  @media(max-width:900px) {
+    .slide { padding:60px 24px 80px; }
+    .cover-title { font-size:2.2rem; }
+    .slide-title { font-size:1.8rem; }
+    .grid-2, .grid-3 { grid-template-columns:1fr; }
+    .step-flow { flex-direction:column; }
+    .step:not(:last-child)::after { content:'↓'; right:auto; left:50%; top:auto; bottom:-14px; transform:translateX(-50%); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Shared top navigation bar -->
+<div class="shared-topbar">
+  <a class="topbar-back" href="presentacion_data_science.html">← Inicio</a>
+  <div class="topbar-sep"></div>
+  <span class="topbar-logo">⚡ DataSci</span>
+  <div class="topbar-sep"></div>
+  <span class="topbar-title">Procesamiento de Datos con Python</span>
+  <span class="topbar-badge">Curso 1 / 5</span>
+</div>
+
+<!-- Progress bar -->
+<div id="progress-bar"></div>
+
+<!-- Sidebar toggle -->
+<button id="sidebar-toggle" aria-label="Índice">
+  <span></span><span></span><span></span>
+</button>
+
+<!-- Sidebar -->
+<nav id="sidebar">
+  <div id="sidebar-logo">
+    Procesamiento de Datos<br>
+    <span>con Python</span>
+  </div>
+  <div id="sidebar-nav">
+    <div class="sidebar-item" data-slide="0"><span class="num">⌂</span> Portada</div>
+    <div class="sidebar-item" data-slide="1"><span class="num">1</span> Fundamentos de Python</div>
+    <div class="sidebar-item" data-slide="2"><span class="num">2</span> Estructuras y Funciones</div>
+    <div class="sidebar-item" data-slide="3"><span class="num">3</span> Programación Funcional</div>
+    <div class="sidebar-item" data-slide="4"><span class="num">4</span> Pandas y EDA</div>
+    <div class="sidebar-item" data-slide="5"><span class="num">5</span> Limpieza de Datos</div>
+    <div class="sidebar-item" data-slide="6"><span class="num">6</span> APIs y Automatización</div>
+    <div class="sidebar-item" data-slide="7"><span class="num">7</span> Transformación y Filtrado</div>
+    <div class="sidebar-item" data-slide="8"><span class="num">8</span> Merge y Agrupaciones</div>
+    <div class="sidebar-item" data-slide="9"><span class="num">★</span> Proyecto Final</div>
+  </div>
+</nav>
+
+<!-- Slides container -->
+<div id="slides">
+
+  <!-- ══════════════ SLIDE 0 — PORTADA ══════════════ -->
+  <div class="slide active" id="slide-0">
+    <div class="cover-eyebrow">Curso Universitario · Data Science</div>
+    <div class="cover-icons">
+      <span class="float-icon">🐍</span>
+      <span class="float-icon">📊</span>
+    </div>
+    <h1 class="cover-title">Procesamiento de Datos<br>con Python</h1>
+    <p class="cover-subtitle">Del dato crudo al insight</p>
+    <button class="btn-start" onclick="goTo(1)">Comenzar →</button>
+    <div class="competencia-pill">
+      <strong>Competencia:</strong> Construye programas y sistemas para analizar datos de diversas fuentes usando Python.
+    </div>
+  </div>
+
+  <!-- ══════════════ SLIDE 1 — FUNDAMENTOS ══════════════ -->
+  <div class="slide" id="slide-1">
+    <div class="topic-badge">Tema 1 de 8</div>
+    <h2 class="slide-title">Fundamentos de Python</h2>
+    <p class="slide-subtitle">El lenguaje que democratizó el análisis de datos — y por qué debes dominarlo.</p>
+
+    <div class="grid-2" style="margin-bottom:20px">
+      <div class="theory-box">
+        <h4>¿Qué es Python?</h4>
+        <ul>
+          <li><strong>Interpretado</strong>: el código se ejecuta línea por línea — sin compilar, resultados inmediatos.</li>
+          <li><strong>Multiparadigma</strong>: puedes programar de forma imperativa, orientada a objetos o funcional.</li>
+          <li><strong>Sintaxis limpia</strong>: la indentación fuerza código legible por humanos.</li>
+          <li><strong>Creado por Guido van Rossum</strong> en 1991 — el nombre viene de Monty Python, no de la serpiente.</li>
+          <li><strong>Domina en datos</strong>: ecosistema (NumPy, Pandas, Scikit-learn, TensorFlow) sin rival.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Tipos de datos primitivos</h3>
+        <div class="pill-row">
+          <span class="pill">int — enteros</span>
+          <span class="pill">float — decimales</span>
+          <span class="pill">str — texto</span>
+          <span class="pill">bool — verdadero/falso</span>
+        </div>
+        <p style="margin-bottom:10px">Los <strong>operadores</strong> funcionan de forma intuitiva: <code style="color:var(--accent)">+  -  *  /  //  %  **</code>.</p>
+        <p>Los <strong>condicionales</strong> <code style="color:var(--accent)">if / elif / else</code> controlan el flujo del programa sin llaves — solo con indentación de 4 espacios.</p>
+      </div>
+    </div>
+
+    <div class="metaphor-card" style="margin-bottom:20px">
+      <div class="metaphor-icon">💬</div>
+      <div class="metaphor-text">
+        <strong>Metáfora:</strong> "Python es el lenguaje de los datos porque es como hablar en voz alta — claro, legible, sin ceremonias. Mientras otros lenguajes exigen que uses traje de etiqueta para ir al supermercado, Python te deja ir en ropa cómoda."
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="code-wrap">
+        <div class="code-header">
+          <span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span>
+          <span class="code-lang">Python</span>
+        </div>
+        <div class="code-body">
+<span class="cm"># Variables: diferentes tipos</span><br>
+<span class="var">nombre</span> <span class="op">=</span> <span class="str">"Ana"</span><br>
+<span class="var">edad</span> <span class="op">=</span> <span class="num">28</span><br>
+<span class="var">salario</span> <span class="op">=</span> <span class="num">45000.50</span><br>
+<span class="var">es_analista</span> <span class="op">=</span> <span class="kw">True</span><br>
+<br>
+<span class="cm"># f-string: formato moderno</span><br>
+<span class="bi">print</span>(<span class="str">f"<span class="var">{nombre}</span> tiene <span class="var">{edad}</span> años"</span>)<br>
+<span class="bi">print</span>(<span class="str">f"Salario: $<span class="var">{salario:,.2f}</span>"</span>)<br>
+<br>
+<span class="cm"># Condicional</span><br>
+<span class="kw">if</span> <span class="var">es_analista</span> <span class="kw">and</span> <span class="var">edad</span> <span class="op">&lt;</span> <span class="num">30</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="bi">print</span>(<span class="str">"Analista junior — gran potencial"</span>)<br>
+<span class="kw">elif</span> <span class="var">edad</span> <span class="op">&gt;=</span> <span class="num">30</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="bi">print</span>(<span class="str">"Analista senior"</span>)<br>
+<span class="kw">else</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="bi">print</span>(<span class="str">"Rol no definido"</span>)
+        </div>
+      </div>
+      <div class="case-card">
+        <span class="case-badge">Caso Real</span>
+        <p>
+          <strong>Netflix</strong> usa Python para su motor de recomendaciones, que genera el 80% de las horas de visualización de la plataforma. Cada vez que tu pantalla de inicio carga, algoritmos escritos en Python — con exactamente las mismas variables, condicionales y tipos de datos que ves aquí — calculan en milisegundos qué 40 títulos te mostrarán de entre un catálogo de miles.<br><br>
+          Cada línea de código que aprendes hoy es la misma que decide qué serie te muestra mañana.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SLIDE 2 — ESTRUCTURAS Y FUNCIONES ══════════════ -->
+  <div class="slide" id="slide-2">
+    <div class="topic-badge">Tema 2 de 8</div>
+    <h2 class="slide-title">Estructuras de Datos y Funciones</h2>
+    <p class="slide-subtitle">Organiza, almacena y reutiliza — los bloques esenciales de cualquier programa.</p>
+
+    <div class="grid-3" style="margin-bottom:20px">
+      <div class="card">
+        <h3>📋 Lista</h3>
+        <p>Colección <strong>ordenada y mutable</strong>. Se indexa desde 0. Permite duplicados.<br><br>
+        <code style="color:var(--accent)">nums = [1, 2, 3]<br>nums.append(4)<br>nums[0] → 1</code></p>
+      </div>
+      <div class="card">
+        <h3>🔒 Tupla</h3>
+        <p>Colección <strong>ordenada e inmutable</strong>. Más rápida que lista. Ideal para datos que no cambian.<br><br>
+        <code style="color:var(--accent)">coords = (19.43, -99.13)<br>lat, lon = coords</code></p>
+      </div>
+      <div class="card">
+        <h3>📖 Diccionario</h3>
+        <p>Colección de pares <strong>clave:valor</strong>. Búsqueda O(1). Mutable. No permite claves duplicadas.<br><br>
+        <code style="color:var(--accent)">d = {"id": 1, "nom": "Ana"}<br>d["id"] → 1</code></p>
+      </div>
+    </div>
+
+    <div class="metaphor-card" style="margin-bottom:20px">
+      <div class="metaphor-icon">📱</div>
+      <div class="metaphor-text">
+        <strong>Metáfora:</strong> "Un diccionario en Python es como tu lista de contactos del teléfono: buscas por nombre (clave) y obtienes el número (valor) instantáneamente — sin recorrer toda la agenda uno por uno."
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <div class="code-wrap">
+          <div class="code-header">
+            <span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span>
+            <span class="code-lang">Python</span>
+          </div>
+          <div class="code-body">
+<span class="cm"># Diccionarios anidados</span><br>
+<span class="var">empleados</span> <span class="op">=</span> {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="str">"Ana"</span>: {<span class="str">"edad"</span>: <span class="num">28</span>, <span class="str">"dept"</span>: <span class="str">"Datos"</span>},<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="str">"Luis"</span>: {<span class="str">"edad"</span>: <span class="num">34</span>, <span class="str">"dept"</span>: <span class="str">"ML"</span>}<br>
+}<br>
+<br>
+<span class="cm"># Función con parámetros y return</span><br>
+<span class="kw">def</span> <span class="fn">saludo</span>(<span class="var">nombre</span>):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="var">info</span> <span class="op">=</span> <span class="var">empleados</span>.<span class="fn">get</span>(<span class="var">nombre</span>, {})<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> <span class="str">f"Hola <span class="var">{nombre}</span>, área: <span class="var">{info.get('dept','N/A')}</span>"</span><br>
+<br>
+<span class="bi">print</span>(<span class="fn">saludo</span>(<span class="str">"Ana"</span>))   <span class="cm"># Hola Ana, área: Datos</span><br>
+<span class="bi">print</span>(<span class="fn">saludo</span>(<span class="str">"Pedro"</span>)) <span class="cm"># Hola Pedro, área: N/A</span><br>
+<br>
+<span class="cm"># Importar módulo externo</span><br>
+<span class="kw">import</span> <span class="bi">math</span><br>
+<span class="bi">print</span>(<span class="bi">math</span>.<span class="fn">sqrt</span>(<span class="num">144</span>))  <span class="cm"># 12.0</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="theory-box">
+          <h4>Funciones def</h4>
+          <ul>
+            <li><strong>Parámetros por defecto</strong>: <code style="color:#a78bfa">def fn(x, y=10)</code></li>
+            <li><strong>*args</strong>: número variable de argumentos posicionales.</li>
+            <li><strong>**kwargs</strong>: número variable de argumentos nombrados.</li>
+            <li><strong>Módulos</strong>: archivos .py reutilizables. <strong>Paquetes</strong>: carpetas con __init__.py.</li>
+          </ul>
+        </div>
+        <div class="case-card">
+          <span class="case-badge">Caso Real</span>
+          <p><strong>Uber</strong> usa diccionarios anidados para mapear conductores, rutas y tarifas en tiempo real. Cuando pides un viaje, el backend en Python consulta estructuras como <code style="color:var(--accent3)">{driver_id: {lat, lon, rating, tarifa}}</code> para encontrar al conductor óptimo en milisegundos entre miles de opciones activas simultáneamente.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SLIDE 3 — PROGRAMACIÓN FUNCIONAL ══════════════ -->
+  <div class="slide" id="slide-3">
+    <div class="topic-badge">Tema 3 de 8</div>
+    <h2 class="slide-title">Programación Funcional</h2>
+    <p class="slide-subtitle">Transforma datos con elegancia: map, filter, reduce y la filosofía declarativa.</p>
+
+    <div class="grid-2" style="margin-bottom:20px">
+      <div class="theory-box">
+        <h4>Imperativo vs. Declarativo</h4>
+        <ul>
+          <li><strong>Imperativo</strong>: dices <em>cómo</em> hacerlo paso a paso (bucle for, variable acumuladora…).</li>
+          <li><strong>Declarativo</strong>: dices <em>qué</em> quieres obtener (map, filter, comprensión de lista).</li>
+          <li><strong>map(fn, lista)</strong>: aplica una función a cada elemento. Retorna iterador.</li>
+          <li><strong>filter(fn, lista)</strong>: conserva solo los elementos donde fn retorna True.</li>
+          <li><strong>reduce(fn, lista)</strong>: colapsa la lista en un único valor (del módulo functools).</li>
+          <li><strong>lambda</strong>: función anónima de una sola expresión. <code style="color:#a78bfa">lambda x: x * 2</code></li>
+          <li><strong>List comprehension</strong>: la forma más "pythónica" y eficiente en velocidad.</li>
+        </ul>
+      </div>
+      <div class="metaphor-card" style="align-self:start">
+        <div class="metaphor-icon">🏭</div>
+        <div class="metaphor-text">
+          <strong>Metáfora:</strong> "<strong>map()</strong> es como una fábrica de ensamblaje: metes materia prima (lista), defines la transformación (función lambda) y del otro lado de la cinta transportadora sale el producto terminado — sin escribir un solo loop."
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="code-wrap">
+        <div class="code-header">
+          <span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span>
+          <span class="code-lang">Python</span>
+        </div>
+        <div class="code-body">
+<span class="var">ventas</span> <span class="op">=</span> [<span class="num">120</span>, <span class="num">85</span>, <span class="num">200</span>, <span class="num">45</span>, <span class="num">310</span>]<br>
+<br>
+<span class="cm"># Forma imperativa (loop for)</span><br>
+<span class="var">resultado_imp</span> <span class="op">=</span> []<br>
+<span class="kw">for</span> <span class="var">v</span> <span class="kw">in</span> <span class="var">ventas</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span> <span class="var">v</span> <span class="op">&gt;</span> <span class="num">100</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="var">resultado_imp</span>.<span class="fn">append</span>(<span class="var">v</span> <span class="op">*</span> <span class="num">0.9</span>)<br>
+<br>
+<span class="cm"># Forma funcional (filter + map)</span><br>
+<span class="var">grandes</span> <span class="op">=</span> <span class="bi">list</span>(<span class="fn">filter</span>(<span class="kw">lambda</span> <span class="var">x</span>: <span class="var">x</span> <span class="op">&gt;</span> <span class="num">100</span>, <span class="var">ventas</span>))<br>
+<span class="var">con_desc</span> <span class="op">=</span> <span class="bi">list</span>(<span class="fn">map</span>(<span class="kw">lambda</span> <span class="var">x</span>: <span class="var">x</span> <span class="op">*</span> <span class="num">0.9</span>, <span class="var">grandes</span>))<br>
+<br>
+<span class="cm"># List comprehension (más pythónico ✓)</span><br>
+<span class="var">resultado</span> <span class="op">=</span> [<span class="var">v</span> <span class="op">*</span> <span class="num">0.9</span> <span class="kw">for</span> <span class="var">v</span> <span class="kw">in</span> <span class="var">ventas</span> <span class="kw">if</span> <span class="var">v</span> <span class="op">&gt;</span> <span class="num">100</span>]<br>
+<span class="bi">print</span>(<span class="var">resultado</span>)  <span class="cm"># [108.0, 180.0, 279.0]</span><br>
+<br>
+<span class="cm"># reduce: suma total</span><br>
+<span class="kw">from</span> <span class="bi">functools</span> <span class="kw">import</span> <span class="fn">reduce</span><br>
+<span class="var">total</span> <span class="op">=</span> <span class="fn">reduce</span>(<span class="kw">lambda</span> <span class="var">a</span>,<span class="var">b</span>: <span class="var">a</span><span class="op">+</span><span class="var">b</span>, <span class="var">ventas</span>)<br>
+<span class="bi">print</span>(<span class="str">f"Total: <span class="var">{total}</span>"</span>)  <span class="cm"># 760</span>
+        </div>
+      </div>
+      <div class="case-card" style="align-self:start">
+        <span class="case-badge">Caso Real</span>
+        <p>
+          <strong>Amazon</strong> procesa millones de consultas de productos por segundo. Sus sistemas de búsqueda aplican cadenas de <code style="color:var(--accent3)">filter()</code> y <code style="color:var(--accent3)">map()</code> para filtrar por categoría, precio, calificación y disponibilidad simultáneamente, devolviendo resultados ordenados en menos de 100 milisegundos.<br><br>
+          Las list comprehensions de Python son hasta <strong>35% más rápidas</strong> que loops equivalentes por estar optimizadas a nivel de bytecode — exactamente por eso Amazon y otras tech-companies las prefieren para pipelines de alta frecuencia.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SLIDE 4 — PANDAS Y EDA ══════════════ -->
+  <div class="slide" id="slide-4">
+    <div class="topic-badge">Tema 4 de 8</div>
+    <h2 class="slide-title">Pandas y Análisis Exploratorio (EDA)</h2>
+    <p class="slide-subtitle">Carga, inspecciona y comprende tus datos antes de analizarlos.</p>
+
+    <div class="grid-2" style="margin-bottom:20px">
+      <div class="theory-box">
+        <h4>Series y DataFrame</h4>
+        <ul>
+          <li><strong>Series</strong>: arreglo unidimensional con índice. Como una columna de Excel.</li>
+          <li><strong>DataFrame</strong>: tabla bidimensional — filas × columnas. La estructura central de Pandas.</li>
+          <li><code style="color:#a78bfa">read_csv()</code> — carga archivos CSV en segundos, incluso de millones de filas.</li>
+          <li><code style="color:#a78bfa">head(n)</code> / <code style="color:#a78bfa">tail(n)</code> — primeras/últimas n filas.</li>
+          <li><code style="color:#a78bfa">info()</code> — tipos de datos, filas no nulas, uso de memoria.</li>
+          <li><code style="color:#a78bfa">describe()</code> — estadísticos descriptivos: media, std, percentiles.</li>
+          <li><code style="color:#a78bfa">value_counts()</code> — frecuencias por categoría.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-label" style="margin-bottom:12px">El flujo EDA</div>
+        <div class="step-flow" style="gap:8px;flex-wrap:nowrap">
+          <div class="step"><div class="step-num">1</div><strong>Cargar</strong><p>read_csv / read_excel / read_sql</p></div>
+          <div class="step"><div class="step-num">2</div><strong>Inspeccionar</strong><p>shape, dtypes, head</p></div>
+          <div class="step"><div class="step-num">3</div><strong>Limpiar</strong><p>nulos, tipos, duplicados</p></div>
+          <div class="step"><div class="step-num">4</div><strong>Analizar</strong><p>groupby, describe, viz</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="metaphor-card" style="margin-bottom:20px">
+      <div class="metaphor-icon">⚡</div>
+      <div class="metaphor-text">
+        <strong>Metáfora:</strong> "Un DataFrame es una hoja de Excel con superpoderes: filtra 10 millones de filas en milisegundos, sin que la computadora sude. Excel se congela con 100 mil filas — Pandas sonríe con 100 millones."
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="code-wrap">
+        <div class="code-header">
+          <span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span>
+          <span class="code-lang">Python · Pandas EDA</span>
+        </div>
+        <div class="code-body">
+<span class="kw">import</span> <span class="bi">pandas</span> <span class="kw">as</span> <span class="var">pd</span><br>
+<br>
+<span class="var">df</span> <span class="op">=</span> <span class="var">pd</span>.<span class="fn">read_csv</span>(<span class="str">"ventas.csv"</span>)<br>
+<br>
+<span class="cm"># Dimensiones del dataset</span><br>
+<span class="bi">print</span>(<span class="var">df</span>.<span class="attr">shape</span>)          <span class="cm"># (50000, 12)</span><br>
+<br>
+<span class="cm"># Tipos de datos por columna</span><br>
+<span class="bi">print</span>(<span class="var">df</span>.<span class="attr">dtypes</span>)<br>
+<br>
+<span class="cm"># Estadísticos descriptivos</span><br>
+<span class="bi">print</span>(<span class="var">df</span>.<span class="fn">describe</span>())<br>
+<br>
+<span class="cm"># Detectar valores faltantes</span><br>
+<span class="bi">print</span>(<span class="var">df</span>.<span class="fn">isnull</span>().<span class="fn">sum</span>())<br>
+<br>
+<span class="cm"># Frecuencias de una categoría</span><br>
+<span class="bi">print</span>(<span class="var">df</span>[<span class="str">'region'</span>].<span class="fn">value_counts</span>())<br>
+<br>
+<span class="cm"># Filtro rápido</span><br>
+<span class="var">grandes</span> <span class="op">=</span> <span class="var">df</span>[<span class="var">df</span>[<span class="str">'monto'</span>] <span class="op">&gt;</span> <span class="num">5000</span>]<br>
+<span class="bi">print</span>(<span class="str">f"Ventas grandes: <span class="var">{len(grandes)}</span>"</span>)
+        </div>
+      </div>
+      <div class="case-card">
+        <span class="case-badge">Caso Real</span>
+        <p>
+          El equipo de datos de <strong>BBVA México</strong> usa Pandas para limpiar y explorar millones de transacciones diarias antes de pasar al motor de detección de fraude.<br><br>
+          El EDA es su primera línea de defensa: con <code style="color:var(--accent3)">describe()</code> detectan montos anómalos; con <code style="color:var(--accent3)">value_counts()</code> identifican comercios inusuales; con <code style="color:var(--accent3)">isnull().sum()</code> encuentran campos obligatorios vacíos — todo en segundos, antes de entrenar un solo modelo.<br><br>
+          <em>Regla de oro del análisis de datos: <strong>nunca confíes en un dataset sin haberlo inspeccionado primero.</strong></em>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SLIDE 5 — LIMPIEZA ══════════════ -->
+  <div class="slide" id="slide-5">
+    <div class="topic-badge">Tema 5 de 8</div>
+    <h2 class="slide-title">Funciones Vectorizadas y Limpieza de Datos</h2>
+    <p class="slide-subtitle">Garbage in, garbage out — los datos sucios arruinan hasta el mejor modelo.</p>
+
+    <div class="grid-3" style="margin-bottom:20px">
+      <div class="card">
+        <h3>🗑️ Valores nulos</h3>
+        <ul>
+          <li><code style="color:var(--accent)">dropna()</code> — elimina filas/columnas con NaN.</li>
+          <li><code style="color:var(--accent)">fillna(valor)</code> — rellena con media, mediana o constante.</li>
+          <li><strong>Regla:</strong> nunca elimines sin entender por qué faltan los datos.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>🔄 Tipos incorrectos</h3>
+        <ul>
+          <li><code style="color:var(--accent)">astype()</code> — convierte tipo de columna.</li>
+          <li><code style="color:var(--accent)">pd.to_numeric(errors='coerce')</code> — convierte y hace NaN lo inválido.</li>
+          <li><code style="color:var(--accent)">pd.to_datetime()</code> — parsea fechas de cualquier formato.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>📝 Texto sucio</h3>
+        <ul>
+          <li><code style="color:var(--accent)">.str.strip()</code> — elimina espacios extra.</li>
+          <li><code style="color:var(--accent)">.str.title()</code> — capitaliza correctamente.</li>
+          <li><code style="color:var(--accent)">.str.replace()</code> — reemplazos con regex.</li>
+          <li><code style="color:var(--accent)">drop_duplicates()</code> — elimina filas repetidas.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="metaphor-card" style="margin-bottom:20px">
+      <div class="metaphor-icon">🍳</div>
+      <div class="metaphor-text">
+        <strong>Metáfora:</strong> "Limpiar datos es como preparar ingredientes antes de cocinar. El mejor chef del mundo no puede salvar una receta con ingredientes podridos. Un modelo de Machine Learning entrenado con datos sucios solo aprende a ser mejor en predecir basura."
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="code-wrap">
+        <div class="code-header">
+          <span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span>
+          <span class="code-lang">Python · Data Cleaning</span>
+        </div>
+        <div class="code-body">
+<span class="kw">import</span> <span class="bi">pandas</span> <span class="kw">as</span> <span class="var">pd</span><br>
+<br>
+<span class="cm"># 1) Convertir columna numérica con texto basura</span><br>
+<span class="var">df</span>[<span class="str">'edad'</span>] <span class="op">=</span> <span class="var">pd</span>.<span class="fn">to_numeric</span>(<span class="var">df</span>[<span class="str">'edad'</span>], <span class="attr">errors</span><span class="op">=</span><span class="str">'coerce'</span>)<br>
+<br>
+<span class="cm"># 2) Rellenar nulos con la mediana</span><br>
+<span class="var">df</span>[<span class="str">'edad'</span>].<span class="fn">fillna</span>(<span class="var">df</span>[<span class="str">'edad'</span>].<span class="fn">median</span>(), <span class="attr">inplace</span><span class="op">=</span><span class="kw">True</span>)<br>
+<br>
+<span class="cm"># 3) Eliminar duplicados por ID único</span><br>
+<span class="var">df</span>.<span class="fn">drop_duplicates</span>(<span class="attr">subset</span><span class="op">=</span><span class="str">'id_cliente'</span>, <span class="attr">inplace</span><span class="op">=</span><span class="kw">True</span>)<br>
+<br>
+<span class="cm"># 4) Normalizar texto: quitar espacios y capitalizar</span><br>
+<span class="var">df</span>[<span class="str">'nombre'</span>] <span class="op">=</span> <span class="var">df</span>[<span class="str">'nombre'</span>].<span class="attr">str</span>.<span class="fn">strip</span>().<span class="attr">str</span>.<span class="fn">title</span>()<br>
+<br>
+<span class="cm"># 5) Parsear fechas</span><br>
+<span class="var">df</span>[<span class="str">'fecha'</span>] <span class="op">=</span> <span class="var">pd</span>.<span class="fn">to_datetime</span>(<span class="var">df</span>[<span class="str">'fecha'</span>], <span class="attr">dayfirst</span><span class="op">=</span><span class="kw">True</span>)<br>
+<span class="var">df</span>[<span class="str">'mes'</span>] <span class="op">=</span> <span class="var">df</span>[<span class="str">'fecha'</span>].<span class="attr">dt</span>.<span class="attr">month</span><br>
+<br>
+<span class="cm"># Reporte final de calidad</span><br>
+<span class="bi">print</span>(<span class="str">f"Nulos restantes: <span class="var">{df.isnull().sum().sum()}</span>"</span>)<br>
+<span class="bi">print</span>(<span class="str">f"Filas únicas: <span class="var">{len(df)}</span>"</span>)
+        </div>
+      </div>
+      <div class="case-card">
+        <span class="case-badge">Caso Real</span>
+        <p>
+          En el <strong>IMSS</strong>, antes de analizar registros médicos de 50 millones de personas, el equipo de data science dedica el <strong>60% del tiempo del proyecto</strong> a limpiar datos.<br><br>
+          Los problemas encontrados: fechas de nacimiento escritas en 14 formatos diferentes, campos de diagnóstico con texto libre lleno de abreviaciones sin estándar, edades registradas como "veintiocho" (texto), campos de sexo con 7 variantes distintas de M/F.<br><br>
+          El proceso de limpieza con Pandas redujo los errores en modelos predictivos de <strong>mortalidad hospitalaria en un 34%</strong> — no por mejores algoritmos, sino por mejores datos.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SLIDE 6 — APIs ══════════════ -->
+  <div class="slide" id="slide-6">
+    <div class="topic-badge">Tema 6 de 8</div>
+    <h2 class="slide-title">APIs, Automatización y Concatenación</h2>
+    <p class="slide-subtitle">Conecta tu código con el mundo real — extrae datos de cualquier servicio web.</p>
+
+    <div class="grid-2" style="margin-bottom:20px">
+      <div class="theory-box">
+        <h4>Protocolo HTTP y REST APIs</h4>
+        <ul>
+          <li><strong>GET</strong>: solicitar datos (leer). <strong>POST</strong>: enviar datos (crear).</li>
+          <li><strong>JSON</strong>: JavaScript Object Notation — el formato universal de intercambio de datos en APIs. Se parece a un diccionario Python.</li>
+          <li><strong>Status codes</strong>: 200 OK, 404 Not Found, 429 Rate Limit, 500 Server Error.</li>
+          <li><strong>requests</strong>: la librería Python estándar para consumir APIs HTTP.</li>
+          <li><strong>pd.concat()</strong>: une múltiples DataFrames verticalmente (como apilar tablas).</li>
+          <li><strong>Automatización</strong>: <code style="color:#a78bfa">for</code> loop sobre endpoints → concatenar resultados → un solo DataFrame.</li>
+        </ul>
+      </div>
+      <div class="metaphor-card" style="align-self:start">
+        <div class="metaphor-icon">🍽️</div>
+        <div class="metaphor-text">
+          <strong>Metáfora:</strong> "Una API es como un mesero en un restaurante: tú haces el pedido (request), él va a la cocina (servidor) y te trae exactamente lo que pediste (response JSON). No necesitas saber cómo se cocinó — solo el formato del menú."
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="code-wrap">
+        <div class="code-header">
+          <span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span>
+          <span class="code-lang">Python · requests + Pandas</span>
+        </div>
+        <div class="code-body">
+<span class="kw">import</span> <span class="bi">requests</span>, <span class="bi">pandas</span> <span class="kw">as</span> <span class="var">pd</span><br>
+<br>
+<span class="cm"># GET a una API pública de tipos de cambio</span><br>
+<span class="var">url</span> <span class="op">=</span> <span class="str">"https://api.exchangerate-api.com/v4/latest/MXN"</span><br>
+<span class="var">resp</span> <span class="op">=</span> <span class="bi">requests</span>.<span class="fn">get</span>(<span class="var">url</span>)<br>
+<span class="var">datos</span> <span class="op">=</span> <span class="var">resp</span>.<span class="fn">json</span>()  <span class="cm"># convierte JSON → dict Python</span><br>
+<br>
+<span class="cm"># Crear DataFrame desde el JSON</span><br>
+<span class="var">tasas</span> <span class="op">=</span> <span class="var">pd</span>.<span class="fn">DataFrame</span>(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="bi">list</span>(<span class="var">datos</span>[<span class="str">'rates'</span>].<span class="fn">items</span>()),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="attr">columns</span><span class="op">=</span>[<span class="str">'moneda'</span>, <span class="str">'tasa'</span>]<br>
+)<br>
+<span class="bi">print</span>(<span class="var">tasas</span>[<span class="var">tasas</span>[<span class="str">'moneda'</span>].<span class="fn">isin</span>([<span class="str">'USD'</span>,<span class="str">'EUR'</span>,<span class="str">'GBP'</span>])])<br>
+<br>
+<span class="cm"># Automatizar múltiples páginas</span><br>
+<span class="var">dfs</span> <span class="op">=</span> []<br>
+<span class="kw">for</span> <span class="var">pagina</span> <span class="kw">in</span> <span class="bi">range</span>(<span class="num">1</span>, <span class="num">6</span>):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="var">r</span> <span class="op">=</span> <span class="bi">requests</span>.<span class="fn">get</span>(<span class="str">f"https://api.ejemplo.com/data?page=<span class="var">{pagina}</span>"</span>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="var">dfs</span>.<span class="fn">append</span>(<span class="var">pd</span>.<span class="fn">DataFrame</span>(<span class="var">r</span>.<span class="fn">json</span>()[<span class="str">'items'</span>]))<br>
+<span class="var">df_total</span> <span class="op">=</span> <span class="var">pd</span>.<span class="fn">concat</span>(<span class="var">dfs</span>, <span class="attr">ignore_index</span><span class="op">=</span><span class="kw">True</span>)
+        </div>
+      </div>
+      <div class="case-card">
+        <span class="case-badge">Caso Real</span>
+        <p>
+          El <strong>SAT México</strong> expone APIs para consultar el estado fiscal de contribuyentes. Empresas como <strong>Finkargo</strong> — fintech de financiamiento para importadores — automatizan con Python la validación de proveedores: consultan la API del SAT, la del IMSS y la del Buró de Crédito en cadena, concatenan los resultados en un DataFrame y en menos de 5 segundos emiten una calificación de riesgo crediticio.<br><br>
+          Lo que antes tomaba 3 días de trabajo manual, hoy es un script de 40 líneas en Python.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SLIDE 7 — TRANSFORMACIÓN ══════════════ -->
+  <div class="slide" id="slide-7">
+    <div class="topic-badge">Tema 7 de 8</div>
+    <h2 class="slide-title">Transformación, Filtración y Reordenamiento</h2>
+    <p class="slide-subtitle">De datos planos a insights accionables con groupby, agg y pivot tables.</p>
+
+    <div class="grid-3" style="margin-bottom:20px">
+      <div class="card">
+        <h3>🎯 Selección avanzada</h3>
+        <ul>
+          <li><code style="color:var(--accent)">.loc[filas, cols]</code> — por etiqueta (nombre).</li>
+          <li><code style="color:var(--accent)">.iloc[i, j]</code> — por posición entera.</li>
+          <li><strong>Boolean indexing</strong>: <code style="color:var(--accent)">df[df['col'] &gt; 100]</code></li>
+          <li><code style="color:var(--accent)">.query()</code> — sintaxis SQL-like más legible.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>📊 groupby + agg</h3>
+        <ul>
+          <li>Agrupa filas por uno o más valores de columna.</li>
+          <li><code style="color:var(--accent)">.agg()</code> aplica múltiples funciones en paralelo.</li>
+          <li><code style="color:var(--accent)">sum, mean, count, min, max, std</code></li>
+          <li><strong>Named aggregations</strong>: nombra los resultados limpiamente.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>🔀 Pivot Tables</h3>
+        <ul>
+          <li><code style="color:var(--accent)">pd.pivot_table()</code> — versión programática de la tabla dinámica de Excel.</li>
+          <li><code style="color:var(--accent)">sort_values()</code> — ordena por columna ascendente o descendente.</li>
+          <li><code style="color:var(--accent)">reset_index()</code> — convierte índices de groupby en columnas normales.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="metaphor-card" style="margin-bottom:20px">
+      <div class="metaphor-icon">🎵</div>
+      <div class="metaphor-text">
+        <strong>Metáfora:</strong> "<strong>groupby()</strong> es como organizar tu biblioteca de música por género: de miles de canciones mezcladas, de repente tienes carpetas ordenadas y puedes calcular cuántas canciones de rock tienes, cuál es la más larga, o cuál artista domina cada categoría."
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="code-wrap">
+        <div class="code-header">
+          <span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span>
+          <span class="code-lang">Python · groupby avanzado</span>
+        </div>
+        <div class="code-body">
+<span class="cm"># Resumen de ventas por región y categoría</span><br>
+<span class="var">resumen</span> <span class="op">=</span> (<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="var">df</span>.<span class="fn">groupby</span>([<span class="str">'region'</span>, <span class="str">'categoria'</span>])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">.agg</span>(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="attr">total_ventas</span><span class="op">=</span>(<span class="str">'monto'</span>, <span class="str">'sum'</span>),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="attr">num_transacciones</span><span class="op">=</span>(<span class="str">'id'</span>, <span class="str">'count'</span>),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="attr">ticket_promedio</span><span class="op">=</span>(<span class="str">'monto'</span>, <span class="str">'mean'</span>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">.sort_values</span>(<span class="str">'total_ventas'</span>, <span class="attr">ascending</span><span class="op">=</span><span class="kw">False</span>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">.reset_index</span>()<br>
+)<br>
+<br>
+<span class="cm"># Top 5 regiones</span><br>
+<span class="bi">print</span>(<span class="var">resumen</span>.<span class="fn">head</span>(<span class="num">5</span>))<br>
+<br>
+<span class="cm"># Pivot table: región × categoría</span><br>
+<span class="var">pivot</span> <span class="op">=</span> <span class="var">pd</span>.<span class="fn">pivot_table</span>(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="var">df</span>, <span class="attr">values</span><span class="op">=</span><span class="str">'monto'</span>, <span class="attr">index</span><span class="op">=</span><span class="str">'region'</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="attr">columns</span><span class="op">=</span><span class="str">'categoria'</span>, <span class="attr">aggfunc</span><span class="op">=</span><span class="str">'sum'</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="attr">fill_value</span><span class="op">=</span><span class="num">0</span><br>
+)
+        </div>
+      </div>
+      <div class="case-card">
+        <span class="case-badge">Caso Real</span>
+        <p>
+          <strong>Walmart México</strong> opera más de 3,000 tiendas. Su equipo de analytics ejecuta pipelines de <code style="color:var(--accent3)">groupby()</code> sobre millones de transacciones diarias para agrupar ventas por tienda, hora del día, categoría de producto y día de la semana.<br><br>
+          El resultado alimenta un sistema de decisión automática: si la leche en una tienda de Monterrey lleva 4 horas con ventas 40% por encima del promedio, el sistema genera una orden de reabastecimiento en tiempo real — sin intervención humana.<br><br>
+          Este proceso, que antes requería reportes semanales manuales en Excel, ahora corre cada 15 minutos en Python.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SLIDE 8 — MERGE ══════════════ -->
+  <div class="slide" id="slide-8">
+    <div class="topic-badge">Tema 8 de 8</div>
+    <h2 class="slide-title">Merge y Agrupaciones — Bases de Datos con Pandas</h2>
+    <p class="slide-subtitle">Une tablas como SQL — combina fuentes de datos para obtener la imagen completa.</p>
+
+    <div class="grid-2" style="margin-bottom:20px">
+      <div class="theory-box">
+        <h4>Tipos de Join</h4>
+        <ul>
+          <li><strong>INNER JOIN</strong>: solo filas que tienen coincidencia en ambas tablas.</li>
+          <li><strong>LEFT JOIN</strong>: todas las filas de la tabla izquierda; NaN donde no hay coincidencia en la derecha.</li>
+          <li><strong>RIGHT JOIN</strong>: todas las filas de la tabla derecha.</li>
+          <li><strong>OUTER JOIN</strong>: todas las filas de ambas tablas; NaN donde no hay coincidencia.</li>
+          <li><strong>pd.concat()</strong>: apila tablas verticalmente (mismas columnas). <strong>pd.merge()</strong>: las une horizontalmente por clave.</li>
+          <li>Los parámetros <code style="color:#a78bfa">left_on</code> / <code style="color:#a78bfa">right_on</code> permiten unir columnas con nombres distintos.</li>
+        </ul>
+      </div>
+      <div class="metaphor-card" style="align-self:start">
+        <div class="metaphor-icon">💍</div>
+        <div class="metaphor-text">
+          <strong>Metáfora:</strong> "Un merge es como una boda entre dos tablas: el <strong>INNER JOIN</strong> es cuando ambos novios llegan a la ceremonia; el <strong>LEFT JOIN</strong> es cuando el novio de la izquierda siempre está — aunque la novia no aparezca, el registro queda con los datos que faltan marcados como NaN."
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="code-wrap">
+        <div class="code-header">
+          <span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span>
+          <span class="code-lang">Python · pd.merge()</span>
+        </div>
+        <div class="code-body">
+<span class="cm"># Tablas separadas</span><br>
+<span class="var">clientes</span> <span class="op">=</span> <span class="var">pd</span>.<span class="fn">read_csv</span>(<span class="str">"clientes.csv"</span>)<br>
+<span class="cm"># Columnas: id, nombre, ciudad, segmento</span><br>
+<br>
+<span class="var">pedidos</span> <span class="op">=</span> <span class="var">pd</span>.<span class="fn">read_csv</span>(<span class="str">"pedidos.csv"</span>)<br>
+<span class="cm"># Columnas: id_cliente, producto, monto, fecha</span><br>
+<br>
+<span class="cm"># LEFT JOIN: todos los pedidos + datos del cliente</span><br>
+<span class="var">completo</span> <span class="op">=</span> <span class="var">pd</span>.<span class="fn">merge</span>(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="var">pedidos</span>, <span class="var">clientes</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="attr">left_on</span><span class="op">=</span><span class="str">'id_cliente'</span>, <span class="attr">right_on</span><span class="op">=</span><span class="str">'id'</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="attr">how</span><span class="op">=</span><span class="str">'left'</span><br>
+)<br>
+<br>
+<span class="cm"># Ventas totales por ciudad</span><br>
+<span class="bi">print</span>(<span class="var">completo</span>.<span class="fn">groupby</span>(<span class="str">'ciudad'</span>)[<span class="str">'monto'</span>].<span class="fn">sum</span>())<br>
+<br>
+<span class="cm"># Detectar pedidos sin cliente asociado</span><br>
+<span class="var">huerfanos</span> <span class="op">=</span> <span class="var">completo</span>[<span class="var">completo</span>[<span class="str">'nombre'</span>].<span class="fn">isnull</span>()]<br>
+<span class="bi">print</span>(<span class="str">f"Pedidos sin cliente: <span class="var">{len(huerfanos)}</span>"</span>)
+        </div>
+      </div>
+      <div class="case-card">
+        <span class="case-badge">Caso Real</span>
+        <p>
+          <strong>Rappi</strong> procesa cientos de miles de pedidos diarios en LATAM. Su backend combina en tiempo real:<br><br>
+          • Tabla <strong>pedidos</strong> (qué pidió el usuario, cuándo, monto)<br>
+          • Tabla <strong>restaurantes</strong> (ubicación, tiempo de preparación promedio, comisión)<br>
+          • Tabla <strong>repartidores</strong> (posición GPS actualizada, rating, pedidos activos)<br><br>
+          El <code style="color:var(--accent3)">pd.merge()</code> equivalente (en su stack de producción) une estas tres tablas para calcular el ETA, la comisión del repartidor y el precio final del pedido — todo en menos de 200 milisegundos por transacción.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SLIDE 9 — PROYECTO FINAL ══════════════ -->
+  <div class="slide" id="slide-9">
+    <div class="topic-badge">Proyecto Integrador</div>
+    <h2 class="slide-title">Proyecto Final: Pipeline de Datos E-Commerce</h2>
+    <p class="slide-subtitle">Aplica todo lo aprendido en un análisis real de principio a fin.</p>
+
+    <div class="grid-2" style="margin-bottom:20px">
+      <div class="card">
+        <h3>🎯 Descripción del Proyecto</h3>
+        <p style="margin-bottom:12px">Construir un <strong>pipeline completo de procesamiento de datos</strong> con Python, desde la carga del dataset crudo hasta la generación de hallazgos de negocio documentados.</p>
+        <p style="margin-bottom:12px"><strong>Dataset:</strong> Brazilian E-Commerce Dataset (Olist) — disponible gratuitamente en Kaggle.</p>
+        <ul>
+          <li>+100,000 pedidos reales (2016–2018)</li>
+          <li>9 tablas relacionadas (clientes, pedidos, productos, vendedores, reseñas)</li>
+          <li>Datos de geolocalización incluidos</li>
+          <li>Perfecto para practicar merge, groupby y EDA</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>📦 Entregables</h3>
+        <ul>
+          <li><strong>Notebook Jupyter</strong> (.ipynb) completamente documentado con Markdown entre celdas.</li>
+          <li><strong>EDA completo</strong>: distribuciones, nulos, outliers, estadísticos.</li>
+          <li><strong>Limpieza documentada</strong>: cada decisión de limpieza justificada.</li>
+          <li><strong>Transformaciones</strong>: al menos 3 groupby con visualización básica.</li>
+          <li><strong>Mínimo 5 hallazgos de negocio</strong> con interpretación clara.</li>
+          <li><strong>Conclusiones</strong>: ¿qué recomendarías al equipo de Olist?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section-label" style="margin-bottom:12px">Rúbrica de Evaluación</div>
+    <div class="card" style="margin-bottom:20px">
+      <div class="rubric-row"><span class="weight">20%</span><span><strong>Carga y EDA</strong> — Exploración inicial completa, estadísticos descriptivos, identificación de nulos y tipos</span></div>
+      <div class="rubric-row"><span class="weight">20%</span><span><strong>Limpieza de datos</strong> — Tratamiento justificado de nulos, duplicados, tipos incorrectos y texto sucio</span></div>
+      <div class="rubric-row"><span class="weight">20%</span><span><strong>Transformaciones y agrupaciones</strong> — groupby, agg, merge con al menos 2 tablas combinadas</span></div>
+      <div class="rubric-row"><span class="weight">25%</span><span><strong>Hallazgos de negocio</strong> — Mínimo 5 insights relevantes, interpretados en lenguaje de negocio (no técnico)</span></div>
+      <div class="rubric-row"><span class="weight">10%</span><span><strong>Documentación</strong> — Markdown entre celdas, títulos claros, comentarios en código</span></div>
+      <div class="rubric-row"><span class="weight">5%</span><span><strong>Visualización</strong> — Al menos 2 gráficas básicas con matplotlib o seaborn</span></div>
+    </div>
+
+    <div class="grid-3">
+      <div class="case-card">
+        <span class="case-badge">Sugerencia 1</span>
+        <p>¿Cuáles son los 10 productos más vendidos y cuál es su calificación promedio? ¿Existe correlación entre volumen y satisfacción?</p>
+      </div>
+      <div class="case-card">
+        <span class="case-badge">Sugerencia 2</span>
+        <p>¿En qué estados de Brasil se concentran los mayores ingresos? ¿Hay diferencias en el ticket promedio por región?</p>
+      </div>
+      <div class="case-card">
+        <span class="case-badge">Sugerencia 3</span>
+        <p>¿Hay estacionalidad en las ventas? Analiza el comportamiento mensual y detecta picos (Black Friday, temporada navideña).</p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /slides -->
+
+<!-- Navigation buttons -->
+<button class="nav-btn" id="btn-prev" disabled>&#8592;</button>
+<button class="nav-btn" id="btn-next">&#8594;</button>
+<div id="slide-counter">1 / 10</div>
+
+<script>
+  const TOTAL = 10;
+  let current = 0;
+  let animating = false;
+
+  const slides = document.querySelectorAll('.slide');
+  const btnPrev = document.getElementById('btn-prev');
+  const btnNext = document.getElementById('btn-next');
+  const counter = document.getElementById('slide-counter');
+  const progressBar = document.getElementById('progress-bar');
+  const sidebarItems = document.querySelectorAll('.sidebar-item');
+  const sidebar = document.getElementById('sidebar');
+  const sidebarToggle = document.getElementById('sidebar-toggle');
+
+  function goTo(n) {
+    if (animating || n === current || n < 0 || n >= TOTAL) return;
+    animating = true;
+
+    const prev = current;
+    slides[prev].classList.add('exit');
+    slides[prev].classList.remove('active');
+
+    current = n;
+
+    setTimeout(() => {
+      slides[prev].classList.remove('exit');
+      slides[current].classList.add('active');
+      slides[current].scrollTop = 0;
+      update();
+      animating = false;
+    }, 320);
+  }
+
+  function update() {
+    counter.textContent = (current + 1) + ' / ' + TOTAL;
+    progressBar.style.width = ((current / (TOTAL - 1)) * 100) + '%';
+    btnPrev.disabled = current === 0;
+    btnNext.disabled = current === TOTAL - 1;
+    sidebarItems.forEach((item, i) => {
+      item.classList.toggle('active', i === current);
+    });
+  }
+
+  btnPrev.addEventListener('click', () => goTo(current - 1));
+  btnNext.addEventListener('click', () => goTo(current + 1));
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current + 1);
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current - 1);
+  });
+
+  sidebarItems.forEach((item, i) => {
+    item.addEventListener('click', () => {
+      goTo(i);
+      sidebar.classList.remove('open');
+      sidebarToggle.classList.remove('open');
+    });
+  });
+
+  sidebarToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    sidebarToggle.classList.toggle('open');
+  });
+
+  // Close sidebar clicking outside
+  document.getElementById('slides').addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    sidebarToggle.classList.remove('open');
+  });
+
+  // Touch/swipe support
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 50) dx < 0 ? goTo(current + 1) : goTo(current - 1);
+  });
+
+  update();
+</script>
+</body>
+</html>

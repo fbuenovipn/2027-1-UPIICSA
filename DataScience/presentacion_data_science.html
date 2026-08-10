@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Science — Curso Interactivo</title>
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --card: #1e2a3a;
+    --accent: #00d4ff;
+    --accent2: #7c3aed;
+    --accent3: #10b981;
+    --accent4: #f59e0b;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --border: #2d3748;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(10,14,26,0.92); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2rem; height: 60px;
+  }
+  .nav-logo { font-size: 1.1rem; font-weight: 700; color: var(--accent); letter-spacing: 1px; }
+  .nav-links { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+  .nav-links a {
+    color: var(--muted); text-decoration: none; font-size: 0.78rem;
+    padding: 0.3rem 0.7rem; border-radius: 20px; transition: all 0.2s;
+    border: 1px solid transparent;
+  }
+  .nav-links a:hover, .nav-links a.active { color: var(--accent); border-color: var(--accent); background: rgba(0,212,255,0.08); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center;
+    padding: 80px 2rem 4rem;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(124,58,237,0.18) 0%, transparent 70%),
+                radial-gradient(ellipse 60% 40% at 80% 80%, rgba(0,212,255,0.1) 0%, transparent 60%);
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  .hero-badge {
+    display: inline-block; padding: 0.35rem 1rem; border-radius: 20px;
+    background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.3);
+    color: var(--accent); font-size: 0.8rem; font-weight: 600;
+    letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1.5rem;
+  }
+  .hero h1 { font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem; }
+  .hero h1 span { background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero p { font-size: 1.2rem; color: var(--muted); max-width: 650px; line-height: 1.7; margin-bottom: 2.5rem; }
+  .hero-stats { display: flex; gap: 2rem; flex-wrap: wrap; justify-content: center; margin-bottom: 3rem; }
+  .stat { text-align: center; }
+  .stat-num { font-size: 2rem; font-weight: 800; color: var(--accent); }
+  .stat-label { font-size: 0.8rem; color: var(--muted); }
+  .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 2rem; border-radius: 8px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; text-decoration: none; border: none; }
+  .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,212,255,0.3); }
+  .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+  .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+
+  /* SCROLL INDICATOR */
+  .scroll-hint { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 0.4rem; color: var(--muted); font-size: 0.75rem; animation: bounce 2s infinite; }
+  .scroll-hint::after { content: '↓'; font-size: 1.2rem; }
+  @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
+
+  /* SECTIONS */
+  section { padding: 6rem 2rem; max-width: 1200px; margin: 0 auto; }
+  .section-header { text-align: center; margin-bottom: 3.5rem; }
+  .section-tag { display: inline-block; padding: 0.25rem 0.8rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 0.8rem; }
+  .tag-blue { background: rgba(0,212,255,0.1); color: var(--accent); border: 1px solid rgba(0,212,255,0.25); }
+  .tag-purple { background: rgba(124,58,237,0.1); color: #a78bfa; border: 1px solid rgba(124,58,237,0.25); }
+  .tag-green { background: rgba(16,185,129,0.1); color: var(--accent3); border: 1px solid rgba(16,185,129,0.25); }
+  .tag-amber { background: rgba(245,158,11,0.1); color: var(--accent4); border: 1px solid rgba(245,158,11,0.25); }
+  .section-header h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; margin-bottom: 1rem; }
+  .section-header p { color: var(--muted); max-width: 600px; margin: 0 auto; line-height: 1.7; }
+
+  /* ROADMAP */
+  .roadmap { position: relative; padding: 2rem 0; }
+  .roadmap::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--accent2), var(--accent), var(--accent3)); transform: translateX(-50%); }
+  .roadmap-item { display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 3rem; position: relative; }
+  .roadmap-item:nth-child(even) { flex-direction: row-reverse; }
+  .roadmap-item:nth-child(even) .roadmap-content { text-align: right; }
+  .roadmap-dot {
+    position: absolute; left: 50%; transform: translateX(-50%);
+    width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; z-index: 2; border: 3px solid var(--bg);
+    flex-shrink: 0;
+  }
+  .roadmap-content { flex: 1; max-width: calc(50% - 4rem); }
+  .roadmap-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; }
+  .roadmap-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,0.3); }
+  .roadmap-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .roadmap-card p { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+  .roadmap-card .tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.8rem; }
+  .roadmap-item:nth-child(even) .roadmap-card .tags { justify-content: flex-end; }
+  .chip { font-size: 0.7rem; padding: 0.2rem 0.6rem; border-radius: 10px; background: rgba(255,255,255,0.06); color: var(--muted); }
+
+  /* COURSE CARDS */
+  .courses-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
+  .course-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+    overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; cursor: pointer;
+  }
+  .course-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+  .course-header { padding: 1.5rem; position: relative; overflow: hidden; }
+  .course-header::before { content: ''; position: absolute; inset: 0; opacity: 0.12; }
+  .cc-blue .course-header::before { background: linear-gradient(135deg, #00d4ff, #0099cc); }
+  .cc-purple .course-header::before { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+  .cc-green .course-header::before { background: linear-gradient(135deg, #10b981, #34d399); }
+  .cc-amber .course-header::before { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+  .course-icon { font-size: 2.5rem; margin-bottom: 0.8rem; position: relative; }
+  .course-header h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.3rem; position: relative; }
+  .course-header .duration { font-size: 0.8rem; color: var(--muted); position: relative; }
+  .course-body { padding: 1.5rem; }
+  .course-body p { font-size: 0.9rem; color: var(--muted); line-height: 1.65; margin-bottom: 1rem; }
+  .topic-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+  .topic-list li { font-size: 0.83rem; color: var(--muted); display: flex; align-items: flex-start; gap: 0.5rem; }
+  .topic-list li::before { content: '▸'; color: var(--accent); flex-shrink: 0; margin-top: 1px; }
+  .course-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .tools-row { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+  .tool-badge { font-size: 0.7rem; padding: 0.2rem 0.6rem; border-radius: 6px; font-weight: 600; }
+  .course-btn { font-size: 0.78rem; padding: 0.4rem 0.9rem; border-radius: 6px; text-decoration: none; font-weight: 600; transition: all 0.2s; }
+  .course-open-btn {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    font-size: 0.78rem; padding: 0.45rem 1rem; border-radius: 6px;
+    font-weight: 700; text-decoration: none; transition: all 0.2s;
+    border: 1px solid; cursor: pointer;
+  }
+  .course-open-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,0,0,0.3); }
+
+  /* DETAIL PANELS */
+  .detail-panel { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; margin-top: 1rem; }
+  .detail-panel.open { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  @media(max-width:700px){ .detail-grid{grid-template-columns:1fr} }
+  .detail-block h4 { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.8rem; }
+  .detail-block ul { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
+  .detail-block ul li { font-size: 0.88rem; color: var(--muted); padding-left: 1rem; position: relative; }
+  .detail-block ul li::before { content: '•'; position: absolute; left: 0; color: var(--accent); }
+  .challenge-box { background: linear-gradient(135deg, rgba(124,58,237,0.12), rgba(0,212,255,0.08)); border: 1px solid rgba(124,58,237,0.3); border-radius: 10px; padding: 1.2rem; margin-top: 1.5rem; }
+  .challenge-box h4 { color: #a78bfa; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.6rem; }
+  .challenge-box p { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+
+  /* METAPHORS SECTION */
+  .metaphors-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
+  .metaphor-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; transition: transform 0.2s; }
+  .metaphor-card:hover { transform: translateY(-4px); }
+  .metaphor-emoji { font-size: 2.5rem; margin-bottom: 0.8rem; }
+  .metaphor-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .metaphor-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.65; }
+  .metaphor-card .concept { display: inline-block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 0.5rem; }
+
+  /* TOOLS GALAXY */
+  .tools-section { background: var(--surface); border-radius: 20px; padding: 3rem 2rem; margin: 0 auto; }
+  .tools-categories { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 2rem; justify-content: center; }
+  .tool-cat-btn { padding: 0.4rem 1rem; border-radius: 20px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-size: 0.82rem; cursor: pointer; transition: all 0.2s; }
+  .tool-cat-btn:hover, .tool-cat-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(0,212,255,0.08); }
+  .tools-cloud { display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center; min-height: 120px; }
+  .tool-item { padding: 0.5rem 1.1rem; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; border: 1px solid; }
+  .tool-item:hover { transform: scale(1.05); }
+
+  /* CHALLENGES */
+  .challenges-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+  .challenge-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; position: relative; overflow: hidden; }
+  .challenge-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .ch-easy::before { background: var(--accent3); }
+  .ch-medium::before { background: var(--accent4); }
+  .ch-hard::before { background: #ef4444; }
+  .ch-badge { display: inline-block; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; padding: 0.2rem 0.6rem; border-radius: 20px; margin-bottom: 0.8rem; }
+  .ch-easy .ch-badge { background: rgba(16,185,129,0.15); color: var(--accent3); }
+  .ch-medium .ch-badge { background: rgba(245,158,11,0.15); color: var(--accent4); }
+  .ch-hard .ch-badge { background: rgba(239,68,68,0.15); color: #f87171; }
+  .challenge-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.6rem; }
+  .challenge-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; margin-bottom: 1rem; }
+  .challenge-card .tools-used { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+
+  /* PROGRESS */
+  .progress-section { background: var(--surface); border-radius: 20px; padding: 2.5rem; }
+  .skill-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.2rem; }
+  .skill-name { min-width: 180px; font-size: 0.88rem; font-weight: 600; }
+  .skill-bar { flex: 1; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .skill-fill { height: 100%; border-radius: 4px; transition: width 1s ease; }
+  .skill-pct { min-width: 42px; font-size: 0.8rem; color: var(--muted); text-align: right; }
+
+  /* FOOTER */
+  footer { text-align: center; padding: 3rem 2rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85rem; }
+  footer span { color: var(--accent); }
+
+  /* TABS */
+  .tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .tab-btn { padding: 0.5rem 1.2rem; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
+  .tab-btn.active { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 700; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+
+  /* ACCORDION */
+  .accordion { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .acc-item { border-bottom: 1px solid var(--border); }
+  .acc-item:last-child { border-bottom: none; }
+  .acc-header { padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: background 0.2s; font-weight: 600; font-size: 0.95rem; }
+  .acc-header:hover { background: rgba(255,255,255,0.03); }
+  .acc-arrow { transition: transform 0.3s; font-size: 0.8rem; color: var(--muted); }
+  .acc-item.open .acc-arrow { transform: rotate(180deg); }
+  .acc-body { display: none; padding: 1rem 1.5rem 1.5rem; }
+  .acc-item.open .acc-body { display: block; animation: fadeIn 0.3s ease; }
+
+  /* RESPONSIVE */
+  @media(max-width:768px) {
+    .roadmap::before { left: 24px; }
+    .roadmap-item { flex-direction: column !important; padding-left: 60px; }
+    .roadmap-item:nth-child(even) .roadmap-content { text-align: left; }
+    .roadmap-item:nth-child(even) .roadmap-card .tags { justify-content: flex-start; }
+    .roadmap-dot { left: 0; transform: none; }
+    .roadmap-content { max-width: 100%; }
+    nav { padding: 0 1rem; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">⚡ DataSci</div>
+  <div class="nav-links">
+    <a href="#ruta">Ruta</a>
+    <a href="#cursos">Cursos</a>
+    <a href="#metaforas">Metáforas</a>
+    <a href="#herramientas">Herramientas</a>
+    <a href="#retos">Retos</a>
+    <a href="#habilidades">Habilidades</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">Programa Data Science</div>
+  <h1>Conviértete en un<br><span>científico de datos</span></h1>
+  <p>Desde los fundamentos de Python hasta Machine Learning e infraestructura Big Data — un viaje completo por el ecosistema de datos más demandado del mundo.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">5</div><div class="stat-label">Programas</div></div>
+    <div class="stat"><div class="stat-num">30+</div><div class="stat-label">Temas</div></div>
+    <div class="stat"><div class="stat-num">15+</div><div class="stat-label">Herramientas</div></div>
+    <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Práctico</div></div>
+  </div>
+  <div class="hero-btns">
+    <a href="#cursos" class="btn btn-primary">Explorar cursos →</a>
+    <a href="#ruta" class="btn btn-outline">Ver ruta de aprendizaje</a>
+  </div>
+  <div class="scroll-hint">scroll</div>
+</div>
+
+<!-- RUTA DE APRENDIZAJE -->
+<section id="ruta">
+  <div class="section-header">
+    <div class="section-tag tag-blue">Ruta de aprendizaje</div>
+    <h2>Tu camino hacia el dominio de los datos</h2>
+    <p>Cada módulo construye sobre el anterior. Sigue la secuencia para maximizar tu comprensión y habilidades prácticas.</p>
+  </div>
+  <div class="roadmap">
+    <div class="roadmap-item">
+      <div class="roadmap-dot" style="background:linear-gradient(135deg,#00d4ff,#0099cc);">🐍</div>
+      <div class="roadmap-content">
+        <div class="roadmap-card">
+          <h3>Procesamiento de Datos con Python</h3>
+          <p>El punto de partida. Aprende Python desde cero con enfoque en manipulación y procesamiento de datos reales.</p>
+          <div class="tags">
+            <span class="chip">Python</span><span class="chip">Pandas</span><span class="chip">Jupyter</span><span class="chip">APIs</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="roadmap-item">
+      <div class="roadmap-dot" style="background:linear-gradient(135deg,#7c3aed,#a855f7);">📊</div>
+      <div class="roadmap-content">
+        <div class="roadmap-card">
+          <h3>Análisis de Datos con Python</h3>
+          <p>Extrae insights de los datos. Estadística, visualización avanzada, correlaciones y una introducción al Machine Learning.</p>
+          <div class="tags">
+            <span class="chip">Seaborn</span><span class="chip">Matplotlib</span><span class="chip">Estadística</span><span class="chip">NLP</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="roadmap-item">
+      <div class="roadmap-dot" style="background:linear-gradient(135deg,#10b981,#34d399);">🤖</div>
+      <div class="roadmap-content">
+        <div class="roadmap-card">
+          <h3>Machine Learning</h3>
+          <p>Entrena modelos que aprenden solos. Desde regresión y árboles de decisión hasta redes neuronales y visión computacional.</p>
+          <div class="tags">
+            <span class="chip">Scikit-learn</span><span class="chip">TensorFlow</span><span class="chip">OpenCV</span><span class="chip">Colab</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="roadmap-item">
+      <div class="roadmap-dot" style="background:linear-gradient(135deg,#f59e0b,#fbbf24);">🌊</div>
+      <div class="roadmap-content">
+        <div class="roadmap-card">
+          <h3>Big Data — Fundamentos</h3>
+          <p>Las 5V del Big Data, ecosistema de herramientas, metodología CRISP-DM y lenguajes R y Python para escala.</p>
+          <div class="tags">
+            <span class="chip">R</span><span class="chip">CRISP-DM</span><span class="chip">Tableau</span><span class="chip">PowerBI</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="roadmap-item">
+      <div class="roadmap-dot" style="background:linear-gradient(135deg,#ef4444,#f87171);">☁️</div>
+      <div class="roadmap-content">
+        <div class="roadmap-card">
+          <h3>Big Data — Infraestructura</h3>
+          <p>Hadoop, HDFS, MapReduce, Apache Spark, Azure HDInsight. Gestión de datos a escala de petabytes en la nube.</p>
+          <div class="tags">
+            <span class="chip">Hadoop</span><span class="chip">Spark</span><span class="chip">Azure</span><span class="chip">Hive</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CURSOS -->
+<section id="cursos" style="max-width:1200px;margin:0 auto;padding:4rem 2rem;">
+  <div class="section-header">
+    <div class="section-tag tag-purple">Contenido detallado</div>
+    <h2>Los 5 programas del curso</h2>
+    <p>Haz clic en cualquier tarjeta para ver el temario completo, objetivos de aprendizaje y reto práctico.</p>
+  </div>
+  <div class="courses-grid">
+
+    <!-- CURSO 1 -->
+    <div class="course-card cc-blue" onclick="toggleDetail('c1')">
+      <div class="course-header">
+        <div class="course-icon">🐍</div>
+        <h3>Procesamiento de Datos con Python</h3>
+        <div class="duration">8 semanas · Nivel fundamentos</div>
+      </div>
+      <div class="course-body">
+        <p>Python es hoy el lenguaje #1 en ciencia de datos. Aquí dominarás las bases: desde variables hasta Pandas DataFrames y conexión con APIs.</p>
+        <ul class="topic-list">
+          <li>Fundamentos del lenguaje Python</li>
+          <li>Estructuras de datos y funciones</li>
+          <li>Pandas para análisis exploratorio</li>
+          <li>Limpieza y transformación de datos</li>
+          <li>APIs, automatización y merge de DataFrames</li>
+        </ul>
+      </div>
+      <div class="course-footer">
+        <div class="tools-row">
+          <span class="tool-badge" style="background:rgba(0,212,255,0.12);color:#00d4ff;border:1px solid rgba(0,212,255,0.25)">Python</span>
+          <span class="tool-badge" style="background:rgba(16,185,129,0.12);color:#10b981;border:1px solid rgba(16,185,129,0.25)">Pandas</span>
+          <span class="tool-badge" style="background:rgba(245,158,11,0.12);color:#f59e0b;border:1px solid rgba(245,158,11,0.25)">Jupyter</span>
+        </div>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <span class="course-btn" style="background:rgba(0,212,255,0.1);color:#00d4ff">Ver más ▾</span>
+          <a class="course-open-btn" href="curso1_procesamiento_python.html"
+             style="background:rgba(0,212,255,0.15);color:#00d4ff;border-color:rgba(0,212,255,0.4)"
+             onclick="event.stopPropagation()">Abrir curso →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- CURSO 2 -->
+    <div class="course-card cc-purple" onclick="toggleDetail('c2')">
+      <div class="course-header">
+        <div class="course-icon">📊</div>
+        <h3>Análisis de Datos con Python</h3>
+        <div class="duration">8 semanas · Nivel intermedio</div>
+      </div>
+      <div class="course-body">
+        <p>Los datos sin visualización son ruido. Aprende a contar historias con datos usando estadística, gráficas profesionales y modelos de análisis.</p>
+        <ul class="topic-list">
+          <li>Estadística descriptiva e inferencial</li>
+          <li>Visualización con Seaborn y Matplotlib</li>
+          <li>Análisis univariado, bivariado y multivariado</li>
+          <li>Correlación y regresión lineal</li>
+          <li>Pruebas A/B e introducción a NLP</li>
+        </ul>
+      </div>
+      <div class="course-footer">
+        <div class="tools-row">
+          <span class="tool-badge" style="background:rgba(124,58,237,0.12);color:#a78bfa;border:1px solid rgba(124,58,237,0.25)">Seaborn</span>
+          <span class="tool-badge" style="background:rgba(124,58,237,0.12);color:#a78bfa;border:1px solid rgba(124,58,237,0.25)">Matplotlib</span>
+          <span class="tool-badge" style="background:rgba(124,58,237,0.12);color:#a78bfa;border:1px solid rgba(124,58,237,0.25)">NumPy</span>
+        </div>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <span class="course-btn" style="background:rgba(124,58,237,0.1);color:#a78bfa">Ver más ▾</span>
+          <a class="course-open-btn" href="curso2_analisis_python.html"
+             style="background:rgba(124,58,237,0.15);color:#a78bfa;border-color:rgba(124,58,237,0.4)"
+             onclick="event.stopPropagation()">Abrir curso →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- CURSO 3 -->
+    <div class="course-card cc-green" onclick="toggleDetail('c3')">
+      <div class="course-header">
+        <div class="course-icon">🤖</div>
+        <h3>Machine Learning con Python</h3>
+        <div class="duration">8 semanas · Nivel avanzado</div>
+      </div>
+      <div class="course-body">
+        <p>Enseña a las máquinas a aprender. Desde los fundamentos matemáticos hasta implementar redes neuronales y modelos de visión computacional.</p>
+        <ul class="topic-list">
+          <li>Aprendizaje supervisado y no supervisado</li>
+          <li>Separación, validación y evaluación de modelos</li>
+          <li>Árboles de decisión y bosques aleatorios</li>
+          <li>Redes Neuronales Artificiales</li>
+          <li>Procesamiento digital de imágenes</li>
+        </ul>
+      </div>
+      <div class="course-footer">
+        <div class="tools-row">
+          <span class="tool-badge" style="background:rgba(16,185,129,0.12);color:#10b981;border:1px solid rgba(16,185,129,0.25)">Scikit-learn</span>
+          <span class="tool-badge" style="background:rgba(16,185,129,0.12);color:#10b981;border:1px solid rgba(16,185,129,0.25)">TensorFlow</span>
+          <span class="tool-badge" style="background:rgba(16,185,129,0.12);color:#10b981;border:1px solid rgba(16,185,129,0.25)">OpenCV</span>
+        </div>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <span class="course-btn" style="background:rgba(16,185,129,0.1);color:#10b981">Ver más ▾</span>
+          <a class="course-open-btn" href="curso3_machine_learning.html"
+             style="background:rgba(16,185,129,0.15);color:#10b981;border-color:rgba(16,185,129,0.4)"
+             onclick="event.stopPropagation()">Abrir curso →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- CURSO 4 -->
+    <div class="course-card cc-amber" onclick="toggleDetail('c4')">
+      <div class="course-header">
+        <div class="course-icon">🌊</div>
+        <h3>Big Data — Fundamentos y Análisis</h3>
+        <div class="duration">6 módulos · Nivel intermedio</div>
+      </div>
+      <div class="course-body">
+        <p>El universo de los datos masivos. Comprende las 5V, el ecosistema de herramientas y aprende R para análisis estadístico de grandes volúmenes.</p>
+        <ul class="topic-list">
+          <li>Las 5V del Big Data (Volumen, Velocidad, Variedad…)</li>
+          <li>Metodología CRISP-DM</li>
+          <li>Lenguaje R para análisis estadístico</li>
+          <li>Visualización: Tableau, PowerBI, ggplot</li>
+          <li>Herramientas de analítica en la nube</li>
+        </ul>
+      </div>
+      <div class="course-footer">
+        <div class="tools-row">
+          <span class="tool-badge" style="background:rgba(245,158,11,0.12);color:#f59e0b;border:1px solid rgba(245,158,11,0.25)">R</span>
+          <span class="tool-badge" style="background:rgba(245,158,11,0.12);color:#f59e0b;border:1px solid rgba(245,158,11,0.25)">Tableau</span>
+          <span class="tool-badge" style="background:rgba(245,158,11,0.12);color:#f59e0b;border:1px solid rgba(245,158,11,0.25)">PowerBI</span>
+        </div>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <span class="course-btn" style="background:rgba(245,158,11,0.1);color:#f59e0b">Ver más ▾</span>
+          <a class="course-open-btn" href="curso4_bigdata_fundamentos.html"
+             style="background:rgba(245,158,11,0.15);color:#f59e0b;border-color:rgba(245,158,11,0.4)"
+             onclick="event.stopPropagation()">Abrir curso →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- CURSO 5 -->
+    <div class="course-card" style="border-color:rgba(239,68,68,0.3)" onclick="toggleDetail('c5')">
+      <div class="course-header" style="border-color:rgba(239,68,68,0.3)">
+        <div class="course-header" style="padding:0">
+        <div class="course-icon">☁️</div>
+        <h3>Big Data — Infraestructura en la Nube</h3>
+        <div class="duration">5 módulos · Nivel avanzado</div>
+        </div>
+      </div>
+      <div class="course-body">
+        <p>La ingeniería detrás de los datos masivos. Hadoop, sistemas distribuidos, comandos HDFS y despliegue en Azure, AWS y Google Cloud.</p>
+        <ul class="topic-list">
+          <li>Arquitectura de Apache Hadoop y MapReduce</li>
+          <li>Comandos HDFS y protocolo SSH</li>
+          <li>Apache Hive y HiveQL para consultas</li>
+          <li>Microsoft Azure HDInsight</li>
+          <li>Ecosistemas: Spark, BigQuery, Snowflake</li>
+        </ul>
+      </div>
+      <div class="course-footer">
+        <div class="tools-row">
+          <span class="tool-badge" style="background:rgba(239,68,68,0.12);color:#f87171;border:1px solid rgba(239,68,68,0.25)">Hadoop</span>
+          <span class="tool-badge" style="background:rgba(239,68,68,0.12);color:#f87171;border:1px solid rgba(239,68,68,0.25)">Azure</span>
+          <span class="tool-badge" style="background:rgba(239,68,68,0.12);color:#f87171;border:1px solid rgba(239,68,68,0.25)">Spark</span>
+        </div>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <span class="course-btn" style="background:rgba(239,68,68,0.1);color:#f87171">Ver más ▾</span>
+          <a class="course-open-btn" href="curso5_bigdata_infraestructura.html"
+             style="background:rgba(239,68,68,0.15);color:#f87171;border-color:rgba(239,68,68,0.4)"
+             onclick="event.stopPropagation()">Abrir curso →</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- DETAIL PANELS -->
+  <div id="detail-c1" class="detail-panel">
+    <div class="detail-grid">
+      <div class="detail-block">
+        <h4 style="color:#00d4ff">📋 Temario completo</h4>
+        <ul>
+          <li>Tema 1: Fundamentos Python — variables, tipos, operadores</li>
+          <li>Tema 2: Estructuras de datos y funciones</li>
+          <li>Tema 3: Programación funcional</li>
+          <li>Tema 4: Pandas y análisis exploratorio (EDA)</li>
+          <li>Tema 5: Funciones vectorizadas y limpieza de datos</li>
+          <li>Tema 6: APIs, automatización y concatenación de DataFrames</li>
+          <li>Tema 7: Transformación, filtración y reordenamiento</li>
+          <li>Tema 8: Bases de datos — merge y agrupaciones</li>
+        </ul>
+      </div>
+      <div class="detail-block">
+        <h4 style="color:#00d4ff">🎯 Objetivos de aprendizaje</h4>
+        <ul>
+          <li>Comprender Python como lenguaje de propósito general para datos</li>
+          <li>Instalar y usar Anaconda y Jupyter Notebook</li>
+          <li>Manipular Series y DataFrames con Pandas</li>
+          <li>Consumir datos de APIs REST en formato JSON/CSV</li>
+          <li>Limpiar, transformar y combinar datasets reales</li>
+          <li>Construir pipelines de procesamiento reproducibles</li>
+        </ul>
+      </div>
+    </div>
+    <div class="challenge-box">
+      <h4>⚡ Reto integrador</h4>
+      <p>Conecta la API pública de <strong>Spotify</strong> (o datos de Kaggle sobre música), descarga el historial de canciones más escuchadas, límpialo con Pandas y genera un reporte con las 10 artistas más populares por género. Sube tu notebook a GitHub y documenta cada paso.</p>
+    </div>
+  </div>
+
+  <div id="detail-c2" class="detail-panel">
+    <div class="detail-grid">
+      <div class="detail-block">
+        <h4 style="color:#a78bfa">📋 Temario completo</h4>
+        <ul>
+          <li>Tema 1: Estimados de locación — media, mediana, percentiles</li>
+          <li>Tema 2: Variabilidad — desviación estándar, rango intercuartil</li>
+          <li>Tema 3: Distribuciones y visualización con histogramas</li>
+          <li>Tema 4: Variables categóricas y análisis bivariado</li>
+          <li>Tema 5: Correlación de Pearson y regresión lineal simple</li>
+          <li>Tema 6: Distribuciones muestrales y pruebas estadísticas</li>
+          <li>Tema 7: Pruebas A/B — diseño y análisis</li>
+          <li>Tema 8: Introducción a NLP y clasificación supervisada</li>
+        </ul>
+      </div>
+      <div class="detail-block">
+        <h4 style="color:#a78bfa">🎯 Objetivos de aprendizaje</h4>
+        <ul>
+          <li>Calcular e interpretar estadísticos descriptivos e inferenciales</li>
+          <li>Crear visualizaciones de nivel profesional con Seaborn</li>
+          <li>Identificar correlaciones y construir modelos de regresión</li>
+          <li>Diseñar y evaluar experimentos A/B</li>
+          <li>Aplicar técnicas básicas de NLP sobre texto en español</li>
+          <li>Producir reportes estadísticos listos para la toma de decisiones</li>
+        </ul>
+      </div>
+    </div>
+    <div class="challenge-box">
+      <h4>⚡ Reto integrador</h4>
+      <p>Usa el dataset público de <strong>precios de Airbnb en CDMX</strong> (disponible en Inside Airbnb). Analiza qué variables (zona, tipo de propiedad, calificación) predicen mejor el precio. Entrega: análisis completo con visualizaciones, matriz de correlación y un modelo de regresión con R² interpretado.</p>
+    </div>
+  </div>
+
+  <div id="detail-c3" class="detail-panel">
+    <div class="detail-grid">
+      <div class="detail-block">
+        <h4 style="color:#10b981">📋 Temario completo</h4>
+        <ul>
+          <li>Tema 1: ¿Qué es Machine Learning? Historia y tipos</li>
+          <li>Tema 2: Separación, validación y evaluación de modelos</li>
+          <li>Tema 3: Algoritmos no supervisados — K-Means, clustering</li>
+          <li>Tema 4: Regresión lineal y polinomial</li>
+          <li>Tema 5: Árboles de decisión y Random Forest</li>
+          <li>Tema 6: Redes Neuronales Artificiales (ANN)</li>
+          <li>Tema 7: Ensemble de clasificadores — voting, bagging, boosting</li>
+          <li>Tema 8: Procesamiento de imágenes con OpenCV</li>
+        </ul>
+      </div>
+      <div class="detail-block">
+        <h4 style="color:#10b981">🎯 Objetivos de aprendizaje</h4>
+        <ul>
+          <li>Distinguir y aplicar aprendizaje supervisado vs. no supervisado</li>
+          <li>Evaluar modelos con métricas: accuracy, precision, recall, F1</li>
+          <li>Implementar algoritmos clásicos con Scikit-learn</li>
+          <li>Entrenar redes neuronales con Keras/TensorFlow en Google Colab</li>
+          <li>Aplicar técnicas de ensemble para mejorar predicciones</li>
+          <li>Detectar y clasificar objetos en imágenes con OpenCV</li>
+        </ul>
+      </div>
+    </div>
+    <div class="challenge-box">
+      <h4>⚡ Reto integrador</h4>
+      <p>Construye un clasificador de <strong>señales de tráfico</strong> (dataset GTSRB disponible en Kaggle). Compara al menos 3 modelos: Random Forest, una red neuronal simple y una CNN. Reporta accuracy, matriz de confusión y explica por qué un modelo supera a los otros.</p>
+    </div>
+  </div>
+
+  <div id="detail-c4" class="detail-panel">
+    <div class="detail-grid">
+      <div class="detail-block">
+        <h4 style="color:#f59e0b">📋 Módulos del programa</h4>
+        <ul>
+          <li>¿Qué es Big Data? — Las 5V: Volumen, Velocidad, Variedad, Veracidad, Valor</li>
+          <li>Fundamentos de Data Science — CRISP-DM, minería de datos</li>
+          <li>Lenguaje Python para Big Data — OOP, visualización avanzada</li>
+          <li>Lenguaje R para Big Data — vectores, matrices, data frames</li>
+          <li>Herramientas analíticas en la nube — Alteryx, AWS, Oracle OCI</li>
+          <li>Importancia del tratamiento de datos — EDA, correlaciones en Tableau</li>
+        </ul>
+      </div>
+      <div class="detail-block">
+        <h4 style="color:#f59e0b">🎯 Objetivos de aprendizaje</h4>
+        <ul>
+          <li>Identificar y aplicar el modelo de las 5V en casos reales</li>
+          <li>Seguir la metodología CRISP-DM en proyectos de datos</li>
+          <li>Realizar análisis estadístico e inferencial con R Studio</li>
+          <li>Crear dashboards interactivos en Tableau Public</li>
+          <li>Usar servicios en la nube para almacenar y procesar datos</li>
+          <li>Efectuar análisis exploratorio completo (EDA)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="challenge-box">
+      <h4>⚡ Reto integrador</h4>
+      <p>Selecciona una problemática social de México (criminalidad, salud, educación) usando datos del <strong>INEGI</strong> o <strong>datos.gob.mx</strong>. Aplica CRISP-DM: entiende el negocio, prepara los datos con Python/R, explora con Tableau y propone un modelo predictivo. Presenta como infografía interactiva.</p>
+    </div>
+  </div>
+
+  <div id="detail-c5" class="detail-panel">
+    <div class="detail-grid">
+      <div class="detail-block">
+        <h4 style="color:#f87171">📋 Módulos del programa</h4>
+        <ul>
+          <li>Arquitectura de Hadoop — HDFS, MapReduce, ecosistema</li>
+          <li>Comandos HDFS — mkdir, put, get, cat, mv, rm via SSH</li>
+          <li>Azure HDInsight — creación de clústeres en la nube</li>
+          <li>Apache Hive y HiveQL — consultas sobre grandes datasets</li>
+          <li>Transformación de datos — data lake vs. data warehouse</li>
+          <li>Ecosistemas alternativos — Spark, BigQuery, Snowflake, Synapse</li>
+        </ul>
+      </div>
+      <div class="detail-block">
+        <h4 style="color:#f87171">🎯 Objetivos de aprendizaje</h4>
+        <ul>
+          <li>Comprender la arquitectura distribuida de Hadoop</li>
+          <li>Ejecutar operaciones de archivos en HDFS via línea de comandos</li>
+          <li>Crear y gestionar clústeres en Microsoft Azure</li>
+          <li>Escribir consultas HiveQL para análisis de grandes tablas</li>
+          <li>Diferenciar y elegir entre data lake, data storage y data warehouse</li>
+          <li>Comparar y recomendar ecosistemas Big Data modernos</li>
+        </ul>
+      </div>
+    </div>
+    <div class="challenge-box">
+      <h4>⚡ Reto integrador</h4>
+      <p>Descarga el dataset público de <strong>tarifas de taxi de Nueva York (NYC TLC)</strong>. Carga los datos en un entorno Hadoop simulado con Docker, crea tablas en Hive y responde: ¿cuáles son las 5 zonas con mayor demanda? ¿Cómo varía el precio promedio por hora del día? Genera un reporte en PowerBI.</p>
+    </div>
+  </div>
+
+</section>
+
+<!-- METÁFORAS -->
+<section id="metaforas" style="background:linear-gradient(to bottom, var(--bg), var(--surface)); padding: 6rem 2rem;">
+<div style="max-width:1200px;margin:0 auto">
+  <div class="section-header">
+    <div class="section-tag tag-green">Aprende con metáforas</div>
+    <h2>Conceptos difíciles, explicados fácil</h2>
+    <p>Las mejores metáforas convierten lo abstracto en concreto. Úsalas en clase para que los conceptos queden grabados.</p>
+  </div>
+  <div class="metaphors-grid">
+    <div class="metaphor-card">
+      <div class="metaphor-emoji">🍳</div>
+      <div class="concept">Machine Learning</div>
+      <h3>Cocinar sin receta fija</h3>
+      <p>En programación tradicional, le das la receta exacta a la computadora. En ML, le muestras miles de platillos y ella deduce la receta sola — igual que un chef que aprende probando y ajustando.</p>
+    </div>
+    <div class="metaphor-card">
+      <div class="metaphor-emoji">🌊</div>
+      <div class="concept">Big Data — Las 5V</div>
+      <h3>El océano vs. el vaso de agua</h3>
+      <p>Un vaso de agua es fácil de analizar. El océano tiene <em>volumen</em> enorme, <em>velocidad</em> de mareas, <em>variedad</em> de vida marina, <em>veracidad</em> de sus mediciones y <em>valor</em> para el planeta. Eso es Big Data.</p>
+    </div>
+    <div class="metaphor-card">
+      <div class="metaphor-emoji">🗂️</div>
+      <div class="concept">DataFrame (Pandas)</div>
+      <h3>La hoja de Excel viva</h3>
+      <p>Un DataFrame es como una hoja de cálculo con superpoderes: puedes filtrar 10 millones de filas en milisegundos, fusionar tablas, limpiar datos sucios y graficar todo con una sola línea de código.</p>
+    </div>
+    <div class="metaphor-card">
+      <div class="metaphor-emoji">🎯</div>
+      <div class="concept">Overfitting</div>
+      <h3>Memorizar en lugar de entender</h3>
+      <p>Un modelo con overfitting es como el estudiante que memoriza las respuestas del examen pasado. Le va perfecto en ese examen, pero falla en el siguiente porque no entendió el concepto.</p>
+    </div>
+    <div class="metaphor-card">
+      <div class="metaphor-emoji">🌳</div>
+      <div class="concept">Random Forest</div>
+      <h3>La democracia de los árboles</h3>
+      <p>Un solo árbol de decisión puede equivocarse. Pero si le preguntas a 100 árboles diferentes y tomas la decisión más votada — igual que en una democracia — los errores individuales se cancelan.</p>
+    </div>
+    <div class="metaphor-card">
+      <div class="metaphor-emoji">🗺️</div>
+      <div class="concept">CRISP-DM</div>
+      <h3>El GPS del científico de datos</h3>
+      <p>Sin CRISP-DM, un proyecto de datos es como manejar sin GPS: llegas a algún lado, pero no necesariamente al destino correcto. La metodología te da el mapa, los pasos y la ruta de retorno cuando algo sale mal.</p>
+    </div>
+    <div class="metaphor-card">
+      <div class="metaphor-emoji">🧹</div>
+      <div class="concept">Limpieza de datos</div>
+      <h3>Basura entra, basura sale</h3>
+      <p>"Garbage in, garbage out" es la ley de hierro del ML. Analizar datos sucios es como cocinar con ingredientes podridos: puedes tener la mejor receta del mundo, el resultado seguirá siendo malo.</p>
+    </div>
+    <div class="metaphor-card">
+      <div class="metaphor-emoji">🏙️</div>
+      <div class="concept">Hadoop + HDFS</div>
+      <h3>La ciudad distribuida</h3>
+      <p>HDFS es como repartir los libros de una biblioteca entre 100 sucursales. Si una sucursal se incendia, no se pierde nada porque cada libro tiene copias en otras. MapReduce es el mensajero que busca en todas al mismo tiempo.</p>
+    </div>
+    <div class="metaphor-card">
+      <div class="metaphor-emoji">🔍</div>
+      <div class="concept">Correlación vs. Causalidad</div>
+      <h3>El helado y los ahogamientos</h3>
+      <p>En verano suben las ventas de helado Y los ahogamientos. Alta correlación — pero el helado no mata. El calor causa ambos. Siempre pregunta: ¿hay una tercera variable escondida?</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- HERRAMIENTAS -->
+<section id="herramientas">
+  <div class="section-header">
+    <div class="section-tag tag-amber">Ecosistema tecnológico</div>
+    <h2>Las herramientas del oficio</h2>
+    <p>Filtra por categoría para explorar el stack completo que usarás a lo largo del programa.</p>
+  </div>
+  <div class="tools-section">
+    <div class="tools-categories">
+      <button class="tool-cat-btn active" onclick="filterTools('all')">Todas</button>
+      <button class="tool-cat-btn" onclick="filterTools('lang')">Lenguajes</button>
+      <button class="tool-cat-btn" onclick="filterTools('lib')">Librerías Python</button>
+      <button class="tool-cat-btn" onclick="filterTools('viz')">Visualización</button>
+      <button class="tool-cat-btn" onclick="filterTools('bigdata')">Big Data</button>
+      <button class="tool-cat-btn" onclick="filterTools('cloud')">Nube</button>
+      <button class="tool-cat-btn" onclick="filterTools('env')">Entornos</button>
+    </div>
+    <div class="tools-cloud" id="toolsCloud"></div>
+  </div>
+</section>
+
+<!-- RETOS -->
+<section id="retos" style="background:var(--surface);padding:6rem 2rem;">
+<div style="max-width:1200px;margin:0 auto">
+  <div class="section-header">
+    <div class="section-tag tag-blue">Retos prácticos</div>
+    <h2>Aprende haciendo</h2>
+    <p>Proyectos reales con datos reales. Cada reto aplica múltiples conceptos del curso en un contexto de la industria actual.</p>
+  </div>
+  <div class="challenges-grid">
+    <div class="challenge-card ch-easy">
+      <span class="ch-badge">Nivel 1 — Fundamentos</span>
+      <h3>🎵 El Top Chart de Spotify con Python</h3>
+      <p>Descarga el dataset de canciones más escuchadas de Spotify (Kaggle). Explora cuáles características predicen si una canción será hit: energía, tempo, valencia. Genera 5 visualizaciones con Seaborn.</p>
+      <div class="tools-used">
+        <span class="chip">Python</span><span class="chip">Pandas</span><span class="chip">Seaborn</span><span class="chip">Jupyter</span>
+      </div>
+    </div>
+    <div class="challenge-card ch-easy">
+      <span class="ch-badge">Nivel 1 — Fundamentos</span>
+      <h3>🌎 El clima en tus datos</h3>
+      <p>Usa la API pública de Open-Meteo para descargar temperaturas históricas de 5 ciudades mexicanas. Compara tendencias, calcula correlaciones y visualiza en un mapa de calor mensual.</p>
+      <div class="tools-used">
+        <span class="chip">Python</span><span class="chip">Requests</span><span class="chip">Pandas</span><span class="chip">Matplotlib</span>
+      </div>
+    </div>
+    <div class="challenge-card ch-medium">
+      <span class="ch-badge">Nivel 2 — Intermedio</span>
+      <h3>🏠 Predictor de precios de vivienda</h3>
+      <p>Con el dataset de INEGI sobre vivienda en México, construye un modelo de regresión para predecir el precio por metro cuadrado. Aplica CRISP-DM completo y evalúa con RMSE y R².</p>
+      <div class="tools-used">
+        <span class="chip">Scikit-learn</span><span class="chip">Pandas</span><span class="chip">Regresión</span><span class="chip">EDA</span>
+      </div>
+    </div>
+    <div class="challenge-card ch-medium">
+      <span class="ch-badge">Nivel 2 — Intermedio</span>
+      <h3>📰 Clasificador de noticias falsas</h3>
+      <p>Entrena un clasificador de texto que detecte noticias falsas en español. Usa TF-IDF + Naive Bayes como baseline, luego mejora con un modelo de ensemble. Reporta precision y recall.</p>
+      <div class="tools-used">
+        <span class="chip">NLP</span><span class="chip">NLTK</span><span class="chip">Scikit-learn</span><span class="chip">TF-IDF</span>
+      </div>
+    </div>
+    <div class="challenge-card ch-medium">
+      <span class="ch-badge">Nivel 2 — Intermedio</span>
+      <h3>🚕 Dashboard de taxis en NYC con Tableau</h3>
+      <p>Conecta el dataset público de NYC Yellow Cab. Crea un dashboard en Tableau con mapa de calor de zonas, gráfica de demanda por hora y análisis de propinas. Publica en Tableau Public.</p>
+      <div class="tools-used">
+        <span class="chip">Tableau</span><span class="chip">SQL</span><span class="chip">EDA</span><span class="chip">Geospatial</span>
+      </div>
+    </div>
+    <div class="challenge-card ch-hard">
+      <span class="ch-badge">Nivel 3 — Avanzado</span>
+      <h3>🤖 Sistema de recomendación de películas</h3>
+      <p>Construye un motor de recomendaciones con el dataset de MovieLens (100K ratings). Implementa filtrado colaborativo y por contenido. Evalúa con RMSE y prueba en un mini-app con Flask.</p>
+      <div class="tools-used">
+        <span class="chip">Scikit-learn</span><span class="chip">Surprise</span><span class="chip">Flask</span><span class="chip">Docker</span>
+      </div>
+    </div>
+    <div class="challenge-card ch-hard">
+      <span class="ch-badge">Nivel 3 — Avanzado</span>
+      <h3>🧠 Red Neuronal para detección de fraude</h3>
+      <p>El dataset de transacciones bancarias de Kaggle (Credit Card Fraud) está extremadamente desbalanceado. Aplica SMOTE, entrena una ANN en TensorFlow y optimiza el threshold para maximizar recall.</p>
+      <div class="tools-used">
+        <span class="chip">TensorFlow</span><span class="chip">Keras</span><span class="chip">SMOTE</span><span class="chip">Colab</span>
+      </div>
+    </div>
+    <div class="challenge-card ch-hard">
+      <span class="ch-badge">Nivel 3 — Avanzado</span>
+      <h3>☁️ Pipeline Big Data en Azure</h3>
+      <p>Diseña un pipeline completo en Azure: ingesta con Azure Data Factory, almacenamiento en ADLS Gen2, procesamiento con Spark en HDInsight, consultas en Hive y visualización en PowerBI Embedded.</p>
+      <div class="tools-used">
+        <span class="chip">Azure</span><span class="chip">Spark</span><span class="chip">Hive</span><span class="chip">PowerBI</span>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- HABILIDADES -->
+<section id="habilidades">
+  <div class="section-header">
+    <div class="section-tag tag-purple">Progreso de habilidades</div>
+    <h2>Nivel de dominio por área</h2>
+    <p>Al completar el programa completo, estas son las habilidades que habrás desarrollado y su nivel de profundidad.</p>
+  </div>
+  <div class="progress-section">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab('tab-tecnico')">Técnico</button>
+      <button class="tab-btn" onclick="showTab('tab-analitico')">Analítico</button>
+      <button class="tab-btn" onclick="showTab('tab-infra')">Infraestructura</button>
+    </div>
+    <div id="tab-tecnico" class="tab-content active">
+      <div class="skill-row"><span class="skill-name">Python (Programación)</span><div class="skill-bar"><div class="skill-fill" style="width:90%;background:linear-gradient(90deg,#00d4ff,#7c3aed)"></div></div><span class="skill-pct">90%</span></div>
+      <div class="skill-row"><span class="skill-name">Pandas / NumPy</span><div class="skill-bar"><div class="skill-fill" style="width:85%;background:linear-gradient(90deg,#00d4ff,#7c3aed)"></div></div><span class="skill-pct">85%</span></div>
+      <div class="skill-row"><span class="skill-name">Scikit-learn (ML)</span><div class="skill-bar"><div class="skill-fill" style="width:75%;background:linear-gradient(90deg,#00d4ff,#7c3aed)"></div></div><span class="skill-pct">75%</span></div>
+      <div class="skill-row"><span class="skill-name">TensorFlow / Keras</span><div class="skill-bar"><div class="skill-fill" style="width:60%;background:linear-gradient(90deg,#00d4ff,#7c3aed)"></div></div><span class="skill-pct">60%</span></div>
+      <div class="skill-row"><span class="skill-name">R (Estadística)</span><div class="skill-bar"><div class="skill-fill" style="width:65%;background:linear-gradient(90deg,#00d4ff,#7c3aed)"></div></div><span class="skill-pct">65%</span></div>
+      <div class="skill-row"><span class="skill-name">SQL / HiveQL</span><div class="skill-bar"><div class="skill-fill" style="width:70%;background:linear-gradient(90deg,#00d4ff,#7c3aed)"></div></div><span class="skill-pct">70%</span></div>
+    </div>
+    <div id="tab-analitico" class="tab-content">
+      <div class="skill-row"><span class="skill-name">Estadística Descriptiva</span><div class="skill-bar"><div class="skill-fill" style="width:88%;background:linear-gradient(90deg,#10b981,#34d399)"></div></div><span class="skill-pct">88%</span></div>
+      <div class="skill-row"><span class="skill-name">Visualización de Datos</span><div class="skill-bar"><div class="skill-fill" style="width:85%;background:linear-gradient(90deg,#10b981,#34d399)"></div></div><span class="skill-pct">85%</span></div>
+      <div class="skill-row"><span class="skill-name">Análisis Exploratorio (EDA)</span><div class="skill-bar"><div class="skill-fill" style="width:82%;background:linear-gradient(90deg,#10b981,#34d399)"></div></div><span class="skill-pct">82%</span></div>
+      <div class="skill-row"><span class="skill-name">Modelos de Regresión</span><div class="skill-bar"><div class="skill-fill" style="width:78%;background:linear-gradient(90deg,#10b981,#34d399)"></div></div><span class="skill-pct">78%</span></div>
+      <div class="skill-row"><span class="skill-name">Clasificación (ML)</span><div class="skill-bar"><div class="skill-fill" style="width:72%;background:linear-gradient(90deg,#10b981,#34d399)"></div></div><span class="skill-pct">72%</span></div>
+      <div class="skill-row"><span class="skill-name">NLP Básico</span><div class="skill-bar"><div class="skill-fill" style="width:55%;background:linear-gradient(90deg,#10b981,#34d399)"></div></div><span class="skill-pct">55%</span></div>
+    </div>
+    <div id="tab-infra" class="tab-content">
+      <div class="skill-row"><span class="skill-name">Hadoop / HDFS</span><div class="skill-bar"><div class="skill-fill" style="width:65%;background:linear-gradient(90deg,#f59e0b,#ef4444)"></div></div><span class="skill-pct">65%</span></div>
+      <div class="skill-row"><span class="skill-name">Apache Spark</span><div class="skill-bar"><div class="skill-fill" style="width:55%;background:linear-gradient(90deg,#f59e0b,#ef4444)"></div></div><span class="skill-pct">55%</span></div>
+      <div class="skill-row"><span class="skill-name">Microsoft Azure</span><div class="skill-bar"><div class="skill-fill" style="width:60%;background:linear-gradient(90deg,#f59e0b,#ef4444)"></div></div><span class="skill-pct">60%</span></div>
+      <div class="skill-row"><span class="skill-name">Docker (Big Data)</span><div class="skill-bar"><div class="skill-fill" style="width:45%;background:linear-gradient(90deg,#f59e0b,#ef4444)"></div></div><span class="skill-pct">45%</span></div>
+      <div class="skill-row"><span class="skill-name">Tableau / PowerBI</span><div class="skill-bar"><div class="skill-fill" style="width:75%;background:linear-gradient(90deg,#f59e0b,#ef4444)"></div></div><span class="skill-pct">75%</span></div>
+      <div class="skill-row"><span class="skill-name">Cloud Storage (AWS/OCI)</span><div class="skill-bar"><div class="skill-fill" style="width:50%;background:linear-gradient(90deg,#f59e0b,#ef4444)"></div></div><span class="skill-pct">50%</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p style="margin-bottom:0.5rem">Diseñado para la enseñanza de <span>Data Science</span> — Recursos abiertos para docentes y estudiantes</p>
+  <p style="font-size:0.78rem;color:#475569">Python · R · Pandas · Scikit-learn · Hadoop · Spark · Azure · Tableau · TensorFlow</p>
+</footer>
+
+<script>
+// TOOLS DATA
+const tools = [
+  {name:'Python',cat:'lang',color:'#00d4ff'},{name:'R',cat:'lang',color:'#a78bfa'},{name:'SQL',cat:'lang',color:'#f59e0b'},{name:'HiveQL',cat:'lang',color:'#f87171'},
+  {name:'Pandas',cat:'lib',color:'#10b981'},{name:'NumPy',cat:'lib',color:'#10b981'},{name:'Scikit-learn',cat:'lib',color:'#10b981'},{name:'TensorFlow',cat:'lib',color:'#f59e0b'},{name:'Keras',cat:'lib',color:'#ef4444'},{name:'OpenCV',cat:'lib',color:'#10b981'},{name:'NLTK',cat:'lib',color:'#a78bfa'},{name:'spaCy',cat:'lib',color:'#a78bfa'},{name:'SciPy',cat:'lib',color:'#00d4ff'},{name:'StatsModels',cat:'lib',color:'#00d4ff'},{name:'Requests',cat:'lib',color:'#f59e0b'},
+  {name:'Seaborn',cat:'viz',color:'#7c3aed'},{name:'Matplotlib',cat:'viz',color:'#7c3aed'},{name:'Tableau',cat:'viz',color:'#00d4ff'},{name:'PowerBI',cat:'viz',color:'#f59e0b'},{name:'ggplot2',cat:'viz',color:'#ef4444'},
+  {name:'Hadoop',cat:'bigdata',color:'#f59e0b'},{name:'HDFS',cat:'bigdata',color:'#f59e0b'},{name:'MapReduce',cat:'bigdata',color:'#f59e0b'},{name:'Apache Spark',cat:'bigdata',color:'#ef4444'},{name:'Apache Hive',cat:'bigdata',color:'#f59e0b'},{name:'Kafka',cat:'bigdata',color:'#a78bfa'},
+  {name:'Microsoft Azure',cat:'cloud',color:'#00d4ff'},{name:'AWS Educate',cat:'cloud',color:'#f59e0b'},{name:'Oracle OCI',cat:'cloud',color:'#ef4444'},{name:'Google Colab',cat:'cloud',color:'#10b981'},{name:'Azure HDInsight',cat:'cloud',color:'#00d4ff'},{name:'Snowflake',cat:'cloud',color:'#00d4ff'},{name:'BigQuery',cat:'cloud',color:'#f59e0b'},
+  {name:'Jupyter Notebook',cat:'env',color:'#f59e0b'},{name:'Anaconda',cat:'env',color:'#10b981'},{name:'R Studio',cat:'env',color:'#a78bfa'},{name:'Docker',cat:'env',color:'#00d4ff'},{name:'VS Code',cat:'env',color:'#00d4ff'},{name:'PowerShell',cat:'env',color:'#7c3aed'}
+];
+
+let activeFilter = 'all';
+
+function renderTools(filter) {
+  const cloud = document.getElementById('toolsCloud');
+  cloud.innerHTML = '';
+  const filtered = filter === 'all' ? tools : tools.filter(t => t.cat === filter);
+  filtered.forEach(t => {
+    const el = document.createElement('div');
+    el.className = 'tool-item';
+    el.style.cssText = `color:${t.color};border-color:${t.color}33;background:${t.color}0d`;
+    el.textContent = t.name;
+    cloud.appendChild(el);
+  });
+}
+
+function filterTools(cat) {
+  activeFilter = cat;
+  document.querySelectorAll('.tool-cat-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderTools(cat);
+}
+
+renderTools('all');
+
+// DETAIL PANELS
+function toggleDetail(id) {
+  const panel = document.getElementById('detail-' + id);
+  const isOpen = panel.classList.contains('open');
+  document.querySelectorAll('.detail-panel').forEach(p => p.classList.remove('open'));
+  if (!isOpen) {
+    panel.classList.add('open');
+    setTimeout(() => panel.scrollIntoView({behavior:'smooth', block:'nearest'}), 50);
+  }
+}
+
+// TABS
+function showTab(id) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ACCORDION
+document.querySelectorAll('.acc-header').forEach(h => {
+  h.addEventListener('click', () => {
+    const item = h.parentElement;
+    item.classList.toggle('open');
+  });
+});
+
+// NAV ACTIVE on scroll
+const sections = document.querySelectorAll('section[id], .hero');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 100) current = s.id || '';
+  });
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.classList.remove('active');
+    if (a.getAttribute('href') === '#' + current) a.classList.add('active');
+  });
+});
+
+// Animate skill bars on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.skill-fill').forEach(f => {
+        const w = f.style.width; f.style.width = '0';
+        setTimeout(() => f.style.width = w, 100);
+      });
+    }
+  });
+}, {threshold: 0.3});
+document.querySelectorAll('.progress-section').forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
