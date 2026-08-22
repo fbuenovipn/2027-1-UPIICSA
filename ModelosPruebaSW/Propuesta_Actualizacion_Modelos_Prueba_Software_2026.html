@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propuesta de Actualización — Modelos de Prueba de Software | UPIICSA IPN 2026</title>
+<style>
+:root {
+  --ipn:#6B1A2E; --ipn-dk:#4a1020; --ipn-lt:#8B2A42;
+  --grn:#2e7d52; --grn-lt:#3da066;
+  --acc:#c9a227; --acc-lt:#f0c040;
+  --bg:#f4f5f7; --card:#fff; --txt:#1a1a2e; --muted:#555;
+  --brd:#e2e2e8;
+  --nuevo:#1a6b3c; --nuevo-bg:#e6f4ec;
+  --actualizar:#7a4a00; --actualizar-bg:#fef3e0;
+  --conservar:#1a4a8a; --conservar-bg:#e6eef8;
+  --sh:0 2px 12px rgba(0,0,0,.08);
+  --sh2:0 6px 24px rgba(107,26,46,.15);
+  --r:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);line-height:1.6}
+
+/* HEADER */
+header{background:linear-gradient(135deg,var(--ipn-dk),var(--ipn) 60%,var(--ipn-lt));color:#fff;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.3)}
+.h-top{display:flex;align-items:center;gap:14px;padding:14px 28px;border-bottom:1px solid rgba(255,255,255,.15)}
+.logo{width:44px;height:44px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;color:var(--ipn);text-align:center;line-height:1.1;flex-shrink:0}
+.h-title h1{font-size:1.15rem;font-weight:700}
+.h-title p{font-size:.78rem;opacity:.85;margin-top:2px}
+.h-meta{display:flex;gap:7px;flex-wrap:wrap;padding:7px 28px;background:rgba(0,0,0,.15)}
+.chip{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:3px 11px;font-size:.72rem;color:#fff}
+.chip.acc{background:var(--acc);border-color:var(--acc-lt);color:#1a1a00;font-weight:700}
+
+/* TABS */
+nav.tabs{background:#fff;border-bottom:2px solid var(--brd);display:flex;overflow-x:auto;scrollbar-width:none;padding:0 28px;position:sticky;top:107px;z-index:90;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+nav.tabs::-webkit-scrollbar{display:none}
+.tb{padding:13px 18px;border:none;background:none;font-size:.83rem;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;display:flex;align-items:center;gap:5px}
+.tb:hover{color:var(--ipn);background:#faf0f2}
+.tb.active{color:var(--ipn);border-bottom-color:var(--ipn);background:#fdf5f7}
+
+/* MAIN */
+main{max-width:1080px;margin:0 auto;padding:28px 20px}
+.sec{display:none}.sec.active{display:block;animation:fi .25s ease}
+@keyframes fi{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+
+/* CARD */
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:24px;margin-bottom:20px;border:1px solid var(--brd);transition:box-shadow .2s}
+.card:hover{box-shadow:var(--sh2)}
+.ch{display:flex;align-items:center;gap:11px;margin-bottom:18px;padding-bottom:13px;border-bottom:2px solid var(--brd)}
+.ci{width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.ci-g{background:#fdf0f3}.ci-gr{background:#edf7ef}.ci-b{background:#edf3fd}.ci-a{background:#fffbeb}
+.ct{font-size:1.05rem;font-weight:700;color:var(--ipn)}
+.cs{font-size:.78rem;color:var(--muted);margin-top:2px}
+
+/* GRID */
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:18px}
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+
+/* STAT */
+.stat{background:#fff;border-radius:var(--r);padding:18px;text-align:center;border:1px solid var(--brd);box-shadow:var(--sh)}
+.sn{font-size:2.3rem;font-weight:800;color:var(--ipn);line-height:1}
+.sl{font-size:.78rem;color:var(--muted);margin-top:5px}
+
+/* BADGE */
+.bdg{display:inline-block;padding:2px 9px;border-radius:20px;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.bn{background:var(--nuevo-bg);color:var(--nuevo)}
+.bc{background:var(--conservar-bg);color:var(--conservar)}
+.ba{background:var(--actualizar-bg);color:var(--actualizar)}
+.bk{background:#fde8e8;color:#a00}
+
+/* TABLE */
+.tw{overflow-x:auto;border-radius:8px;border:1px solid var(--brd)}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+thead tr{background:var(--ipn);color:#fff}
+thead th{padding:11px 13px;text-align:left;font-size:.78rem;font-weight:600;letter-spacing:.04em}
+tbody tr{border-bottom:1px solid var(--brd);transition:background .15s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:#fdf5f7}
+tbody td{padding:10px 13px;vertical-align:top}
+
+/* ACCORDION */
+.acc{border:1px solid var(--brd);border-radius:var(--r);overflow:hidden;margin-bottom:14px}
+.ah{display:flex;align-items:center;justify-content:space-between;padding:15px 18px;cursor:pointer;background:#fff;transition:background .2s;user-select:none;gap:10px}
+.ah:hover{background:#fdf5f7}
+.ah.open{background:#fdf0f4;border-bottom:1px solid var(--brd)}
+.al{display:flex;align-items:center;gap:11px}
+.an{width:30px;height:30px;border-radius:50%;background:var(--ipn);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.82rem;flex-shrink:0}
+.at{font-weight:700;font-size:.92rem}
+.as{font-size:.75rem;color:var(--muted);margin-top:2px}
+.ar-r{display:flex;align-items:center;gap:9px;flex-shrink:0}
+.ahrs{background:var(--ipn);color:#fff;border-radius:20px;padding:3px 10px;font-size:.73rem;font-weight:600}
+.aarr{font-size:1rem;color:var(--ipn);transition:transform .3s}
+.ah.open .aarr{transform:rotate(180deg)}
+.ab{display:none;padding:18px;background:#fdfafa}
+.ab.open{display:block}
+
+/* CONTENT ROW */
+.cr{display:flex;gap:9px;align-items:flex-start;padding:7px 0;border-bottom:1px dashed var(--brd)}
+.cr:last-child{border-bottom:none}
+.crn{font-size:.78rem;color:var(--muted);min-width:30px;font-weight:600}
+.crt{flex:1;font-size:.85rem}
+.crb{flex-shrink:0}
+
+/* JUSTIF BOX */
+.jb{background:linear-gradient(135deg,#fdf5f7,#fff8fb);border-left:4px solid var(--ipn);border-radius:0 8px 8px 0;padding:13px 15px;margin-bottom:14px;font-size:.85rem;color:#333}
+.jb strong{color:var(--ipn)}
+
+/* HOURS GRID */
+.hg{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:12px}
+.hc{background:#fff;border:1px solid var(--brd);border-radius:7px;padding:9px;text-align:center}
+.hcn{font-size:1.3rem;font-weight:800;color:var(--ipn)}
+.hcl{font-size:.68rem;color:var(--muted);margin-top:1px}
+
+/* GAP */
+.gh{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;padding:7px 0;border-bottom:2px solid var(--ipn);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ipn);margin-bottom:3px}
+.gr{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--brd);font-size:.85rem}
+.gr:last-child{border-bottom:none}
+.go{color:var(--muted)}
+.gn{color:var(--nuevo);font-weight:600}
+
+/* LEGEND */
+.leg{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:18px;padding:11px 14px;background:#fff;border-radius:8px;border:1px solid var(--brd);font-size:.78rem}
+.li{display:flex;align-items:center;gap:5px}
+
+/* PROGRESS */
+.pw{margin:7px 0}
+.pl{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);margin-bottom:3px}
+.pb{height:7px;background:#e8e8e8;border-radius:4px;overflow:hidden}
+.pf{height:100%;border-radius:4px;transition:width .8s ease}
+.fi-g{background:linear-gradient(90deg,var(--ipn),var(--ipn-lt))}
+.fi-gr{background:linear-gradient(90deg,var(--grn),var(--grn-lt))}
+
+/* PRACTICA */
+.pc{background:#fff;border-radius:var(--r);border:1px solid var(--brd);overflow:hidden;box-shadow:var(--sh);transition:box-shadow .2s}
+.pc:hover{box-shadow:var(--sh2)}
+.ph{background:var(--ipn);color:#fff;padding:11px 15px;display:flex;justify-content:space-between;align-items:center}
+.ph h4{font-size:.83rem;font-weight:700}
+.phs{background:rgba(255,255,255,.2);border-radius:20px;padding:2px 9px;font-size:.72rem}
+.pb2{padding:13px 15px}
+.po{font-size:.75rem;color:var(--muted);text-decoration:line-through;margin-bottom:5px}
+.pn{font-size:.85rem;font-weight:600;color:var(--nuevo)}
+.pd{font-size:.78rem;color:#666;margin-top:5px}
+.tr{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.tg{background:#f0f0f0;color:#444;border-radius:20px;padding:3px 10px;font-size:.72rem;font-weight:600}
+.tg.g{background:var(--nuevo-bg);color:var(--nuevo)}
+
+/* BIB */
+.be{display:flex;gap:11px;align-items:flex-start;padding:11px 13px;border-radius:8px;border:1px solid var(--brd);margin-bottom:9px;background:#fff;font-size:.85rem;transition:box-shadow .2s}
+.be:hover{box-shadow:var(--sh)}
+.by{background:var(--ipn);color:#fff;border-radius:6px;padding:2px 7px;font-size:.72rem;font-weight:700;flex-shrink:0;margin-top:2px}
+.bau{font-weight:600}
+.bti{color:var(--muted);font-style:italic;margin-top:2px}
+.bpu{font-size:.75rem;color:#888;margin-top:2px}
+.free{display:inline-block;background:#e6f4ec;color:var(--nuevo);border-radius:4px;padding:1px 5px;font-size:.68rem;font-weight:700;margin-left:5px}
+
+/* JUSTIF LIST */
+.jl{list-style:none}
+.jl li{display:flex;gap:13px;padding:15px;border-bottom:1px solid var(--brd);align-items:flex-start}
+.jl li:last-child{border-bottom:none}
+.jn{width:30px;height:30px;border-radius:50%;background:var(--ipn);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.82rem;flex-shrink:0;margin-top:2px}
+.jc h4{font-size:.92rem;color:var(--ipn);margin-bottom:3px}
+.jc p{font-size:.85rem;color:#444}
+
+/* HIGHLIGHT */
+.hl{background:linear-gradient(135deg,#fff8e1,#fffde7);border:1px solid var(--acc);border-left:4px solid var(--acc);border-radius:0 8px 8px 0;padding:13px 15px;font-size:.85rem;margin:14px 0}
+
+footer{background:var(--ipn-dk);color:rgba(255,255,255,.7);text-align:center;padding:20px;font-size:.78rem;margin-top:40px}
+footer strong{color:#fff}
+
+@media(max-width:640px){
+  .h-top{padding:10px 14px}.h-meta{padding:6px 14px}
+  nav.tabs{padding:0 6px}
+  main{padding:16px 12px}
+  .g2,.g3{grid-template-columns:1fr}
+  .gh,.gr{grid-template-columns:1fr}
+  .hg{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="h-top">
+    <div style="display:flex;gap:10px">
+      <div class="logo">IPN</div>
+      <div class="logo" style="background:var(--grn);color:#fff;font-size:10px">UPII<br>CSA</div>
+    </div>
+    <div class="h-title">
+      <h1>Propuesta de Actualización — Modelos de Prueba de Software</h1>
+      <p>Instituto Politécnico Nacional · UPIICSA · Licenciatura en Ciencias de la Informática · Semestre 5</p>
+    </div>
+  </div>
+  <div class="h-meta">
+    <span class="chip">Plan de Estudio: 2021</span>
+    <span class="chip">Vigente desde: Feb 2023</span>
+    <span class="chip">TEPIC 5.0 · SATCA 4.2</span>
+    <span class="chip">54h totales semestre</span>
+    <span class="chip acc">Propuesta 2026</span>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="tb active" onclick="showTab('resumen')">📋 Resumen</button>
+  <button class="tb" onclick="showTab('diagnostico')">🔍 Diagnóstico</button>
+  <button class="tb" onclick="showTab('contenidos')">📚 Contenidos</button>
+  <button class="tb" onclick="showTab('practicas')">🧪 Prácticas</button>
+  <button class="tb" onclick="showTab('bibliografia')">📖 Bibliografía</button>
+  <button class="tb" onclick="showTab('justificacion')">⚖️ Justificación</button>
+</nav>
+
+<main>
+
+<!-- ══ RESUMEN ══ -->
+<section id="resumen" class="sec active">
+
+  <div class="card">
+    <div class="ch"><div class="ci ci-g">📋</div><div><div class="ct">Propósito Actualizado de la Unidad de Aprendizaje</div><div class="cs">Reemplaza el propósito del Plan 2021</div></div></div>
+    <div style="background:linear-gradient(135deg,#fdf5f7,#fff);border-left:4px solid var(--ipn);border-radius:0 8px 8px 0;padding:15px 18px;font-size:.93rem;line-height:1.7;color:#222">
+      Diseña, implementa y automatiza estrategias de pruebas de software con base en <strong>estándares internacionales vigentes</strong> (ISO/IEC 25010:2023, ISTQB Foundation v4.0), aplicando técnicas funcionales y no funcionales, herramientas de <strong>automatización modernas</strong>, metodologías <strong>Shift-Left</strong> y prácticas de <strong>pruebas continuas en pipelines CI/CD</strong>, incluyendo pruebas en entornos cloud-native, APIs, aplicaciones móviles y sistemas con componentes de IA.
+    </div>
+    <div class="tr" style="margin-top:12px">
+      <span class="tg" style="background:#fdf0f3;color:var(--ipn)">ISO/IEC 25010:2023</span>
+      <span class="tg" style="background:#fdf0f3;color:var(--ipn)">ISTQB v4.0</span>
+      <span class="tg" style="background:#fdf0f3;color:var(--ipn)">Shift-Left Testing</span>
+      <span class="tg" style="background:#fdf0f3;color:var(--ipn)">CI/CD Pipelines</span>
+      <span class="tg" style="background:#fdf0f3;color:var(--ipn)">Playwright / Cypress</span>
+      <span class="tg" style="background:#fdf0f3;color:var(--ipn)">API Testing</span>
+      <span class="tg" style="background:#fdf0f3;color:var(--ipn)">TDD / BDD</span>
+      <span class="tg" style="background:#fdf0f3;color:var(--ipn)">Testing de IA/ML</span>
+    </div>
+  </div>
+
+  <div class="g3" style="margin-bottom:20px">
+    <div class="stat"><div class="sn">3</div><div class="sl">Unidades temáticas<br><small style="color:#aaa">(estructura conservada)</small></div></div>
+    <div class="stat"><div class="sn">54h</div><div class="sl">Carga total semestral<br><small style="color:#aaa">36T + 18P + 16AA (sin cambio)</small></div></div>
+    <div class="stat"><div class="sn" style="color:var(--nuevo)">~45%</div><div class="sl">Contenidos nuevos<br><small style="color:#aaa">o significativamente actualizados</small></div></div>
+    <div class="stat"><div class="sn" style="color:var(--acc)">2023</div><div class="sl">Norma ISO/IEC 25010<br><small style="color:#aaa">reemplaza ISO 9126 (obsoleta 2011)</small></div></div>
+    <div class="stat"><div class="sn">6</div><div class="sl">Herramientas propuestas<br><small style="color:#aaa">Cypress, Playwright, k6, Jest, Postman…</small></div></div>
+    <div class="stat"><div class="sn" style="color:var(--grn)">10+</div><div class="sl">Referencias 2022-2026<br><small style="color:#aaa">vs. textos 2015-2020 vigentes</small></div></div>
+  </div>
+
+  <div class="card">
+    <div class="ch"><div class="ci ci-a">🗺️</div><div><div class="ct">Mapa de Cambios por Unidad</div><div class="cs">Distribución de contenidos nuevos, actualizados y conservados</div></div></div>
+    <div class="leg">
+      <div class="li"><span class="bdg bn">NUEVO</span> Contenido no existente</div>
+      <div class="li"><span class="bdg ba">ACTUALIZAR</span> Requiere modernización</div>
+      <div class="li"><span class="bdg bc">CONSERVAR</span> Vigente y relevante</div>
+    </div>
+    <div style="margin-bottom:14px">
+      <div class="pl"><span>Unidad I — Calidad y Modelos de Prueba</span><span>4 nuevos · 2 actualizan · 2 conservan</span></div>
+      <div class="pb"><div class="pf fi-g" style="width:50%"></div></div>
+    </div>
+    <div style="margin-bottom:14px">
+      <div class="pl"><span>Unidad II — Tipos de Pruebas</span><span>5 nuevos · 3 actualizan · 2 conservan</span></div>
+      <div class="pb"><div class="pf fi-g" style="width:50%"></div></div>
+    </div>
+    <div>
+      <div class="pl"><span>Unidad III — Proceso y Automatización</span><span>6 nuevos · 2 actualizan · 2 conservan</span></div>
+      <div class="pb"><div class="pf fi-g" style="width:60%"></div></div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══ DIAGNÓSTICO ══ -->
+<section id="diagnostico" class="sec">
+
+  <div class="card">
+    <div class="ch"><div class="ci ci-gr">✅</div><div><div class="ct">Fortalezas del Plan 2021 a Conservar</div></div></div>
+    <div class="g2">
+      <div style="display:flex;gap:9px;align-items:flex-start;padding:10px;border:1px solid var(--brd);border-radius:8px;background:#f9f9f9">
+        <span style="font-size:1.2rem">🏗️</span>
+        <div><strong style="font-size:.85rem">Estructura progresiva en 3 unidades</strong><p style="font-size:.78rem;color:#555;margin-top:2px">Calidad → Tipos de prueba → Proceso. Progresión lógica que va de lo conceptual a lo operativo.</p></div>
+      </div>
+      <div style="display:flex;gap:9px;align-items:flex-start;padding:10px;border:1px solid var(--brd);border-radius:8px;background:#f9f9f9">
+        <span style="font-size:1.2rem">📐</span>
+        <div><strong style="font-size:.85rem">Referencia a ISO/IEC/IEEE 29119</strong><p style="font-size:.78rem;color:#555;margin-top:2px">Norma internacional de pruebas de software aún vigente y relevante como referencia base.</p></div>
+      </div>
+      <div style="display:flex;gap:9px;align-items:flex-start;padding:10px;border:1px solid var(--brd);border-radius:8px;background:#f9f9f9">
+        <span style="font-size:1.2rem">🔄</span>
+        <div><strong style="font-size:.85rem">Proyecto integrador por fases</strong><p style="font-size:.78rem;color:#555;margin-top:2px">El enfoque de proyecto real dividido en 3 fases (una por unidad) es una fortaleza didáctica a preservar y ampliar.</p></div>
+      </div>
+      <div style="display:flex;gap:9px;align-items:flex-start;padding:10px;border:1px solid var(--brd);border-radius:8px;background:#f9f9f9">
+        <span style="font-size:1.2rem">🧪</span>
+        <div><strong style="font-size:.85rem">Práctica en laboratorio</strong><p style="font-size:.78rem;color:#555;margin-top:2px">U-II y U-III ya tienen prácticas en laboratorio (18h total). Base sólida para incorporar herramientas modernas.</p></div>
+      </div>
+      <div style="display:flex;gap:9px;align-items:flex-start;padding:10px;border:1px solid var(--brd);border-radius:8px;background:#f9f9f9">
+        <span style="font-size:1.2rem">⚡</span>
+        <div><strong style="font-size:.85rem">Metodologías ágiles en U-I</strong><p style="font-size:.78rem;color:#555;margin-top:2px">Inclusión de ágiles como modelo de prueba es pertinente; requiere profundización con Scrum Testing y Kanban.</p></div>
+      </div>
+      <div style="display:flex;gap:9px;align-items:flex-start;padding:10px;border:1px solid var(--brd);border-radius:8px;background:#f9f9f9">
+        <span style="font-size:1.2rem">🎯</span>
+        <div><strong style="font-size:.85rem">Cobertura de tipos funcionales y no funcionales</strong><p style="font-size:.78rem;color:#555;margin-top:2px">La clasificación base (funcional/no funcional) es correcta y se conserva como eje organizador de U-II.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ch"><div class="ci ci-g">🚨</div><div><div class="ct">Brechas Identificadas vs. Contexto 2024-2026</div><div class="cs">Áreas de obsolescencia o ausencia crítica en el plan vigente</div></div></div>
+    <div class="gh"><span>Área / Tema</span><span>Situación actual Plan 2021</span><span>Nivel</span></div>
+    <div class="gr"><div class="gn">ISO/IEC 25010:2023 (reemplaza ISO 9126)</div><div class="go">Usa ISO/IEC 9126, obsoleta desde 2011 y reemplazada en 2023</div><span class="bdg bk">CRÍTICA</span></div>
+    <div class="gr"><div class="gn">Shift-Left Testing / Pruebas continuas</div><div class="go">Completamente ausente — testing como fase final del SDLC</div><span class="bdg bk">CRÍTICA</span></div>
+    <div class="gr"><div class="gn">CI/CD y automatización en pipelines</div><div class="go">Ausente — no se menciona integración continua ni entrega continua</div><span class="bdg bk">CRÍTICA</span></div>
+    <div class="gr"><div class="gn">ISTQB Foundation Level v4.0 (2023)</div><div class="go">No referenciado — es el estándar de certificación más demandado</div><span class="bdg bk">CRÍTICA</span></div>
+    <div class="gr"><div class="gn">TDD (Test Driven Development) y BDD</div><div class="go">No incluido — estándar en equipos ágiles modernos</div><span class="bdg bn">ALTA</span></div>
+    <div class="gr"><div class="gn">Testing de APIs REST / GraphQL (Postman, RestAssured)</div><div class="go">Completamente ausente — APIs son el backbone de sistemas modernos</div><span class="bdg bn">ALTA</span></div>
+    <div class="gr"><div class="gn">Herramientas modernas: Cypress, Playwright, k6, Jest</div><div class="go">Solo mención genérica de "herramientas de testeo" sin especificar</div><span class="bdg bn">ALTA</span></div>
+    <div class="gr"><div class="gn">Pruebas en aplicaciones móviles (Appium, Espresso)</div><div class="go">Completamente ausente</div><span class="bdg bn">ALTA</span></div>
+    <div class="gr"><div class="gn">Testing de microservicios y arquitecturas cloud-native</div><div class="go">Ausente — ecosistemas distribuidos dominan la industria</div><span class="bdg bn">ALTA</span></div>
+    <div class="gr"><div class="gn">Testing de sistemas con IA/ML</div><div class="go">Completamente ausente — nueva disciplina emergente crítica</div><span class="bdg ba">MEDIA</span></div>
+    <div class="gr"><div class="gn">Contract Testing (Pact) para microservicios</div><div class="go">Ausente</div><span class="bdg ba">MEDIA</span></div>
+    <div class="gr"><div class="gn">Testing de accesibilidad (WCAG 2.2, Axe)</div><div class="go">Ausente — requisito legal en muchos contextos</div><span class="bdg ba">MEDIA</span></div>
+    <div class="gr"><div class="gn">Cobertura de código y métricas de calidad modernas</div><div class="go">No incluido en herramientas de testeo</div><span class="bdg ba">MEDIA</span></div>
+    <div class="gr"><div class="gn">Performance testing moderno (k6, Gatling vs. herramientas legacy)</div><div class="go">Solo "pruebas de rendimiento" sin metodología ni herramientas</div><span class="bdg ba">MEDIA</span></div>
+  </div>
+
+</section>
+
+<!-- ══ CONTENIDOS ══ -->
+<section id="contenidos" class="sec">
+
+  <div class="leg">
+    <div class="li"><span class="bdg bn">NUEVO</span> Tema no existente en Plan 2021</div>
+    <div class="li"><span class="bdg ba">ACTUALIZAR</span> Existente, requiere modernización</div>
+    <div class="li"><span class="bdg bc">CONSERVAR</span> Vigente sin cambios</div>
+  </div>
+
+  <!-- U1 -->
+  <div class="acc">
+    <div class="ah" onclick="toggleAcc(this)">
+      <div class="al">
+        <div class="an">I</div>
+        <div>
+          <div class="at">Calidad y Modelos Actualizados de Prueba de Software</div>
+          <div class="as">Antes: "Calidad para Modelos de prueba" — Se actualiza ISO 9126 → ISO 25010:2023 y se amplía con ISTQB v4.0 y Shift-Left</div>
+        </div>
+      </div>
+      <div class="ar-r"><span class="ahrs">14T · 2P · 4AA</span><span class="aarr">▼</span></div>
+    </div>
+    <div class="ab">
+      <div class="jb"><strong>Justificación:</strong> La ISO/IEC 9126 fue retirada en 2011 y reemplazada por la familia ISO/IEC 25000 (SQuaRE). La versión vigente es <strong>ISO/IEC 25010:2023</strong>, que amplió las características de calidad de 6 a 8 (añadiendo Seguridad y Compatibilidad como características independientes) y actualiza sub-características. El <strong>ISTQB Foundation Level v4.0</strong> (publicado 2023) es el marco de referencia de pruebas más adoptado globalmente, con más de 1.1 millones de certificados emitidos. El paradigma <strong>Shift-Left Testing</strong> es fundamental para entender por qué las pruebas modernas no son una fase final sino una actividad continua desde los requisitos.</div>
+      <div class="cr"><span class="crn">1.1</span><span class="crt">Calidad del software: calidad interna, externa y en uso</span><span class="crb"><span class="bdg bc">CONSERVAR</span></span></div>
+      <div class="cr"><span class="crn">1.2</span><span class="crt">ISO/IEC 25010:2023 (SQuaRE): características y sub-características de calidad actualizadas (8 características)</span><span class="crb"><span class="bdg ba">ACTUALIZAR</span></span></div>
+      <div class="cr"><span class="crn">1.3</span><span class="crt">ISO/IEC/IEEE 29119: estructura, partes y aplicación en proyectos reales</span><span class="crb"><span class="bdg bc">CONSERVAR</span></span></div>
+      <div class="cr"><span class="crn">1.4</span><span class="crt">ISTQB Foundation Level v4.0 (2023): principios de testing, psicología del testing, terminología estándar</span><span class="crb"><span class="bdg bn">NUEVO</span></span></div>
+      <div class="cr"><span class="crn">1.5</span><span class="crt">Shift-Left Testing: integrar pruebas desde requisitos, impacto en costo y calidad (curva de Boehm actualizada)</span><span class="crb"><span class="bdg bn">NUEVO</span></span></div>
+      <div class="cr"><span class="crn">1.6</span><span class="crt">Modelos de prueba: Modelo V, Cascada, Ágil (Scrum Testing / Kanban), y DevOps Testing</span><span class="crb"><span class="bdg ba">ACTUALIZAR</span></span></div>
+      <div class="cr"><span class="crn">1.7</span><span class="crt">Testing en contextos modernos: microservicios, cloud-native, mobile y sistemas con IA</span><span class="crb"><span class="bdg bn">NUEVO</span></span></div>
+      <div class="cr"><span class="crn">1.8</span><span class="crt">Métricas y KPIs de calidad de pruebas: cobertura de código, densidad de defectos, tasa de escape, MTBF</span><span class="crb"><span class="bdg bn">NUEVO</span></span></div>
+      <div class="hg">
+        <div class="hc"><div class="hcn">14</div><div class="hcl">Horas Teoría</div></div>
+        <div class="hc"><div class="hcn">2</div><div class="hcl">Horas Práctica</div></div>
+        <div class="hc"><div class="hcn">4</div><div class="hcl">Horas AA</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- U2 -->
+  <div class="acc">
+    <div class="ah" onclick="toggleAcc(this)">
+      <div class="al">
+        <div class="an">II</div>
+        <div>
+          <div class="at">Tipos de Pruebas de Software: Funcionales, No Funcionales y Especializadas</div>
+          <div class="as">Antes: "Tipos de pruebas" — Se añaden pruebas de API, móvil, accesibilidad y IA/ML; se actualizan técnicas modernas</div>
+        </div>
+      </div>
+      <div class="ar-r"><span class="ahrs">11T · 6P · 4AA</span><span class="aarr">▼</span></div>
+    </div>
+    <div class="ab">
+      <div class="jb"><strong>Justificación:</strong> La clasificación funcional/no funcional del plan 2021 es válida, pero incompleta. Faltan categorías críticas: las <strong>pruebas de API</strong> son indispensables en arquitecturas orientadas a servicios (REST, GraphQL, gRPC); las <strong>pruebas de accesibilidad</strong> son requisito legal bajo WCAG 2.2 y la Ley General para la Inclusión de Personas con Discapacidad en México; las <strong>pruebas de IA/ML</strong> son una disciplina emergente con desafíos únicos (no-determinismo, sesgo, deriva de datos). TDD y BDD son prácticas estándar en equipos ágiles modernos, ausentes completamente en el plan 2021.</div>
+      <div class="cr"><span class="crn">2.1</span><span class="crt">Fundamentos de pruebas de software: propósito, principios ISTQB, terminología estándar</span><span class="crb"><span class="bdg ba">ACTUALIZAR</span></span></div>
+      <div class="cr"><span class="crn">2.2</span><span class="crt">Pruebas funcionales: caja negra, caja blanca, caja gris — técnicas y casos de uso</span><span class="crb"><span class="bdg bc">CONSERVAR</span></span></div>
+      <div class="cr"><span class="crn">2.3</span><span class="crt">Pruebas funcionales específicas: unitarias (TDD), integración, humo, regresión, aceptación (UAT, alfa, beta)</span><span class="crb"><span class="bdg ba">ACTUALIZAR</span></span></div>
+      <div class="cr"><span class="crn">2.4</span><span class="crt">TDD (Test Driven Development) y BDD (Behavior Driven Development): ciclo red-green-refactor, Gherkin, Cucumber</span><span class="crb"><span class="bdg bn">NUEVO</span></span></div>
+      <div class="cr"><span class="crn">2.5</span><span class="crt">Pruebas no funcionales: rendimiento, carga, estrés, resistencia, recuperación — metodología actualizada</span><span class="crb"><span class="bdg bc">CONSERVAR</span></span></div>
+      <div class="cr"><span class="crn">2.6</span><span class="crt">Pruebas de seguridad: SAST, DAST, IAST, fuzzing, pruebas de penetración básica en aplicaciones</span><span class="crb"><span class="bdg ba">ACTUALIZAR</span></span></div>
+      <div class="cr"><span class="crn">2.7</span><span class="crt">Pruebas de API: REST, GraphQL, gRPC — validación de contratos, autenticación, códigos de respuesta, payload</span><span class="crb"><span class="bdg bn">NUEVO</span></span></div>
+      <div class="cr"><span class="crn">2.8</span><span class="crt">Pruebas de aplicaciones móviles: nativas, híbridas y web móvil — estrategias, dispositivos reales vs. emuladores</span><span class="crb"><span class="bdg bn">NUEVO</span></span></div>
+      <div class="cr"><span class="crn">2.9</span><span class="crt">Pruebas de accesibilidad: WCAG 2.2, herramientas (Axe, Lighthouse), criterios de cumplimiento nivel AA</span><span class="crb"><span class="bdg bn">NUEVO</span></span></div>
+      <div class="cr"><span class="crn">2.10</span><span class="crt">Testing de sistemas con IA/ML: pruebas de modelo, sesgo algorítmico, deriva de datos, pruebas de robustez adversarial</span><span class="crb"><span class="bdg bn">NUEVO</span></span></div>
+      <div class="hg">
+        <div class="hc"><div class="hcn">11</div><div class="hcl">Horas Teoría</div></div>
+        <div class="hc"><div class="hcn">6</div><div class="hcl">Horas Práctica</div></div>
+        <div class="hc"><div class="hcn">4</div><div class="hcl">Horas AA</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- U3 -->
+  <div class="acc">
+    <div class="ah" onclick="toggleAcc(this)">
+      <div class="al">
+        <div class="an">III</div>
+        <div>
+          <div class="at">Proceso, Automatización y Herramientas Modernas de Pruebas</div>
+          <div class="as">Antes: "Proceso de pruebas" — Mayor transformación: se incorpora CI/CD, herramientas actuales y Contract Testing</div>
+        </div>
+      </div>
+      <div class="ar-r"><span class="ahrs">11T · 10P · 8AA</span><span class="aarr">▼</span></div>
+    </div>
+    <div class="ab">
+      <div class="jb"><strong>Justificación:</strong> Esta es la unidad con mayor brecha respecto al mercado actual. El plan 2021 menciona "herramientas de testeo" y "prueba manual o automatizada" de forma genérica sin especificar tecnologías. En 2026, el ecosistema de herramientas ha evolucionado radicalmente: <strong>Cypress y Playwright</strong> reemplazaron a Selenium como estándar de automatización web; <strong>k6 y Gatling</strong> reemplazaron a JMeter en performance testing moderno; <strong>Jest y Vitest</strong> dominan en ecosistemas JavaScript. El concepto de <strong>pruebas continuas en pipelines CI/CD</strong> (GitHub Actions, GitLab CI) es habilidad mandatoria. El <strong>Contract Testing</strong> con Pact resuelve el problema de coordinación en microservicios, ausente completamente en el plan actual.</div>
+      <div class="cr"><span class="crn">3.1</span><span class="crt">Proceso genérico de pruebas: planeación, diseño, implementación, ejecución, cierre (ISO/IEC 29119-2)</span><span class="crb"><span class="bdg bc">CONSERVAR</span></span></div>
+      <div class="cr"><span class="crn">3.2</span><span class="crt">Plan de pruebas: estructura, criterios de entrada/salida, estrategia, estimación de esfuerzo</span><span class="crb"><span class="bdg bc">CONSERVAR</span></span></div>
+      <div class="cr"><span class="crn">3.3</span><span class="crt">Diseño de casos de prueba: partición de equivalencias, análisis de valores límite, tablas de decisión, transición de estados</span><span class="crb"><span class="bdg ba">ACTUALIZAR</span></span></div>
+      <div class="cr"><span class="crn">3.4</span><span class="crt">Automatización de pruebas: cuándo automatizar, pirámide de pruebas (Mike Cohn), ROI de automatización</span><span class="crb"><span class="bdg ba">ACTUALIZAR</span></span></div>
+      <div class="cr"><span class="crn">3.5</span><span class="crt">Herramientas modernas de automatización UI: Playwright, Cypress — arquitectura, selectores, aserciones, CI integration</span><span class="crb"><span class="bdg bn">NUEVO</span></span></div>
+      <div class="cr"><span class="crn">3.6</span><span class="crt">Frameworks de pruebas unitarias: Jest / Vitest (JS/TS), JUnit 5 (Java), pytest (Python) — mocks, stubs, spies</span><span class="crb"><span class="bdg bn">NUEVO</span></span></div>
+      <div class="cr"><span class="crn">3.7</span><span class="crt">Testing de APIs con herramientas: Postman/Newman, REST-Assured, colecciones automatizadas, variables de entorno</span><span class="crb"><span class="bdg bn">NUEVO</span></span></div>
+      <div class="cr"><span class="crn">3.8</span><span class="crt">Performance testing moderno: k6, Gatling — scripting de escenarios, umbrales, análisis de resultados</span><span class="crb"><span class="bdg bn">NUEVO</span></span></div>
+      <div class="cr"><span class="crn">3.9</span><span class="crt">Pruebas continuas en CI/CD: GitHub Actions / GitLab CI — pipelines de prueba, reportes automáticos, fail-fast</span><span class="crb"><span class="bdg bn">NUEVO</span></span></div>
+      <div class="cr"><span class="crn">3.10</span><span class="crt">Contract Testing con Pact: pruebas de contratos entre consumidor y proveedor en arquitecturas de microservicios</span><span class="crb"><span class="bdg bn">NUEVO</span></span></div>
+      <div class="cr"><span class="crn">3.11</span><span class="crt">Gestión de defectos y trazabilidad: ciclo de vida del bug, severidad vs. prioridad, herramientas (Jira, TestRail)</span><span class="crb"><span class="bdg ba">ACTUALIZAR</span></span></div>
+      <div class="hg">
+        <div class="hc"><div class="hcn">11</div><div class="hcl">Horas Teoría</div></div>
+        <div class="hc"><div class="hcn">10</div><div class="hcl">Horas Práctica</div></div>
+        <div class="hc"><div class="hcn">8</div><div class="hcl">Horas AA</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hl">
+    <strong>Distribución total de horas:</strong> 36h Teoría + 18h Práctica + 16h AA = <strong>54h totales sin cambio en carga semestral</strong>. La estructura académica se conserva íntegramente. El cambio se concentra en la actualización de contenidos y herramientas, no en la carga horaria.
+  </div>
+
+</section>
+
+<!-- ══ PRÁCTICAS ══ -->
+<section id="practicas" class="sec">
+
+  <div class="card" style="margin-bottom:20px">
+    <div class="ch"><div class="ci ci-gr">🧪</div><div><div class="ct">Relación de Prácticas Propuestas</div><div class="cs">Evolución de prácticas genéricas a laboratorios con herramientas profesionales actuales</div></div></div>
+    <div class="hl">
+      <strong>Cambio metodológico clave:</strong> Se migra de "técnica de caja negra/blanca" como nombre de práctica a <strong>laboratorios con herramientas específicas de la industria</strong>. El proyecto integrador se mantiene en 3 fases (una por unidad), pero el producto final es un <strong>suite completo de pruebas automatizadas</strong> sobre una aplicación web real, con reporte de cobertura y pipeline CI/CD funcional.
+    </div>
+  </div>
+
+  <div class="g2">
+
+    <div class="pc">
+      <div class="ph"><h4>Práctica U-I — Modelos y Calidad</h4><span class="phs">2h · Aula/Lab</span></div>
+      <div class="pb2">
+        <div class="po">Modelos de Prueba de software (Plan 2021 — genérica)</div>
+        <div class="pn">Auditoría de calidad con ISO/IEC 25010:2023 + mapa de Shift-Left</div>
+        <div class="pd">El alumno toma una aplicación web pública o del proyecto integrador, evalúa sus características de calidad contra las 8 características de ISO/IEC 25010:2023, documenta hallazgos y elabora un mapa de dónde deben incorporarse pruebas en el SDLC (Shift-Left). Entrega: reporte de auditoría + mapa visual de testing.</div>
+        <div class="tr"><span class="tg">ISO/IEC 25010:2023</span><span class="tg">Shift-Left</span><span class="tg g">Análisis crítico</span></div>
+      </div>
+    </div>
+
+    <div class="pc">
+      <div class="ph"><h4>Práctica U-II.1 — Pruebas No Funcionales</h4><span class="phs">2h · Laboratorio</span></div>
+      <div class="pb2">
+        <div class="po">Pruebas no funcionales-rendimiento: Técnica de estrés (Plan 2021)</div>
+        <div class="pn">Performance testing con k6: pruebas de carga, estrés y umbrales</div>
+        <div class="pd">El alumno escribe scripts de k6 para ejecutar pruebas de carga (Virtual Users), estrés (ramp-up agresivo) y resistencia (soak test) sobre una API o aplicación web. Define umbrales de aceptación (p95 &lt; 500ms, error rate &lt; 1%) e interpreta los resultados en tiempo real.</div>
+        <div class="tr"><span class="tg">k6</span><span class="tg">Load Testing</span><span class="tg g">Lab Virtual</span></div>
+      </div>
+    </div>
+
+    <div class="pc">
+      <div class="ph"><h4>Práctica U-II.2 — Pruebas Unitarias y TDD</h4><span class="phs">2h · Laboratorio</span></div>
+      <div class="pb2">
+        <div class="po">Pruebas funcionales-unitarias: Técnica de Caja negra/Caja blanca (Plan 2021)</div>
+        <div class="pn">TDD con Jest: ciclo red-green-refactor y cobertura de código</div>
+        <div class="pd">Aplicando el ciclo TDD, el alumno escribe primero los tests (Jest/pytest), verifica que fallan (red), implementa el código mínimo para pasarlos (green) y refactoriza. Mide y analiza la cobertura de código con Istanbul/Coverage.py. Objetivo: alcanzar ≥80% de cobertura en el módulo asignado.</div>
+        <div class="tr"><span class="tg">Jest / pytest</span><span class="tg">TDD</span><span class="tg">Code Coverage</span><span class="tg g">Lab</span></div>
+      </div>
+    </div>
+
+    <div class="pc">
+      <div class="ph"><h4>Práctica U-II.3 — Pruebas de API</h4><span class="phs">1h · Laboratorio</span></div>
+      <div class="pb2">
+        <div class="po">Pruebas funcionales-humo (Plan 2021)</div>
+        <div class="pn">Testing de API REST con Postman: colecciones, variables y automatización con Newman</div>
+        <div class="pd">El alumno diseña una colección completa de Postman para una API REST pública o del proyecto integrador: pruebas de smoke, validación de esquemas JSON, manejo de autenticación (Bearer token), y ejecución automatizada con Newman desde línea de comandos. Entrega: colección exportada + reporte HTML de Newman.</div>
+        <div class="tr"><span class="tg">Postman</span><span class="tg">Newman</span><span class="tg">API REST</span><span class="tg g">Lab</span></div>
+      </div>
+    </div>
+
+    <div class="pc">
+      <div class="ph"><h4>Práctica U-II.4 — Pruebas de Regresión</h4><span class="phs">1h · Laboratorio</span></div>
+      <div class="pb2">
+        <div class="po">Pruebas funcionales-regresión (Plan 2021 — manual)</div>
+        <div class="pn">Suite de regresión automatizada con Playwright + reporte de resultados</div>
+        <div class="pd">El alumno configura Playwright en un proyecto web, escribe una suite de pruebas E2E que cubre los flujos críticos (smoke + regresión), ejecuta la suite en modo headless y analiza el reporte HTML de Playwright que incluye screenshots, videos y trazas de fallos.</div>
+        <div class="tr"><span class="tg">Playwright</span><span class="tg">E2E Testing</span><span class="tg">Regresión</span><span class="tg g">Lab</span></div>
+      </div>
+    </div>
+
+    <div class="pc" style="grid-column:1/-1">
+      <div class="ph"><h4>Prácticas U-III — Proceso y CI/CD (Proyecto Integrador Fase III)</h4><span class="phs">10h · Laboratorio</span></div>
+      <div class="pb2">
+        <div class="po">Integración descendente/ascendente + Pruebas alfa/beta (Plan 2021)</div>
+        <div class="pn">Pipeline CI/CD completo con GitHub Actions: pruebas unitarias + integración + E2E + reporte de cobertura</div>
+        <div class="pd">En equipos, los alumnos integran todas las pruebas del proyecto integrador en un pipeline de GitHub Actions: (1) pruebas unitarias con Jest/pytest + reporte de cobertura mínima 80%, (2) pruebas de integración de API con Newman, (3) pruebas E2E con Playwright en modo headless, (4) reporte consolidado de resultados. El pipeline falla si alguna capa de pruebas no pasa. Entrega: repositorio con pipeline funcional + reporte ejecutivo de calidad del software.</div>
+        <div class="tr"><span class="tg">GitHub Actions</span><span class="tg">CI/CD Pipeline</span><span class="tg">Jest</span><span class="tg">Playwright</span><span class="tg">Newman</span><span class="tg">Code Coverage</span><span class="tg g">Proyecto Integrador</span></div>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ══ BIBLIOGRAFÍA ══ -->
+<section id="bibliografia" class="sec">
+
+  <div class="card">
+    <div class="ch"><div class="ci ci-b">📗</div><div><div class="ct">Bibliografía Básica Propuesta</div><div class="cs">Reemplaza y complementa los textos del Plan 2021</div></div></div>
+
+    <div class="be">
+      <span class="by">2023</span>
+      <div><div class="bau">ISO/IEC 25010:2023</div><div class="bti">Systems and software engineering — Systems and software Quality Requirements and Evaluation (SQuaRE) — Product quality model</div><div class="bpu">International Organization for Standardization (acceso institucional) <span class="free">CLAVE</span></div></div>
+    </div>
+    <div class="be">
+      <span class="by">2023</span>
+      <div><div class="bau">ISTQB (International Software Testing Qualifications Board)</div><div class="bti">Certified Tester Foundation Level Syllabus v4.0</div><div class="bpu">istqb.org — Descarga gratuita <span class="free">LIBRE</span></div></div>
+    </div>
+    <div class="be">
+      <span class="by">2022</span>
+      <div><div class="bau">Crispin, L. & Gregory, J.</div><div class="bti">Agile Testing Condensed: A Brief Introduction — Edición actualizada</div><div class="bpu">Leanpub, EE.UU. ISBN: 9781999220518 <em style="color:#888;font-size:.78rem">(conservar del plan vigente, actualizar edición)</em></div></div>
+    </div>
+    <div class="be">
+      <span class="by">2022</span>
+      <div><div class="bau">Osherove, R.</div><div class="bti">The Art of Unit Testing, 3rd Edition (con ejemplos en JavaScript)</div><div class="bpu">Manning Publications, EE.UU. ISBN: 978-1617297489</div></div>
+    </div>
+    <div class="be">
+      <span class="by">2021</span>
+      <div><div class="bau">Percival, H. & Gregory, B.</div><div class="bti">Architecture Patterns with Python — Capítulos de Testing y TDD</div><div class="bpu">O'Reilly Media <span class="free">LIBRE online</span></div></div>
+    </div>
+    <div class="be">
+      <span class="by">2019</span>
+      <div><div class="bau">Sommerville, I.</div><div class="bti">Ingeniería de software, 10ª ed.</div><div class="bpu">Pearson México ISBN: 9781456287726 <em style="color:#888;font-size:.78rem">(conservar del plan vigente)</em></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ch"><div class="ci ci-b">📘</div><div><div class="ct">Bibliografía Complementaria</div></div></div>
+
+    <div class="be">
+      <span class="by">2024</span>
+      <div><div class="bau">Google Testing Blog / Google Engineering Practices</div><div class="bti">Test Engineering — Google's approach to software testing at scale</div><div class="bpu">google.github.io/eng-practices <span class="free">LIBRE</span></div></div>
+    </div>
+    <div class="be">
+      <span class="by">2023</span>
+      <div><div class="bau">OWASP Foundation</div><div class="bti">OWASP Testing Guide v4.2 — Web Application Testing</div><div class="bpu">owasp.org <span class="free">LIBRE</span></div></div>
+    </div>
+    <div class="be">
+      <span class="by">2023</span>
+      <div><div class="bau">Playwright Team (Microsoft)</div><div class="bti">Playwright Documentation — Best Practices for E2E Testing</div><div class="bpu">playwright.dev <span class="free">LIBRE</span></div></div>
+    </div>
+    <div class="be">
+      <span class="by">2022</span>
+      <div><div class="bau">Kim, G., Humble, J. & Willis, J.</div><div class="bti">The DevOps Handbook, 2nd Edition — Capítulos de Testing Continuo</div><div class="bpu">IT Revolution Press, EE.UU. ISBN: 978-1950508402</div></div>
+    </div>
+    <div class="be">
+      <span class="by">2022</span>
+      <div><div class="bau">Winters, T., Manshreck, T. & Wright, H.</div><div class="bti">Software Engineering at Google — Capítulos de Unit Testing, Testing at Scale</div><div class="bpu">O'Reilly Media <span class="free">LIBRE online</span></div></div>
+    </div>
+    <div class="be">
+      <span class="by">2021</span>
+      <div><div class="bau">Richardson, C.</div><div class="bti">Microservices Patterns — Capítulos de Testing Strategies</div><div class="bpu">Manning Publications ISBN: 978-1617294549</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ch"><div class="ci ci-gr">💻</div><div><div class="ct">Herramientas y Plataformas de Práctica</div><div class="cs">Ecosistema de herramientas propuesto para laboratorios</div></div></div>
+    <div class="g2">
+      <div style="padding:11px;border:1px solid var(--brd);border-radius:8px">
+        <strong style="font-size:.85rem;color:var(--grn)">Playwright</strong>
+        <p style="font-size:.78rem;color:#555;margin-top:3px">Framework de automatización web de Microsoft. Soporta Chromium, Firefox y WebKit. Estándar 2024 para pruebas E2E. Reemplaza a Selenium en proyectos modernos.</p><span class="free" style="margin-top:3px;display:inline-block">LIBRE</span>
+      </div>
+      <div style="padding:11px;border:1px solid var(--brd);border-radius:8px">
+        <strong style="font-size:.85rem;color:var(--grn)">Jest / Vitest</strong>
+        <p style="font-size:.78rem;color:#555;margin-top:3px">Frameworks de pruebas unitarias para JavaScript/TypeScript. Jest es el más adoptado; Vitest es su sucesor orientado a Vite. Ambos incluyen cobertura de código integrada.</p><span class="free" style="margin-top:3px;display:inline-block">LIBRE</span>
+      </div>
+      <div style="padding:11px;border:1px solid var(--brd);border-radius:8px">
+        <strong style="font-size:.85rem;color:var(--grn)">Postman / Newman</strong>
+        <p style="font-size:.78rem;color:#555;margin-top:3px">Postman para diseño y ejecución manual de API tests; Newman para ejecución en CLI/CI. Plan gratuito suficiente para el curso.</p><span class="free" style="margin-top:3px;display:inline-block">LIBRE (básico)</span>
+      </div>
+      <div style="padding:11px;border:1px solid var(--brd);border-radius:8px">
+        <strong style="font-size:.85rem;color:var(--grn)">k6</strong>
+        <p style="font-size:.78rem;color:#555;margin-top:3px">Performance testing moderno con scripts en JavaScript. Open source, con salida en CLI y métricas detalladas. Usado por Grafana, Netflix y Twitter.</p><span class="free" style="margin-top:3px;display:inline-block">LIBRE</span>
+      </div>
+      <div style="padding:11px;border:1px solid var(--brd);border-radius:8px">
+        <strong style="font-size:.85rem;color:var(--grn)">GitHub Actions</strong>
+        <p style="font-size:.78rem;color:#555;margin-top:3px">Plataforma CI/CD integrada en GitHub. Gratuita para repositorios públicos y con cuota mensual generosa para privados. Pipelines YAML declarativos.</p><span class="free" style="margin-top:3px;display:inline-block">LIBRE (público)</span>
+      </div>
+      <div style="padding:11px;border:1px solid var(--brd);border-radius:8px">
+        <strong style="font-size:.85rem;color:var(--grn)">Axe / Lighthouse</strong>
+        <p style="font-size:.78rem;color:#555;margin-top:3px">Herramientas de accesibilidad. Axe como extensión de navegador y biblioteca. Lighthouse integrado en Chrome DevTools para auditorías automatizadas de accesibilidad, SEO y rendimiento.</p><span class="free" style="margin-top:3px;display:inline-block">LIBRE</span>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══ JUSTIFICACIÓN ══ -->
+<section id="justificacion" class="sec">
+
+  <div class="card">
+    <div class="ch"><div class="ci ci-g">⚖️</div><div><div class="ct">Justificación General de la Propuesta</div><div class="cs">6 argumentos que sustentan la actualización del Plan 2021</div></div></div>
+    <ul class="jl">
+      <li>
+        <div class="jn">1</div>
+        <div class="jc">
+          <h4>Obsolescencia de ISO/IEC 9126 — Norma retirada hace 15 años</h4>
+          <p>La ISO/IEC 9126, referenciada explícitamente en el Plan 2021 (tema 1.1.3), fue <strong>retirada oficialmente en 2011</strong> y reemplazada por la familia ISO/IEC 25000 (SQuaRE). La versión más reciente, <strong>ISO/IEC 25010:2023</strong>, amplió el modelo de calidad de 6 a 8 características e introdujo nuevas sub-características para entornos cloud, IA y sistemas de sistemas. Enseñar una norma retirada hace 15 años constituye una inconsistencia académica que debe corregirse urgentemente.</p>
+        </div>
+      </li>
+      <li>
+        <div class="jn">2</div>
+        <div class="jc">
+          <h4>ISTQB como estándar global de certificación en pruebas</h4>
+          <p>El <strong>ISTQB Foundation Level v4.0 (2023)</strong> es el esquema de certificación de pruebas de software más reconocido mundialmente con más de 1.1 millones de certificados emitidos en 125 países. Las empresas contratantes en México (Softtek, Wizeline, BBVA, Banorte, entre otras) lo solicitan como requisito o preferencia en perfiles de QA Engineer y Software Tester. Su ausencia total en el Plan 2021 representa una desventaja competitiva directa para los egresados frente a candidatos con esta certificación.</p>
+        </div>
+      </li>
+      <li>
+        <div class="jn">3</div>
+        <div class="jc">
+          <h4>Shift-Left Testing como paradigma dominante en la industria</h4>
+          <p>El modelo donde las pruebas ocurren al final del SDLC (implícito en el Plan 2021) fue superado. El paradigma <strong>Shift-Left Testing</strong> integra las pruebas desde la fase de requisitos, reduciendo el costo de corrección de defectos hasta 100x (curva de Boehm). En equipos DevOps, los desarrolladores son responsables de sus propias pruebas unitarias y de integración. Un egresado que no entienda este cambio de paradigma llegará al trabajo asumiendo que "testing" es lo que ocurre al final, lo que lo colocará en conflicto con las prácticas del equipo desde el primer día.</p>
+        </div>
+      </li>
+      <li>
+        <div class="jn">4</div>
+        <div class="jc">
+          <h4>Herramientas obsoletas vs. ecosistema real de la industria 2024-2026</h4>
+          <p>El Plan 2021 menciona "herramientas de testeo" de forma genérica sin nombrar ninguna. En la realidad: <strong>Selenium</strong> (la herramienta más citada en cursos desactualizados) ha sido desplazado por <strong>Playwright</strong> y <strong>Cypress</strong> como estándares de facto en automatización E2E (State of JS Survey 2023). <strong>k6</strong> reemplazó a JMeter en equipos modernos de performance testing. <strong>Jest/Vitest</strong> son omnipresentes en proyectos JavaScript. Enseñar testing sin herramientas concretas equivale a enseñar programación sin lenguaje.</p>
+        </div>
+      </li>
+      <li>
+        <div class="jn">5</div>
+        <div class="jc">
+          <h4>CI/CD y pruebas continuas como competencia mandatoria en perfiles de egreso</h4>
+          <p>Según el reporte <em>State of DevOps 2023</em> (Google/DORA), el <strong>94% de las organizaciones de alto desempeño</strong> utilizan pipelines CI/CD con pruebas automatizadas integradas. Las ofertas de trabajo para perfiles de QA Engineer, Software Developer y DevOps Engineer en México incluyen "GitHub Actions", "Jenkins" o "GitLab CI" como habilidades requeridas. Un egresado que no sepa integrar sus pruebas en un pipeline no puede participar en el flujo de trabajo estándar de la mayoría de los equipos de desarrollo actuales.</p>
+        </div>
+      </li>
+      <li>
+        <div class="jn">6</div>
+        <div class="jc">
+          <h4>Conservación de la estructura académica para viabilidad de aprobación</h4>
+          <p>La propuesta mantiene íntegramente las <strong>3 unidades temáticas</strong>, la <strong>carga horaria total de 54h</strong> (36T + 18P + 16AA), el enfoque de <strong>proyecto integrador por fases</strong> y el sistema de evaluación por portafolio. Esto facilita la aprobación ante el Consejo Técnico Consultivo Escolar sin requerir un rediseño curricular completo del Plan 2021. Los cambios se concentran en <em>actualizar los temas dentro de cada unidad</em>, no en su estructura formal. El perfil docente requerido se mantiene (mínimo 3 años en ingeniería de pruebas) añadiendo experiencia deseable en herramientas modernas o certificación ISTQB.</p>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="ch"><div class="ci ci-a">📝</div><div><div class="ct">Perfil Docente Actualizado</div></div></div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Dimensión</th><th>Plan 2021 (vigente)</th><th>Propuesta 2026 (adición)</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Experiencia</strong></td><td>Mínimo 3 años en ingeniería de pruebas funcionales y no funcionales; 3 años en docencia</td><td>+ Experiencia demostrable en automatización (Playwright, Jest o equivalente) y/o en CI/CD; o certificación ISTQB vigente</td></tr>
+          <tr><td><strong>Conocimientos técnicos</strong></td><td>Pruebas funcionales/no funcionales, métricas de calidad, herramientas de automatización, herramientas de gestión de pruebas</td><td>+ ISO/IEC 25010:2023, ISTQB v4.0, TDD/BDD, Shift-Left, pipelines CI/CD, API testing</td></tr>
+          <tr><td><strong>Habilidades</strong></td><td>Creatividad, liderazgo, comunicación, manejo de grupos, uso de TIC</td><td>+ Conducción de laboratorios de automatización; gestión de repositorios Git con pipelines activos</td></tr>
+          <tr><td><strong>Certificaciones recomendadas</strong></td><td>No especificadas</td><td>ISTQB CTFL v4.0, ISTQB CT-TAE (Test Automation Engineer), o equivalente de AWS/Azure DevOps</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card" style="background:linear-gradient(135deg,var(--ipn-dk),var(--ipn));color:#fff;border:none">
+    <div style="font-size:.78rem;opacity:.7;margin-bottom:7px;text-transform:uppercase;letter-spacing:.1em">Elaboró la propuesta</div>
+    <div style="font-size:.98rem;font-weight:700;margin-bottom:3px">[Nombre del docente proponente]</div>
+    <div style="font-size:.85rem;opacity:.85">Academia de Informática — UPIICSA, IPN</div>
+    <div style="margin-top:14px;font-size:.78rem;opacity:.65">Agosto 2026 · Para revisión: Consejo Técnico Consultivo Escolar / Subdirección Académica</div>
+  </div>
+
+</section>
+</main>
+
+<footer>
+  <strong>Instituto Politécnico Nacional · UPIICSA</strong><br>
+  Propuesta de Actualización — Modelos de Prueba de Software · Plan 2021 · Semestre 5<br>
+  <span style="opacity:.5;font-size:.72rem">Documento generado en agosto 2026</span>
+</footer>
+
+<script>
+function showTab(id){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tb').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.currentTarget.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function toggleAcc(h){
+  const b=h.nextElementSibling, open=h.classList.contains('open');
+  document.querySelectorAll('.ah').forEach(x=>x.classList.remove('open'));
+  document.querySelectorAll('.ab').forEach(x=>x.classList.remove('open'));
+  if(!open){h.classList.add('open');b.classList.add('open');}
+}
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.querySelectorAll('.pf').forEach(f=>{const w=f.style.width;f.style.width='0%';setTimeout(()=>{f.style.width=w;},100)});
+      obs.unobserve(e.target);
+    }
+  });
+},{threshold:.3});
+document.querySelectorAll('.card').forEach(c=>obs.observe(c));
+</script>
+</body>
+</html>
