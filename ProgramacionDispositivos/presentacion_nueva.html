@@ -1,0 +1,2545 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Android con Jetpack Compose</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--card:#21262d;--border:#30363d;
+--kotlin:#a371f7;--compose:#58a6ff;--green:#3fb950;--yellow:#e3b341;
+--red:#f85149;--teal:#39d353;--text:#e6edf3;--muted:#8b949e;--dim:#6e7681;
+--meta-bg:#1c1500;--ex-bg:#0b1f0b;}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);
+font-family:'Segoe UI',system-ui,sans-serif}
+#bar{position:fixed;top:0;left:0;height:3px;
+background:linear-gradient(90deg,var(--kotlin),var(--compose));
+transition:width .3s ease;z-index:999}
+#deck{height:calc(100vh - 56px);overflow:hidden;position:relative}
+.sl{position:absolute;inset:0;opacity:0;pointer-events:none;
+transform:translateX(40px);transition:opacity .3s,transform .3s;
+display:flex;flex-direction:column;overflow:hidden}
+.sl.on{opacity:1;pointer-events:all;transform:none}
+.sl.out{opacity:0;transform:translateX(-40px)}
+.hd{padding:14px 40px;border-bottom:1px solid var(--border);
+display:flex;align-items:center;gap:12px;flex-shrink:0;
+background:rgba(255,255,255,.02)}
+.mod{font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px;letter-spacing:.6px}
+.m0{background:#a371f7;color:#fff}.m1{background:#a371f7;color:#fff}
+.m2{background:#58a6ff;color:#fff}.m3{background:#e8731a;color:#fff}
+.m4{background:#1a7fe8;color:#fff}.m5{background:#2da44e;color:#fff}
+.m6{background:#9333ea;color:#fff}.m7{background:#b8860b;color:#000}
+.m8{background:#f85149;color:#fff}
+.m9{background:#00897B;color:#fff}.m10{background:#1565C0;color:#fff}.m11{background:#6A1B9A;color:#fff}
+.hd h2{font-size:20px;font-weight:600}
+.bd{flex:1;overflow-y:auto;padding:28px 48px;display:flex;flex-direction:column;gap:18px}
+.bd::-webkit-scrollbar{width:4px}
+.bd::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.cols3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px}
+.card h3{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;
+letter-spacing:.8px;margin-bottom:12px}
+.meta{background:var(--meta-bg);border-left:4px solid var(--yellow);
+border-radius:0 8px 8px 0;padding:14px 18px}
+.meta .lbl{font-size:11px;font-weight:700;color:var(--yellow);
+text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.meta p{font-size:16px;line-height:1.7;color:#d2a8ff}
+.ex{background:var(--ex-bg);border-left:4px solid var(--green);
+border-radius:0 8px 8px 0;padding:14px 18px}
+.ex .lbl{font-size:11px;font-weight:700;color:var(--green);
+text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.ex p{font-size:16px;line-height:1.7;color:#adf3b8}
+.concept{background:rgba(88,166,255,.07);border:1px solid rgba(88,166,255,.3);
+border-radius:8px;padding:12px 16px}
+.concept .clbl{font-size:11px;font-weight:700;color:var(--compose);
+text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.concept p{font-size:15.5px;line-height:1.65;color:var(--text)}
+pre{background:#010409;border:1px solid var(--border);border-radius:8px;
+padding:16px 18px;font-size:15px;line-height:1.85;overflow-x:auto;
+font-family:'Cascadia Code','Fira Code',Consolas,monospace}
+.kw{color:#ff7b72}.fn{color:#d2a8ff}.cl{color:#79c0ff}
+.st{color:#a5d6ff}.cm{color:#8b949e;font-style:italic}
+.an{color:#ffa657}.num{color:#79c0ff}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th{background:var(--card);padding:10px 14px;text-align:left;
+border-bottom:2px solid var(--border);color:var(--muted);
+font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+td{padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+td:first-child{color:var(--red);font-family:monospace;font-size:14px}
+td:last-child{color:var(--green);font-family:monospace;font-size:14px}
+tr:hover td{background:rgba(255,255,255,.02)}
+td.txt{color:var(--text);font-family:inherit;font-size:15px}
+ul.li{list-style:none;display:flex;flex-direction:column;gap:10px}
+ul.li li{display:flex;gap:10px;font-size:16px;line-height:1.65;color:var(--muted)}
+ul.li li::before{content:'▸';color:var(--kotlin);flex-shrink:0;margin-top:2px}
+.cmp{border-top:3px solid transparent;padding-top:10px}
+.cmp-bad{border-top-color:var(--red)}.cmp-good{border-top-color:var(--green)}
+.cmp .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+.cmp-bad .tag{color:var(--red)}.cmp-good .tag{color:var(--green)}
+.layers{display:flex;flex-direction:column;gap:4px;max-width:560px}
+.layer{padding:12px 24px;border-radius:7px;text-align:center;font-size:15px;font-weight:600}
+.layer .sub{font-size:12px;font-weight:400;opacity:.8;margin-top:3px}
+.arr{text-align:center;color:var(--dim);font-size:18px;line-height:1.2}
+.flow{display:flex;flex-direction:column;align-items:center;gap:4px}
+.fbox{padding:11px 32px;border-radius:8px;font-size:14px;font-weight:600;text-align:center}
+.farr{color:var(--dim);font-size:13px}
+.hero{flex:1;display:flex;flex-direction:column;justify-content:center;
+align-items:center;text-align:center;gap:18px;
+background:linear-gradient(135deg,#0d1117 0%,#1c1040 55%,#0d1117 100%)}
+.htitle{font-size:46px;font-weight:900;line-height:1.1;
+background:linear-gradient(135deg,#e6edf3,#a371f7);
+-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hsub{font-size:17px;color:var(--muted);max-width:580px;line-height:1.6}
+.hbadges{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:6px}
+.hb{background:var(--card);border:1px solid var(--border);
+padding:6px 18px;border-radius:20px;font-size:13px;font-weight:600}
+#nav{height:56px;border-top:1px solid var(--border);
+background:rgba(13,17,23,.96);backdrop-filter:blur(12px);
+display:flex;align-items:center;justify-content:space-between;
+padding:0 28px;position:fixed;bottom:0;left:0;right:0;z-index:998}
+.btn{background:var(--card);border:1px solid var(--border);
+color:var(--text);padding:7px 22px;border-radius:6px;cursor:pointer;
+font-size:13px;font-weight:600;transition:border-color .15s}
+.btn:hover{border-color:var(--compose)}.btn:disabled{opacity:.3;cursor:default}
+#ctr{font-size:13px;color:var(--muted);font-weight:600;text-align:center}
+#ctr small{display:block;font-size:11px;margin-top:2px}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:24px;height:8px;border-radius:4px;opacity:.35;
+cursor:pointer;border:none;transition:opacity .2s,transform .2s}
+.dot.on{opacity:1;transform:scaleX(1.2)}
+.tg{display:inline-block;background:rgba(88,166,255,.15);color:var(--compose);
+border-radius:4px;padding:1px 7px;font-size:12px;font-family:monospace}
+.tl{display:flex;flex-direction:column;gap:0}
+.tl-r{display:flex;gap:16px;padding-bottom:13px;position:relative}
+.tl-r::before{content:'';position:absolute;left:38px;top:26px;
+bottom:0;width:2px;background:var(--border)}
+.tl-r:last-child::before{display:none}
+.tl-y{font-size:12px;font-weight:700;color:var(--kotlin);
+background:rgba(163,113,247,.15);padding:5px 8px;border-radius:6px;
+min-width:44px;text-align:center;height:fit-content;margin-top:1px;flex-shrink:0}
+.tl-c{font-size:15.5px;line-height:1.6;color:var(--muted)}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<div id="deck">
+
+<!-- ══ 0. PORTADA ══ -->
+<div class="sl on" data-m="0">
+<div class="hero">
+  <div style="font-size:52px">🤖</div>
+  <div class="htitle">Desarrollo Android<br>con Jetpack Compose</div>
+  <div class="hsub">Stack moderno de producción 2024 — De los fundamentos a la arquitectura limpia</div>
+  <div class="hbadges">
+    <span class="hb" style="border-color:#a371f7;color:#a371f7">Kotlin</span>
+    <span class="hb" style="border-color:#58a6ff;color:#58a6ff">Jetpack Compose</span>
+    <span class="hb" style="border-color:#3fb950;color:#3fb950">Android Studio</span>
+    <span class="hb" style="border-color:#e3b341;color:#e3b341">MVVM · Clean Architecture</span>
+    <span class="hb" style="border-color:#f85149;color:#f85149">8 módulos · 40 slides</span>
+  </div>
+</div>
+</div>
+
+<!-- ══ 1. ¿Qué es Android hoy? ══ -->
+<div class="sl" data-m="1">
+<div class="hd"><span class="mod m1">S1</span><h2>¿Qué es Android hoy?</h2></div>
+<div class="bd">
+  <div class="cols">
+    <div>
+      <div class="card" style="margin-bottom:16px">
+        <div style="font-size:40px;font-weight:900;color:#a371f7;margin-bottom:4px">&gt;70%</div>
+        <div style="font-size:16px;color:var(--muted)">Cuota global de mercado móvil (StatCounter 2024).<br>Teléfonos · Tablets · TVs · Autos · Relojes</div>
+      </div>
+      <div class="meta">
+        <div class="lbl">🏭 Metáfora industrial</div>
+        <p>Si Android fuera una fábrica: el <strong>kernel Linux</strong> son los cimientos y la maquinaria pesada; las <strong>apps</strong> son los productos terminados; <strong>Jetpack Compose</strong> es la línea de ensamblaje moderna que reemplazó las viejas cadenas de montaje XML.</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Cronología clave</h3>
+      <div class="tl">
+        <div class="tl-r"><span class="tl-y">2008</span><span class="tl-c">Primera versión pública — Android 1.0, HTC Dream</span></div>
+        <div class="tl-r"><span class="tl-y">2014</span><span class="tl-c">Material Design — lenguaje visual unificado de Google</span></div>
+        <div class="tl-r"><span class="tl-y">2017</span><span class="tl-c">Kotlin declarado lenguaje oficial en Google I/O</span></div>
+        <div class="tl-r"><span class="tl-y">2019</span><span class="tl-c">Android declarado <em>Kotlin-first</em> por Google</span></div>
+        <div class="tl-r"><span class="tl-y">2021</span><span class="tl-c">Jetpack Compose 1.0 — UI declarativa estable</span></div>
+        <div class="tl-r"><span class="tl-y">2022</span><span class="tl-c">Material 3 (Material You) — theming dinámico</span></div>
+        <div class="tl-r"><span class="tl-y">2024</span><span class="tl-c">Android 15 · Compose BOM 2024.x · KMP</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ 2. Arquitectura de capas ══ -->
+<div class="sl" data-m="1">
+<div class="hd"><span class="mod m1">S1</span><h2>Arquitectura de Android — Las 6 capas</h2></div>
+<div class="bd">
+  <div class="cols">
+    <div class="layers">
+      <div class="layer" style="background:rgba(163,113,247,.25);border:1px solid #a371f7">TU APLICACIÓN<div class="sub">Compose UI · ViewModel · Room</div></div>
+      <div class="arr">▼</div>
+      <div class="layer" style="background:rgba(88,166,255,.2);border:1px solid #58a6ff">JETPACK / ANDROIDX<div class="sub">Navigation · DataStore · WorkManager · Hilt</div></div>
+      <div class="arr">▼</div>
+      <div class="layer" style="background:rgba(63,185,80,.2);border:1px solid #3fb950">ANDROID FRAMEWORK (Java API)<div class="sub">Activity · Service · ContentResolver</div></div>
+      <div class="arr">▼</div>
+      <div class="layer" style="background:rgba(227,179,65,.2);border:1px solid #e3b341">ART — Android Runtime<div class="sub">Compila Kotlin/Java a bytecode nativo (AOT)</div></div>
+      <div class="arr">▼</div>
+      <div class="layer" style="background:rgba(248,81,73,.2);border:1px solid #f85149">HAL · KERNEL LINUX<div class="sub">Cámara · GPS · Sensores · Drivers · Memoria</div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px;justify-content:center">
+      <div class="meta">
+        <div class="lbl">⚡ ART vs Dalvik</div>
+        <p><strong>Dalvik (hasta Android 4.x):</strong> Compilaba el código <em>mientras lo ejecutaba</em> — JIT (Just In Time). Como traducir un libro palabra por palabra mientras lo lees.<br><br><strong>ART (desde Android 5.0):</strong> Compila el código <em>antes</em> de ejecutarlo — AOT (Ahead Of Time). Como haber traducido el libro completo antes de empezar.<br><br>Resultado: arranque más rápido y menor consumo de batería.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ 3. Kotlin — Data Classes ══ -->
+<div class="sl" data-m="1">
+<div class="hd"><span class="mod m1">S1</span><h2>Kotlin — El lenguaje oficial de Android</h2></div>
+<div class="bd">
+  <div class="concept">
+    <div class="clbl">¿Por qué Kotlin reemplazó a Java?</div>
+    <p>Kotlin es el lenguaje oficial de Android desde 2017. Su ventaja principal: hace lo mismo que Java con hasta un 40% menos de código, y el compilador detecta errores que en Java solo aparecen en tiempo de ejecución (como los temidos NullPointerException).</p>
+  </div>
+  <div class="cols">
+    <div class="card cmp cmp-bad">
+      <div class="tag">❌ Java — 15 líneas para un modelo de datos</div>
+      <pre><span class="kw">public class</span> <span class="cl">Usuario</span> {
+  <span class="kw">private</span> <span class="cl">String</span> nombre;
+  <span class="kw">private int</span> edad;
+
+  <span class="cm">// Constructor: inicializa los campos</span>
+  <span class="kw">public</span> <span class="cl">Usuario</span>(<span class="cl">String</span> n, <span class="kw">int</span> e) {
+    <span class="kw">this</span>.nombre = n;
+    <span class="kw">this</span>.edad = e;
+  }
+  <span class="cm">// Getters: acceso a los campos privados</span>
+  <span class="kw">public</span> <span class="cl">String</span> <span class="fn">getNombre</span>() { <span class="kw">return</span> nombre; }
+  <span class="kw">public int</span> <span class="fn">getEdad</span>() { <span class="kw">return</span> edad; }
+  <span class="cm">// Y además hay que escribir manualmente:</span>
+  <span class="cm">// equals(), hashCode(), toString(), copy()...</span>
+}</pre>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="card cmp cmp-good">
+        <div class="tag">✅ Kotlin — 4 líneas, todo incluido automáticamente</div>
+        <pre><span class="cm">// "data class" le dice al compilador que genere</span>
+<span class="cm">// automáticamente: equals, hashCode, toString, copy</span>
+<span class="kw">data class</span> <span class="cl">Usuario</span>(
+    <span class="kw">val</span> nombre: <span class="cl">String</span>,  <span class="cm">// val = inmutable</span>
+    <span class="kw">val</span> edad: <span class="cl">Int</span>        <span class="cm">// tipo Int, no int</span>
+)
+
+<span class="cm">// Uso: copia con un campo diferente</span>
+<span class="kw">val</span> u1 = <span class="cl">Usuario</span>(<span class="st">"Ana"</span>, <span class="num">30</span>)
+<span class="kw">val</span> u2 = u1.<span class="fn">copy</span>(edad = <span class="num">31</span>)  <span class="cm">// solo cambia edad</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ 4. Kotlin — Null Safety ══ -->
+<div class="sl" data-m="1">
+<div class="hd"><span class="mod m1">S1</span><h2>Kotlin — Null Safety: adiós a los NullPointerException</h2></div>
+<div class="bd">
+  <div class="concept">
+    <div class="clbl">El error #1 en Java — resuelto por Kotlin</div>
+    <p>En Java, cualquier variable puede ser null por defecto. Esto provoca NullPointerException en producción. En Kotlin, el tipo distingue entre <strong>"puede ser null"</strong> (String?) y <strong>"nunca es null"</strong> (String). El compilador obliga a manejar el null antes de compilar.</p>
+  </div>
+  <pre><span class="cm">// En Java: String puede ser null en cualquier momento</span>
+<span class="cm">// String nombre = null;  → falla silenciosamente</span>
+
+<span class="cm">// ─── En Kotlin: el tipo indica si puede ser null ───</span>
+
+<span class="kw">var</span> nombre: <span class="cl">String</span> = <span class="st">"Ana"</span>        <span class="cm">// ✅ nunca puede ser null</span>
+<span class="cm">// nombre = null  → ERROR DE COMPILACIÓN ← el compilador lo detecta</span>
+
+<span class="kw">var</span> apodo: <span class="cl">String</span>? = <span class="kw">null</span>         <span class="cm">// ✅ "?" = puede ser null explícitamente</span>
+
+<span class="cm">// ── Operadores para manejar nulls de forma segura ──</span>
+
+<span class="cm">// ?. = "safe call": ejecuta solo si NO es null</span>
+<span class="kw">val</span> largo = apodo?.<span class="fn">length</span>         <span class="cm">// retorna null si apodo es null, sin crash</span>
+
+<span class="cm">// ?: = "Elvis operator": valor por defecto si es null</span>
+<span class="kw">val</span> tamaño = apodo?.<span class="fn">length</span> ?: <span class="num">0</span>  <span class="cm">// si apodo es null → retorna 0</span>
+
+<span class="cm">// !! = "Non-null assertion": lanza excepción si es null</span>
+<span class="cm">// Úsalo SOLO cuando estás seguro de que no es null</span>
+<span class="kw">val</span> forzado = apodo!!.<span class="fn">length</span>       <span class="cm">// ⚠️ peligroso: crash si apodo es null</span>
+
+<span class="cm">// ── Patrón recomendado: let ──</span>
+apodo?.<span class="fn">let</span> { texto ->
+    <span class="cm">// Este bloque SOLO se ejecuta si apodo != null</span>
+    <span class="cm">// "texto" es el valor no-null dentro del bloque</span>
+    println(<span class="st">"El apodo tiene ${texto.length} caracteres"</span>)
+}</pre>
+  <div class="ex">
+    <div class="lbl">⭐ Caso real — Google estimó que el 70% de los crashes en Android son NullPointerException</div>
+    <p>Kotlin elimina esta categoría entera de bugs en tiempo de compilación, antes de que el código llegue al usuario.</p>
+  </div>
+</div>
+</div>
+
+<!-- ══ 5. Kotlin — Coroutines ══ -->
+<div class="sl" data-m="1">
+<div class="hd"><span class="mod m1">S1</span><h2>Kotlin — Coroutines: concurrencia sin hilos</h2></div>
+<div class="bd">
+  <div class="concept">
+    <div class="clbl">¿Por qué coroutines en lugar de Threads?</div>
+    <p>Un Thread es como contratar a un empleado dedicado full-time: consume memoria aunque esté esperando. Una coroutine es como un empleado que mientras espera (por red, BD) libera su espacio para que otro use ese recurso. Puedes tener miles de coroutines simultáneas con el mismo costo que 10 threads.</p>
+  </div>
+  <div class="cols">
+    <div>
+      <pre><span class="cm">// ── Sin coroutines: Thread manual bloqueante ──</span>
+<span class="cl">Thread</span> {
+    <span class="cm">// Bloquea un hilo entero mientras espera la red</span>
+    <span class="kw">val</span> datos = <span class="fn">obtenerDatosDeRed</span>()  <span class="cm">// bloquea</span>
+    <span class="cm">// Para actualizar UI hay que volver al main thread</span>
+    <span class="fn">runOnUiThread</span> { <span class="fn">actualizarUI</span>(datos) }
+}.<span class="fn">start</span>()  <span class="cm">// crear y arrancar el thread manualmente</span>
+
+<span class="cm">// ── Con coroutines: limpio y eficiente ──</span>
+<span class="cm">// viewModelScope: se cancela automáticamente</span>
+<span class="cm">// cuando el ViewModel se destruye</span>
+viewModelScope.<span class="fn">launch</span> {
+
+    <span class="cm">// withContext: cambia el dispatcher (hilo de ejecución)</span>
+    <span class="cm">// Dispatchers.IO = pool de hilos para I/O (red, BD)</span>
+    <span class="kw">val</span> datos = <span class="fn">withContext</span>(<span class="cl">Dispatchers</span>.IO) {
+        <span class="fn">obtenerDatosDeRed</span>()  <span class="cm">// suspende sin bloquear</span>
+    }
+    <span class="cm">// Aquí ya estamos en el Main thread automáticamente</span>
+    <span class="fn">actualizarUI</span>(datos)  <span class="cm">// seguro actualizar UI aquí</span>
+}</pre>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <pre><span class="cm">// ── Dispatchers: ¿en qué hilo se ejecuta? ──</span>
+
+<span class="cm">// Main: hilo principal (UI) — único que puede tocar UI</span>
+<span class="cl">Dispatchers</span>.Main
+
+<span class="cm">// IO: para operaciones de entrada/salida</span>
+<span class="cm">// (red, base de datos, archivos)</span>
+<span class="cl">Dispatchers</span>.IO
+
+<span class="cm">// Default: para cálculos intensivos (CPU)</span>
+<span class="cm">// (ordenar listas grandes, procesar imágenes)</span>
+<span class="cl">Dispatchers</span>.Default
+
+<span class="cm">// ── async/await: ejecutar en paralelo ──</span>
+<span class="cm">// Lanza dos operaciones simultáneamente</span>
+<span class="kw">val</span> a = <span class="fn">async</span> { <span class="fn">obtenerUsuario</span>() }
+<span class="kw">val</span> b = <span class="fn">async</span> { <span class="fn">obtenerProductos</span>() }
+<span class="cm">// await() espera el resultado de cada uno</span>
+<span class="fn">procesar</span>(a.<span class="fn">await</span>(), b.<span class="fn">await</span>())</pre>
+      <div class="meta">
+        <div class="lbl">🏃 Metáfora</div>
+        <p>Thread = empleado dedicado que espera sentado. Coroutine = empleado que mientras espera la respuesta de un correo, hace otra tarea — mucho más eficiente.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ 6. Android Studio + BOM ══ -->
+<div class="sl" data-m="1">
+<div class="hd"><span class="mod m1">S1</span><h2>Android Studio · BOM · Configuración</h2></div>
+<div class="bd">
+  <div class="cols">
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="card">
+        <h3>Herramientas clave de Android Studio</h3>
+        <table>
+          <tr><th>Herramienta</th><th class="txt">Para qué sirve</th></tr>
+          <tr><td>Compose Preview</td><td class="txt">Ver UI sin ejecutar la app</td></tr>
+          <tr><td>Layout Inspector</td><td class="txt">Inspeccionar árbol de composables en vivo</td></tr>
+          <tr><td>Profiler</td><td class="txt">Medir CPU, memoria, red, energía</td></tr>
+          <tr><td>Device Manager</td><td class="txt">Crear y gestionar emuladores (AVD)</td></tr>
+        </table>
+      </div>
+      <div class="meta">
+        <div class="lbl">📋 ¿Qué es el BOM?</div>
+        <p>BOM = <em>Bill of Materials</em>. Es como un <strong>menú del día</strong>: defines una versión y todas las librerías de Compose adoptan versiones compatibles entre sí automáticamente. Sin BOM tendrías que verificar manualmente la compatibilidad de cada librería.</p>
+      </div>
+    </div>
+    <div>
+      <pre><span class="cm">// build.gradle.kts — configuración mínima Compose</span>
+android {
+  compileSdk = <span class="num">35</span>         <span class="cm">// compilar con SDK 35</span>
+  defaultConfig {
+    minSdk = <span class="num">24</span>            <span class="cm">// soporta ~97% dispositivos activos</span>
+    targetSdk = <span class="num">35</span>
+  }
+  buildFeatures {
+    compose = <span class="kw">true</span>        <span class="cm">// activa el compilador de Compose</span>
+  }
+}
+
+dependencies {
+  <span class="cm">// BOM gestiona versiones compatibles automáticamente</span>
+  <span class="kw">val</span> bom = <span class="fn">platform</span>(<span class="st">"androidx.compose:compose-bom:2024.09.00"</span>)
+  implementation(bom)    <span class="cm">// todas las libs Compose usan este BOM</span>
+
+  <span class="cm">// No necesitan versión — el BOM la asigna</span>
+  implementation(<span class="st">"androidx.compose.ui:ui"</span>)
+  implementation(<span class="st">"androidx.compose.material3:material3"</span>)
+  implementation(<span class="st">"androidx.compose.ui:ui-tooling-preview"</span>)
+  implementation(<span class="st">"androidx.activity:activity-compose:1.9.2"</span>)
+}
+
+<span class="cm">// MainActivity.kt — punto de entrada de toda la app</span>
+<span class="kw">class</span> <span class="cl">MainActivity</span> : <span class="cl">ComponentActivity</span>() {
+  <span class="kw">override fun</span> <span class="fn">onCreate</span>(savedInstanceState: <span class="cl">Bundle</span>?) {
+    <span class="kw">super</span>.<span class="fn">onCreate</span>(savedInstanceState)
+    <span class="cm">// setContent: reemplaza setContentView() de XML</span>
+    <span class="fn">setContent</span> { <span class="cl">MaterialTheme</span> { <span class="fn">MiApp</span>() } }
+  }
+}</pre>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ 7. S2 — Compose declarativo ══ -->
+<div class="sl" data-m="2">
+<div class="hd"><span class="mod m2">S2</span><h2>El Modelo Mental — Imperativo vs Declarativo</h2></div>
+<div class="bd">
+  <div class="meta" style="margin-bottom:4px">
+    <div class="lbl">🖶 Metáfora central de Compose</div>
+    <p><strong>XML imperativo:</strong> moldear arcilla — tocas la pieza directamente para cambiar su forma. El desarrollador <em>muta</em> el estado del UI.<br><strong>Compose declarativo:</strong> impresión 3D — describes el resultado final y la máquina lo construye cada vez que el estado cambia. Como una función matemática: mismo input → mismo output.</p>
+  </div>
+  <div class="cols">
+    <div class="card cmp cmp-bad">
+      <div class="tag">❌ Antes — XML + mutación directa</div>
+      <pre><span class="cm">&lt;!-- archivo XML separado del código Kotlin --&gt;</span>
+&lt;<span class="cl">LinearLayout</span>&gt;
+  &lt;<span class="cl">TextView</span> android:id="@+id/tv"
+    android:text="Hola" /&gt;
+  &lt;<span class="cl">Button</span> android:id="@+id/btn" /&gt;
+&lt;/<span class="cl">LinearLayout</span>&gt;
+
+<span class="cm">// Kotlin: buscar vista por ID y MUTAR su estado</span>
+<span class="kw">val</span> tv = <span class="fn">findViewById</span>&lt;<span class="cl">TextView</span>&gt;(R.id.tv)
+<span class="kw">val</span> btn = <span class="fn">findViewById</span>&lt;<span class="cl">Button</span>&gt;(R.id.btn)
+btn.<span class="fn">setOnClickListener</span> {
+    <span class="cm">// Mutamos directamente el objeto UI</span>
+    tv.text = <span class="st">"Mundo"</span>  <span class="cm">// ← mutación directa del árbol</span>
+}</pre>
+    </div>
+    <div class="card cmp cmp-good">
+      <div class="tag">✅ Compose — describe el estado, la UI se actualiza sola</div>
+      <pre><span class="an">@Composable</span>  <span class="cm">// esta función es UI declarativa</span>
+<span class="kw">fun</span> <span class="fn">Saludo</span>() {
+  <span class="cm">// Estado: cuando cambia, Compose reconstruye la UI</span>
+  <span class="kw">var</span> texto <span class="kw">by</span> <span class="fn">remember</span> { <span class="fn">mutableStateOf</span>(<span class="st">"Hola"</span>) }
+
+  <span class="cl">Column</span> {
+    <span class="cm">// Text se regenera cuando "texto" cambia</span>
+    <span class="cl">Text</span>(text = texto)
+    <span class="cl">Button</span>(onClick = { texto = <span class="st">"Mundo"</span> }) {
+      <span class="cl">Text</span>(<span class="st">"Cambiar"</span>)
+    }
+  }
+  <span class="cm">// Compose RECONSTRUYE solo lo que cambió — eficiente</span>
+}</pre>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ 8. ContadorApp — primer Composable ══ -->
+<div class="sl" data-m="2">
+<div class="hd"><span class="mod m2">S2</span><h2>ContadorApp — Tu primer Composable explicado</h2></div>
+<div class="bd">
+  <div class="concept">
+    <div class="clbl">Conceptos clave en este ejemplo</div>
+    <p><strong>@Composable</strong> = función de UI · <strong>remember</strong> = sobrevive recomposición · <strong>mutableStateOf</strong> = estado reactivo · <strong>by</strong> = delegado (evita .value) · <strong>Recomposición</strong> = Compose re-ejecuta la función cuando el estado cambia</p>
+  </div>
+  <pre><span class="cm">// @Composable: transforma esta función en un componente de UI</span>
+<span class="cm">// Compose la llama cada vez que su estado cambia (recomposición)</span>
+<span class="an">@Composable</span>
+<span class="kw">fun</span> <span class="fn">ContadorApp</span>() {
+
+    <span class="cm">// remember: persiste el valor entre recomposiciones</span>
+    <span class="cm">// Sin remember → el contador se resetea a 0 en cada recomposición</span>
+    <span class="cm">// mutableStateOf(0) → crea un observable que dispara recomposición al cambiar</span>
+    <span class="cm">// "by" → delegado de propiedad: permite escribir "contador" en lugar de "contador.value"</span>
+    <span class="kw">var</span> contador <span class="kw">by</span> <span class="fn">remember</span> { <span class="fn">mutableStateOf</span>(<span class="num">0</span>) }
+
+    <span class="cm">// Column: apila hijos verticalmente (equivale a LinearLayout vertical)</span>
+    <span class="cm">// horizontalAlignment: centra todos los hijos en el eje horizontal</span>
+    <span class="cl">Column</span>(
+        horizontalAlignment = <span class="cl">Alignment</span>.CenterHorizontally,
+        modifier = <span class="cl">Modifier</span>
+            .<span class="fn">fillMaxSize</span>()     <span class="cm">// ocupa todo el ancho y alto disponible</span>
+            .<span class="fn">padding</span>(<span class="num">16</span>.dp)    <span class="cm">// margen interno de 16dp en los 4 lados</span>
+    ) {
+        <span class="cm">// Text: muestra el valor actual del estado "contador"</span>
+        <span class="cm">// Compose reconstruye SOLO este Text cuando contador cambia</span>
+        <span class="cl">Text</span>(
+            text = <span class="st">"Contador: $contador"</span>,
+            style = <span class="cl">MaterialTheme</span>.typography.headlineMedium  <span class="cm">// fuente M3</span>
+        )
+
+        <span class="cl">Spacer</span>(modifier = <span class="cl">Modifier</span>.<span class="fn">height</span>(<span class="num">16</span>.dp))  <span class="cm">// espacio vacío de 16dp</span>
+
+        <span class="cm">// Button: al hacer click ejecuta el lambda onClick</span>
+        <span class="cm">// contador++ → cambia el estado → dispara recomposición del Text</span>
+        <span class="cl">Button</span>(onClick = { contador++ }) {
+            <span class="cl">Text</span>(<span class="st">"Incrementar"</span>)  <span class="cm">// contenido del botón</span>
+        }
+    }
+}
+
+<span class="cm">// ¿Cómo funciona? Estado cambia → Compose compara → reconstruye solo lo necesario</span></pre>
+</div>
+</div>
+
+<!-- ══ 9. S2 — Layouts ══ -->
+<div class="sl" data-m="2">
+<div class="hd"><span class="mod m2">S2</span><h2>Layouts — Column, Row, Box</h2></div>
+<div class="bd">
+  <div class="concept">
+    <div class="clbl">Los 3 contenedores fundamentales de Compose</div>
+    <p><strong>Column</strong> = apila verticalmente · <strong>Row</strong> = apila horizontalmente · <strong>Box</strong> = superpone (z-index). Son equivalentes a LinearLayout (vertical/horizontal) y FrameLayout de XML, pero con una API mucho más intuitiva.</p>
+  </div>
+  <pre><span class="cm">// Column: hijos uno debajo del otro (como LinearLayout vertical)</span>
+<span class="cl">Column</span>(
+    modifier = <span class="cl">Modifier</span>.<span class="fn">fillMaxWidth</span>().<span class="fn">padding</span>(<span class="num">16</span>.dp),
+    verticalArrangement = <span class="cl">Arrangement</span>.spacedBy(<span class="num">8</span>.dp),   <span class="cm">// 8dp entre hijos</span>
+    horizontalAlignment = <span class="cl">Alignment</span>.CenterHorizontally    <span class="cm">// centra horizontalmente</span>
+) {
+    <span class="cl">Text</span>(<span class="st">"Título"</span>)
+    <span class="cl">Text</span>(<span class="st">"Subtítulo"</span>)
+}
+
+<span class="cm">// Row: hijos uno al lado del otro (como LinearLayout horizontal)</span>
+<span class="cl">Row</span>(
+    modifier = <span class="cl">Modifier</span>.<span class="fn">fillMaxWidth</span>().<span class="fn">padding</span>(<span class="num">8</span>.dp),
+    horizontalArrangement = <span class="cl">Arrangement</span>.SpaceBetween,  <span class="cm">// máximo espacio entre hijos</span>
+    verticalAlignment = <span class="cl">Alignment</span>.CenterVertically       <span class="cm">// centra verticalmente</span>
+) {
+    <span class="cl">Text</span>(<span class="st">"Izquierda"</span>)
+    <span class="cl">Text</span>(<span class="st">"Derecha"</span>)
+}
+
+<span class="cm">// Box: superpone hijos (el último queda encima)</span>
+<span class="cm">// Útil para badges, overlays, loading spinners sobre contenido</span>
+<span class="cl">Box</span>(modifier = <span class="cl">Modifier</span>.<span class="fn">size</span>(<span class="num">80</span>.dp)) {
+    <span class="cl">Image</span>(...)                                       <span class="cm">// capa inferior: imagen</span>
+    <span class="cl">Badge</span>(modifier = <span class="cl">Modifier</span>.<span class="fn">align</span>(<span class="cl">Alignment</span>.TopEnd))  <span class="cm">// capa superior: badge</span>
+}</pre>
+  <div class="ex">
+    <div class="lbl">⭐ Caso real — Twitter/X</div>
+    <p>Cada tweet usa <span class="tg">Row</span> (avatar + contenido), dentro hay una <span class="tg">Column</span> (nombre, texto, acciones), y cada botón de acción (Like, Retweet) usa <span class="tg">Row</span> con ícono + contador.</p>
+  </div>
+</div>
+</div>
+
+<!-- ══ 10. S2 — Modifier ══ -->
+<div class="sl" data-m="2">
+<div class="hd"><span class="mod m2">S2</span><h2>Modifier — El sistema de decoración de Compose</h2></div>
+<div class="bd">
+  <div class="concept">
+    <div class="clbl">¿Qué es un Modifier y por qué el ORDEN importa?</div>
+    <p>Modifier es una cadena de decoraciones que se aplican de <strong>izquierda a derecha</strong>. Cada `.modificador()` envuelve al anterior. Esto significa que <code>padding().clickable()</code> ≠ <code>clickable().padding()</code> — el área clickeable cambia según el orden.</p>
+  </div>
+  <div class="cols">
+    <div>
+      <pre><span class="cm">// Modifier: cada llamada encadena una decoración</span>
+<span class="cl">Text</span>(
+    text = <span class="st">"Precio: $99"</span>,
+    modifier = <span class="cl">Modifier</span>
+        .<span class="fn">fillMaxWidth</span>()       <span class="cm">// 1. ocupa todo el ancho</span>
+        .<span class="fn">background</span>(<span class="cl">Color</span>.Blue)  <span class="cm">// 2. fondo azul (antes del padding)</span>
+        .<span class="fn">padding</span>(<span class="num">16</span>.dp)        <span class="cm">// 3. margen interno (sobre el fondo)</span>
+        .<span class="fn">clip</span>(<span class="cl">RoundedCornerShape</span>(<span class="num">8</span>.dp))  <span class="cm">// 4. esquinas redondeadas</span>
+        .<span class="fn">clickable</span> { }         <span class="cm">// 5. área clickeable incluye el padding</span>
+)
+
+<span class="cm">// ⚠️ Orden incorrecto — clickeable NO incluye el padding</span>
+<span class="cl">Modifier</span>
+    .<span class="fn">clickable</span> { }    <span class="cm">// área clickeable = solo el texto</span>
+    .<span class="fn">padding</span>(<span class="num">16</span>.dp)   <span class="cm">// padding se añade DESPUÉS del click</span></pre>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <pre><span class="cm">// Modificadores más usados</span>
+<span class="cl">Modifier</span>
+  .<span class="fn">fillMaxSize</span>()       <span class="cm">// 100% ancho y alto</span>
+  .<span class="fn">fillMaxWidth</span>()      <span class="cm">// 100% ancho</span>
+  .<span class="fn">width</span>(<span class="num">200</span>.dp)        <span class="cm">// ancho fijo</span>
+  .<span class="fn">height</span>(<span class="num">56</span>.dp)        <span class="cm">// alto fijo</span>
+  .<span class="fn">padding</span>(<span class="num">16</span>.dp)       <span class="cm">// margen interno todos lados</span>
+  .<span class="fn">padding</span>(            <span class="cm">// margen por lado</span>
+    horizontal = <span class="num">16</span>.dp,
+    vertical = <span class="num">8</span>.dp
+  )
+  .<span class="fn">background</span>(color)   <span class="cm">// color de fondo</span>
+  .<span class="fn">clip</span>(shape)          <span class="cm">// recortar forma</span>
+  .<span class="fn">border</span>(<span class="num">1</span>.dp, color)  <span class="cm">// borde</span>
+  .<span class="fn">alpha</span>(<span class="num">0</span>.5f)           <span class="cm">// transparencia 50%</span>
+  .<span class="fn">clickable</span> { }        <span class="cm">// hacer clickeable</span></pre>
+      <div class="meta">
+        <div class="lbl">💡 Regla de oro</div>
+        <p>Piensa en Modifier como capas de CSS pero de adentro hacia afuera. El primer modificador es la capa más interior. Igual que <code>margin</code> vs <code>padding</code> en CSS.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ 11. S2 — State Hoisting ══ -->
+<div class="sl" data-m="2">
+<div class="hd"><span class="mod m2">S2</span><h2>State Hoisting — Elevar el estado</h2></div>
+<div class="bd">
+  <div class="concept">
+    <div class="clbl">Principio: los componentes deben ser "tontos" (sin estado propio)</div>
+    <p>State hoisting = mover el estado hacia arriba en la jerarquía. El componente hijo recibe el valor y un callback. El padre es quien tiene el estado. Esto hace el componente hijo <strong>reutilizable</strong> y <strong>testeable</strong> — no importa de dónde viene el estado.</p>
+  </div>
+  <div class="cols">
+    <div>
+      <pre><span class="cm">// ✅ Componente hijo "tonto": recibe todo por parámetros</span>
+<span class="cm">// No tiene estado propio → es reutilizable en cualquier pantalla</span>
+<span class="an">@Composable</span>
+<span class="kw">fun</span> <span class="fn">FormularioPago</span>(
+    monto: <span class="cl">String</span>,             <span class="cm">// estado: viene del padre</span>
+    tarjeta: <span class="cl">String</span>,           <span class="cm">// estado: viene del padre</span>
+    onMontoChange: (<span class="cl">String</span>) -> <span class="cl">Unit</span>,   <span class="cm">// callback para notificar cambios</span>
+    onTarjetaChange: (<span class="cl">String</span>) -> <span class="cl">Unit</span>, <span class="cm">// el hijo no cambia el estado directamente</span>
+    onPagar: () -> <span class="cl">Unit</span>        <span class="cm">// callback para la acción</span>
+) {
+    <span class="cl">Column</span> {
+        <span class="cl">OutlinedTextField</span>(
+            value = monto,
+            onValueChange = onMontoChange,  <span class="cm">// notifica al padre</span>
+            label = { <span class="cl">Text</span>(<span class="st">"Monto"</span>) }
+        )
+        <span class="cl">Button</span>(onClick = onPagar) {
+            <span class="cl">Text</span>(<span class="st">"Pagar $$monto"</span>)
+        }
+    }
+}</pre>
+    </div>
+    <div>
+      <pre><span class="cm">// ✅ Componente padre: DUEÑO del estado</span>
+<span class="cm">// Centraliza toda la lógica de estado</span>
+<span class="an">@Composable</span>
+<span class="kw">fun</span> <span class="fn">PantallaPago</span>() {
+    <span class="cm">// El padre es quien guarda y gestiona el estado</span>
+    <span class="kw">var</span> monto <span class="kw">by</span> <span class="fn">remember</span> { <span class="fn">mutableStateOf</span>(<span class="st">""</span>) }
+    <span class="kw">var</span> tarjeta <span class="kw">by</span> <span class="fn">remember</span> { <span class="fn">mutableStateOf</span>(<span class="st">""</span>) }
+
+    <span class="cm">// Pasa el estado hacia abajo y callbacks hacia arriba</span>
+    <span class="fn">FormularioPago</span>(
+        monto = monto,
+        tarjeta = tarjeta,
+        onMontoChange = { monto = it },    <span class="cm">// padre actualiza</span>
+        onTarjetaChange = { tarjeta = it }, <span class="cm">// padre actualiza</span>
+        onPagar = { <span class="fn">procesarPago</span>(monto) }  <span class="cm">// padre ejecuta</span>
+    )
+}</pre>
+      <div class="ex">
+        <div class="lbl">⭐ Patrón real — Stripe, PayPal</div>
+        <p>Sus formularios de pago usan exactamente este patrón: el formulario es un componente sin estado propio que recibe valores y callbacks del Screen que gestiona la lógica.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ 12. S2 — Material 3 ══ -->
+<div class="sl" data-m="2">
+<div class="hd"><span class="mod m2">S2</span><h2>Material 3 — Theming y Tipografía</h2></div>
+<div class="bd">
+  <div class="concept">
+    <div class="clbl">¿Qué es Material 3 y por qué usarlo?</div>
+    <p>Material 3 es el sistema de diseño de Google. Define colores semánticos (<em>primary, secondary, surface</em>), tipografía (<em>headlineLarge, bodyMedium</em>) y formas. Al usarlo, tu app se adapta automáticamente al modo oscuro y a los colores del sistema del dispositivo (Material You).</p>
+  </div>
+  <div class="cols">
+    <div>
+      <pre><span class="cm">// Theme.kt — define los tokens de color semánticos</span>
+<span class="cm">// Estos son los colores de TU MARCA, no los del componente</span>
+<span class="kw">private val</span> EsquemaClaro = <span class="fn">lightColorScheme</span>(
+    primary = <span class="cl">Color</span>(<span class="num">0xFF6200EE</span>),      <span class="cm">// color principal (botones, FAB)</span>
+    onPrimary = <span class="cl">Color</span>.White,           <span class="cm">// texto/íconos sobre primary</span>
+    secondary = <span class="cl">Color</span>(<span class="num">0xFF03DAC6</span>),    <span class="cm">// color secundario (chips, badges)</span>
+    background = <span class="cl">Color</span>(<span class="num">0xFFFFFBFE</span>),   <span class="cm">// fondo de la app</span>
+    surface = <span class="cl">Color</span>(<span class="num">0xFFFFFBFE</span>),      <span class="cm">// fondo de Cards y Dialogs</span>
+    error = <span class="cl">Color</span>(<span class="num">0xFFB00020</span>)         <span class="cm">// color de errores</span>
+)
+
+<span class="cm">// El MaterialTheme envuelve toda la app</span>
+<span class="an">@Composable</span>
+<span class="kw">fun</span> <span class="fn">MiAppTheme</span>(content: <span class="an">@Composable</span> () -> <span class="cl">Unit</span>) {
+    <span class="cl">MaterialTheme</span>(
+        colorScheme = EsquemaClaro,  <span class="cm">// paleta de colores</span>
+        typography = Tipografia,      <span class="cm">// escala tipográfica</span>
+        content = content             <span class="cm">// contenido de la app</span>
+    )
+}</pre>
+    </div>
+    <div>
+      <pre><span class="cm">// Usar los tokens semánticos en componentes</span>
+<span class="cm">// ✅ CORRECTO: usar tokens semánticos del tema</span>
+<span class="cl">Text</span>(
+    text = <span class="st">"Precio"</span>,
+    <span class="cm">// headlineMedium: tamaño predefinido del sistema tipográfico</span>
+    style = <span class="cl">MaterialTheme</span>.typography.headlineMedium,
+    <span class="cm">// primary: color principal del tema (se adapta a dark/light)</span>
+    color = <span class="cl">MaterialTheme</span>.colorScheme.primary
+)
+
+<span class="cm">// ❌ INCORRECTO: hardcodear colores</span>
+<span class="cm">// Text(color = Color(0xFF6200EE))  ← no cambia en dark mode</span>
+
+<span class="cm">// Escala tipográfica de Material 3</span>
+<span class="cm">// displayLarge → headlineLarge → titleLarge</span>
+<span class="cm">// bodyLarge → bodyMedium → bodySmall → labelSmall</span>
+
+<span class="cm">// Ejemplo: jerarquía en una tarjeta de producto</span>
+<span class="cl">Text</span>(<span class="st">"Samsung Galaxy S25"</span>, style = <span class="cl">MaterialTheme</span>.typography.titleMedium)
+<span class="cl">Text</span>(<span class="st">"Smartphone 6.2\""</span>,  style = <span class="cl">MaterialTheme</span>.typography.bodyMedium)
+<span class="cl">Text</span>(<span class="st">"$999.99"</span>,           style = <span class="cl">MaterialTheme</span>.typography.headlineSmall)</pre>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ 13. S3 — Navigation ══ -->
+<div class="sl" data-m="3">
+<div class="hd"><span class="mod m3">S3</span><h2>Navigation Compose — Navegar entre pantallas</h2></div>
+<div class="bd">
+  <div class="concept">
+    <div class="clbl">¿Cómo funciona la navegación en Compose?</div>
+    <p><strong>NavController</strong> es el controlador de navegación (como un historial del browser). <strong>NavHost</strong> es el contenedor que muestra la pantalla actual. Cada pantalla tiene una <strong>ruta</strong> (string único). Navegas llamando <code>navController.navigate("ruta")</code>.</p>
+  </div>
+  <pre><span class="cm">// Paso 1: crear el NavController — gestiona el back stack</span>
+<span class="an">@Composable</span>
+<span class="kw">fun</span> <span class="fn">AppNavigation</span>() {
+    <span class="cm">// rememberNavController: sobrevive recomposiciones</span>
+    <span class="kw">val</span> navController = <span class="fn">rememberNavController</span>()
+
+    <span class="cm">// NavHost: muestra la pantalla correspondiente a la ruta actual</span>
+    <span class="cl">NavHost</span>(
+        navController = navController,
+        startDestination = <span class="st">"lista"</span>  <span class="cm">// pantalla inicial al abrir la app</span>
+    ) {
+
+        <span class="cm">// composable(): define una pantalla y su ruta</span>
+        <span class="fn">composable</span>(<span class="st">"lista"</span>) {
+            <span class="cm">// Pasa el navController para que la pantalla pueda navegar</span>
+            <span class="fn">PantallaLista</span>(navController = navController)
+        }
+
+        <span class="cm">// Ruta con argumento: {id} es un parámetro dinámico</span>
+        <span class="fn">composable</span>(<span class="st">"detalle/{id}"</span>) { backStackEntry ->
+            <span class="cm">// Extraer el argumento de la ruta</span>
+            <span class="kw">val</span> id = backStackEntry.arguments?.<span class="fn">getString</span>(<span class="st">"id"</span>) ?: <span class="st">""</span>
+            <span class="fn">PantallaDetalle</span>(id = id, navController = navController)
+        }
+
+        <span class="fn">composable</span>(<span class="st">"perfil"</span>) { <span class="fn">PantallaPerfil</span>(navController) }
+    }
+}
+
+<span class="cm">// Navegar desde cualquier pantalla:</span>
+navController.<span class="fn">navigate</span>(<span class="st">"detalle/42"</span>)  <span class="cm">// ir a detalle con id=42</span>
+navController.<span class="fn">popBackStack</span>()          <span class="cm">// equivale al botón "Atrás"</span></pre>
+</div>
+</div>
+
+<!-- ══ 14. S3 — ViewModel ══ -->
+<div class="sl" data-m="3">
+<div class="hd"><span class="mod m3">S3</span><h2>ViewModel — Separar lógica de la UI</h2></div>
+<div class="bd">
+  <div class="concept">
+    <div class="clbl">¿Para qué sirve el ViewModel?</div>
+    <p>El ViewModel sobrevive rotaciones de pantalla y cambios de configuración. La UI es efímera (se destruye y recrea), pero el ViewModel permanece. Esto evita perder datos al girar el teléfono. Además, separa la lógica de negocio de la UI — el ViewModel no sabe nada de Compose.</p>
+  </div>
+  <pre><span class="cm">// ViewModel: sobrevive rotaciones y cambios de configuración</span>
+<span class="cm">// No importa View, Context ni ninguna clase de Android UI</span>
+<span class="kw">class</span> <span class="cl">ProductosViewModel</span>(
+    <span class="kw">private val</span> repositorio: <span class="cl">ProductosRepositorio</span>  <span class="cm">// inyectado, no new</span>
+) : <span class="cl">ViewModel</span>() {
+
+    <span class="cm">// UiState: clase que representa TODO el estado visual de la pantalla</span>
+    <span class="cm">// Un solo objeto en lugar de múltiples variables sueltas</span>
+    <span class="kw">data class</span> <span class="cl">UiState</span>(
+        <span class="kw">val</span> productos: <span class="cl">List</span>&lt;<span class="cl">Producto</span>&gt; = <span class="fn">emptyList</span>(),  <span class="cm">// lista vacía por defecto</span>
+        <span class="kw">val</span> cargando: <span class="cl">Boolean</span> = <span class="kw">true</span>,                 <span class="cm">// inicia cargando</span>
+        <span class="kw">val</span> error: <span class="cl">String</span>? = <span class="kw">null</span>                      <span class="cm">// null = sin error</span>
+    )
+
+    <span class="cm">// MutableStateFlow: flujo de datos mutable INTERNO (privado)</span>
+    <span class="kw">private val</span> _uiState = <span class="fn">MutableStateFlow</span>(<span class="cl">UiState</span>())
+    <span class="cm">// StateFlow: versión de solo lectura expuesta a la UI</span>
+    <span class="kw">val</span> uiState: <span class="cl">StateFlow</span>&lt;<span class="cl">UiState</span>&gt; = _uiState.<span class="fn">asStateFlow</span>()
+
+    <span class="kw">init</span> {
+        <span class="fn">cargarProductos</span>()  <span class="cm">// cargar datos al crear el ViewModel</span>
+    }
+
+    <span class="kw">private fun</span> <span class="fn">cargarProductos</span>() {
+        <span class="cm">// viewModelScope: coroutine que se cancela cuando el ViewModel muere</span>
+        viewModelScope.<span class="fn">launch</span> {
+            <span class="kw">try</span> {
+                <span class="kw">val</span> lista = repositorio.<span class="fn">obtenerProductos</span>()
+                <span class="cm">// copy(): actualiza solo los campos que cambian</span>
+                _uiState.<span class="fn">update</span> { it.<span class="fn">copy</span>(productos = lista, cargando = <span class="kw">false</span>) }
+            } <span class="kw">catch</span> (e: <span class="cl">Exception</span>) {
+                _uiState.<span class="fn">update</span> { it.<span class="fn">copy</span>(error = e.message, cargando = <span class="kw">false</span>) }
+            }
+        }
+    }
+}</pre>
+</div>
+</div>
+
+<!-- ══ 15. S3 — ViewModel en UI ══ -->
+<div class="sl" data-m="3">
+<div class="hd"><span class="mod m3">S3</span><h2>ViewModel — Conectar con la UI</h2></div>
+<div class="bd">
+  <div class="concept">
+    <div class="clbl">Flujo completo: ViewModel → StateFlow → collectAsStateWithLifecycle → UI</div>
+    <p><code>collectAsStateWithLifecycle()</code> observa el StateFlow de forma segura: deja de escuchar cuando la app va al background (ahorra batería) y reanuda cuando vuelve al primer plano. Siempre úsalo en lugar de <code>collectAsState()</code>.</p>
+  </div>
+  <pre><span class="cm">// La UI observa el ViewModel — nunca crea lógica aquí</span>
+<span class="an">@Composable</span>
+<span class="kw">fun</span> <span class="fn">PantallaProductos</span>(
+    <span class="cm">// viewModel() obtiene la instancia del ViewModel (sobrevive rotaciones)</span>
+    viewModel: <span class="cl">ProductosViewModel</span> = <span class="fn">viewModel</span>()
+) {
+    <span class="cm">// collectAsStateWithLifecycle: convierte Flow en State de Compose</span>
+    <span class="cm">// Se pausa cuando la app va al background para ahorrar batería</span>
+    <span class="kw">val</span> uiState <span class="kw">by</span> viewModel.uiState.<span class="fn">collectAsStateWithLifecycle</span>()
+
+    <span class="cm">// Mostrar contenido según el estado actual</span>
+    <span class="kw">when</span> {
+        <span class="cm">// Caso 1: está cargando → mostrar indicador</span>
+        uiState.cargando -> <span class="cl">CircularProgressIndicator</span>()
+
+        <span class="cm">// Caso 2: hay error → mostrar mensaje</span>
+        uiState.error != <span class="kw">null</span> -> <span class="cl">Text</span>(<span class="st">"Error: ${uiState.error}"</span>)
+
+        <span class="cm">// Caso 3: datos listos → mostrar lista</span>
+        <span class="kw">else</span> -> <span class="cl">LazyColumn</span> {
+            <span class="cm">// items(): función de extensión de LazyColumn</span>
+            <span class="fn">items</span>(uiState.productos) { producto ->
+                <span class="fn">TarjetaProducto</span>(producto = producto)
+            }
+        }
+    }
+}</pre>
+  <div class="ex">
+    <div class="lbl">⭐ Caso real — Netflix</div>
+    <p>La pantalla principal de Netflix tiene un UiState con: lista de contenido, estado de carga, y perfil del usuario. Cuando rotas el teléfono, el ViewModel persiste y no recarga el contenido de red.</p>
+  </div>
+</div>
+</div>
+
+<!-- ══ 16. S3 — LazyColumn ══ -->
+<div class="sl" data-m="3">
+<div class="hd"><span class="mod m3">S3</span><h2>LazyColumn — Listas eficientes (equivale a RecyclerView)</h2></div>
+<div class="bd">
+  <div class="concept">
+    <div class="clbl">¿Por qué Lazy? — Solo renderiza lo visible en pantalla</div>
+    <p><strong>Column</strong> renderiza todos los elementos al mismo tiempo, aunque no sean visibles. <strong>LazyColumn</strong> solo renderiza los elementos visibles (como RecyclerView), lo que lo hace eficiente para miles de elementos.</p>
+  </div>
+  <pre><span class="cm">// LazyColumn: equivalente a RecyclerView — solo renderiza lo visible</span>
+<span class="cl">LazyColumn</span>(
+    modifier = <span class="cl">Modifier</span>.<span class="fn">fillMaxSize</span>(),
+    <span class="cm">// contentPadding: padding alrededor de toda la lista</span>
+    contentPadding = <span class="cl">PaddingValues</span>(horizontal = <span class="num">16</span>.dp, vertical = <span class="num">8</span>.dp),
+    <span class="cm">// verticalArrangement: espacio entre elementos</span>
+    verticalArrangement = <span class="cl">Arrangement</span>.spacedBy(<span class="num">8</span>.dp)
+) {
+    <span class="cm">// item(): un solo elemento fijo (ej: encabezado)</span>
+    <span class="fn">item</span> { <span class="cl">Text</span>(<span class="st">"Productos destacados"</span>, style = <span class="cl">MaterialTheme</span>.typography.titleLarge) }
+
+    <span class="cm">// items(lista): genera un elemento por cada objeto de la lista</span>
+    <span class="cm">// key: identificador único para que Compose haga diff eficiente</span>
+    <span class="fn">items</span>(productos, key = { it.id }) { producto ->
+        <span class="fn">TarjetaProducto</span>(
+            producto = producto,
+            onClick = { navController.<span class="fn">navigate</span>(<span class="st">"detalle/${producto.id}"</span>) }
+        )
+    }
+
+    <span class="cm">// itemsIndexed: cuando también necesitas el índice</span>
+    <span class="fn">itemsIndexed</span>(productos) { index, producto ->
+        <span class="cl">Text</span>(<span class="st">"${index + 1}. ${producto.nombre}"</span>)
+    }
+
+    <span class="cm">// item(): pie de lista</span>
+    <span class="fn">item</span> { <span class="fn">Spacer</span>(<span class="cl">Modifier</span>.<span class="fn">height</span>(<span class="num">80</span>.dp)) }  <span class="cm">// espacio para el FAB</span>
+}
+
+<span class="cm">// LazyRow: misma lógica pero horizontal (carruseles, chips)</span></pre>
+</div>
+</div>
+
+<!-- ══ 17. S4 — Scaffold ══ -->
+<div class="sl" data-m="4">
+<div class="hd"><span class="mod m4">S4</span><h2>Scaffold — La estructura estándar de pantalla</h2></div>
+<div class="bd">
+  <div class="concept">
+    <div class="clbl">¿Qué es Scaffold y por qué usarlo?</div>
+    <p>Scaffold implementa el layout estándar de Material Design: barra superior, barra inferior, FAB y snackbar en sus posiciones correctas. El problema principal que resuelve: asegurar que el contenido no quede <strong>debajo de las barras del sistema</strong> mediante <code>paddingValues</code>.</p>
+  </div>
+  <pre><span class="an">@Composable</span>
+<span class="kw">fun</span> <span class="fn">PantallaProductos</span>(navController: <span class="cl">NavController</span>) {
+    <span class="cm">// SnackbarHostState: controla los snackbars de forma centralizada</span>
+    <span class="kw">val</span> snackbarState = <span class="fn">remember</span> { <span class="cl">SnackbarHostState</span>() }
+    <span class="kw">val</span> scope = <span class="fn">rememberCoroutineScope</span>()  <span class="cm">// para mostrar snackbars</span>
+
+    <span class="cl">Scaffold</span>(
+        <span class="cm">// TopAppBar: barra superior con título, navegación y acciones</span>
+        topBar = {
+            <span class="cl">TopAppBar</span>(
+                title = { <span class="cl">Text</span>(<span class="st">"Catálogo"</span>) },
+                navigationIcon = {
+                    <span class="cm">// Botón para volver atrás en la navegación</span>
+                    <span class="cl">IconButton</span>(onClick = { navController.<span class="fn">popBackStack</span>() }) {
+                        <span class="cl">Icon</span>(<span class="cl">Icons</span>.AutoMirrored.Filled.ArrowBack, <span class="st">"Atrás"</span>)
+                    }
+                },
+                actions = {
+                    <span class="cl">IconButton</span>(onClick = { }) { <span class="cl">Icon</span>(<span class="cl">Icons</span>.Default.Search, <span class="st">"Buscar"</span>) }
+                }
+            )
+        },
+        <span class="cm">// FAB: botón de acción flotante (esquina inferior derecha)</span>
+        floatingActionButton = {
+            <span class="cl">FloatingActionButton</span>(onClick = { <span class="cm">/* agregar */</span> }) {
+                <span class="cl">Icon</span>(<span class="cl">Icons</span>.Default.Add, <span class="st">"Agregar"</span>)
+            }
+        },
+        snackbarHost = { <span class="cl">SnackbarHost</span>(snackbarState) }
+    ) { paddingValues ->
+        <span class="cm">// ⚠️ OBLIGATORIO: aplicar paddingValues al contenido</span>
+        <span class="cm">// Sin esto, el contenido queda DEBAJO de la TopAppBar o el FAB</span>
+        <span class="cl">LazyColumn</span>(modifier = <span class="cl">Modifier</span>.<span class="fn">padding</span>(paddingValues)) {
+            <span class="cm">/* items */</span>
+        }
+    }
+}</pre>
+</div>
+</div>
+
+<!-- ══ 18. S4 — Animaciones ══ -->
+<div class="sl" data-m="4">
+<div class="hd"><span class="mod m4">S4</span><h2>Animaciones en Compose</h2></div>
+<div class="bd">
+  <div class="concept">
+    <div class="clbl">3 APIs de animación para 3 casos distintos</div>
+    <p><strong>AnimatedVisibility</strong> = mostrar/ocultar con transición · <strong>animateContentSize</strong> = animar cambios de tamaño automáticamente · <strong>animate*AsState</strong> = animar cualquier valor (Float, Color, Dp) cuando cambia su estado.</p>
+  </div>
+  <div class="cols">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <pre><span class="cm">// AnimatedVisibility: show/hide con transición</span>
+<span class="kw">var</span> visible <span class="kw">by</span> <span class="fn">remember</span> { <span class="fn">mutableStateOf</span>(<span class="kw">true</span>) }
+<span class="cl">AnimatedVisibility</span>(
+    visible = visible,
+    <span class="cm">// enter: animación al aparecer</span>
+    enter = <span class="fn">fadeIn</span>() + <span class="fn">slideInVertically</span>(),
+    <span class="cm">// exit: animación al desaparecer</span>
+    exit = <span class="fn">fadeOut</span>() + <span class="fn">slideOutVertically</span>()
+) {
+    <span class="cl">Card</span> { <span class="cl">Text</span>(<span class="st">"Elemento animado"</span>) }
+}
+
+<span class="cm">// animateContentSize: el contenedor se anima</span>
+<span class="cm">// automáticamente cuando su contenido cambia de tamaño</span>
+<span class="kw">var</span> expandido <span class="kw">by</span> <span class="fn">remember</span> { <span class="fn">mutableStateOf</span>(<span class="kw">false</span>) }
+<span class="cl">Card</span>(modifier = <span class="cl">Modifier</span>
+    .<span class="fn">animateContentSize</span>()    <span class="cm">// ← un solo modificador</span>
+    .<span class="fn">clickable</span> { expandido = !expandido }
+) {
+    <span class="cl">Column</span> {
+        <span class="cl">Text</span>(<span class="st">"Título"</span>)
+        <span class="cm">// Este bloque aparece/desaparece con animación</span>
+        <span class="kw">if</span> (expandido) <span class="cl">Text</span>(<span class="st">"Descripción larga..."</span>)
+    }
+}</pre>
+    </div>
+    <div>
+      <pre><span class="cm">// animate*AsState: anima cualquier valor</span>
+<span class="cm">// cuando su "targetValue" cambia</span>
+<span class="kw">var</span> seleccionado <span class="kw">by</span> <span class="fn">remember</span> { <span class="fn">mutableStateOf</span>(<span class="kw">false</span>) }
+
+<span class="cm">// Escala: 1.0 → 1.1 con efecto de rebote</span>
+<span class="kw">val</span> escala <span class="kw">by</span> <span class="fn">animateFloatAsState</span>(
+    targetValue = <span class="kw">if</span> (seleccionado) <span class="num">1.1f</span> <span class="kw">else</span> <span class="num">1.0f</span>,
+    <span class="cm">// spring: física de resorte (más natural que linear)</span>
+    animationSpec = <span class="fn">spring</span>(
+        dampingRatio = <span class="cl">Spring</span>.DampingRatioMediumBouncy
+    ),
+    label = <span class="st">"escala"</span>  <span class="cm">// para el inspector de animaciones</span>
+)
+
+<span class="cm">// Color: surface → primaryContainer con transición suave</span>
+<span class="kw">val</span> color <span class="kw">by</span> <span class="fn">animateColorAsState</span>(
+    targetValue = <span class="kw">if</span> (seleccionado)
+        <span class="cl">MaterialTheme</span>.colorScheme.primaryContainer
+    <span class="kw">else</span>
+        <span class="cl">MaterialTheme</span>.colorScheme.surface,
+    label = <span class="st">"color"</span>
+)
+
+<span class="cm">// Aplicar los valores animados al componente</span>
+<span class="cl">Card</span>(
+    modifier = <span class="cl">Modifier</span>
+        .<span class="fn">scale</span>(escala)                 <span class="cm">// aplica escala animada</span>
+        .<span class="fn">clickable</span> { seleccionado = !seleccionado },
+    colors = <span class="cl">CardDefaults</span>.<span class="fn">cardColors</span>(containerColor = color)
+) { }</pre>
+      <div class="ex">
+        <div class="lbl">⭐ Instagram y Twitter</div>
+        <p>El corazón de Instagram al dar Like usa <span class="tg">animateFloatAsState</span> con spring. Twitter/X usa <span class="tg">AnimatedVisibility</span> para los botones de respuesta.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ 19. S4 — Pager y Pull-to-refresh ══ -->
+<div class="sl" data-m="4">
+<div class="hd"><span class="mod m4">S4</span><h2>HorizontalPager y Pull-to-Refresh</h2></div>
+<div class="bd">
+  <div class="cols">
+    <div>
+      <div class="concept">
+        <div class="clbl">HorizontalPager — Carrusel de páginas</div>
+        <p>Equivale a ViewPager2. Permite deslizar entre páginas horizontalmente. Ideal para carruseles de imágenes, onboarding, o pantallas con tabs.</p>
+      </div>
+      <pre><span class="cm">// rememberPagerState: controla qué página se muestra</span>
+<span class="kw">val</span> pagerState = <span class="fn">rememberPagerState</span>(
+    pageCount = { imagenes.size }  <span class="cm">// total de páginas</span>
+)
+
+<span class="cl">HorizontalPager</span>(
+    state = pagerState,
+    modifier = <span class="cl">Modifier</span>.<span class="fn">fillMaxWidth</span>().<span class="fn">height</span>(<span class="num">200</span>.dp)
+) { pagina ->
+    <span class="cm">// "pagina" es el índice actual visible</span>
+    <span class="cl">AsyncImage</span>(
+        model = imagenes[pagina],
+        contentDescription = <span class="st">"Imagen $pagina"</span>,
+        contentScale = <span class="cl">ContentScale</span>.Crop  <span class="cm">// recortar para llenar</span>
+    )
+}
+
+<span class="cm">// Indicador de puntos (dots)</span>
+<span class="fn">repeat</span>(imagenes.size) { index ->
+    <span class="kw">val</span> color <span class="kw">by</span> <span class="fn">animateColorAsState</span>(
+        <span class="cm">// Punto activo: color primario. Inactivo: gris</span>
+        <span class="kw">if</span> (pagerState.currentPage == index)
+            <span class="cl">MaterialTheme</span>.colorScheme.primary
+        <span class="kw">else</span> <span class="cl">Color</span>.Gray, label = <span class="st">"dot"</span>
+    )
+    <span class="cl">Box</span>(modifier = <span class="cl">Modifier</span>.<span class="fn">size</span>(<span class="num">8</span>.dp).<span class="fn">background</span>(color, <span class="cl">CircleShape</span>))
+}</pre>
+    </div>
+    <div>
+      <div class="concept">
+        <div class="clbl">PullToRefreshBox — Deslizar para refrescar</div>
+        <p>Equivale a SwipeRefreshLayout. El usuario desliza hacia abajo para recargar datos. <code>isRefreshing</code> controla el spinner y <code>onRefresh</code> dispara la recarga.</p>
+      </div>
+      <pre><span class="an">@OptIn</span>(ExperimentalMaterial3Api::<span class="kw">class</span>)
+<span class="an">@Composable</span>
+<span class="kw">fun</span> <span class="fn">ListaConRefresh</span>(viewModel: <span class="cl">ProductosViewModel</span> = <span class="fn">viewModel</span>()) {
+    <span class="kw">val</span> uiState <span class="kw">by</span> viewModel.uiState.<span class="fn">collectAsStateWithLifecycle</span>()
+
+    <span class="cm">// PullToRefreshBox: envuelve el contenido scrollable</span>
+    <span class="cl">PullToRefreshBox</span>(
+        <span class="cm">// isRefreshing: true = mostrar spinner de carga</span>
+        isRefreshing = uiState.cargando,
+        <span class="cm">// onRefresh: se llama cuando el usuario desliza hacia abajo</span>
+        onRefresh = { viewModel.<span class="fn">recargar</span>() }
+    ) {
+        <span class="cl">LazyColumn</span>(modifier = <span class="cl">Modifier</span>.<span class="fn">fillMaxSize</span>()) {
+            <span class="fn">items</span>(uiState.productos) { producto ->
+                <span class="fn">TarjetaProducto</span>(producto)
+            }
+        }
+    }
+}</pre>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ 20. Cap1 — Room Entity y DAO ══ -->
+<div class="sl" data-m="5">
+<div class="hd"><span class="mod m5">S5</span><h2>Room — Base de datos local en Android</h2></div>
+<div class="bd">
+  <div class="concept">
+    <div class="clbl">¿Qué es Room y cómo se estructura?</div>
+    <p>Room es una capa de abstracción sobre SQLite. Tiene 3 componentes: <strong>@Entity</strong> = tabla de la BD (una clase Kotlin = una tabla), <strong>@Dao</strong> = operaciones (queries como funciones Kotlin), <strong>@Database</strong> = punto de entrada a la BD.</p>
+  </div>
+  <div class="cols">
+    <div>
+      <pre><span class="cm">// @Entity: define una TABLA en la base de datos</span>
+<span class="cm">// tableName: nombre de la tabla en SQLite (opcional)</span>
+<span class="an">@Entity</span>(tableName = <span class="st">"productos"</span>)
+<span class="kw">data class</span> <span class="cl">ProductoEntity</span>(
+
+    <span class="cm">// @PrimaryKey: llave primaria de la tabla</span>
+    <span class="cm">// autoGenerate: Room asigna el ID automáticamente</span>
+    <span class="an">@PrimaryKey</span>(autoGenerate = <span class="kw">true</span>)
+    <span class="kw">val</span> id: <span class="cl">Int</span> = <span class="num">0</span>,
+
+    <span class="cm">// @ColumnInfo: personaliza el nombre de la columna</span>
+    <span class="cm">// Sin esto, el nombre de la columna = nombre de la propiedad</span>
+    <span class="an">@ColumnInfo</span>(name = <span class="st">"nombre_producto"</span>)
+    <span class="kw">val</span> nombre: <span class="cl">String</span>,
+
+    <span class="kw">val</span> precio: <span class="cl">Double</span>,     <span class="cm">// columna "precio"</span>
+    <span class="kw">val</span> stock: <span class="cl">Int</span> = <span class="num">0</span>,     <span class="cm">// columna "stock", valor por defecto 0</span>
+    <span class="kw">val</span> enOferta: <span class="cl">Boolean</span> = <span class="kw">false</span>
+)</pre>
+    </div>
+    <div>
+      <pre><span class="cm">// @Dao: define las OPERACIONES sobre la tabla</span>
+<span class="cm">// Dao = Data Access Object — solo queries, no lógica</span>
+<span class="an">@Dao</span>
+<span class="kw">interface</span> <span class="cl">ProductoDao</span> {
+
+    <span class="cm">// Flow&lt;List&gt;: retorna datos en tiempo real</span>
+    <span class="cm">// Cada vez que los datos cambian, Room emite la nueva lista</span>
+    <span class="an">@Query</span>(<span class="st">"SELECT * FROM productos ORDER BY nombre"</span>)
+    <span class="kw">fun</span> <span class="fn">obtenerTodos</span>(): <span class="cl">Flow</span>&lt;<span class="cl">List</span>&lt;<span class="cl">ProductoEntity</span>&gt;&gt;
+
+    <span class="cm">// suspend: operación asíncrona que no bloquea el hilo</span>
+    <span class="an">@Insert</span>(onConflict = <span class="cl">OnConflictStrategy</span>.REPLACE)
+    <span class="kw">suspend fun</span> <span class="fn">insertar</span>(producto: <span class="cl">ProductoEntity</span>)
+
+    <span class="cm">// @Delete: borra el registro que coincide con el objeto</span>
+    <span class="an">@Delete</span>
+    <span class="kw">suspend fun</span> <span class="fn">eliminar</span>(producto: <span class="cl">ProductoEntity</span>)
+
+    <span class="cm">// Query con parámetro: :id coincide con el parámetro "id"</span>
+    <span class="an">@Query</span>(<span class="st">"SELECT * FROM productos WHERE id = :id"</span>)
+    <span class="kw">suspend fun</span> <span class="fn">obtenerPorId</span>(id: <span class="cl">Int</span>): <span class="cl">ProductoEntity</span>?
+}</pre>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ 21. Cap1 — Room Database + DataStore ══ -->
+<div class="sl" data-m="5">
+<div class="hd"><span class="mod m5">S5</span><h2>Room @Database y DataStore</h2></div>
+<div class="bd">
+  <div class="cols">
+    <div>
+      <pre><span class="cm">// @Database: declara la base de datos Room</span>
+<span class="cm">// entities: lista de todas las tablas</span>
+<span class="cm">// version: incrementar al cambiar el esquema</span>
+<span class="an">@Database</span>(entities = [<span class="cl">ProductoEntity</span>::<span class="kw">class</span>], version = <span class="num">1</span>)
+<span class="kw">abstract class</span> <span class="cl">AppDatabase</span> : <span class="cl">RoomDatabase</span>() {
+
+    <span class="cm">// Función abstracta: Room genera la implementación</span>
+    <span class="kw">abstract fun</span> <span class="fn">productoDao</span>(): <span class="cl">ProductoDao</span>
+
+    <span class="kw">companion object</span> {
+        <span class="cm">// @Volatile: garantiza visibilidad entre hilos</span>
+        <span class="an">@Volatile</span> <span class="kw">private var</span> INSTANCE: <span class="cl">AppDatabase</span>? = <span class="kw">null</span>
+
+        <span class="kw">fun</span> <span class="fn">obtener</span>(context: <span class="cl">Context</span>): <span class="cl">AppDatabase</span> {
+            <span class="cm">// synchronized: solo un hilo puede crear la BD</span>
+            <span class="kw">return</span> INSTANCE ?: <span class="kw">synchronized</span>(<span class="kw">this</span>) {
+                <span class="cl">Room</span>.<span class="fn">databaseBuilder</span>(
+                    context.applicationContext,
+                    <span class="cl">AppDatabase</span>::<span class="kw">class</span>.java,
+                    <span class="st">"app_database.db"</span>  <span class="cm">// nombre del archivo</span>
+                ).<span class="fn">build</span>().<span class="kw">also</span> { INSTANCE = it }
+            }
+        }
+    }
+}</pre>
+    </div>
+    <div>
+      <div class="concept">
+        <div class="clbl">DataStore — Reemplaza SharedPreferences</div>
+        <p>DataStore es asíncrono (basado en Flow), seguro en hilos, y no puede corromper datos en operaciones de escritura simultáneas. SharedPreferences era síncrono y podía causar ANR (App Not Responding).</p>
+      </div>
+      <pre><span class="cm">// Declarar claves tipadas — evita errores de tipo</span>
+<span class="kw">val</span> TEMA_OSCURO = <span class="fn">booleanPreferencesKey</span>(<span class="st">"tema_oscuro"</span>)
+<span class="kw">val</span> NOMBRE_USUARIO = <span class="fn">stringPreferencesKey</span>(<span class="st">"nombre_usuario"</span>)
+
+<span class="cm">// Leer: Flow que emite el valor actual y sus cambios</span>
+<span class="kw">val</span> temaOscuro: <span class="cl">Flow</span>&lt;<span class="cl">Boolean</span>&gt; = dataStore.data
+    .<span class="fn">map</span> { prefs -> prefs[TEMA_OSCURO] ?: <span class="kw">false</span> }
+
+<span class="cm">// Escribir: suspend fun, ejecutar en coroutine</span>
+<span class="kw">suspend fun</span> <span class="fn">guardarTema</span>(oscuro: <span class="cl">Boolean</span>) {
+    dataStore.<span class="fn">edit</span> { prefs ->
+        <span class="cm">// edit: transacción atómica — o todo o nada</span>
+        prefs[TEMA_OSCURO] = oscuro
+    }
+}
+
+<span class="cm">// Comparación</span>
+<span class="cm">// SharedPreferences: sp.edit().putBoolean("k", v).apply()</span>
+<span class="cm">// DataStore: dataStore.edit { it[KEY] = value }  ← más seguro</span></pre>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ 22. Cap2 — Coroutines + Retrofit ══ -->
+<div class="sl" data-m="6">
+<div class="hd"><span class="mod m6">S6</span><h2>Retrofit — Cliente HTTP moderno con Coroutines</h2></div>
+<div class="bd">
+  <div class="concept">
+    <div class="clbl">¿Qué es Retrofit y cómo funciona con suspend?</div>
+    <p>Retrofit convierte interfaces Kotlin en llamadas HTTP. Con <code>suspend fun</code>, la llamada de red se ejecuta de forma asíncrona sin bloquear el hilo principal. Combina con <code>sealed class</code> para manejar los estados: Cargando, Éxito y Error.</p>
+  </div>
+  <div class="cols">
+    <div>
+      <pre><span class="cm">// Interfaz Retrofit: cada función = un endpoint HTTP</span>
+<span class="kw">interface</span> <span class="cl">ProductosApi</span> {
+
+    <span class="cm">// @GET: petición GET a la URL relativa</span>
+    <span class="cm">// suspend: la función es asíncrona (no bloquea el hilo)</span>
+    <span class="an">@GET</span>(<span class="st">"productos"</span>)
+    <span class="kw">suspend fun</span> <span class="fn">obtenerProductos</span>(): <span class="cl">RespuestaProductos</span>
+
+    <span class="cm">// @Path: sustituye {id} en la URL con el valor del parámetro</span>
+    <span class="an">@GET</span>(<span class="st">"productos/{id}"</span>)
+    <span class="kw">suspend fun</span> <span class="fn">obtenerProducto</span>(<span class="an">@Path</span>(<span class="st">"id"</span>) id: <span class="cl">Int</span>): <span class="cl">ProductoDto</span>
+
+    <span class="cm">// @Query: añade parámetros a la URL: ?pagina=1&limite=20</span>
+    <span class="an">@GET</span>(<span class="st">"productos"</span>)
+    <span class="kw">suspend fun</span> <span class="fn">buscar</span>(
+        <span class="an">@Query</span>(<span class="st">"q"</span>) termino: <span class="cl">String</span>,
+        <span class="an">@Query</span>(<span class="st">"pagina"</span>) pagina: <span class="cl">Int</span> = <span class="num">1</span>
+    ): <span class="cl">RespuestaProductos</span>
+
+    <span class="cm">// @Body: envía el objeto como JSON en el cuerpo del POST</span>
+    <span class="an">@POST</span>(<span class="st">"productos"</span>)
+    <span class="kw">suspend fun</span> <span class="fn">crearProducto</span>(<span class="an">@Body</span> producto: <span class="cl">ProductoDto</span>): <span class="cl">ProductoDto</span>
+}</pre>
+    </div>
+    <div>
+      <pre><span class="cm">// Sealed class: representa los 3 estados posibles de una operación</span>
+<span class="cm">// Fuerza al código a manejar TODOS los casos (exhaustivo)</span>
+<span class="kw">sealed class</span> <span class="cl">Resultado</span>&lt;<span class="kw">out</span> T&gt; {
+    <span class="cm">// Éxito: contiene los datos</span>
+    <span class="kw">data class</span> <span class="cl">Exito</span>&lt;T&gt;(<span class="kw">val</span> datos: T) : <span class="cl">Resultado</span>&lt;T&gt;()
+    <span class="cm">// Error: contiene el mensaje de error</span>
+    <span class="kw">data class</span> <span class="cl">Error</span>(<span class="kw">val</span> mensaje: <span class="cl">String</span>) : <span class="cl">Resultado</span>&lt;<span class="cl">Nothing</span>&gt;()
+    <span class="cm">// Cargando: estado intermedio</span>
+    <span class="kw">object</span> <span class="cl">Cargando</span> : <span class="cl">Resultado</span>&lt;<span class="cl">Nothing</span>&gt;()
+}
+
+<span class="cm">// Uso en ViewModel con when exhaustivo</span>
+<span class="kw">when</span> (<span class="kw">val</span> resultado = repositorio.<span class="fn">obtenerProductos</span>()) {
+    <span class="kw">is</span> <span class="cl">Resultado</span>.<span class="cl">Exito</span>   -> <span class="fn">mostrar</span>(resultado.datos)
+    <span class="kw">is</span> <span class="cl">Resultado</span>.<span class="cl">Error</span>   -> <span class="fn">mostrarError</span>(resultado.mensaje)
+    <span class="kw">is</span> <span class="cl">Resultado</span>.<span class="cl">Cargando</span> -> <span class="fn">mostrarSpinner</span>()
+    <span class="cm">// No hay "else" — sealed class garantiza que son solo estos 3</span>
+}</pre>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ 23. Cap2 — Offline-first Repository ══ -->
+<div class="sl" data-m="6">
+<div class="hd"><span class="mod m6">S6</span><h2>Patrón Offline-First — Repository</h2></div>
+<div class="bd">
+  <div class="concept">
+    <div class="clbl">¿Qué es offline-first y por qué es importante?</div>
+    <p>Una app offline-first <strong>siempre muestra datos de la BD local primero</strong>. Luego sincroniza con la red en background. El usuario ve datos instantáneamente y no depende de conexión. Spotify, Gmail y WhatsApp funcionan así.</p>
+  </div>
+  <pre><span class="cm">// ProductosRepositorioImpl: coordina BD local y API remota</span>
+<span class="cm">// Regla offline-first: BD es la fuente de verdad</span>
+<span class="kw">class</span> <span class="cl">ProductosRepositorioImpl</span>(
+    <span class="kw">private val</span> dao: <span class="cl">ProductoDao</span>,       <span class="cm">// fuente local (Room)</span>
+    <span class="kw">private val</span> api: <span class="cl">ProductosApi</span>       <span class="cm">// fuente remota (Retrofit)</span>
+) : <span class="cl">ProductosRepositorio</span> {
+
+    <span class="cm">// obtenerProductos(): Flow que emite la lista de la BD</span>
+    <span class="cm">// Cada vez que Room actualiza la BD, la UI recibe la nueva lista</span>
+    <span class="cm">// Sin necesidad de llamar manualmente a "recargar"</span>
+    <span class="kw">override fun</span> <span class="fn">obtenerProductos</span>(): <span class="cl">Flow</span>&lt;<span class="cl">List</span>&lt;<span class="cl">Producto</span>&gt;&gt; =
+        dao.<span class="fn">obtenerTodos</span>()              <span class="cm">// retorna Flow de Room directamente</span>
+           .<span class="fn">map</span> { entities -> entities.<span class="fn">map</span> { it.<span class="fn">toProducto</span>() } }
+
+    <span class="cm">// sincronizar(): descarga de la red y guarda en BD local</span>
+    <span class="cm">// La UI no llama a esto — usa el Flow de arriba</span>
+    <span class="kw">override suspend fun</span> <span class="fn">sincronizar</span>() {
+        <span class="cm">// withContext(IO): cambia al hilo de IO para operaciones de red</span>
+        <span class="fn">withContext</span>(<span class="cl">Dispatchers</span>.IO) {
+            <span class="kw">try</span> {
+                <span class="cm">// Paso 1: descargar de la API</span>
+                <span class="kw">val</span> remotos = api.<span class="fn">obtenerProductos</span>().productos
+
+                <span class="cm">// Paso 2: guardar en Room — Room actualiza el Flow automáticamente</span>
+                dao.<span class="fn">insertarTodos</span>(remotos.<span class="fn">map</span> { it.<span class="fn">toEntity</span>() })
+
+                <span class="cm">// El Flow de obtenerProductos() emitirá la nueva lista sin</span>
+                <span class="cm">// que la UI tenga que pedir los datos de nuevo</span>
+            } <span class="kw">catch</span> (e: <span class="cl">IOException</span>) {
+                <span class="cm">// Sin conexión: mostrar datos de la BD local (offline-first)</span>
+                <span class="cm">// No lanzamos el error — la UI ya tiene datos cacheados</span>
+            }
+        }
+    }
+}</pre>
+  <div class="ex">
+    <div class="lbl">⭐ Caso real — Spotify y Gmail</div>
+    <p>Spotify almacena tu biblioteca en SQLite local. Al abrir la app, muestra tus canciones de la BD inmediatamente mientras sincroniza en background con los servidores.</p>
+  </div>
+</div>
+</div>
+
+<!-- ══ 24. Cap3 — WorkManager ══ -->
+<div class="sl" data-m="7">
+<div class="hd"><span class="mod m7">S7</span><h2>WorkManager — Trabajo garantizado en background</h2></div>
+<div class="bd">
+  <div class="concept">
+    <div class="clbl">¿Cuándo usar WorkManager?</div>
+    <p>WorkManager garantiza que el trabajo se ejecute <strong>aunque el usuario cierre la app o reinicie el dispositivo</strong>. Ideal para: subir fotos, sincronizar datos, enviar logs. No es para trabajo inmediato (usa coroutines) ni para notificaciones push (usa FCM).</p>
+  </div>
+  <pre><span class="cm">// CoroutineWorker: worker moderno con soporte de coroutines</span>
+<span class="cm">// Siempre usar CoroutineWorker en lugar de Worker</span>
+<span class="kw">class</span> <span class="cl">SincronizacionWorker</span>(
+    context: <span class="cl">Context</span>,
+    params: <span class="cl">WorkerParameters</span>
+) : <span class="cl">CoroutineWorker</span>(context, params) {
+
+    <span class="cm">// doWork: función suspendida que realiza el trabajo</span>
+    <span class="cm">// Se ejecuta en Dispatchers.Default automáticamente</span>
+    <span class="kw">override suspend fun</span> <span class="fn">doWork</span>(): <span class="cl">Result</span> {
+        <span class="kw">return try</span> {
+            <span class="kw">val</span> repo = (applicationContext <span class="kw">as</span> <span class="cl">MiApp</span>).repositorio
+            repo.<span class="fn">sincronizar</span>()
+            <span class="cl">Result</span>.<span class="fn">success</span>()  <span class="cm">// trabajo completado exitosamente</span>
+
+        } <span class="kw">catch</span> (e: <span class="cl">IOException</span>) {
+            <span class="cm">// Sin red: reintentar automáticamente</span>
+            <span class="cm">// runAttemptCount: número de intentos realizados</span>
+            <span class="kw">if</span> (runAttemptCount &lt; <span class="num">3</span>) <span class="cl">Result</span>.<span class="fn">retry</span>()  <span class="cm">// reintentar</span>
+            <span class="kw">else</span> <span class="cl">Result</span>.<span class="fn">failure</span>()                    <span class="cm">// fallar después de 3 intentos</span>
+        }
+    }
+}
+
+<span class="cm">// Programar trabajo periódico (cada 6 horas)</span>
+<span class="kw">val</span> request = <span class="cl">PeriodicWorkRequestBuilder</span>&lt;<span class="cl">SincronizacionWorker</span>&gt;(<span class="num">6</span>, <span class="cl">TimeUnit</span>.HOURS)
+    .<span class="fn">setConstraints</span>(<span class="cm">// condiciones para ejecutar</span>
+        <span class="cl">Constraints</span>.<span class="cl">Builder</span>()
+            .<span class="fn">setRequiredNetworkType</span>(<span class="cl">NetworkType</span>.CONNECTED)  <span class="cm">// solo con red</span>
+            .<span class="fn">setRequiresBatteryNotLow</span>(<span class="kw">true</span>)                <span class="cm">// no con batería baja</span>
+            .<span class="fn">build</span>()
+    ).<span class="fn">build</span>()
+
+<span class="cm">// enqueueUniquePeriodicWork: evita duplicados con la misma "clave"</span>
+<span class="cl">WorkManager</span>.<span class="fn">getInstance</span>(context)
+    .<span class="fn">enqueueUniquePeriodicWork</span>(<span class="st">"sync"</span>, <span class="cl">ExistingPeriodicWorkPolicy</span>.UPDATE, request)</pre>
+</div>
+</div>
+
+<!-- ══ 25. Cap3 — Notificaciones ══ -->
+<div class="sl" data-m="7">
+<div class="hd"><span class="mod m7">S7</span><h2>Notificaciones — Notification Channels</h2></div>
+<div class="bd">
+  <div class="concept">
+    <div class="clbl">¿Por qué Notification Channels desde Android 8?</div>
+    <p>Los canales agrupan notificaciones por categoría. El usuario puede silenciar "Ofertas" sin silenciar "Pedidos". Cada canal tiene su propia configuración de sonido, vibración e importancia. Es obligatorio en Android 8+ (API 26+).</p>
+  </div>
+  <pre><span class="cm">// Crear canales al iniciar la app (en Application.onCreate)</span>
+<span class="kw">fun</span> <span class="fn">crearCanales</span>(context: <span class="cl">Context</span>) {
+    <span class="kw">if</span> (<span class="cl">Build</span>.VERSION.SDK_INT >= <span class="cl">Build</span>.VERSION_CODES.O) {
+
+        <span class="cm">// Canal de alta importancia: sonido + cabecera flotante</span>
+        <span class="kw">val</span> canalPedidos = <span class="cl">NotificationChannel</span>(
+            <span class="st">"pedidos"</span>,                             <span class="cm">// ID único del canal</span>
+            <span class="st">"Pedidos y entregas"</span>,                  <span class="cm">// nombre visible al usuario</span>
+            <span class="cl">NotificationManager</span>.IMPORTANCE_HIGH    <span class="cm">// aparece como heads-up</span>
+        )
+
+        <span class="cm">// Canal de importancia normal: sin sonido intrusivo</span>
+        <span class="kw">val</span> canalOfertas = <span class="cl">NotificationChannel</span>(
+            <span class="st">"ofertas"</span>, <span class="st">"Ofertas"</span>, <span class="cl">NotificationManager</span>.IMPORTANCE_DEFAULT
+        )
+
+        <span class="kw">val</span> manager = context.<span class="fn">getSystemService</span>(<span class="cl">NotificationManager</span>::<span class="kw">class</span>.java)
+        manager.<span class="fn">createNotificationChannels</span>(<span class="fn">listOf</span>(canalPedidos, canalOfertas))
+    }
+}
+
+<span class="cm">// Mostrar una notificación en el canal "pedidos"</span>
+<span class="kw">fun</span> <span class="fn">notificarPedido</span>(context: <span class="cl">Context</span>, numeroPedido: <span class="cl">String</span>) {
+    <span class="kw">val</span> notif = <span class="cl">NotificationCompat</span>.<span class="cl">Builder</span>(context, <span class="st">"pedidos"</span>)  <span class="cm">// ← canal</span>
+        .<span class="fn">setSmallIcon</span>(R.drawable.ic_bag)
+        .<span class="fn">setContentTitle</span>(<span class="st">"Pedido #$numeroPedido enviado"</span>)
+        .<span class="fn">setContentText</span>(<span class="st">"Llegará en 30-45 minutos"</span>)
+        .<span class="fn">setPriority</span>(<span class="cl">NotificationCompat</span>.PRIORITY_HIGH)
+        .<span class="fn">setAutoCancel</span>(<span class="kw">true</span>)  <span class="cm">// se descarta al tocarla</span>
+        .<span class="fn">build</span>()
+
+    <span class="cl">NotificationManagerCompat</span>.<span class="fn">from</span>(context)
+        .<span class="fn">notify</span>(numeroPedido.<span class="fn">hashCode</span>(), notif)  <span class="cm">// ID único por pedido</span>
+}</pre>
+</div>
+</div>
+
+<!-- ══ 26. Cap4 — Clean Architecture ══ -->
+<div class="sl" data-m="8">
+<div class="hd"><span class="mod m8">S8</span><h2>Clean Architecture — Las 3 capas</h2></div>
+<div class="bd">
+  <div class="meta" style="margin-bottom:4px">
+    <div class="lbl">🏗️ ¿Por qué arquitectura limpia?</div>
+    <p>Sin arquitectura, tu app termina con toda la lógica en la Activity (el famoso "God Activity"). Clean Architecture divide las responsabilidades en capas con <strong>dependencias unidireccionales</strong>: la UI no sabe de la BD, y la BD no sabe de la UI.</p>
+  </div>
+  <div class="cols">
+    <div class="layers" style="justify-content:center">
+      <div class="layer" style="background:rgba(163,113,247,.25);border:1px solid #a371f7">
+        UI LAYER (Compose + ViewModel)
+        <div class="sub">Solo conoce UiState · Envía eventos · No sabe de BD ni red</div>
+      </div>
+      <div class="arr">▼ llama a ▼</div>
+      <div class="layer" style="background:rgba(88,166,255,.2);border:1px solid #58a6ff">
+        DOMAIN LAYER (Use Cases)
+        <div class="sub">Reglas de negocio puras · Sin imports de Android · Opcional</div>
+      </div>
+      <div class="arr">▼ llama a ▼</div>
+      <div class="layer" style="background:rgba(63,185,80,.2);border:1px solid #3fb950">
+        DATA LAYER (Repository + DataSources)
+        <div class="sub">Coordina Room + Retrofit · Implementa contratos del Domain</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;justify-content:center">
+      <pre><span class="cm">// domain/ProductosRepositorio.kt</span>
+<span class="cm">// CONTRATO: solo la interfaz, sin detalles de implementación</span>
+<span class="cm">// Sin imports de Room, Retrofit ni Android — es Kotlin puro</span>
+<span class="kw">interface</span> <span class="cl">ProductosRepositorio</span> {
+    <span class="kw">fun</span> <span class="fn">obtenerProductos</span>(): <span class="cl">Flow</span>&lt;<span class="cl">List</span>&lt;<span class="cl">Producto</span>&gt;&gt;
+    <span class="kw">suspend fun</span> <span class="fn">sincronizar</span>()
+}
+
+<span class="cm">// data/ProductosRepositorioImpl.kt</span>
+<span class="cm">// IMPLEMENTACIÓN: conoce Room y Retrofit</span>
+<span class="cm">// Si cambias la BD, solo cambias este archivo</span>
+<span class="kw">class</span> <span class="cl">ProductosRepositorioImpl</span>(
+    <span class="kw">private val</span> dao: <span class="cl">ProductoDao</span>,   <span class="cm">// implementa con Room</span>
+    <span class="kw">private val</span> api: <span class="cl">ProductosApi</span>   <span class="cm">// y Retrofit</span>
+) : <span class="cl">ProductosRepositorio</span> { ... }</pre>
+      <div class="ex">
+        <div class="lbl">⭐ Beneficio concreto</div>
+        <p>Si migras de Room a Realm, solo modificas <code>ProductosRepositorioImpl</code>. El ViewModel y la UI no cambian nada — no saben qué BD se usa.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ 27. Cap4 — Hilt por qué ══ -->
+<div class="sl" data-m="8">
+<div class="hd"><span class="mod m8">S8</span><h2>Hilt — ¿Por qué inyección de dependencias?</h2></div>
+<div class="bd">
+  <div class="concept">
+    <div class="clbl">El problema que resuelve Hilt</div>
+    <p>Sin DI, para crear un ViewModel necesitas crear manualmente el Repositorio, que necesita el DAO, que necesita la BD, que necesita el Context... Hilt automatiza toda esta cadena de creación.</p>
+  </div>
+  <div class="cols">
+    <div class="card cmp cmp-bad">
+      <div class="tag">❌ Sin Hilt — creación manual de dependencias</div>
+      <pre><span class="cm">// En MainActivity hay que construir todo manualmente</span>
+<span class="kw">val</span> db = <span class="cl">AppDatabase</span>.<span class="fn">obtener</span>(this)   <span class="cm">// necesita Context</span>
+<span class="kw">val</span> dao = db.<span class="fn">productoDao</span>()          <span class="cm">// necesita db</span>
+<span class="kw">val</span> api = <span class="cl">NetworkModule</span>.productosApi <span class="cm">// singleton manual</span>
+<span class="kw">val</span> repo = <span class="cl">ProductosRepositorioImpl</span>(dao, api) <span class="cm">// necesita dao y api</span>
+<span class="kw">val</span> vm = <span class="cl">ProductosViewModel</span>(repo)   <span class="cm">// necesita repo</span>
+<span class="cm">// Si cambia ProductosRepositorio, cambias este código</span>
+<span class="cm">// Y cada Activity que lo use...</span></pre>
+    </div>
+    <div class="card cmp cmp-good">
+      <div class="tag">✅ Con Hilt — Hilt construye todo automáticamente</div>
+      <pre><span class="cm">// ViewModel solo declara lo que necesita</span>
+<span class="an">@HiltViewModel</span>
+<span class="kw">class</span> <span class="cl">ProductosViewModel</span> <span class="an">@Inject constructor</span>(
+    <span class="cm">// Hilt inyecta el repositorio automáticamente</span>
+    <span class="kw">private val</span> repositorio: <span class="cl">ProductosRepositorio</span>
+) : <span class="cl">ViewModel</span>() { ... }
+
+<span class="cm">// En el Composable: hiltViewModel() en lugar de viewModel()</span>
+<span class="an">@Composable</span>
+<span class="kw">fun</span> <span class="fn">PantallaProductos</span>(
+    viewModel: <span class="cl">ProductosViewModel</span> = <span class="fn">hiltViewModel</span>()
+) { ... }
+<span class="cm">// Hilt crea y conecta toda la cadena de dependencias</span></pre>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="lbl">🏭 Metáfora</div>
+    <p>Sin DI: construyes un coche fabricando tú mismo cada tornillo, motor y rueda. Hilt: tienes una fábrica que te entrega el coche ensamblado cuando lo pides — tú solo describes qué coche quieres.</p>
+  </div>
+</div>
+</div>
+
+<!-- ══ 28. Cap4 — Hilt Module ══ -->
+<div class="sl" data-m="8">
+<div class="hd"><span class="mod m8">S8</span><h2>Hilt — Configuración y Módulos</h2></div>
+<div class="bd">
+  <div class="cols">
+    <div>
+      <pre><span class="cm">// 1. Anotar la Application con @HiltAndroidApp</span>
+<span class="cm">// Esto activa Hilt para toda la app</span>
+<span class="an">@HiltAndroidApp</span>
+<span class="kw">class</span> <span class="cl">MiApp</span> : <span class="cl">Application</span>()
+
+<span class="cm">// 2. Módulo: le dice a Hilt cómo crear cada dependencia</span>
+<span class="an">@Module</span>
+<span class="cm">// @InstallIn: en qué scope vive este módulo</span>
+<span class="cm">// SingletonComponent = una instancia en toda la app</span>
+<span class="an">@InstallIn</span>(<span class="cl">SingletonComponent</span>::<span class="kw">class</span>)
+<span class="kw">object</span> <span class="cl">AppModule</span> {
+
+    <span class="cm">// @Provides: función que crea la instancia</span>
+    <span class="cm">// @Singleton: solo crea una instancia (no crea una nueva cada vez)</span>
+    <span class="an">@Provides</span>
+    <span class="an">@Singleton</span>
+    <span class="kw">fun</span> <span class="fn">provideDatabase</span>(app: <span class="cl">Application</span>): <span class="cl">AppDatabase</span> {
+        <span class="cm">// Hilt inyecta Application automáticamente</span>
+        <span class="kw">return</span> <span class="cl">AppDatabase</span>.<span class="fn">obtener</span>(app)
+    }
+
+    <span class="an">@Provides</span>
+    <span class="kw">fun</span> <span class="fn">provideDao</span>(db: <span class="cl">AppDatabase</span>): <span class="cl">ProductoDao</span> {
+        <span class="cm">// db: Hilt inyecta la BD del método anterior</span>
+        <span class="kw">return</span> db.<span class="fn">productoDao</span>()
+    }</pre>
+    </div>
+    <div>
+      <pre>    <span class="an">@Provides</span>
+    <span class="an">@Singleton</span>
+    <span class="kw">fun</span> <span class="fn">provideApi</span>(): <span class="cl">ProductosApi</span> {
+        <span class="cm">// Crear el cliente Retrofit — singleton</span>
+        <span class="kw">return</span> <span class="cl">Retrofit</span>.<span class="cl">Builder</span>()
+            .<span class="fn">baseUrl</span>(<span class="st">"https://api.miapp.com/"</span>)
+            .<span class="fn">addConverterFactory</span>(<span class="cl">GsonConverterFactory</span>.<span class="fn">create</span>())
+            .<span class="fn">build</span>()
+            .<span class="fn">create</span>(<span class="cl">ProductosApi</span>::<span class="kw">class</span>.java)
+    }
+
+    <span class="an">@Provides</span>
+    <span class="an">@Singleton</span>
+    <span class="kw">fun</span> <span class="fn">provideRepositorio</span>(
+        dao: <span class="cl">ProductoDao</span>,   <span class="cm">// inyectado del método provideDao</span>
+        api: <span class="cl">ProductosApi</span>   <span class="cm">// inyectado del método provideApi</span>
+    ): <span class="cl">ProductosRepositorio</span> {
+        <span class="cm">// Retorna la implementación concreta</span>
+        <span class="cm">// pero el tipo es la interfaz del domain</span>
+        <span class="kw">return</span> <span class="cl">ProductosRepositorioImpl</span>(dao, api)
+    }
+}
+<span class="cm">// Hilt conecta automáticamente todos los "provides"</span>
+<span class="cm">// usando el gráfico de dependencias en tiempo de compilación</span></pre>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ 29. Cap4 — Testing por qué ══ -->
+<div class="sl" data-m="8">
+<div class="hd"><span class="mod m8">S8</span><h2>Testing — La pirámide de pruebas</h2></div>
+<div class="bd">
+  <div class="meta">
+    <div class="lbl">🧪 ¿Para qué sirven los tests?</div>
+    <p>Los tests no son para verificar que el código funciona ahora — son para verificar que <strong>siga funcionando</strong> después de cada cambio. Una suite de tests es una red de seguridad que te dice exactamente qué rompiste al hacer un cambio.</p>
+  </div>
+  <div class="cols">
+    <div class="layers" style="justify-content:center">
+      <div class="layer" style="background:rgba(88,166,255,.2);border:1px solid #58a6ff;font-size:13px">
+        🖥️ TESTS DE UI (E2E) — Lentos, pocos
+        <div class="sub">Prueban flujos completos · Ejecución en dispositivo real</div>
+      </div>
+      <div class="arr">▼</div>
+      <div class="layer" style="background:rgba(227,179,65,.2);border:1px solid #e3b341;font-size:13px">
+        🔧 TESTS DE INTEGRACIÓN — Medios
+        <div class="sub">Room en memoria · API simulada · Prueban capas juntas</div>
+      </div>
+      <div class="arr">▼</div>
+      <div class="layer" style="background:rgba(63,185,80,.3);border:1px solid #3fb950;font-size:13px">
+        ⚡ TESTS UNITARIOS — Rápidos, muchos
+        <div class="sub">ViewModel · Use Cases · Lógica de negocio pura · JVM</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="card">
+        <h3>Herramientas por tipo de test</h3>
+        <table>
+          <tr><th>Herramienta</th><th class="txt">Para qué</th></tr>
+          <tr><td>JUnit 4/5</td><td class="txt">Framework base de tests unitarios</td></tr>
+          <tr><td>MockK</td><td class="txt">Crear mocks de dependencias en Kotlin</td></tr>
+          <tr><td>Turbine</td><td class="txt">Testear Flow / StateFlow</td></tr>
+          <tr><td>kotlinx-coroutines-test</td><td class="txt">runTest, advanceUntilIdle</td></tr>
+          <tr><td>createComposeRule</td><td class="txt">Testear Composables</td></tr>
+          <tr><td>inMemoryDatabaseBuilder</td><td class="txt">Testear Room sin archivos</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ 30. Cap4 — Testing ViewModel ══ -->
+<div class="sl" data-m="8">
+<div class="hd"><span class="mod m8">S8</span><h2>Testing de ViewModels con Coroutines</h2></div>
+<div class="bd">
+  <div class="concept">
+    <div class="clbl">Patrón AAA: Arrange → Act → Assert</div>
+    <p><strong>Arrange</strong>: configurar el mock y el objeto a testear. <strong>Act</strong>: ejecutar la acción. <strong>Assert</strong>: verificar el resultado. MockK crea objetos falsos (mocks) que simulan el comportamiento del repositorio real sin llamar a la BD.</p>
+  </div>
+  <pre><span class="cm">// @ExtendWith: activa la extensión de MockK para JUnit 5</span>
+<span class="an">@ExtendWith</span>(<span class="cl">MockKExtension</span>::<span class="kw">class</span>)
+<span class="kw">class</span> <span class="cl">ProductosViewModelTest</span> {
+
+    <span class="cm">// @MockK: crea un objeto falso que simula el repositorio real</span>
+    <span class="an">@MockK</span> <span class="kw">private lateinit var</span> repositorio: <span class="cl">ProductosRepositorio</span>
+
+    <span class="an">@Before</span>
+    <span class="kw">fun</span> <span class="fn">setup</span>() {
+        <span class="cm">// Reemplaza Dispatchers.Main por uno síncrono para tests</span>
+        <span class="cm">// Sin esto, las coroutines del ViewModel no se ejecutan en tests</span>
+        <span class="cl">Dispatchers</span>.<span class="fn">setMain</span>(<span class="cl">StandardTestDispatcher</span>())
+    }
+
+    <span class="an">@After</span>
+    <span class="kw">fun</span> <span class="fn">tearDown</span>() { <span class="cl">Dispatchers</span>.<span class="fn">resetMain</span>() }  <span class="cm">// restaurar para otros tests</span>
+
+    <span class="an">@Test</span>
+    <span class="kw">fun</span> `<span class="fn">cuando se cargan productos uiState tiene la lista</span>`() = <span class="fn">runTest</span> {
+        <span class="cm">// ── ARRANGE: configurar el mock ──</span>
+        <span class="kw">val</span> esperados = <span class="fn">listOf</span>(<span class="cl">Producto</span>(<span class="num">1</span>, <span class="st">"Laptop"</span>, <span class="num">999.99</span>))
+        <span class="cm">// coEvery: cuando se llame a obtenerProductos(), retorna este Flow</span>
+        <span class="fn">coEvery</span> { repositorio.<span class="fn">obtenerProductos</span>() } <span class="fn">returns</span> <span class="fn">flowOf</span>(esperados)
+
+        <span class="cm">// ── ACT: crear el ViewModel (dispara init → cargarProductos) ──</span>
+        <span class="kw">val</span> viewModel = <span class="cl">ProductosViewModel</span>(repositorio)
+
+        <span class="cm">// ── ASSERT: verificar el estado usando Turbine ──</span>
+        <span class="cm">// .test(): colector de Flow para tests — captura emisiones</span>
+        viewModel.uiState.<span class="fn">test</span> {
+            <span class="kw">val</span> estado = <span class="fn">awaitItem</span>()  <span class="cm">// espera la próxima emisión del Flow</span>
+            <span class="fn">assertThat</span>(estado.productos).<span class="fn">isEqualTo</span>(esperados)
+            <span class="fn">assertThat</span>(estado.cargando).<span class="fn">isFalse</span>()
+            <span class="fn">cancelAndIgnoreRemainingEvents</span>()  <span class="cm">// limpiar</span>
+        }
+    }
+}</pre>
+</div>
+</div>
+
+<!-- ══ 31. Cap4 — Testing Compose y Room ══ -->
+<div class="sl" data-m="8">
+<div class="hd"><span class="mod m8">S8</span><h2>Testing de Composables y Room</h2></div>
+<div class="bd">
+  <div class="cols">
+    <div>
+      <div class="concept">
+        <div class="clbl">Testing de Composables — createComposeRule</div>
+        <p>El test renderiza el Composable en un entorno controlado y verifica que muestra el contenido correcto o responde al input del usuario.</p>
+      </div>
+      <pre><span class="kw">class</span> <span class="cl">ListaProductosTest</span> {
+    <span class="cm">// createComposeRule: regla de JUnit que levanta</span>
+    <span class="cm">// un entorno de Compose para tests</span>
+    <span class="an">@get:Rule</span>
+    <span class="kw">val</span> compose = <span class="fn">createComposeRule</span>()
+
+    <span class="an">@Test</span>
+    <span class="kw">fun</span> `<span class="fn">lista vacía muestra mensaje</span>`() {
+        <span class="cm">// setContent: renderiza el Composable</span>
+        compose.<span class="fn">setContent</span> {
+            <span class="fn">ListaProductos</span>(productos = <span class="fn">emptyList</span>())
+        }
+        <span class="cm">// onNodeWithText: busca el nodo por texto</span>
+        compose
+            .<span class="fn">onNodeWithText</span>(<span class="st">"No hay productos"</span>)
+            .<span class="fn">assertIsDisplayed</span>()  <span class="cm">// verificar visibilidad</span>
+    }
+
+    <span class="an">@Test</span>
+    <span class="kw">fun</span> `<span class="fn">click en producto llama callback</span>`() {
+        <span class="kw">var</span> clickeado: <span class="cl">Producto</span>? = <span class="kw">null</span>
+        <span class="kw">val</span> productos = <span class="fn">listOf</span>(<span class="cl">Producto</span>(<span class="num">1</span>, <span class="st">"Laptop"</span>, <span class="num">999.0</span>))
+        compose.<span class="fn">setContent</span> {
+            <span class="fn">ListaProductos</span>(productos, onProductoClick = { clickeado = it })
+        }
+        compose.<span class="fn">onNodeWithText</span>(<span class="st">"Laptop"</span>).<span class="fn">performClick</span>()
+        <span class="fn">assertThat</span>(clickeado?.id).<span class="fn">isEqualTo</span>(<span class="num">1</span>)
+    }
+}</pre>
+    </div>
+    <div>
+      <div class="concept">
+        <div class="clbl">Testing de Room — Base de datos en memoria</div>
+        <p>La BD en memoria no persiste entre tests — se crea y destruye con cada test. Es idéntica a la BD real pero en RAM, no en disco.</p>
+      </div>
+      <pre><span class="an">@RunWith</span>(<span class="cl">AndroidJUnit4</span>::<span class="kw">class</span>)
+<span class="kw">class</span> <span class="cl">ProductoDaoTest</span> {
+    <span class="kw">private lateinit var</span> db: <span class="cl">AppDatabase</span>
+    <span class="kw">private lateinit var</span> dao: <span class="cl">ProductoDao</span>
+
+    <span class="an">@Before</span>
+    <span class="kw">fun</span> <span class="fn">crear</span>() {
+        <span class="cm">// inMemoryDatabaseBuilder: BD en RAM (no persiste)</span>
+        <span class="cm">// allowMainThreadQueries: en tests se permite el hilo Main</span>
+        db = <span class="cl">Room</span>.<span class="fn">inMemoryDatabaseBuilder</span>(
+            <span class="fn">InstrumentationRegistry</span>.<span class="fn">getInstrumentation</span>().targetContext,
+            <span class="cl">AppDatabase</span>::<span class="kw">class</span>.java
+        ).<span class="fn">allowMainThreadQueries</span>().<span class="fn">build</span>()
+        dao = db.<span class="fn">productoDao</span>()
+    }
+
+    <span class="an">@After</span>
+    <span class="kw">fun</span> <span class="fn">cerrar</span>() = db.<span class="fn">close</span>()  <span class="cm">// liberar recursos</span>
+
+    <span class="an">@Test</span>
+    <span class="kw">fun</span> <span class="fn">insertarYRecuperar</span>() = <span class="fn">runTest</span> {
+        dao.<span class="fn">insertar</span>(<span class="cl">ProductoEntity</span>(nombre = <span class="st">"Laptop"</span>, precio = <span class="num">999.0</span>))
+        <span class="cm">// first(): toma la primera emisión del Flow</span>
+        <span class="kw">val</span> lista = dao.<span class="fn">obtenerTodos</span>().<span class="fn">first</span>()
+        <span class="fn">assertThat</span>(lista).<span class="fn">hasSize</span>(<span class="num">1</span>)
+        <span class="fn">assertThat</span>(lista[<span class="num">0</span>].nombre).<span class="fn">isEqualTo</span>(<span class="st">"Laptop"</span>)
+    }
+}</pre>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ 32. Cierre ══ -->
+<div class="sl" data-m="8">
+<div class="hd"><span class="mod m8">S8</span><h2>Estructura de app en producción y recursos</h2></div>
+<div class="bd">
+  <div class="cols">
+    <div class="card">
+      <h3>Estructura de directorios recomendada</h3>
+      <pre style="font-size:13px">app/src/main/kotlin/com/empresa/miapp/
+├── MiApp.kt              <span class="cm">← @HiltAndroidApp</span>
+├── MainActivity.kt        <span class="cm">← punto de entrada</span>
+│
+├── domain/               <span class="cm">← sin imports Android</span>
+│   ├── model/            <span class="cm">← Producto.kt, Usuario.kt</span>
+│   ├── repository/       <span class="cm">← interfaces (contratos)</span>
+│   └── usecase/          <span class="cm">← reglas de negocio</span>
+│
+├── data/                 <span class="cm">← implementaciones</span>
+│   ├── local/            <span class="cm">← Room: Entity, Dao, DB</span>
+│   ├── remote/           <span class="cm">← Retrofit: Api, Dto</span>
+│   └── repository/       <span class="cm">← RepositorioImpl</span>
+│
+├── ui/
+│   ├── navigation/       <span class="cm">← AppNavigation.kt</span>
+│   ├── theme/            <span class="cm">← Theme, Color, Type</span>
+│   ├── screens/          <span class="cm">← una carpeta por pantalla</span>
+│   │   └── productos/    <span class="cm">← Screen.kt + ViewModel.kt</span>
+│   └── components/       <span class="cm">← componentes reutilizables</span>
+│
+└── di/
+    └── AppModule.kt      <span class="cm">← módulos Hilt</span></pre>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="card">
+        <h3>Apps de referencia en producción</h3>
+        <table>
+          <tr><th>App</th><th class="txt">Stack</th></tr>
+          <tr><td>Now in Android</td><td class="txt">MVVM + Clean + Hilt + Room + Compose</td></tr>
+          <tr><td>Google Play Store</td><td class="txt">MVVM + Navigation Compose</td></tr>
+          <tr><td>Spotify</td><td class="txt">Clean Architecture + offline-first</td></tr>
+          <tr><td>Twitter/X</td><td class="txt">Clean + WorkManager + offline cache</td></tr>
+        </table>
+      </div>
+      <div class="ex">
+        <div class="lbl">⭐ Recurso clave — Now in Android</div>
+        <p><strong>github.com/android/nowinandroid</strong> es la app de referencia oficial de Google. Open source, representa exactamente cómo Google recomienda estructurar una app en 2024. Úsala como guía en tus proyectos.</p>
+      </div>
+      <div style="font-size:14px;color:var(--muted);line-height:1.9">
+        📚 <strong style="color:#58a6ff">developer.android.com/compose</strong> — Documentación oficial<br>
+        🧪 <strong style="color:#3fb950">developer.android.com/jetpack/compose/testing</strong> — Testing<br>
+        🏗️ <strong style="color:#a371f7">developer.android.com/topic/architecture</strong> — Arquitectura<br>
+        🔧 <strong style="color:#e3b341">developer.android.com/training/dependency-injection/hilt-android</strong>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<!-- ══ 33. S9 — CityReport Portada del proyecto ══ -->
+<div class="sl" data-m="9">
+<div class="hd"><span class="mod m9">S9</span><h2>CityReport — Proyecto integrador del semestre</h2></div>
+<div class="bd">
+  <div class="concept">
+    <div class="clbl">Una app real construida en 3 fases — una por parcial</div>
+    <p>CityReport permite a ciudadanos reportar incidencias urbanas (baches, fugas, alumbrado), consultarlas en mapa y recibir actualizaciones. Cada fase aplica exactamente los temas del parcial: la app crece con el curso.</p>
+  </div>
+  <div class="cols">
+    <div>
+      <div class="card">
+        <h3>Stack tecnológico</h3>
+        <table>
+          <tr><th>Capa</th><th class="txt">Tecnología</th></tr>
+          <tr><td>UI</td><td class="txt">Jetpack Compose · Material Design 3</td></tr>
+          <tr><td>Navegación</td><td class="txt">Navigation Compose · NavGraph</td></tr>
+          <tr><td>Arquitectura</td><td class="txt">MVC → MVVM → Clean Architecture</td></tr>
+          <tr><td>Hardware</td><td class="txt">CameraX · FusedLocationProvider</td></tr>
+          <tr><td>BD local</td><td class="txt">Room · DataStore</td></tr>
+          <tr><td>Nube</td><td class="txt">Firebase Firestore · Firebase Storage</td></tr>
+          <tr><td>Auth</td><td class="txt">Firebase Authentication</td></tr>
+          <tr><td>Background</td><td class="txt">WorkManager · Notifications</td></tr>
+        </table>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:11px">
+      <div class="card" style="border-top:4px solid #1565C0">
+        <div style="font-size:11px;font-weight:700;color:#1565C0;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Fase 1 · Parcial 1</div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:5px">Arquitectura base</div>
+        <div style="font-size:13px;color:var(--muted)">3 pantallas · data class Incidencia · NavGraph · LazyColumn · MVVM básico</div>
+        <div style="margin-top:8px;font-size:12px;background:rgba(21,101,192,.12);color:#79c0ff;padding:5px 10px;border-radius:6px">📦 APK con formulario de captura en memoria</div>
+      </div>
+      <div class="card" style="border-top:4px solid #2E7D32">
+        <div style="font-size:11px;font-weight:700;color:#2E7D32;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Fase 2 · Parcial 2</div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:5px">Hardware + Material UI</div>
+        <div style="font-size:13px;color:var(--muted)">CameraX · FusedLocation · NotificationCompat · Material 3 · animaciones</div>
+        <div style="margin-top:8px;font-size:12px;background:rgba(46,125,50,.12);color:#3fb950;padding:5px 10px;border-radius:6px">📦 APK con cámara, GPS y UI Material</div>
+      </div>
+      <div class="card" style="border-top:4px solid #6A1B9A">
+        <div style="font-size:11px;font-weight:700;color:#6A1B9A;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Fase 3 · Parcial 3</div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:5px">Persistencia + Nube</div>
+        <div style="font-size:13px;color:var(--muted)">Room · DataStore · Firestore · Firebase Auth · WorkManager sync</div>
+        <div style="margin-top:8px;font-size:12px;background:rgba(106,27,154,.12);color:#d2a8ff;padding:5px 10px;border-radius:6px">📦 APK final con datos en la nube</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ 34a. S9 — CityReport Fase 1 · Modelo de datos ══ -->
+<div class="sl" data-m="9">
+<div class="hd"><span class="mod m9">S9</span><h2>Fase 1 — Modelo de datos: data class Incidencia</h2></div>
+<div class="bd">
+  <div class="concept" style="margin-bottom:16px">
+    <div class="clbl">El modelo central de toda la app</div>
+    <p><strong>Incidencia</strong> es el objeto que fluye entre todas las capas. En Fase 1 vive en memoria; en Fase 3 se persiste en Room y Firestore. Diseñarlo bien desde el inicio evita refactorizaciones costosas.</p>
+  </div>
+  <pre><span class="cm">// domain/model/Incidencia.kt — modelo puro Kotlin, sin imports Android</span>
+<span class="cm">// "data class" genera automáticamente equals, hashCode, toString y copy()</span>
+<span class="kw">data class</span> <span class="cl">Incidencia</span>(
+    <span class="cm">// val = inmutable; = 0 es valor por defecto → Room lo sobreescribe</span>
+    <span class="kw">val</span> id: <span class="cl">Int</span> = <span class="num">0</span>,
+    <span class="kw">val</span> titulo: <span class="cl">String</span>,           <span class="cm">// "Bache en Av. Insurgentes"</span>
+    <span class="kw">val</span> descripcion: <span class="cl">String</span>,      <span class="cm">// texto libre del ciudadano</span>
+    <span class="kw">val</span> categoria: <span class="cl">Categoria</span>,      <span class="cm">// enum: limita valores posibles</span>
+    <span class="cm">// Coordenadas opcionales: = 0.0 en Fase 1, FusedLocation las llena en Fase 2</span>
+    <span class="kw">val</span> latitud: <span class="cl">Double</span> = <span class="num">0.0</span>,
+    <span class="kw">val</span> longitud: <span class="cl">Double</span> = <span class="num">0.0</span>,
+    <span class="cm">// String? = puede ser null → "?" indica que es opcional en Kotlin</span>
+    <span class="cm">// En Fase 1 siempre es null; CameraX lo llena en Fase 2</span>
+    <span class="kw">val</span> fotoUri: <span class="cl">String</span>? = <span class="kw">null</span>,
+    <span class="cm">// currentTimeMillis() devuelve milisegundos desde 1970 (timestamp Unix)</span>
+    <span class="cm">// se usa Long (64 bits) para evitar el problema del año 2038 con Int</span>
+    <span class="kw">val</span> fecha: <span class="cl">Long</span> = <span class="cl">System</span>.currentTimeMillis(),
+    <span class="kw">val</span> estado: <span class="cl">Estado</span> = <span class="cl">Estado</span>.PENDIENTE,  <span class="cm">// arranca como PENDIENTE</span>
+    <span class="cm">// false = aún no subido a Firestore; WorkManager lo cambia a true en Fase 3</span>
+    <span class="kw">val</span> sincronizado: <span class="cl">Boolean</span> = <span class="kw">false</span>
+)
+
+<span class="cm">// enum class garantiza que solo existan estos valores — el compilador</span>
+<span class="cm">// avisa si olvidas manejar un caso en un "when" exhaustivo</span>
+<span class="kw">enum class</span> <span class="cl">Categoria</span> { BACHE, FUGA_AGUA, ALUMBRADO, BASURA, OTRO }
+<span class="kw">enum class</span> <span class="cl">Estado</span>    { PENDIENTE, EN_PROCESO, RESUELTO }</pre>
+</div>
+</div>
+
+<!-- ══ 34b. S9 — CityReport Fase 1 · NavGraph ══ -->
+<div class="sl" data-m="9">
+<div class="hd"><span class="mod m9">S9</span><h2>Fase 1 — Navegación entre pantallas (NavGraph)</h2></div>
+<div class="bd">
+  <pre><span class="cm">// navigation/AppNavigation.kt — define todas las rutas de la app</span>
+<span class="an">@Composable</span>
+<span class="kw">fun</span> <span class="fn">AppNavigation</span>() {
+    <span class="cm">// rememberNavController: sobrevive recomposiciones y rotaciones</span>
+    <span class="cm">// Es el "historial del navegador" de la app — gestiona el back stack</span>
+    <span class="kw">val</span> nav = <span class="fn">rememberNavController</span>()
+
+    <span class="cm">// NavHost: contenedor que muestra la pantalla de la ruta actual</span>
+    <span class="cm">// startDestination: pantalla que se muestra al abrir la app</span>
+    <span class="cl">NavHost</span>(nav, startDestination = <span class="st">"home"</span>) {
+
+        <span class="cm">// composable("ruta"): registra una pantalla y la asocia a esa ruta</span>
+        <span class="cm">// Pantalla 1 — lista de todos los reportes</span>
+        <span class="fn">composable</span>(<span class="st">"home"</span>) {
+            <span class="cm">// Los lambdas son callbacks: HomeScreen no sabe que existe NavController</span>
+            <span class="cm">// → principio de separación: la pantalla solo avisa, el nav decide</span>
+            <span class="fn">HomeScreen</span>(
+                onNuevaIncidencia = { nav.<span class="fn">navigate</span>(<span class="st">"nueva"</span>) },
+                onVerDetalle = { id ->
+                    <span class="cm">// navigate("detalle/$id") inserta la pantalla en el back stack</span>
+                    nav.<span class="fn">navigate</span>(<span class="st">"detalle/$id"</span>)
+                }
+            )
+        }
+
+        <span class="cm">// Pantalla 2 — formulario para registrar nueva incidencia</span>
+        <span class="fn">composable</span>(<span class="st">"nueva"</span>) {
+            <span class="fn">NuevaIncidenciaScreen</span>(
+                <span class="cm">// popBackStack(): equivale a presionar el botón "Atrás"</span>
+                <span class="cm">// tanto al guardar como al cancelar volvemos a "home"</span>
+                onGuardar = { nav.<span class="fn">popBackStack</span>() },
+                onCancelar = { nav.<span class="fn">popBackStack</span>() }
+            )
+        }
+
+        <span class="cm">// Pantalla 3 — detalle. "{id}" es un argumento dinámico en la ruta</span>
+        <span class="fn">composable</span>(<span class="st">"detalle/{id}"</span>) { back ->
+            <span class="cm">// backStackEntry.arguments contiene los parámetros extraídos de la URL</span>
+            <span class="cm">// getString devuelve String?, toIntOrNull convierte sin lanzar excepción</span>
+            <span class="kw">val</span> id = back.arguments?.<span class="fn">getString</span>(<span class="st">"id"</span>)?.<span class="fn">toIntOrNull</span>()
+            <span class="fn">DetalleScreen</span>(incidenciaId = id, onBack = { nav.<span class="fn">popBackStack</span>() })
+        }
+    }
+}</pre>
+  <div class="ex" style="margin-top:16px">
+    <div class="lbl">⭐ Entregable Fase 1</div>
+    <p>Las 3 pantallas navegan correctamente. Los datos viven en un <span class="tg">mutableStateListOf</span> dentro del ViewModel — sin BD todavía. La persistencia llega en Fase 3.</p>
+  </div>
+</div>
+</div>
+
+<!-- ══ 35a. S9 — CityReport Fase 1 · ViewModel ══ -->
+<div class="sl" data-m="9">
+<div class="hd"><span class="mod m9">S9</span><h2>Fase 1 — IncidenciasViewModel con StateFlow</h2></div>
+<div class="bd">
+  <pre><span class="cm">// IncidenciasViewModel.kt — sobrevive rotaciones de pantalla</span>
+<span class="cm">// @HiltViewModel: le dice a Hilt que este ViewModel usa inyección de dependencias</span>
+<span class="an">@HiltViewModel</span>
+<span class="cm">// @Inject constructor: Hilt construye el objeto automáticamente</span>
+<span class="cm">// En Fase 1 no hay repositorio; en Fase 3 se inyecta IncidenciaRepositorio</span>
+<span class="kw">class</span> <span class="cl">IncidenciasViewModel</span> <span class="an">@Inject constructor</span>() : <span class="cl">ViewModel</span>() {
+
+    <span class="cm">// MutableStateFlow: flujo de datos mutable — al cambiar, notifica a la UI</span>
+    <span class="cm">// private: solo este ViewModel puede modificarlo (encapsulación)</span>
+    <span class="cm">// emptyList(): estado inicial = lista vacía, no null</span>
+    <span class="kw">private val</span> _incidencias = <span class="fn">MutableStateFlow</span>&lt;<span class="cl">List</span>&lt;<span class="cl">Incidencia</span>&gt;&gt;(<span class="fn">emptyList</span>())
+
+    <span class="cm">// asStateFlow(): expone versión de solo lectura a la UI</span>
+    <span class="cm">// La UI observa este, pero no puede modificarlo directamente</span>
+    <span class="kw">val</span> incidencias = _incidencias.<span class="fn">asStateFlow</span>()
+
+    <span class="kw">fun</span> <span class="fn">agregar</span>(inc: <span class="cl">Incidencia</span>) {
+        <span class="cm">// copy(): crea nueva instancia cambiando solo el campo "id"</span>
+        <span class="cm">// size + 1 es un ID temporal; Room generará IDs reales en Fase 3</span>
+        <span class="kw">val</span> nueva = inc.<span class="fn">copy</span>(id = (_incidencias.value.<span class="fn">size</span> + <span class="num">1</span>))
+        <span class="cm">// update { }: recibe la lista actual y retorna la nueva lista</span>
+        <span class="cm">// "it + nueva" = concatenar la nueva incidencia al final de la lista</span>
+        _incidencias.<span class="fn">update</span> { it + nueva }
+    }
+
+    <span class="cm">// find { }: recorre la lista y devuelve el primer elemento que cumpla</span>
+    <span class="cm">// la condición; devuelve null si no lo encuentra (por eso retorna Incidencia?)</span>
+    <span class="kw">fun</span> <span class="fn">obtenerPorId</span>(id: <span class="cl">Int</span>): <span class="cl">Incidencia</span>? =
+        _incidencias.value.<span class="fn">find</span> { it.id == id }
+
+    <span class="kw">fun</span> <span class="fn">cambiarEstado</span>(id: <span class="cl">Int</span>, estado: <span class="cl">Estado</span>) {
+        _incidencias.<span class="fn">update</span> { lista ->
+            <span class="cm">// map { }: transforma cada elemento de la lista</span>
+            <span class="cm">// Si el id coincide → crea copia con nuevo estado</span>
+            <span class="cm">// Si no coincide → devuelve el elemento sin cambios</span>
+            lista.<span class="fn">map</span> { <span class="kw">if</span> (it.id == id) it.<span class="fn">copy</span>(estado = estado) <span class="kw">else</span> it }
+        }
+    }
+}</pre>
+</div>
+</div>
+
+<!-- ══ 35b. S9 — CityReport Fase 1 · HomeScreen ══ -->
+<div class="sl" data-m="9">
+<div class="hd"><span class="mod m9">S9</span><h2>Fase 1 — HomeScreen con Scaffold y LazyColumn</h2></div>
+<div class="bd">
+  <pre><span class="cm">// HomeScreen.kt — pantalla principal con Scaffold de Material 3</span>
+<span class="an">@Composable</span>
+<span class="kw">fun</span> <span class="fn">HomeScreen</span>(
+    <span class="cm">// hiltViewModel(): obtiene la instancia del ViewModel gestionada por Hilt</span>
+    <span class="cm">// El "= hiltViewModel()" es un valor por defecto → en tests se puede pasar uno falso</span>
+    viewModel: <span class="cl">IncidenciasViewModel</span> = <span class="fn">hiltViewModel</span>(),
+    <span class="cm">// Callbacks: HomeScreen no sabe nada de NavController → solo avisa al padre</span>
+    onNuevaIncidencia: () -> <span class="cl">Unit</span>,
+    onVerDetalle: (<span class="cl">Int</span>) -> <span class="cl">Unit</span>
+) {
+    <span class="cm">// collectAsStateWithLifecycle(): convierte StateFlow en State de Compose</span>
+    <span class="cm">// Se pausa cuando la app va al fondo (ahorra batería vs collectAsState)</span>
+    <span class="kw">val</span> incidencias <span class="kw">by</span> viewModel.incidencias.<span class="fn">collectAsStateWithLifecycle</span>()
+
+    <span class="cm">// Scaffold coloca TopAppBar, FAB y contenido en sus posiciones correctas</span>
+    <span class="cm">// y gestiona el padding para que nada quede tapado por las barras</span>
+    <span class="cl">Scaffold</span>(
+        topBar = { <span class="cl">TopAppBar</span>(title = { <span class="cl">Text</span>(<span class="st">"CityReport"</span>) }) },
+        floatingActionButton = {
+            <span class="cm">// FAB: botón circular de acción principal — esquina inferior derecha</span>
+            <span class="cl">FloatingActionButton</span>(onClick = onNuevaIncidencia) {
+                <span class="cl">Icon</span>(<span class="cl">Icons</span>.Default.Add, <span class="st">"Nuevo reporte"</span>)
+            }
+        }
+    ) { padding ->
+        <span class="cm">// "padding" = valores calculados por Scaffold para no tapar contenido</span>
+        <span class="cm">// Si isEmpty → no hay datos: mostramos estado vacío en el centro</span>
+        <span class="kw">if</span> (incidencias.<span class="fn">isEmpty</span>()) {
+            <span class="cm">// Box con Alignment.Center centra el mensaje en toda la pantalla</span>
+            <span class="cl">Box</span>(<span class="cl">Modifier</span>.<span class="fn">fillMaxSize</span>(), contentAlignment = <span class="cl">Alignment</span>.Center) {
+                <span class="cl">Text</span>(<span class="st">"Sin reportes. Usa + para crear uno."</span>,
+                    <span class="cm">// onSurfaceVariant: color de texto secundario del tema (se adapta dark/light)</span>
+                    color = <span class="cl">MaterialTheme</span>.colorScheme.onSurfaceVariant)
+            }
+        } <span class="kw">else</span> {
+            <span class="cm">// LazyColumn solo renderiza las tarjetas visibles en pantalla</span>
+            <span class="cl">LazyColumn</span>(contentPadding = <span class="cl">PaddingValues</span>(
+                <span class="cm">// calculateTopPadding(): altura de la TopAppBar — evita tapar las tarjetas</span>
+                top = padding.<span class="fn">calculateTopPadding</span>() + <span class="num">8</span>.dp,
+                <span class="cm">// 88dp abajo: deja espacio para que el FAB no tape el último elemento</span>
+                bottom = <span class="num">88</span>.dp, horizontal = <span class="num">16</span>.dp
+            ), verticalArrangement = <span class="cl">Arrangement</span>.spacedBy(<span class="num">8</span>.dp)) {
+                <span class="cm">// key = { it.id }: permite a Compose identificar qué elemento</span>
+                <span class="cm">// cambió — anima inserciones y evita parpadeos al actualizar la lista</span>
+                <span class="fn">items</span>(incidencias, key = { it.id }) { inc ->
+                    <span class="fn">IncidenciaCard</span>(inc, onClick = { onVerDetalle(inc.id) })
+                }
+            }
+        }
+    }
+}</pre>
+</div>
+</div>
+
+<!-- ══ 36a. S10 — CityReport Fase 2 · CameraX ══ -->
+<div class="sl" data-m="10">
+<div class="hd"><span class="mod m10">S10</span><h2>Fase 2 — Captura de foto con CameraX</h2></div>
+<div class="bd">
+  <div class="concept" style="margin-bottom:16px">
+    <div class="clbl">Enriquecer el reporte con evidencia fotográfica</div>
+    <p>CameraX envuelve la API de cámara de Android. Usamos <code>suspendCancellableCoroutine</code> para convertir su callback en una función suspend limpia.</p>
+  </div>
+  <pre><span class="cm">// CameraHelper.kt — envuelve CameraX en una API suspend amigable</span>
+<span class="kw">class</span> <span class="cl">CameraHelper</span>(
+    <span class="kw">private val</span> context: <span class="cl">Context</span>,
+    <span class="cm">// LifecycleOwner: CameraX observa el ciclo de vida y libera la cámara</span>
+    <span class="cm">// automáticamente cuando la pantalla se destruye — evita fugas de recursos</span>
+    <span class="kw">private val</span> lifecycleOwner: <span class="cl">LifecycleOwner</span>
+) {
+    <span class="cm">// ImageCapture: caso de uso de CameraX para capturar fotos</span>
+    <span class="cm">// MINIMIZE_LATENCY: prioriza velocidad sobre calidad de imagen</span>
+    <span class="kw">private val</span> imageCapture = <span class="cl">ImageCapture</span>.<span class="cl">Builder</span>()
+        .<span class="fn">setCaptureMode</span>(<span class="cl">ImageCapture</span>.CAPTURE_MODE_MINIMIZE_LATENCY)
+        .<span class="fn">build</span>()
+
+    <span class="cm">// suspend: la función se puede pausar sin bloquear el hilo principal</span>
+    <span class="cm">// Uri?: retorna la ruta del archivo guardado, o null si hubo error</span>
+    <span class="kw">suspend fun</span> <span class="fn">tomarFoto</span>(): <span class="cl">Uri</span>? = <span class="fn">suspendCancellableCoroutine</span> { cont ->
+        <span class="cm">// suspendCancellableCoroutine: puente entre callback antiguo y coroutine</span>
+        <span class="cm">// "cont" es la continuación — llamar cont.resume() despierta la coroutine</span>
+
+        <span class="cm">// filesDir: directorio privado de la app (no accesible a otras apps)</span>
+        <span class="cm">// currentTimeMillis() en el nombre garantiza nombres únicos de archivo</span>
+        <span class="kw">val</span> archivo = <span class="cl">File</span>(context.filesDir,
+            <span class="st">"incidencia_${System.currentTimeMillis()}.jpg"</span>)
+
+        <span class="cm">// OutputFileOptions: indica a CameraX dónde guardar la foto</span>
+        <span class="kw">val</span> options = <span class="cl">ImageCapture</span>.<span class="cl">OutputFileOptions</span>.<span class="cl">Builder</span>(archivo).<span class="fn">build</span>()
+
+        <span class="cm">// takePicture: inicia la captura de forma asíncrona</span>
+        <span class="cm">// getMainExecutor: el callback se ejecuta en el hilo principal</span>
+        imageCapture.<span class="fn">takePicture</span>(options, <span class="cl">ContextCompat</span>.<span class="fn">getMainExecutor</span>(context),
+            <span class="kw">object</span> : <span class="cl">ImageCapture</span>.<span class="cl">OnImageSavedCallback</span> {
+                <span class="kw">override fun</span> <span class="fn">onImageSaved</span>(output: <span class="cl">OutputFileResults</span>) {
+                    <span class="cm">// Foto guardada: convertimos File a Uri y despertamos la coroutine</span>
+                    cont.<span class="fn">resume</span>(<span class="cl">Uri</span>.<span class="fn">fromFile</span>(archivo))
+                }
+                <span class="kw">override fun</span> <span class="fn">onError</span>(e: <span class="cl">ImageCaptureException</span>) {
+                    <span class="cm">// Error al capturar: devolvemos null, el ViewModel decide qué mostrar</span>
+                    cont.<span class="fn">resume</span>(<span class="kw">null</span>)
+                }
+            })
+    }
+}</pre>
+</div>
+</div>
+
+<!-- ══ 36b. S10 — CityReport Fase 2 · GPS ══ -->
+<div class="sl" data-m="10">
+<div class="hd"><span class="mod m10">S10</span><h2>Fase 2 — Coordenadas GPS con FusedLocationProvider</h2></div>
+<div class="bd">
+  <pre><span class="cm">// LocationHelper.kt — usa Fused Location (fusiona GPS + WiFi + red móvil)</span>
+<span class="cm">// Fused API elige automáticamente la fuente más precisa y eficiente</span>
+<span class="kw">class</span> <span class="cl">LocationHelper</span>(<span class="kw">private val</span> context: <span class="cl">Context</span>) {
+
+    <span class="cm">// FusedLocationProviderClient: cliente que Google Play Services gestiona</span>
+    <span class="cm">// — más preciso que GPS solo y consume menos batería</span>
+    <span class="kw">private val</span> client = <span class="cl">LocationServices</span>
+        .<span class="fn">getFusedLocationProviderClient</span>(context)
+
+    <span class="cm">// @SuppressLint: ya verificamos el permiso antes de llamar a esta función</span>
+    <span class="cm">// Android Studio muestra error si no suprimimos — le decimos que lo sabemos</span>
+    <span class="an">@SuppressLint</span>(<span class="st">"MissingPermission"</span>)
+    <span class="kw">suspend fun</span> <span class="fn">obtenerUbicacion</span>(): <span class="cl">Location</span>? =
+        <span class="fn">suspendCancellableCoroutine</span> { cont ->
+            <span class="cm">// PRIORITY_HIGH_ACCURACY: usa GPS (más preciso, más batería)</span>
+            <span class="cm">// PRIORITY_BALANCED_POWER_ACCURACY usa WiFi/red (menos preciso, menos batería)</span>
+            <span class="cm">// null = sin token de cancelación externo</span>
+            client.<span class="fn">getCurrentLocation</span>(<span class="cl">Priority</span>.PRIORITY_HIGH_ACCURACY, <span class="kw">null</span>)
+                <span class="cm">// addOnSuccessListener: se llama cuando se obtiene la ubicación</span>
+                <span class="cm">// "it" es el objeto Location con latitude y longitude</span>
+                .<span class="fn">addOnSuccessListener</span> { cont.<span class="fn">resume</span>(it) }
+                <span class="cm">// addOnFailureListener: GPS desactivado o sin permiso → devuelve null</span>
+                .<span class="fn">addOnFailureListener</span> { cont.<span class="fn">resume</span>(<span class="kw">null</span>) }
+        }
+}
+
+<span class="cm">// Integración en el ViewModel de NuevaIncidencia</span>
+<span class="kw">fun</span> <span class="fn">capturarUbicacion</span>() {
+    <span class="cm">// viewModelScope: la coroutine se cancela si el usuario sale de la pantalla</span>
+    viewModelScope.<span class="fn">launch</span> {
+        <span class="kw">val</span> loc = locationHelper.<span class="fn">obtenerUbicacion</span>()
+        <span class="kw">if</span> (loc != <span class="kw">null</span>) {
+            <span class="cm">// copy(): actualiza solo lat/lng del UiState; los demás campos no cambian</span>
+            <span class="cm">// La UI reacciona automáticamente al cambio del StateFlow</span>
+            _uiState.<span class="fn">update</span> {
+                it.<span class="fn">copy</span>(lat = loc.latitude, lng = loc.longitude)
+            }
+        }
+    }
+}</pre>
+  <div class="meta" style="margin-top:16px">
+    <div class="lbl">📋 Permisos necesarios (AndroidManifest)</div>
+    <p><span class="tg">CAMERA</span> · <span class="tg">ACCESS_FINE_LOCATION</span> · <span class="tg">ACCESS_COARSE_LOCATION</span> · <span class="tg">POST_NOTIFICATIONS</span> (Android 13+). Solicitar en tiempo de ejecución con <strong>rememberPermissionState</strong> de Accompanist.</p>
+  </div>
+</div>
+</div>
+
+<!-- ══ 37a. S10 — CityReport Fase 2 · Material 3 NavigationBar ══ -->
+<div class="sl" data-m="10">
+<div class="hd"><span class="mod m10">S10</span><h2>Fase 2 — NavigationBar de Material Design 3</h2></div>
+<div class="bd">
+  <div class="concept" style="margin-bottom:16px">
+    <div class="clbl">NavigationBar con 3 destinos</div>
+    <p>CityReport usa <strong>NavigationBar</strong> (barra inferior) con 3 destinos: Mis reportes, Mapa, Perfil. Cada destino tiene su ícono y etiqueta estándar de Material 3.</p>
+  </div>
+  <pre><span class="cm">// MainScreen.kt — estructura principal con barra de navegación inferior</span>
+<span class="an">@Composable</span>
+<span class="kw">fun</span> <span class="fn">MainScreen</span>() {
+    <span class="cm">// destino: índice de la pestaña activa (0=Reportes, 1=Mapa, 2=Perfil)</span>
+    <span class="cm">// remember: sobrevive recomposiciones (no se resetea al cambiar algo)</span>
+    <span class="kw">var</span> destino <span class="kw">by</span> <span class="fn">remember</span> { <span class="fn">mutableStateOf</span>(<span class="num">0</span>) }
+    <span class="kw">val</span> items  = <span class="fn">listOf</span>(<span class="st">"Reportes"</span>, <span class="st">"Mapa"</span>, <span class="st">"Perfil"</span>)
+    <span class="kw">val</span> iconos = <span class="fn">listOf</span>(
+        <span class="cl">Icons</span>.Default.List,    <span class="cm">// índice 0 — coincide con "Reportes"</span>
+        <span class="cl">Icons</span>.Default.Map,     <span class="cm">// índice 1 — coincide con "Mapa"</span>
+        <span class="cl">Icons</span>.Default.Person   <span class="cm">// índice 2 — coincide con "Perfil"</span>
+    )
+
+    <span class="cm">// Scaffold con bottomBar: ubica la NavigationBar en la parte inferior</span>
+    <span class="cm">// y garantiza que el contenido no quede tapado por ella</span>
+    <span class="cl">Scaffold</span>(
+        bottomBar = {
+            <span class="cm">// NavigationBar: componente Material 3 (reemplaza BottomNavigationView de XML)</span>
+            <span class="cl">NavigationBar</span> {
+                <span class="cm">// forEachIndexed: itera con índice y valor simultáneamente</span>
+                items.<span class="fn">forEachIndexed</span> { i, label ->
+                    <span class="cl">NavigationBarItem</span>(
+                        <span class="cm">// selected: true solo en el ítem activo → Material aplica el resaltado</span>
+                        selected = destino == i,
+                        <span class="cm">// onClick: actualiza el estado → Compose redibuja solo lo necesario</span>
+                        onClick = { destino = i },
+                        icon = { <span class="cl">Icon</span>(iconos[i], label) },
+                        label = { <span class="cl">Text</span>(label) }
+                    )
+                }
+            }
+        }
+    ) { padding ->
+        <span class="cm">// when exhaustivo: Kotlin obliga a cubrir todos los valores posibles</span>
+        <span class="cm">// padding incluye la altura de NavigationBar para no tapar el contenido</span>
+        <span class="kw">when</span> (destino) {
+            <span class="num">0</span> -> <span class="fn">ReportesScreen</span>(<span class="cl">Modifier</span>.<span class="fn">padding</span>(padding))
+            <span class="num">1</span> -> <span class="fn">MapaScreen</span>(<span class="cl">Modifier</span>.<span class="fn">padding</span>(padding))
+            <span class="num">2</span> -> <span class="fn">PerfilScreen</span>(<span class="cl">Modifier</span>.<span class="fn">padding</span>(padding))
+        }
+    }
+}</pre>
+</div>
+</div>
+
+<!-- ══ 37b. S10 — CityReport Fase 2 · Notificaciones ══ -->
+<div class="sl" data-m="10">
+<div class="hd"><span class="mod m10">S10</span><h2>Fase 2 — NotificationHelper con canales</h2></div>
+<div class="bd">
+  <pre><span class="cm">// NotificationHelper.kt — object = singleton (una sola instancia en toda la app)</span>
+<span class="kw">object</span> <span class="cl">NotificationHelper</span> {
+
+    <span class="cm">// Llamar en Application.onCreate() — solo una vez al arrancar la app</span>
+    <span class="kw">fun</span> <span class="fn">crearCanales</span>(context: <span class="cl">Context</span>) {
+        <span class="cm">// Los canales solo existen desde Android 8 (API 26) — verificación obligatoria</span>
+        <span class="kw">if</span> (<span class="cl">Build</span>.VERSION.SDK_INT >= <span class="num">26</span>) {
+            <span class="kw">val</span> manager = context.<span class="fn">getSystemService</span>(<span class="cl">NotificationManager</span>::<span class="kw">class</span>.java)
+            manager.<span class="fn">createNotificationChannels</span>(<span class="fn">listOf</span>(
+                <span class="cm">// Canal para confirmaciones: silencioso, aparece en bandeja</span>
+                <span class="cl">NotificationChannel</span>(<span class="st">"reportes"</span>, <span class="st">"Mis reportes"</span>,
+                    <span class="cl">NotificationManager</span>.IMPORTANCE_DEFAULT),
+                <span class="cm">// Canal para actualizaciones de estado: IMPORTANCE_HIGH = heads-up</span>
+                <span class="cm">// (aparece como banner flotante aunque el usuario esté en otra app)</span>
+                <span class="cl">NotificationChannel</span>(<span class="st">"actualizaciones"</span>, <span class="st">"Actualizaciones de estado"</span>,
+                    <span class="cl">NotificationManager</span>.IMPORTANCE_HIGH)
+            ))
+        }
+    }
+
+    <span class="kw">fun</span> <span class="fn">notificarReporteEnviado</span>(context: <span class="cl">Context</span>, titulo: <span class="cl">String</span>) {
+        <span class="cm">// Builder recibe el contexto y el ID del canal al que pertenece</span>
+        <span class="kw">val</span> notif = <span class="cl">NotificationCompat</span>.<span class="cl">Builder</span>(context, <span class="st">"reportes"</span>)
+            .<span class="fn">setSmallIcon</span>(R.drawable.ic_report)    <span class="cm">// ícono en la barra de estado</span>
+            .<span class="fn">setContentTitle</span>(<span class="st">"Reporte enviado"</span>)
+            .<span class="fn">setContentText</span>(<span class="st">"\"$titulo\" fue registrado"</span>)
+            <span class="cm">// setAutoCancel: la notificación desaparece cuando el usuario la toca</span>
+            .<span class="fn">setAutoCancel</span>(<span class="kw">true</span>)
+            .<span class="fn">build</span>()
+        <span class="cm">// notify(id, notif): id=1 fijo → si se llama de nuevo, reemplaza la anterior</span>
+        <span class="cl">NotificationManagerCompat</span>.<span class="fn">from</span>(context).<span class="fn">notify</span>(<span class="num">1</span>, notif)
+    }
+
+    <span class="kw">fun</span> <span class="fn">notificarCambioEstado</span>(context: <span class="cl">Context</span>, titulo: <span class="cl">String</span>, estado: <span class="cl">Estado</span>) {
+        <span class="cm">// estado.name: convierte el enum a String ("RESUELTO", "EN_PROCESO"...)</span>
+        <span class="kw">val</span> notif = <span class="cl">NotificationCompat</span>.<span class="cl">Builder</span>(context, <span class="st">"actualizaciones"</span>)
+            .<span class="fn">setSmallIcon</span>(R.drawable.ic_update)
+            .<span class="fn">setContentTitle</span>(<span class="st">"Estado actualizado"</span>)
+            .<span class="fn">setContentText</span>(<span class="st">"\"$titulo\" → ${estado.name}"</span>)
+            <span class="cm">// PRIORITY_HIGH en el builder aplica a Android &lt; 8 (sin canales)</span>
+            .<span class="fn">setPriority</span>(<span class="cl">NotificationCompat</span>.PRIORITY_HIGH)
+            .<span class="fn">build</span>()
+        <span class="cm">// hashCode() del título genera un ID único por reporte</span>
+        <span class="cm">// → cada incidencia tiene su propia notificación, no se sobreescriben</span>
+        <span class="cl">NotificationManagerCompat</span>.<span class="fn">from</span>(context).<span class="fn">notify</span>(titulo.<span class="fn">hashCode</span>(), notif)
+    }
+}</pre>
+</div>
+</div>
+
+<!-- ══ 38a. S11 — CityReport Fase 3 · Room Entity ══ -->
+<div class="sl" data-m="11">
+<div class="hd"><span class="mod m11">S11</span><h2>Fase 3 — Room: IncidenciaEntity y mappers</h2></div>
+<div class="bd">
+  <pre><span class="cm">// data/local/IncidenciaEntity.kt — capa de datos, conoce Room</span>
+<span class="cm">// @Entity: le dice a Room que esta clase es una tabla en la base de datos</span>
+<span class="an">@Entity</span>(tableName = <span class="st">"incidencias"</span>)
+<span class="kw">data class</span> <span class="cl">IncidenciaEntity</span>(
+    <span class="cm">// @PrimaryKey autoGenerate: Room asigna IDs 1, 2, 3... automáticamente</span>
+    <span class="an">@PrimaryKey</span>(autoGenerate = <span class="kw">true</span>) <span class="kw">val</span> id: <span class="cl">Int</span> = <span class="num">0</span>,
+    <span class="kw">val</span> titulo: <span class="cl">String</span>,
+    <span class="kw">val</span> descripcion: <span class="cl">String</span>,
+    <span class="cm">// Room no puede guardar enums directamente → guardamos el String del nombre</span>
+    <span class="cm">// Categoria.BACHE.name = "BACHE", Categoria.valueOf("BACHE") = Categoria.BACHE</span>
+    <span class="kw">val</span> categoria: <span class="cl">String</span>,
+    <span class="kw">val</span> latitud: <span class="cl">Double</span>,
+    <span class="kw">val</span> longitud: <span class="cl">Double</span>,
+    <span class="cm">// @ColumnInfo: personaliza el nombre de la columna en SQLite</span>
+    <span class="cm">// Sin esto la columna se llamaría "fotoUri" (camelCase) en lugar de "foto_uri"</span>
+    <span class="an">@ColumnInfo</span>(name = <span class="st">"foto_uri"</span>) <span class="kw">val</span> fotoUri: <span class="cl">String</span>? = <span class="kw">null</span>,
+    <span class="kw">val</span> fecha: <span class="cl">Long</span>,
+    <span class="kw">val</span> estado: <span class="cl">String</span>,
+    <span class="cm">// false al insertar → WorkManager lo pone en true cuando sube a Firestore</span>
+    <span class="cm">// Esta columna es la clave del modo offline-first de CityReport</span>
+    <span class="kw">val</span> sincronizado: <span class="cl">Boolean</span> = <span class="kw">false</span>
+)
+
+<span class="cm">// Funciones de extensión: convierten entre la capa de dominio y la de datos</span>
+<span class="cm">// El dominio nunca importa Room; la conversión vive en la capa de datos</span>
+
+<span class="cm">// Incidencia (dominio) → IncidenciaEntity (base de datos)</span>
+<span class="cm">// categoria.name convierte enum a String: Categoria.BACHE → "BACHE"</span>
+<span class="kw">fun</span> <span class="cl">Incidencia</span>.<span class="fn">toEntity</span>() = <span class="cl">IncidenciaEntity</span>(
+    id, titulo, descripcion, categoria.name,
+    latitud, longitud, fotoUri, fecha, estado.name, sincronizado
+)
+
+<span class="cm">// IncidenciaEntity (base de datos) → Incidencia (dominio)</span>
+<span class="cm">// Categoria.valueOf("BACHE") convierte String de vuelta al enum</span>
+<span class="kw">fun</span> <span class="cl">IncidenciaEntity</span>.<span class="fn">toIncidencia</span>() = <span class="cl">Incidencia</span>(
+    id, titulo, descripcion,
+    <span class="cl">Categoria</span>.<span class="fn">valueOf</span>(categoria),  <span class="cm">// String → enum del dominio</span>
+    latitud, longitud, fotoUri, fecha,
+    <span class="cl">Estado</span>.<span class="fn">valueOf</span>(estado), sincronizado
+)</pre>
+</div>
+</div>
+
+<!-- ══ 38b. S11 — CityReport Fase 3 · DAO + DataStore ══ -->
+<div class="sl" data-m="11">
+<div class="hd"><span class="mod m11">S11</span><h2>Fase 3 — IncidenciaDao y DataStore</h2></div>
+<div class="bd">
+  <pre><span class="cm">// data/local/IncidenciaDao.kt — define las operaciones sobre la tabla</span>
+<span class="cm">// @Dao: interfaz — Room genera la implementación concreta en tiempo de compilación</span>
+<span class="an">@Dao</span>
+<span class="kw">interface</span> <span class="cl">IncidenciaDao</span> {
+
+    <span class="cm">// Flow&lt;List&gt;: retorna los datos en tiempo real</span>
+    <span class="cm">// Cada vez que se inserta o modifica una fila, Room emite la lista actualizada</span>
+    <span class="cm">// La UI no necesita llamar a "recargar" — se actualiza sola</span>
+    <span class="cm">// ORDER BY fecha DESC: las más recientes aparecen primero</span>
+    <span class="an">@Query</span>(<span class="st">"SELECT * FROM incidencias ORDER BY fecha DESC"</span>)
+    <span class="kw">fun</span> <span class="fn">observarTodas</span>(): <span class="cl">Flow</span>&lt;<span class="cl">List</span>&lt;<span class="cl">IncidenciaEntity</span>&gt;&gt;
+
+    <span class="cm">// WHERE sincronizado = 0: SQLite usa 0/1 para Boolean (false/true)</span>
+    <span class="cm">// SyncWorker llama a esta función al recuperar conexión a internet</span>
+    <span class="an">@Query</span>(<span class="st">"SELECT * FROM incidencias WHERE sincronizado = 0"</span>)
+    <span class="kw">suspend fun</span> <span class="fn">obtenerNoSincronizadas</span>(): <span class="cl">List</span>&lt;<span class="cl">IncidenciaEntity</span>&gt;
+
+    <span class="cm">// OnConflictStrategy.REPLACE: si ya existe un registro con el mismo ID</span>
+    <span class="cm">// lo reemplaza — útil para actualizar datos que vienen de Firestore</span>
+    <span class="an">@Insert</span>(onConflict = <span class="cl">OnConflictStrategy</span>.REPLACE)
+    <span class="kw">suspend fun</span> <span class="fn">insertar</span>(inc: <span class="cl">IncidenciaEntity</span>)
+
+    <span class="cm">// :id es el parámetro de la función — Room lo sustituye en la query SQL</span>
+    <span class="an">@Query</span>(<span class="st">"UPDATE incidencias SET sincronizado = 1 WHERE id = :id"</span>)
+    <span class="kw">suspend fun</span> <span class="fn">marcarSincronizada</span>(id: <span class="cl">Int</span>)
+}
+
+<span class="cm">// DataStore — preferencias de usuario (reemplaza SharedPreferences)</span>
+<span class="cm">// Las claves son tipadas: booleanPreferencesKey solo acepta Boolean</span>
+<span class="cm">// Esto evita los errores de tipo en tiempo de ejecución de SharedPreferences</span>
+<span class="kw">val</span> TEMA_OSCURO   = <span class="fn">booleanPreferencesKey</span>(<span class="st">"tema_oscuro"</span>)
+<span class="kw">val</span> NOTIF_ACTIVAS = <span class="fn">booleanPreferencesKey</span>(<span class="st">"notificaciones"</span>)
+<span class="kw">val</span> RADIO_KM      = <span class="fn">intPreferencesKey</span>(<span class="st">"radio_busqueda_km"</span>)
+
+<span class="cm">// dataStore.data: Flow que emite las preferencias cada vez que cambian</span>
+<span class="cm">// map: transforma el objeto Preferences en el valor que nos interesa</span>
+<span class="cm">// ?: false: valor por defecto si la clave aún no existe (primera ejecución)</span>
+<span class="kw">val</span> temaOscuro: <span class="cl">Flow</span>&lt;<span class="cl">Boolean</span>&gt; = dataStore.data
+    .<span class="fn">map</span> { it[TEMA_OSCURO] ?: <span class="kw">false</span> }</pre>
+  <div class="ex" style="margin-top:16px">
+    <div class="lbl">⭐ Modo offline-first en CityReport</div>
+    <p>El usuario puede reportar sin conexión. La incidencia se guarda en Room con <span class="tg">sincronizado = false</span>. Cuando hay red, WorkManager la sube a Firestore y la marca como sincronizada.</p>
+  </div>
+</div>
+</div>
+
+<!-- ══ 39a. S11 — CityReport Fase 3 · Firestore Repository ══ -->
+<div class="sl" data-m="11">
+<div class="hd"><span class="mod m11">S11</span><h2>Fase 3 — FirestoreRepository: subir y autenticar</h2></div>
+<div class="bd">
+  <pre><span class="cm">// data/remote/FirestoreRepository.kt — sincroniza con Firebase</span>
+<span class="kw">class</span> <span class="cl">FirestoreRepository</span>(
+    <span class="kw">private val</span> db: <span class="cl">FirebaseFirestore</span>,   <span class="cm">// base de datos NoSQL en la nube</span>
+    <span class="kw">private val</span> auth: <span class="cl">FirebaseAuth</span>,       <span class="cm">// autenticación de usuarios</span>
+    <span class="kw">private val</span> storage: <span class="cl">FirebaseStorage</span>  <span class="cm">// almacenamiento de archivos (fotos)</span>
+) {
+    <span class="cm">// collection("incidencias"): referencia a la colección en Firestore</span>
+    <span class="cm">// En NoSQL una "colección" equivale a una tabla, un "documento" a una fila</span>
+    <span class="kw">private val</span> col = db.<span class="fn">collection</span>(<span class="st">"incidencias"</span>)
+
+    <span class="kw">suspend fun</span> <span class="fn">subir</span>(inc: <span class="cl">Incidencia</span>): <span class="cl">Boolean</span> {
+        <span class="kw">return try</span> {
+            <span class="cm">// currentUser?.uid: ID único del usuario autenticado</span>
+            <span class="cm">// ?: return false: si no hay usuario logueado, abortamos sin subir</span>
+            <span class="kw">val</span> uid = auth.currentUser?.uid ?: <span class="kw">return false</span>
+
+            <span class="cm">// fotoUri?.let { }: solo se ejecuta si fotoUri NO es null (Fase 2+)</span>
+            <span class="kw">val</span> fotoUrl = inc.fotoUri?.<span class="fn">let</span> { uri ->
+                <span class="cm">// child("fotos/uid/id.jpg"): ruta única en Firebase Storage por usuario</span>
+                <span class="cm">// putFile(): sube el archivo local al Storage — await() espera sin bloquear</span>
+                <span class="cm">// downloadUrl: URL pública con la que Firestore referencia la foto</span>
+                storage.<span class="fn">reference</span>.<span class="fn">child</span>(<span class="st">"fotos/$uid/${inc.id}.jpg"</span>)
+                    .<span class="fn">putFile</span>(<span class="cl">Uri</span>.<span class="fn">parse</span>(uri)).<span class="fn">await</span>()
+                    .<span class="fn">storage</span>.<span class="fn">downloadUrl</span>.<span class="fn">await</span>().<span class="fn">toString</span>()
+            }
+
+            <span class="cm">// document(id): selecciona o crea el documento con ese ID</span>
+            <span class="cm">// set(): guarda el objeto completo (sobreescribe si ya existe)</span>
+            <span class="cm">// await(): suspende hasta que Firestore confirma la escritura</span>
+            col.<span class="fn">document</span>(inc.id.<span class="fn">toString</span>()).<span class="fn">set</span>(
+                inc.<span class="fn">copy</span>(fotoUri = fotoUrl, sincronizado = <span class="kw">true</span>)
+            ).<span class="fn">await</span>()
+            <span class="kw">true</span>  <span class="cm">// éxito: el Worker marcará la fila en Room como sincronizada</span>
+
+        } <span class="kw">catch</span> (e: <span class="cl">Exception</span>) { <span class="kw">false</span> }  <span class="cm">// sin red → false, Worker reintentará</span>
+    }
+
+    <span class="cm">// Firebase Auth con Google — el idToken viene del selector de cuenta de Google</span>
+    <span class="kw">suspend fun</span> <span class="fn">loginConGoogle</span>(idToken: <span class="cl">String</span>): <span class="cl">Boolean</span> {
+        <span class="cm">// GoogleAuthProvider.getCredential: convierte el token de Google en credencial Firebase</span>
+        <span class="kw">val</span> cred = <span class="cl">GoogleAuthProvider</span>.<span class="fn">getCredential</span>(idToken, <span class="kw">null</span>)
+        <span class="kw">return try</span> {
+            <span class="cm">// signInWithCredential: valida con Firebase y crea la sesión del usuario</span>
+            auth.<span class="fn">signInWithCredential</span>(cred).<span class="fn">await</span>()
+            <span class="kw">true</span>
+        } <span class="kw">catch</span> (e: <span class="cl">Exception</span>) { <span class="kw">false</span> }
+    }
+}</pre>
+</div>
+</div>
+
+<!-- ══ 39b. S11 — CityReport Fase 3 · SyncWorker ══ -->
+<div class="sl" data-m="11">
+<div class="hd"><span class="mod m11">S11</span><h2>Fase 3 — SyncWorker y WorkManager</h2></div>
+<div class="bd">
+  <pre><span class="cm">// SyncWorker.kt — Worker que garantiza la ejecución aunque la app esté cerrada</span>
+<span class="cm">// CoroutineWorker: versión moderna que soporta suspend functions nativamente</span>
+<span class="kw">class</span> <span class="cl">SyncWorker</span>(ctx: <span class="cl">Context</span>, params: <span class="cl">WorkerParameters</span>)
+    : <span class="cl">CoroutineWorker</span>(ctx, params) {
+
+    <span class="cm">// doWork(): función principal del worker — se ejecuta en Dispatchers.Default</span>
+    <span class="cm">// WorkManager la llama cuando se cumplen las constraints (hay red)</span>
+    <span class="kw">override suspend fun</span> <span class="fn">doWork</span>(): <span class="cl">Result</span> {
+        <span class="cm">// applicationContext: acceso a la instancia global de la app</span>
+        <span class="cm">// "as CityReportApp" hace cast para acceder a dao y firestoreRepo</span>
+        <span class="kw">val</span> app = applicationContext <span class="kw">as</span> <span class="cl">CityReportApp</span>
+
+        <span class="cm">// Consultamos Room: incidencias con sincronizado = false</span>
+        <span class="kw">val</span> pendientes = app.dao.<span class="fn">obtenerNoSincronizadas</span>()
+        <span class="cm">// Si no hay nada pendiente → éxito inmediato, no consumimos red</span>
+        <span class="kw">if</span> (pendientes.<span class="fn">isEmpty</span>()) <span class="kw">return</span> <span class="cl">Result</span>.<span class="fn">success</span>()
+
+        <span class="kw">return try</span> {
+            pendientes.<span class="fn">forEach</span> { entity ->
+                <span class="cm">// toIncidencia(): convierte Entity (capa datos) → Incidencia (dominio)</span>
+                <span class="kw">val</span> ok = app.firestoreRepo.<span class="fn">subir</span>(entity.<span class="fn">toIncidencia</span>())
+                <span class="cm">// Solo marca como sincronizada si Firestore confirmó la escritura</span>
+                <span class="kw">if</span> (ok) app.dao.<span class="fn">marcarSincronizada</span>(entity.id)
+            }
+            <span class="cl">Result</span>.<span class="fn">success</span>()  <span class="cm">// todo subido correctamente</span>
+        } <span class="kw">catch</span> (e: <span class="cl">IOException</span>) {
+            <span class="cm">// runAttemptCount: cuántas veces WorkManager ha intentado este trabajo</span>
+            <span class="cm">// retry(): WorkManager vuelve a intentarlo con backoff exponencial</span>
+            <span class="cm">// failure(): después de 3 intentos fallidos, desiste</span>
+            <span class="kw">if</span> (runAttemptCount < <span class="num">3</span>) <span class="cl">Result</span>.<span class="fn">retry</span>() <span class="kw">else</span> <span class="cl">Result</span>.<span class="fn">failure</span>()
+        }
+    }
+}
+
+<span class="cm">// Programar el worker — se lanza desde el ViewModel al detectar incidencias pendientes</span>
+<span class="cm">// OneTimeWork (no periódico): se ejecuta una vez cuando vuelve la red</span>
+<span class="kw">val</span> syncRequest = <span class="cl">OneTimeWorkRequestBuilder</span>&lt;<span class="cl">SyncWorker</span>&gt;()
+    .<span class="fn">setConstraints</span>(<span class="cl">Constraints</span>.<span class="cl">Builder</span>()
+        <span class="cm">// CONNECTED: WorkManager espera automáticamente a que haya red</span>
+        .<span class="fn">setRequiredNetworkType</span>(<span class="cl">NetworkType</span>.CONNECTED)
+        .<span class="fn">build</span>())
+    .<span class="fn">build</span>()
+
+<span class="cm">// enqueueUniqueWork con nombre "city_sync": evita duplicados</span>
+<span class="cm">// ExistingWorkPolicy.REPLACE: si ya hay un worker esperando, lo reemplaza</span>
+<span class="cl">WorkManager</span>.<span class="fn">getInstance</span>(context)
+    .<span class="fn">enqueueUniqueWork</span>(<span class="st">"city_sync"</span>, <span class="cl">ExistingWorkPolicy</span>.REPLACE, syncRequest)</pre>
+  <div class="meta" style="margin-top:16px">
+    <div class="lbl">🏁 Entregable Fase 3</div>
+    <p>APK final con datos que sobreviven al cierre de la app (Room), se sincronizan en la nube (Firestore) y se recuperan al reconectar (WorkManager). Incluye autenticación con Firebase Auth.</p>
+  </div>
+</div>
+</div>
+
+</div><!-- /deck -->
+
+<!-- ══ NAVBAR ══ -->
+<div id="nav">
+  <div style="flex:1;display:flex;justify-content:flex-start">
+    <button class="btn" id="bp" onclick="go(-1)" disabled>← Anterior</button>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+    <div id="dots"></div>
+    <div id="ctr">1 / 1<small id="mname">Portada</small></div>
+  </div>
+  <div style="flex:1;display:flex;justify-content:flex-end;gap:8px">
+    <button class="btn" id="bn" onclick="go(1)">Siguiente →</button>
+    <button class="btn" onclick="toggleFS()" title="Pantalla completa (F)" style="padding:7px 14px;">⛶ F</button>
+  </div>
+</div>
+
+<script>
+const slides=document.querySelectorAll('.sl');
+const N=slides.length;
+let cur=0;
+
+const mods=[
+  {name:'Portada',color:'#a371f7'},
+  {name:'S1 — Intro Android',color:'#a371f7'},
+  {name:'S2 — UI Fundamentos',color:'#58a6ff'},
+  {name:'S3 — Navegación',color:'#e8731a'},
+  {name:'S4 — UI Avanzado',color:'#1a7fe8'},
+  {name:'S5 — Persistencia',color:'#2da44e'},
+  {name:'S6 — Retrofit',color:'#9333ea'},
+  {name:'S7 — WorkManager',color:'#b8860b'},
+  {name:'S8 — Arquitectura',color:'#f85149'},
+  {name:'S9 — CityReport · Fase 1',color:'#00897B'},
+  {name:'S10 — CityReport · Fase 2',color:'#1565C0'},
+  {name:'S11 — CityReport · Fase 3',color:'#6A1B9A'},
+];
+
+const dotsEl=document.getElementById('dots');
+mods.forEach((m,i)=>{
+  const d=document.createElement('button');
+  d.className='dot';d.style.background=m.color;
+  d.title=m.name;
+  d.onclick=()=>{
+    for(let j=0;j<N;j++){
+      if(parseInt(slides[j].dataset.m)===i){go(j-cur);return;}
+    }
+  };
+  dotsEl.appendChild(d);
+});
+
+function go(delta){
+  const next=cur+delta;
+  if(next<0||next>=N)return;
+  slides[cur].classList.remove('on');
+  slides[cur].classList.add('out');
+  const prev=cur;
+  cur=next;
+  slides[cur].classList.add('on');
+  setTimeout(()=>slides[prev].classList.remove('out'),320);
+  document.getElementById('bp').disabled=cur===0;
+  document.getElementById('bn').disabled=cur===N-1;
+  document.getElementById('ctr').childNodes[0].textContent=`${cur+1} / ${N}`;
+  document.getElementById('bar').style.width=`${((cur+1)/N)*100}%`;
+  const m=parseInt(slides[cur].dataset.m);
+  document.getElementById('mname').textContent=mods[m]?.name||'';
+  document.querySelectorAll('.dot').forEach((d,i)=>{d.classList.toggle('on',i===m);});
+}
+
+document.getElementById('bp').disabled=true;
+document.getElementById('bar').style.width=`${(1/N)*100}%`;
+document.getElementById('ctr').childNodes[0].textContent=`1 / ${N}`;
+const initM=parseInt(slides[0].dataset.m);
+document.getElementById('mname').textContent=mods[initM]?.name||'';
+document.querySelectorAll('.dot')[initM]?.classList.add('on');
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();go(1);}
+  if(e.key==='ArrowLeft'){e.preventDefault();go(-1);}
+  if(e.key==='Home'){e.preventDefault();go(-cur);}
+  if(e.key==='End'){e.preventDefault();go(N-1-cur);}
+  if(e.key==='f'||e.key==='F'){toggleFS();}
+});
+
+function toggleFS(){
+  if(!document.fullscreenElement) document.documentElement.requestFullscreen();
+  else document.exitFullscreen();
+}
+
+let tx=0;
+document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:true});
+document.addEventListener('touchend',e=>{
+  const d=tx-e.changedTouches[0].clientX;
+  if(Math.abs(d)>60)go(d>0?1:-1);
+},{passive:true});
+</script>
+</body>
+</html>
