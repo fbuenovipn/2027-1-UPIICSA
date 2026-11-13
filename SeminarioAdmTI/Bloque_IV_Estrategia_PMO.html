@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloque IV — Estrategia, PMO y Marcos Escalados</title>
+<style>
+  :root{--bg:#04080f;--card:#0b1628;--border:#1e3a5f;--violet:#7c3aed;--cyan:#06b6d4;--green:#10b981;--orange:#f59e0b;--red:#ef4444;--pink:#ec4899;--yellow:#fbbf24;--text:#e2e8f0;--muted:#64748b;--teal:#0d9488;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden;height:100vh;}
+  #navbar{position:fixed;top:0;left:0;right:0;height:54px;background:rgba(4,8,15,.96);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:100;backdrop-filter:blur(8px);}
+  #navbar .brand{color:var(--violet);font-weight:700;font-size:.85rem;letter-spacing:1px;}
+  #navbar .brand span{color:var(--pink);}
+  .stabs{display:flex;gap:6px;}
+  .stabs button{background:transparent;border:1px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:20px;cursor:pointer;font-size:.75rem;transition:all .2s;}
+  .stabs button.active{background:var(--violet);border-color:var(--violet);color:#fff;font-weight:700;}
+  .stabs button:hover:not(.active){border-color:var(--violet);color:var(--violet);}
+  #ctr{color:var(--muted);font-size:.8rem;min-width:80px;text-align:right;}
+  #pb{position:fixed;top:54px;left:0;height:3px;background:linear-gradient(90deg,var(--violet),var(--pink));transition:width .3s;z-index:100;}
+  #sc{position:fixed;top:57px;left:0;right:0;bottom:40px;overflow:hidden;}
+  .slide{position:absolute;top:0;left:0;right:0;bottom:0;padding:28px 48px;display:none;overflow-y:auto;animation:fi .35s ease;}
+  .slide.active{display:flex;flex-direction:column;}
+  @keyframes fi{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+  #footer{position:fixed;bottom:0;left:0;right:0;height:40px;background:rgba(4,8,15,.96);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:16px;z-index:100;}
+  #footer button{background:var(--card);border:1px solid var(--border);color:var(--text);padding:5px 20px;border-radius:6px;cursor:pointer;font-size:.8rem;transition:all .2s;}
+  #footer button:hover{border-color:var(--violet);color:var(--violet);}
+  #footer .hint{color:var(--muted);font-size:.72rem;}
+  h1{font-size:2rem;font-weight:800;line-height:1.2;margin-bottom:10px;}
+  h2{font-size:1.5rem;font-weight:700;margin-bottom:14px;}
+  h3{font-size:1.05rem;font-weight:600;color:var(--cyan);margin-bottom:8px;margin-top:12px;}
+  p{font-size:.92rem;line-height:1.65;margin-bottom:8px;}
+  ul,ol{padding-left:20px;font-size:.9rem;line-height:1.8;}
+  li{margin-bottom:4px;}
+  .sub{color:var(--muted);font-size:1rem;margin-bottom:6px;}
+  .tag{display:inline-block;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:2px 10px;font-size:.75rem;color:var(--muted);margin-right:6px;margin-bottom:4px;}
+  .cover{align-items:center;justify-content:center;text-align:center;}
+  .cover h1{font-size:2.3rem;background:linear-gradient(135deg,var(--violet),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;}
+  .badge{display:inline-block;border:1px solid var(--violet);border-radius:8px;padding:8px 24px;color:var(--violet);font-size:.9rem;font-weight:700;letter-spacing:2px;margin-bottom:20px;background:rgba(124,58,237,.08);}
+  .sg{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:20px;}
+  .sc2{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 16px;width:168px;text-align:left;}
+  .sc2 .num{color:var(--violet);font-size:.7rem;font-weight:700;}
+  .sc2 .nm{font-size:.8rem;margin-top:4px;}
+  .cg{display:grid;gap:14px;margin-top:8px;}
+  .cg.c2{grid-template-columns:1fr 1fr;}
+  .cg.c3{grid-template-columns:1fr 1fr 1fr;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;position:relative;overflow:hidden;}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+  .card.v::before{background:var(--violet);}
+  .card.c::before{background:var(--cyan);}
+  .card.g::before{background:var(--green);}
+  .card.o::before{background:var(--orange);}
+  .card.r::before{background:var(--red);}
+  .card.p::before{background:var(--pink);}
+  .card.t::before{background:var(--teal);}
+  .card h3{margin-top:0;font-size:.95rem;}
+  .card p,.card ul,.card li{font-size:.85rem;}
+  .box{border-radius:10px;padding:14px 18px;margin:10px 0;}
+  .bm{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.4);}
+  .bc{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.4);}
+  .bl{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.4);}
+  .bd{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.4);}
+  .bq{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.4);cursor:pointer;}
+  .bt-label{font-weight:700;font-size:.8rem;margin-bottom:6px;letter-spacing:.5px;}
+  .bm .bt-label{color:var(--violet);}
+  .bc .bt-label{color:var(--orange);}
+  .bl .bt-label{color:var(--green);}
+  .bd .bt-label{color:var(--cyan);}
+  .bq .bt-label{color:var(--yellow);}
+  .box p,.box li,.box ul{font-size:.87rem;}
+  .qa{display:none;margin-top:8px;padding-top:8px;border-top:1px solid rgba(251,191,36,.3);color:var(--green);font-size:.85rem;}
+  .bq.revealed .qa{display:block;}
+  table{width:100%;border-collapse:collapse;font-size:.83rem;margin-top:8px;}
+  th{background:#071020;color:var(--cyan);text-align:left;padding:8px 12px;border:1px solid var(--border);}
+  td{padding:7px 12px;border:1px solid var(--border);vertical-align:top;}
+  tr:nth-child(even) td{background:rgba(11,22,40,.6);}
+  .sr{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0;}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 18px;flex:1;min-width:120px;text-align:center;}
+  .stat .n{font-size:1.8rem;font-weight:800;line-height:1;}
+  .stat .l{font-size:.72rem;color:var(--muted);margin-top:4px;}
+  .tl{list-style:none;padding:0;margin-top:8px;}
+  .tl li{display:flex;gap:14px;margin-bottom:12px;align-items:flex-start;}
+  .tl .st{min-width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+  .tl .st.v{background:rgba(124,58,237,.15);border:2px solid var(--violet);color:var(--violet);}
+  .tl .st.c{background:rgba(6,182,212,.15);border:2px solid var(--cyan);color:var(--cyan);}
+  .tl .st.g{background:rgba(16,185,129,.15);border:2px solid var(--green);color:var(--green);}
+  .tl .st.o{background:rgba(245,158,11,.15);border:2px solid var(--orange);color:var(--orange);}
+  .tl .st.p{background:rgba(236,72,153,.15);border:2px solid var(--pink);color:var(--pink);}
+  .tl .content h4{font-size:.9rem;}
+  .tl .content p{font-size:.83rem;color:var(--muted);margin:0;}
+  .ld{display:flex;flex-direction:column;gap:6px;margin:10px 0;}
+  .lr{border-radius:6px;padding:8px 16px;font-size:.82rem;font-weight:600;}
+  .slide::-webkit-scrollbar{width:4px;}
+  .slide::-webkit-scrollbar-track{background:transparent;}
+  .slide::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+</style>
+</head>
+<body>
+<div id="navbar">
+  <div class="brand">📋 PROYECTOS <span>· BLOQUE IV</span></div>
+  <div class="stabs">
+    <button onclick="gts(0)" id="t0">S16</button>
+    <button onclick="gts(1)" id="t1">S17</button>
+    <button onclick="gts(2)" id="t2">S18</button>
+    <button onclick="gts(3)" id="t3">S19</button>
+    <button onclick="gts(4)" id="t4">S20</button>
+  </div>
+  <div id="ctr">1 / 1</div>
+</div>
+<div id="pb" style="width:1%"></div>
+<div id="sc">
+
+<!-- PORTADA -->
+<div class="slide active cover" data-s="0">
+  <div class="badge">BLOQUE IV · SESIONES 16 – 20</div>
+  <h1>Estrategia, PMO<br>y Marcos Escalados</h1>
+  <p class="sub">Dirección y Gestión de Proyectos · Seminario de Titulación · UPIICSA · 30 horas</p>
+  <div class="sg">
+    <div class="sc2"><div class="num">SESIÓN 16</div><div class="nm">Diseño de PMO</div></div>
+    <div class="sc2"><div class="num">SESIÓN 17</div><div class="nm">Portafolio y Estrategia</div></div>
+    <div class="sc2"><div class="num">SESIÓN 18</div><div class="nm">SAFe y Agilidad a Escala</div></div>
+    <div class="sc2"><div class="num">SESIÓN 19</div><div class="nm">ITIL y Gestión de Servicios</div></div>
+    <div class="sc2"><div class="num">SESIÓN 20</div><div class="nm">Evaluación Económica</div></div>
+  </div>
+  <p style="margin-top:24px;color:var(--muted);font-size:.82rem;">← → o barra espaciadora · Click en S16–S20 para saltar sesión</p>
+</div>
+
+<!-- ═══ SESIÓN 16: PMO ═══ -->
+<div class="slide" data-s="0">
+  <h2>Sesión 16 <span style="color:var(--violet)">— Diseño e Implementación de una PMO</span></h2>
+  <div class="box bm"><div class="bt-label">🎭 METÁFORA</div>
+    <p>La PMO es como la <strong>torre de control de un aeropuerto</strong>: no pilota ningún avión, pero sin ella cada piloto tomaría pistas aleatoriamente, los vuelos se cruzarían, y el caos sería inevitable. La PMO no ejecuta los proyectos — establece los estándares, coordina los recursos compartidos, y da visibilidad del portafolio completo a quienes deben decidir qué proyectos volar y cuándo.</p>
+  </div>
+  <div class="sr" style="margin-top:16px;">
+    <div class="stat"><div class="n" style="color:var(--violet)">71%</div><div class="l">Organizaciones con PMO reportan mayor alineación de proyectos con la estrategia (PMI 2022)</div></div>
+    <div class="stat"><div class="n" style="color:var(--cyan)">38%</div><div class="l">Reducción en proyectos fallidos en organizaciones con PMO madura vs sin PMO</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">$1.4B</div><div class="l">Ahorros anuales promedio en grandes empresas con PMO activa (PMI Pulse 2023)</div></div>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Los 3 Modelos de PMO</h2>
+  <div class="cg c3">
+    <div class="card c">
+      <h3>PMO de Apoyo (Supportive)</h3>
+      <p>Rol consultivo. Provee plantillas, mejores prácticas y herramientas, pero los PMs toman sus propias decisiones.</p>
+      <ul style="font-size:.82rem;line-height:1.9;margin-top:8px;">
+        <li>Repositorio de lecciones aprendidas</li>
+        <li>Biblioteca de plantillas</li>
+        <li>Capacitación y coaching</li>
+        <li>Benchmarking de proyectos</li>
+      </ul>
+      <p style="font-size:.8rem;color:var(--muted);margin-top:8px;">Mejor para: organizaciones con cultura de PM madura, proyectos muy diversos en metodología</p>
+    </div>
+    <div class="card o">
+      <h3>PMO de Control (Controlling)</h3>
+      <p>Establece estándares y requiere cumplimiento. Revisa el estado de los proyectos y puede escalar cuando no se siguen los estándares.</p>
+      <ul style="font-size:.82rem;line-height:1.9;margin-top:8px;">
+        <li>Marcos y metodologías obligatorias</li>
+        <li>Revisiones periódicas de portafolio</li>
+        <li>Auditorías de adherencia a procesos</li>
+        <li>Métricas estandarizadas</li>
+      </ul>
+      <p style="font-size:.8rem;color:var(--muted);margin-top:8px;">Mejor para: organizaciones en proceso de madurez, múltiples proyectos con recursos compartidos</p>
+    </div>
+    <div class="card v">
+      <h3>PMO Directiva (Directive)</h3>
+      <p>Gestiona directamente los proyectos. Los PMs reportan a la PMO, no a las áreas funcionales. Máximo control.</p>
+      <ul style="font-size:.82rem;line-height:1.9;margin-top:8px;">
+        <li>PMs son recursos de la PMO</li>
+        <li>Decisiones centralizadas</li>
+        <li>Consistencia máxima</li>
+        <li>Priorización centralizada</li>
+      </ul>
+      <p style="font-size:.8rem;color:var(--muted);margin-top:8px;">Mejor para: empresas de ingeniería/consultoría donde los proyectos SON el negocio</p>
+    </div>
+  </div>
+  <div class="box bc" style="margin-top:12px;"><div class="bt-label">📰 CASO REAL — Cemex: PMO que transformó 400 proyectos</div>
+    <p>Cemex implementó una PMO Corporativa en 2016 para gestionar su portafolio global de 400+ proyectos de capital anuales. La PMO estandarizó métricas, procesos de aprobación y reportes ejecutivos en las 50 plantas de 10 países. En 2 años: reducción del 22% en sobrecostos de capital, visibilidad en tiempo real del portafolio para el CEO, y eliminación de 60 proyectos "zombi" que consumían presupuesto sin entregables claros. La PMO pagó su propio costo en el primer año.</p>
+  </div>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt-label">❓ QUIZ — Click para ver respuesta</div>
+    <p>Una empresa tiene 15 proyectos activos, 8 PMs con experiencias muy distintas, y la dirección no sabe cuál es el estado real de los proyectos hasta que un proyecto falla. ¿Qué tipo de PMO recomiendas como primer paso y por qué?</p>
+    <div class="qa"><strong>PMO de Control.</strong> No es una PMO Directiva (demasiado cambio cultural de golpe y los PMs lo rechazarían) ni una de Apoyo (no tiene fuerza suficiente para resolver la falta de visibilidad). La PMO de Control establece estándares mínimos comunes (formato de reporte, semáforos RAG, registro de riesgos) que dan visibilidad inmediata sin quitar autonomía a los PMs. En 6-12 meses, con credibilidad ganada, puede evolucionar hacia Directiva si es necesario. La transición gradual tiene más probabilidad de éxito que un cambio radical.</div>
+  </div>
+  <div class="box bm"><div class="bt-label">🚀 RETO DE APLICACIÓN</div>
+    <p>Diseñar la PMO para una organización de tu sector: justificar el tipo de PMO (Apoyo/Control/Directiva), definir los 5 servicios que ofrecerá en el primer año, establecer las 3 métricas de éxito de la PMO misma, y elaborar el roadmap de implementación a 12 meses.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 17: PORTAFOLIO ═══ -->
+<div class="slide" data-s="1">
+  <h2>Sesión 17 <span style="color:var(--cyan)">— Gestión de Portafolio y Alineación Estratégica</span></h2>
+  <div class="box bm"><div class="bt-label">🎭 METÁFORA</div>
+    <p>Gestionar un portafolio de proyectos es como <strong>administrar una cartera de inversión</strong>: no basta con que cada proyecto sea bueno individualmente — el portafolio completo debe estar balanceado entre riesgo y retorno, alineado con los objetivos del "inversor" (la organización), y con los recursos bien asignados entre activos. Proyectos "favoritos" sin retorno estratégico son como bonos de baja calidad que arrastran el rendimiento total.</p>
+  </div>
+  <div class="cg c2" style="margin-top:14px;">
+    <div class="card c">
+      <h3>Portafolio vs Programa vs Proyecto</h3>
+      <table style="font-size:.82rem;">
+        <tr><th>Nivel</th><th>¿Qué es?</th><th>Foco</th></tr>
+        <tr><td><strong>Portafolio</strong></td><td>Conjunto de proyectos/programas alineados a la estrategia</td><td>¿Estamos haciendo los proyectos correctos?</td></tr>
+        <tr><td><strong>Programa</strong></td><td>Proyectos relacionados gestionados coordinadamente para obtener beneficios que no se logran individualmente</td><td>¿Estamos obteniendo los beneficios esperados del grupo?</td></tr>
+        <tr><td><strong>Proyecto</strong></td><td>Esfuerzo temporal con inicio y fin para un entregable único</td><td>¿Estamos haciendo el proyecto correctamente?</td></tr>
+      </table>
+    </div>
+    <div class="card v">
+      <h3>Criterios de Priorización de Proyectos</h3>
+      <ul style="font-size:.83rem;line-height:2;">
+        <li><strong>Valor estratégico</strong> (1-5) — ¿cuánto contribuye a los objetivos 2025-2030?</li>
+        <li><strong>ROI esperado</strong> — beneficio neto / inversión total en % anualizado</li>
+        <li><strong>Tiempo al mercado</strong> — ¿cuánto tiempo hasta primer beneficio realizable?</li>
+        <li><strong>Riesgo inherente</strong> (inverso) — mayor riesgo = menor puntaje</li>
+        <li><strong>Urgencia regulatoria/legal</strong> — mandato externo inapelable</li>
+        <li><strong>Dependencias</strong> — ¿otros proyectos dependen de este?</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card t" style="margin-top:12px;">
+    <h3>Proceso de Revisión del Portafolio</h3>
+    <div class="cg c3" style="margin-top:8px;">
+      <div style="font-size:.82rem;"><strong style="color:var(--cyan);">Revisión mensual:</strong> Estado RAG de cada proyecto, alertas, decisiones tácticas</div>
+      <div style="font-size:.82rem;"><strong style="color:var(--orange);">Revisión trimestral:</strong> Realineación de prioridades, reasignación de recursos, cancelación de proyectos estancados</div>
+      <div style="font-size:.82rem;"><strong style="color:var(--violet);">Revisión anual:</strong> Validación del portafolio completo vs la estrategia actualizada, decisiones de inversión del siguiente año</div>
+    </div>
+  </div>
+  <div class="box bc" style="margin-top:12px;"><div class="bt-label">📰 CASO REAL — BBVA México: Portafolio Ágil en Banca</div>
+    <p>BBVA México implementó una gestión de portafolio estratégico en 2019 con 85 proyectos activos simultáneos. El comité de portafolio (CEO, CTO, CFO) se reunía mensualmente para revisar el mapa de valor de cada proyecto vs el plan estratégico "Transform. Run. Grow.". En la revisión de marzo 2020, cancelaron 12 proyectos de bajo valor estratégico y reasignaron esos recursos a 4 proyectos digitales acelerados por la pandemia. Esta decisión habría tomado meses sin un proceso de portafolio formal; con él, tomó una reunión de 3 horas.</p>
+  </div>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt-label">❓ QUIZ — Click para ver respuesta</div>
+    <p>El director de manufactura insiste en que su proyecto de remodelación de planta (ROI del 8% a 5 años) sea aprobado antes que un proyecto digital de experiencia del cliente (ROI del 45% a 2 años). Argumenta que "la planta ya tiene 10 años sin mantenimiento". ¿Qué criterios usas para decidir?</p>
+    <div class="qa">La decisión de portafolio debe usar criterios múltiples, no solo ROI. Factores: (1) <strong>¿Hay riesgo operativo o de seguridad en la planta?</strong> Si sí, es urgencia regulatoria (prioridad alta independiente del ROI). (2) <strong>Dependencias</strong>: ¿el proyecto digital requiere que la planta esté operando a plena capacidad? (3) <strong>Recursos</strong>: ¿los mismos equipos ejecutan ambos? Si no, pueden correr en paralelo. La respuesta correcta en un proceso de portafolio no es que uno "gane" al otro — es que el comité de portafolio tome una decisión explícita y documentada basada en criterios estratégicos, no en quién grita más fuerte.</div>
+  </div>
+  <div class="box bm"><div class="bt-label">🚀 RETO DE APLICACIÓN</div>
+    <p>Crear el mapa de portafolio de tu área u organización: listar 6-8 proyectos actuales o propuestos, calificar cada uno en los 6 criterios de priorización (1-5), calcular el puntaje ponderado, y construir la matriz de portafolio (eje X = esfuerzo/costo, eje Y = valor estratégico) con recomendación de qué proyectos priorizar, pausar y cancelar.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 18: SAFe ═══ -->
+<div class="slide" data-s="2">
+  <h2>Sesión 18 <span style="color:var(--green)">— SAFe y Agilidad a Escala</span></h2>
+  <div class="box bm"><div class="bt-label">🎭 METÁFORA</div>
+    <p>Scrum funciona perfectamente para un equipo de 7 personas. Pero cuando tienes 300 personas en 30 equipos construyendo el mismo producto, necesitas que todos "sprints" avancen en la misma dirección. SAFe es como un <strong>convoy militar</strong>: cada vehículo tiene su propio conductor (equipo Scrum autónomo), pero todos siguen el mismo mapa, avanzan al mismo ritmo, y el comandante del convoy (Release Train Engineer) asegura que nadie se pierda.</p>
+  </div>
+  <div class="cg c2" style="margin-top:14px;">
+    <div class="card g">
+      <h3>Los 4 Niveles de SAFe</h3>
+      <ul class="tl">
+        <li><div class="st g">1</div><div class="content"><h4>Team Level</h4><p>Equipos Scrum/Kanban individuales (5-11 personas). Sprints de 2 semanas.</p></div></li>
+        <li><div class="st c">2</div><div class="content"><h4>Program Level (ART)</h4><p>Agile Release Train: 5-12 equipos coordinados. PI Planning cada 10 semanas.</p></div></li>
+        <li><div class="st o">3</div><div class="content"><h4>Large Solution Level</h4><p>Múltiples ARTs coordinados para soluciones muy complejas.</p></div></li>
+        <li><div class="st v">4</div><div class="content"><h4>Portfolio Level</h4><p>Alineación con la estrategia empresarial. Lean Portfolio Management.</p></div></li>
+      </ul>
+    </div>
+    <div class="card c">
+      <h3>Program Increment (PI) Planning</h3>
+      <p>El corazón de SAFe: evento de 2 días donde todos los equipos del ART planean juntos el próximo incremento de 8-12 semanas.</p>
+      <ul style="font-size:.83rem;line-height:1.9;margin-top:8px;">
+        <li><strong>Día 1:</strong> Visión del negocio, arquitectura compartida, planificación por equipo</li>
+        <li><strong>Día 2:</strong> Revisión de planes, identificación de riesgos y dependencias entre equipos, commits finales</li>
+        <li><strong>Resultado:</strong> Objetivos del PI comprometidos, plan de entregas, riesgos identificados (ROAM)</li>
+      </ul>
+      <div class="box bd" style="margin-top:8px;"><div class="bt-label">💡 ROAM: Riesgos en SAFe</div>
+        <p style="font-size:.82rem;"><strong>R</strong>esolved · <strong>O</strong>wned · <strong>A</strong>ccepted · <strong>M</strong>itigated — cada riesgo del PI se categoriza en una de estas 4 acciones antes de terminar el PI Planning.</p>
+      </div>
+    </div>
+  </div>
+  <div class="box bc" style="margin-top:8px;"><div class="bt-label">📰 CASO REAL — Banorte: SAFe para transformación digital</div>
+    <p>Banorte adoptó SAFe en 2020 para coordinar su plataforma de banca digital con 18 equipos de desarrollo (≈200 personas). Antes de SAFe, los equipos se bloqueaban mutuamente por dependencias no resueltas y los releases eran impredecibles. Con un Agile Release Train y PI Planning trimestral, Banorte redujo los bloqueos entre equipos un 70%, estableció una cadencia de entregas cada 10 semanas, y logró lanzar su app de OXXO Pay en 6 meses en lugar de los 18 meses proyectados originalmente con cascada.</p>
+  </div>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt-label">❓ QUIZ — Click para ver respuesta</div>
+    <p>¿Por qué no es suficiente con tener múltiples equipos Scrum en la misma empresa para escalar agilidad? ¿Qué problema específico resuelve SAFe que Scrum individual no puede?</p>
+    <div class="qa">Scrum asume que cada equipo trabaja de forma independiente. Cuando múltiples equipos construyen el mismo producto, surgen problemas que Scrum no resuelve: (1) <strong>Dependencias técnicas</strong> — el equipo A necesita que el equipo B termine su API antes de poder avanzar; sin coordinación, se bloquean. (2) <strong>Integración</strong> — 10 equipos entregando partes separadas que nunca se integran = 10 fragmentos, no 1 producto. (3) <strong>Priorización conflictiva</strong> — cada Product Owner prioriza su backlog sin ver el sistema completo. SAFe resuelve estos problemas con el PI Planning, el ART backlog común, y la sincronización de sprints.</div>
+  </div>
+  <div class="box bm"><div class="bt-label">🚀 RETO DE APLICACIÓN</div>
+    <p>Diseñar el proceso de coordinación entre dos equipos con dependencias en el Proyecto Integrador: identificar las dependencias técnicas y funcionales entre las fases del proyecto, establecer los puntos de integración, definir cómo se gestionarían los bloqueos, y proponer el mecanismo de PI Planning simplificado para los 2 equipos.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 19: ITIL ═══ -->
+<div class="slide" data-s="3">
+  <h2>Sesión 19 <span style="color:var(--pink)">— ITIL y la Transición Proyecto-Operación</span></h2>
+  <div class="box bm"><div class="bt-label">🎭 METÁFORA</div>
+    <p>Un proyecto sin un plan de transición a operaciones es como construir un hospital sin contratar médicos ni enfermeras para operarlo. El edificio puede ser perfecto — sin el equipo y los procesos operativos, no salva vidas. <strong>ITIL</strong> es el marco que convierte los entregables del proyecto en servicios confiables y medibles que el negocio puede usar indefinidamente.</p>
+  </div>
+  <div class="cg c2" style="margin-top:14px;">
+    <div class="card p">
+      <h3>Los 4 Pilares de ITIL 4</h3>
+      <ul class="tl">
+        <li><div class="st p">O</div><div class="content"><h4>Organizaciones y Personas</h4><p>Las personas son el centro del servicio. Cultura de colaboración entre TI y el negocio.</p></div></li>
+        <li><div class="st c">I</div><div class="content"><h4>Información y Tecnología</h4><p>Los datos como activo gestionado. Decisiones basadas en evidencia.</p></div></li>
+        <li><div class="st g">P</div><div class="content"><h4>Socios y Proveedores</h4><p>Gestión de la cadena de valor de servicios: proveedores, aliados, terceros.</p></div></li>
+        <li><div class="st o">V</div><div class="content"><h4>Flujos de Valor y Procesos</h4><p>Procesos definidos para crear valor de forma predecible y repetible.</p></div></li>
+      </ul>
+    </div>
+    <div class="card v">
+      <h3>Service Desk y Gestión de Incidentes</h3>
+      <div class="ld" style="margin-top:4px;">
+        <div class="lr" style="background:rgba(239,68,68,.08);border:1px solid var(--red);color:var(--red);">🔴 P1 — CRÍTICO: Servicio completamente caído. Respuesta en &lt;15 min. Puente de crisis.</div>
+        <div class="lr" style="background:rgba(245,158,11,.08);border:1px solid var(--orange);color:var(--orange);">🟡 P2 — ALTO: Degradación significativa. Respuesta en &lt;1 hora. Equipo dedicado.</div>
+        <div class="lr" style="background:rgba(251,191,36,.08);border:1px solid var(--yellow);color:var(--yellow);">🟡 P3 — MEDIO: Funcionalidad parcialmente afectada. Respuesta en &lt;4 horas. Cola priorizada.</div>
+        <div class="lr" style="background:rgba(16,185,129,.08);border:1px solid var(--green);color:var(--green);">🟢 P4 — BAJO: Solicitudes de servicio normales. Respuesta en &lt;8 horas. Flujo estándar.</div>
+      </div>
+    </div>
+  </div>
+  <div class="card c" style="margin-top:12px;">
+    <h3>La Transición Proyecto → Operación: Los 5 Entregables</h3>
+    <table>
+      <tr><th>Entregable</th><th>Qué contiene</th><th>¿Quién lo necesita?</th></tr>
+      <tr><td><strong>Runbook</strong></td><td>Procedimientos de operación diaria paso a paso</td><td>Operadores, service desk</td></tr>
+      <tr><td><strong>Playbook de incidentes</strong></td><td>Pasos de diagnóstico y resolución por tipo de incidente</td><td>Equipo de soporte nivel 2-3</td></tr>
+      <tr><td><strong>Documentación técnica</strong></td><td>Arquitectura, integraciones, configuraciones, credenciales</td><td>Equipo técnico, auditorías</td></tr>
+      <tr><td><strong>SLA y métricas</strong></td><td>Compromisos de disponibilidad, tiempos de respuesta, umbrales</td><td>Cliente, gerencia</td></tr>
+      <tr><td><strong>Plan de capacitación</strong></td><td>Material y plan para entrenar a quienes operarán el sistema</td><td>Usuarios, operadores</td></tr>
+    </table>
+  </div>
+  <div class="box bc" style="margin-top:8px;"><div class="bt-label">📰 CASO REAL — IMSS: Sistema sin Runbook</div>
+    <p>El sistema de agenda de citas del IMSS (implementado como proyecto en 2019) fue entregado a operaciones sin runbook ni playbook de incidentes. Cuando el sistema tuvo su primera caída mayor (3 meses después, afectando 2.3M de citas), el equipo de operaciones no tenía ningún procedimiento documentado — cada decisión era escalada al equipo de desarrollo original, que ya estaba en otro proyecto. La caída duró 18 horas; con un playbook hubiera durado 2-3 horas máximo. El costo fue $240M MXN en pérdida de productividad del sistema de salud.</p>
+  </div>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt-label">❓ QUIZ — Click para ver respuesta</div>
+    <p>El director de TI pide que el proyecto de nuevo sistema de ventas termine el 30 de noviembre para que esté listo para el Buen Fin (11-19 noviembre). ¿Qué problema de gestión de proyectos y de ITIL hay en esta solicitud?</p>
+    <div class="qa">Dos problemas: (1) <strong>Gestión de proyectos</strong>: terminar el 30 de noviembre DESPUÉS del Buen Fin (19 de noviembre) no tiene ningún valor — el sistema estará listo cuando el pico de demanda ya pasó. La fecha de entrega necesita incluir tiempo de prueba en producción, estabilización y capacitación — probablemente 15 de octubre como fecha máxima de pase a producción. (2) <strong>ITIL</strong>: nunca se debe poner en producción un sistema grande sin un período de estabilización (freeze period) antes de un evento crítico de negocio. La regla de ITIL es: no cambios mayores en los 2 semanas anteriores a un evento de alto riesgo. El sistema debió estar en producción desde al menos el 1 de octubre para tener 6 semanas de estabilización.</div>
+  </div>
+  <div class="box bm"><div class="bt-label">🚀 RETO DE APLICACIÓN</div>
+    <p>Diseñar el plan de transición a operaciones del Proyecto Integrador: definir los 5 entregables de transición con su contenido mínimo, establecer el SLA del servicio resultante (disponibilidad, tiempos de respuesta, prioridades de incidentes), y planificar el período de estabilización post-lanzamiento.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 20: EVALUACIÓN ECONÓMICA ═══ -->
+<div class="slide" data-s="4">
+  <h2>Sesión 20 <span style="color:var(--orange)">— Evaluación Económica y Gestión del Cambio</span></h2>
+  <div class="box bm"><div class="bt-label">🎭 METÁFORA</div>
+    <p>El ROI de un proyecto es el <strong>boleto de entrada</strong> a la reunión del comité de inversión: sin un boleto válido (retorno demostrable), no entras. Pero muchos directores presentan boletos falsos — ROIs inflados con beneficios intangibles no cuantificados y costos escondidos. El PM estratégico construye el caso de negocio con honestidad: si el proyecto no tiene ROI positivo, mejor no ejecutarlo que ejecutarlo y malgastar recursos escasos.</p>
+  </div>
+  <div class="cg c2" style="margin-top:14px;">
+    <div class="card o">
+      <h3>Métricas de Evaluación Económica</h3>
+      <table style="font-size:.82rem;">
+        <tr><th>Métrica</th><th>¿Qué mide?</th><th>Umbral mínimo</th></tr>
+        <tr><td><strong>ROI</strong></td><td>(Beneficio − Inversión) / Inversión × 100</td><td>&gt;15% para proyectos de mejora</td></tr>
+        <tr><td><strong>Payback</strong></td><td>Tiempo en recuperar la inversión inicial</td><td>&lt;3 años generalmente</td></tr>
+        <tr><td><strong>VPN</strong></td><td>Valor presente de flujos futuros − inversión inicial</td><td>VPN &gt; 0 para aprobar</td></tr>
+        <tr><td><strong>TIR</strong></td><td>Tasa a la que el VPN = 0</td><td>TIR &gt; WACC de la empresa</td></tr>
+        <tr><td><strong>B/C Ratio</strong></td><td>Beneficio total / Costo total</td><td>&gt;1.2 mínimo</td></tr>
+      </table>
+    </div>
+    <div class="card v">
+      <h3>Gestión del Cambio Organizacional (OCM)</h3>
+      <ul class="tl">
+        <li><div class="st v">1</div><div class="content"><h4>Crear urgencia</h4><p>¿Por qué cambiar AHORA? Sin urgencia, el status quo siempre gana.</p></div></li>
+        <li><div class="st c">2</div><div class="content"><h4>Construir coalición</h4><p>Identificar líderes influyentes que defiendan el cambio en cada área.</p></div></li>
+        <li><div class="st g">3</div><div class="content"><h4>Comunicar la visión</h4><p>Repetir el "por qué" hasta que todos puedan explicarlo. 7 veces, 7 canales.</p></div></li>
+        <li><div class="st o">4</div><div class="content"><h4>Quick wins visibles</h4><p>Victorias tempranas demuestran que el cambio funciona. Celebrarlas públicamente.</p></div></li>
+        <li><div class="st p">5</div><div class="content"><h4>Anclar en la cultura</h4><p>El cambio solo es real cuando los nuevos comportamientos son la nueva normalidad.</p></div></li>
+      </ul>
+    </div>
+  </div>
+  <div class="box bc" style="margin-top:8px;"><div class="bt-label">📰 CASO REAL — Alfa SAB: ROI real de transformación digital</div>
+    <p>Alfa SAB (conglomerado regiomontano) construyó el caso de negocio de su plataforma digital de cadena de suministro con un análisis riguroso. ROI calculado: 32% en 3 años. Payback: 28 meses. Componentes del beneficio: reducción de inventario en 18% ($340M MXN), eliminación de 42 FTE de captura manual, reducción de 23% en costos de transporte por optimización de rutas. Componentes del costo: $180M MXN en tecnología, $45M MXN en capacitación y gestión del cambio. El caso de negocio fue presentado al consejo con 3 escenarios (pesimista, base, optimista) y fue aprobado por unanimidad.</p>
+  </div>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt-label">❓ QUIZ — Click para ver respuesta</div>
+    <p>El patrocinador dice: "El ROI de este proyecto es el 200% porque nuestra marca valdrá más si lo hacemos". ¿Cómo evalúas este argumento y qué recomendarías?</p>
+    <div class="qa">El "valor de marca" es un beneficio real pero <strong>intangible y no cuantificado</strong>. El problema no es incluirlo — el problema es usarlo como el beneficio principal sin cuantificarlo. Recomendación: (1) separar beneficios tangibles (cuantificables en $ con metodología clara) de intangibles, (2) calcular el VPN/TIR/ROI solo con los tangibles — si es positivo con solo los tangibles, los intangibles son "bonus gratis", (3) si el proyecto solo es rentable sumando intangibles, pedir al equipo de marketing que cuantifique el valor de marca con una metodología reconocida (Brand Finance, Interbrand). Un ROI de 200% basado solo en "marca" es una señal de que el caso de negocio no está bien construido.</div>
+  </div>
+  <div class="box bm"><div class="bt-label">🚀 RETO DE APLICACIÓN</div>
+    <p>Construir el caso de negocio completo del Proyecto Integrador: estimación de costos detallada, cuantificación de beneficios (separar tangibles de intangibles), cálculo de ROI, Payback y VPN, y análisis de sensibilidad para los 2 factores más inciertos del modelo financiero.</p>
+  </div>
+</div>
+
+<!-- CIERRE BLOQUE IV -->
+<div class="slide cover" data-s="4">
+  <div class="badge">BLOQUE IV — CIERRE</div>
+  <h1>Del Proyecto a la<br>Estrategia Organizacional</h1>
+  <p style="max-width:600px;margin:16px auto;color:var(--muted);">PMO, portafolio, SAFe, ITIL y evaluación económica son los instrumentos del PM que piensa más allá del proyecto individual — hacia el impacto sistémico en la organización.</p>
+  <div class="sr" style="justify-content:center;max-width:700px;margin:20px auto;">
+    <div class="stat"><div class="n" style="color:var(--violet)">S16</div><div class="l">PMO</div></div>
+    <div class="stat"><div class="n" style="color:var(--cyan)">S17</div><div class="l">Portafolio</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">S18</div><div class="l">SAFe</div></div>
+    <div class="stat"><div class="n" style="color:var(--pink)">S19</div><div class="l">ITIL</div></div>
+    <div class="stat"><div class="n" style="color:var(--orange)">S20</div><div class="l">ROI/OCM</div></div>
+  </div>
+  <div class="box bd" style="max-width:600px;margin:0 auto;"><div class="bt-label">💡 SIGUIENTE — BLOQUE V</div>
+    <p><strong>Liderazgo Avanzado y Proyecto Integrador:</strong> Contratos, cierre formal, transformación digital como proyecto, taller del PI y presentación ante el panel evaluador.</p>
+  </div>
+  <div style="margin-top:16px;font-size:.8rem;color:var(--muted);">
+    <strong style="color:var(--violet);">Referencias:</strong>
+    PMI. (2017). <em>The Standard for Portfolio Management</em> (4a ed.). PMI. ·
+    Scaled Agile, Inc. (2023). <em>SAFe 6.0 Reference Guide</em>. scaledagileframework.com. ·
+    Axelos. (2019). <em>ITIL Foundation: ITIL 4 Edition</em>. TSO. ·
+    Kotter, J. P. (2012). <em>Leading Change</em> (2a ed.). Harvard Business Review Press. ·
+    Brealey, R. A. et al. (2020). <em>Principles of Corporate Finance</em> (13a ed.). McGraw-Hill.
+  </div>
+</div>
+
+</div>
+
+<div id="footer">
+  <button onclick="prev()">← Anterior</button>
+  <span class="hint">← → · Espacio · Seminario de Titulación · UPIICSA · Dirección y Gestión de Proyectos</span>
+  <button onclick="next()">Siguiente →</button>
+</div>
+
+<script>
+const slides=document.querySelectorAll('.slide'),total=slides.length;let cur=0;
+const ss=[];slides.forEach((s,i)=>{const v=parseInt(s.dataset.s);if(ss[v]===undefined)ss[v]=i;});
+function go(n){if(n<0||n>=total)return;slides[cur].classList.remove('active');cur=n;slides[cur].classList.add('active');document.getElementById('ctr').textContent=(cur+1)+' / '+total;document.getElementById('pb').style.width=((cur+1)/total*100)+'%';ut();slides[cur].scrollTop=0;}
+function next(){go(cur+1);}function prev(){go(cur-1);}function gts(i){go(ss[i]);}
+function ut(){const v=parseInt(slides[cur].dataset.s);for(let i=0;i<5;i++){const b=document.getElementById('t'+i);if(b)b.classList.toggle('active',i===v);}}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();}if(e.key==='ArrowLeft'){e.preventDefault();prev();}});
+ut();
+</script>
+</body>
+</html>

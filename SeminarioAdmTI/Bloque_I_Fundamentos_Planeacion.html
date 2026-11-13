@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloque I — Fundamentos de Gestión y Planeación de Proyectos</title>
+<style>
+  :root{--bg:#04080f;--card:#0b1628;--border:#1e3a5f;--violet:#7c3aed;--cyan:#06b6d4;--green:#10b981;--orange:#f59e0b;--red:#ef4444;--pink:#ec4899;--yellow:#fbbf24;--text:#e2e8f0;--muted:#64748b;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden;height:100vh;}
+  #navbar{position:fixed;top:0;left:0;right:0;height:54px;background:rgba(4,8,15,.96);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:100;backdrop-filter:blur(8px);}
+  #navbar .brand{color:var(--cyan);font-weight:700;font-size:.85rem;letter-spacing:1px;}
+  #navbar .brand span{color:var(--muted);}
+  .stabs{display:flex;gap:6px;}
+  .stabs button{background:transparent;border:1px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:20px;cursor:pointer;font-size:.75rem;transition:all .2s;}
+  .stabs button.active{background:var(--cyan);border-color:var(--cyan);color:#000;font-weight:700;}
+  .stabs button:hover:not(.active){border-color:var(--cyan);color:var(--cyan);}
+  #ctr{color:var(--muted);font-size:.8rem;min-width:80px;text-align:right;}
+  #pb{position:fixed;top:54px;left:0;height:3px;background:linear-gradient(90deg,#0c4a6e,var(--cyan));transition:width .3s;z-index:100;}
+  #sc{position:fixed;top:57px;left:0;right:0;bottom:40px;overflow:hidden;}
+  .slide{position:absolute;top:0;left:0;right:0;bottom:0;padding:28px 48px;display:none;overflow-y:auto;animation:fi .35s ease;}
+  .slide.active{display:flex;flex-direction:column;}
+  @keyframes fi{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+  #footer{position:fixed;bottom:0;left:0;right:0;height:40px;background:rgba(4,8,15,.96);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:16px;z-index:100;}
+  #footer button{background:var(--card);border:1px solid var(--border);color:var(--text);padding:5px 20px;border-radius:6px;cursor:pointer;font-size:.8rem;transition:all .2s;}
+  #footer button:hover{border-color:var(--cyan);color:var(--cyan);}
+  #footer .hint{color:var(--muted);font-size:.72rem;}
+  h1{font-size:2rem;font-weight:800;line-height:1.2;margin-bottom:10px;}
+  h2{font-size:1.5rem;font-weight:700;margin-bottom:14px;}
+  h3{font-size:1.05rem;font-weight:600;color:var(--cyan);margin-bottom:8px;margin-top:12px;}
+  p{font-size:.92rem;line-height:1.65;margin-bottom:8px;}
+  ul,ol{padding-left:20px;font-size:.9rem;line-height:1.8;}
+  li{margin-bottom:4px;}
+  .sub{color:var(--muted);font-size:1rem;margin-bottom:6px;}
+  .tag{display:inline-block;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:2px 10px;font-size:.75rem;color:var(--muted);margin-right:6px;margin-bottom:4px;}
+  .cover{align-items:center;justify-content:center;text-align:center;}
+  .cover h1{font-size:2.3rem;background:linear-gradient(135deg,var(--cyan),#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;}
+  .badge{display:inline-block;border:1px solid var(--cyan);border-radius:8px;padding:8px 24px;color:var(--cyan);font-size:.9rem;font-weight:700;letter-spacing:2px;margin-bottom:20px;background:rgba(6,182,212,.08);}
+  .sg{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:20px;}
+  .sc2{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 16px;width:168px;text-align:left;}
+  .sc2 .num{color:var(--cyan);font-size:.7rem;font-weight:700;}
+  .sc2 .nm{font-size:.8rem;margin-top:4px;}
+  .cg{display:grid;gap:14px;margin-top:8px;}
+  .cg.c2{grid-template-columns:1fr 1fr;}
+  .cg.c3{grid-template-columns:1fr 1fr 1fr;}
+  .cg.c4{grid-template-columns:1fr 1fr 1fr 1fr;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;position:relative;overflow:hidden;}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+  .card.v::before{background:var(--violet);}
+  .card.c::before{background:var(--cyan);}
+  .card.g::before{background:var(--green);}
+  .card.o::before{background:var(--orange);}
+  .card.r::before{background:var(--red);}
+  .card h3{margin-top:0;font-size:.95rem;}
+  .card p,.card ul,.card li{font-size:.85rem;}
+  .box{border-radius:10px;padding:14px 18px;margin:10px 0;}
+  .bm{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.4);}
+  .bc{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.4);}
+  .bl{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.4);}
+  .bd{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.4);}
+  .bq{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.4);cursor:pointer;}
+  .bt{font-weight:700;font-size:.8rem;margin-bottom:6px;letter-spacing:.5px;}
+  .bm .bt{color:var(--violet);}
+  .bc .bt{color:var(--orange);}
+  .bl .bt{color:var(--green);}
+  .bd .bt{color:var(--cyan);}
+  .bq .bt{color:var(--yellow);}
+  .box p,.box li,.box ul{font-size:.87rem;}
+  .qa{display:none;margin-top:8px;padding-top:8px;border-top:1px solid rgba(251,191,36,.3);color:var(--green);font-size:.85rem;}
+  .bq.revealed .qa{display:block;}
+  table{width:100%;border-collapse:collapse;font-size:.83rem;margin-top:8px;}
+  th{background:#071020;color:var(--cyan);text-align:left;padding:8px 12px;border:1px solid var(--border);}
+  td{padding:7px 12px;border:1px solid var(--border);vertical-align:top;}
+  tr:nth-child(even) td{background:rgba(11,22,40,.6);}
+  .sr{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0;}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 18px;flex:1;min-width:120px;text-align:center;}
+  .stat .n{font-size:1.8rem;font-weight:800;line-height:1;}
+  .stat .l{font-size:.72rem;color:var(--muted);margin-top:4px;}
+  .tl{list-style:none;padding:0;margin-top:8px;}
+  .tl li{display:flex;gap:14px;margin-bottom:12px;align-items:flex-start;}
+  .tl .st{min-width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+  .tl .st.c{background:rgba(6,182,212,.15);border:2px solid var(--cyan);color:var(--cyan);}
+  .tl .st.g{background:rgba(16,185,129,.15);border:2px solid var(--green);color:var(--green);}
+  .tl .st.o{background:rgba(245,158,11,.15);border:2px solid var(--orange);color:var(--orange);}
+  .tl .st.v{background:rgba(124,58,237,.15);border:2px solid var(--violet);color:var(--violet);}
+  .tl .content h4{font-size:.9rem;}
+  .tl .content p{font-size:.83rem;color:var(--muted);margin:0;}
+  .slide::-webkit-scrollbar{width:4px;}
+  .slide::-webkit-scrollbar-track{background:transparent;}
+  .slide::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+  .hl{background:rgba(6,182,212,.12);border-left:3px solid var(--cyan);padding:4px 10px;border-radius:0 6px 6px 0;font-size:.88rem;margin:4px 0;}
+</style>
+</head>
+<body>
+<div id="navbar">
+  <div class="brand">📋 PROYECTOS <span>· BLOQUE I</span></div>
+  <div class="stabs">
+    <button onclick="gts(0)" id="t0">S1</button>
+    <button onclick="gts(1)" id="t1">S2</button>
+    <button onclick="gts(2)" id="t2">S3</button>
+    <button onclick="gts(3)" id="t3">S4</button>
+    <button onclick="gts(4)" id="t4">S5</button>
+  </div>
+  <div id="ctr">1 / 1</div>
+</div>
+<div id="pb" style="width:3%"></div>
+<div id="sc">
+
+<!-- PORTADA -->
+<div class="slide active cover" data-s="0">
+  <div class="badge">BLOQUE I · SESIONES 1 – 5</div>
+  <h1>Fundamentos de Gestión<br>y Planeación de Proyectos</h1>
+  <p class="sub">Dirección y Gestión de Proyectos · Seminario de Titulación · UPIICSA · 30 horas</p>
+  <div class="sg">
+    <div class="sc2"><div class="num">SESIÓN 1</div><div class="nm">PMBOK7 y Fundamentos de PM</div></div>
+    <div class="sc2"><div class="num">SESIÓN 2</div><div class="nm">Ciclos de Vida y Enfoques Adaptativos</div></div>
+    <div class="sc2"><div class="num">SESIÓN 3</div><div class="nm">Project Charter y WBS</div></div>
+    <div class="sc2"><div class="num">SESIÓN 4</div><div class="nm">Cronograma, CPM y Ruta Crítica</div></div>
+    <div class="sc2"><div class="num">SESIÓN 5</div><div class="nm">Gestión del Valor Ganado (EVM)</div></div>
+  </div>
+  <p style="margin-top:24px;color:var(--muted);font-size:.82rem;">← → o barra espaciadora · Click en S1–S5 para saltar sesión</p>
+</div>
+
+<!-- ═══ SESIÓN 1: PMBOK7 ═══ -->
+<div class="slide" data-s="0">
+  <h2>Sesión 1 <span style="color:var(--cyan)">— PMBOK7 y Fundamentos de Gestión de Proyectos</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA DE APERTURA</div>
+    <p>Gestionar proyectos es como ser el <strong>arquitecto de un edificio</strong>: sin planos claros puedes construir, pero cada improvisación cuesta 10 veces más corregirla que prevenirla. El arquitecto no pone ladrillos — integra a todos los especialistas (estructura, instalaciones, acabados) para que el resultado final sea coherente, seguro y entregado a tiempo.</p>
+  </div>
+  <div class="sr" style="margin-top:14px;">
+    <div class="stat"><div class="n" style="color:var(--cyan)">11.4%</div><div class="l">Del PIB mundial<br>en proyectos (PMI 2023)</div></div>
+    <div class="stat"><div class="n" style="color:var(--orange)">$1 de $7</div><div class="l">Invertido se desperdicia<br>en proyectos fallidos</div></div>
+    <div class="stat"><div class="n" style="color:var(--red)">47%</div><div class="l">Proyectos dentro del<br>presupuesto original</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">+28%</div><div class="l">Más éxito con PM<br>certificado y formal</div></div>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Los 12 Principios del PMBOK7</h2>
+  <div class="cg c3">
+    <div class="card c"><h3>1 · Administración responsable</h3><p>El PM actúa con integridad, cuidando los intereses de la organización, el equipo, los stakeholders y la comunidad.</p></div>
+    <div class="card c"><h3>2 · Equipo colaborativo</h3><p>Crear una cultura de equipo con claridad de roles, respeto y compromiso compartido con los objetivos del proyecto.</p></div>
+    <div class="card c"><h3>3 · Stakeholders comprometidos</h3><p>Involucrar a todas las partes interesadas de forma proactiva para entender y gestionar sus expectativas.</p></div>
+    <div class="card g"><h3>4 · Foco en el valor</h3><p>Cada decisión debe evaluarse en función del valor que aporta al negocio, no de completar actividades por sí mismas.</p></div>
+    <div class="card g"><h3>5 · Pensamiento sistémico</h3><p>El proyecto es parte de un sistema mayor — reconocer y gestionar las interdependencias con el entorno organizacional.</p></div>
+    <div class="card g"><h3>6 · Liderazgo adaptativo</h3><p>Diferentes situaciones requieren diferentes estilos de liderazgo: directivo, coach, facilitador, delegador.</p></div>
+    <div class="card o"><h3>7 · Adaptación contextual</h3><p>No existe un enfoque único. La metodología debe adaptarse al contexto específico del proyecto y la organización.</p></div>
+    <div class="card o"><h3>8 · Calidad integrada</h3><p>La calidad no se inspecciona al final — se diseña desde el inicio y se verifica continuamente durante la ejecución.</p></div>
+    <div class="card o"><h3>9 · Gestión de la complejidad</h3><p>Reconocer y navegar la complejidad: comportamientos humanos, sistemas interconectados, incertidumbre.</p></div>
+    <div class="card v"><h3>10 · Optimización del riesgo</h3><p>El riesgo no es solo amenaza — también es oportunidad. Gestionar ambos para maximizar el valor del proyecto.</p></div>
+    <div class="card v"><h3>11 · Adaptabilidad y resiliencia</h3><p>Construir capacidad de respuesta al cambio — el plan es una guía, no una prisión.</p></div>
+    <div class="card v"><h3>12 · Mejora continua</h3><p>Evaluar regularmente el desempeño del proyecto y de las prácticas de PM para mejorar en cada iteración.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>PMBOK6 vs PMBOK7: El Gran Cambio de Paradigma</h2>
+  <table>
+    <tr><th>Dimensión</th><th>PMBOK6 (2017)</th><th>PMBOK7 (2021)</th></tr>
+    <tr><td>Enfoque central</td><td>Procesos y grupos de proceso</td><td>Principios y dominios de desempeño</td></tr>
+    <tr><td>Estructura</td><td>49 procesos en 5 grupos y 10 áreas de conocimiento</td><td>12 principios + 8 dominios de desempeño</td></tr>
+    <tr><td>Receta o guía</td><td>Prescriptivo: "haz estos procesos"</td><td>Descriptivo: "logra estos resultados"</td></tr>
+    <tr><td>Metodología</td><td>Principalmente predictiva (cascada)</td><td>Agnóstico: predictivo, ágil o híbrido según contexto</td></tr>
+    <tr><td>Valor</td><td>Éxito = alcance + tiempo + costo</td><td>Éxito = valor entregado a los stakeholders</td></tr>
+    <tr><td>¿Murió el PMBOK6?</td><td colspan="2">No — sigue siendo válido y muy usado. El PMBOK7 lo complementa, no lo reemplaza. Los procesos del 6 están en la guía de práctica del estándar.</td></tr>
+  </table>
+  <div class="box bc"><div class="bt">📰 CASO REAL — IMSS Proyecto SIMEF</div>
+    <p>El IMSS lanzó el SIMEF (Sistema de Información Médica y Expediente Electrónico, $2,400M). El PM original gestionaba con listas de tareas sin principios formales. <strong>3 años de retraso y 40% de sobrecosto</strong> después, el PM fue sustituido. El nuevo equipo aplicó los principios del PMBOK7 — especialmente foco en valor y stakeholders — y entregó el primer módulo útil en 8 meses.</p>
+  </div>
+  <div class="box bl"><div class="bt">🔬 ACTIVIDAD PRÁCTICA</div>
+    <p>Mapear el último proyecto importante de tu empresa/institución contra los 12 principios del PMBOK7: ¿cuáles se aplicaron naturalmente? ¿cuáles faltaron? ¿qué hubiera cambiado si se hubieran aplicado todos? Presentar 3 hallazgos en 5 minutos.</p>
+  </div>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Click para ver respuesta</div>
+    <p>¿Cuál es la diferencia principal entre PMBOK6 y PMBOK7, en una sola oración?</p>
+    <div class="qa"><strong>PMBOK6 te dice QUÉ HACER (procesos); PMBOK7 te dice QUÉ LOGRAR (resultados/principios).</strong> En el PMBOK6 el PM sigue una receta; en el PMBOK7 el PM tiene principios para adaptar su enfoque al contexto específico de cada proyecto.</div>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 2: CICLOS DE VIDA ═══ -->
+<div class="slide" data-s="1">
+  <h2>Sesión 2 <span style="color:var(--cyan)">— Ciclos de Vida y Enfoques Adaptativos</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>El ciclo de vida del proyecto es como una <strong>receta de cocina</strong>: hay recetas con instrucciones paso a paso rígidas (predictivo — el pastel debe hornearse exactamente así), recetas que se ajustan al gusto del comensal conforme avanza (adaptativo — el platillo evoluciona con feedback), y recetas híbridas (la base siempre igual, pero la decoración se decide al final según el cliente).</p>
+  </div>
+  <table style="margin-top:14px;">
+    <tr><th>Dimensión</th><th>Predictivo (Cascada)</th><th>Adaptativo (Ágil)</th><th>Híbrido</th></tr>
+    <tr><td>Requisitos</td><td>Fijos desde el inicio</td><td>Evolucionan con el feedback</td><td>Núcleo fijo, detalles ágiles</td></tr>
+    <tr><td>Cambios</td><td>Proceso formal de cambio costoso</td><td>Bienvenidos en cualquier momento</td><td>Formal para grandes cambios</td></tr>
+    <tr><td>Entregables</td><td>Uno al final del proyecto</td><td>Incrementos cada 2-4 semanas</td><td>Hitos clave + incrementos</td></tr>
+    <tr><td>Cliente</td><td>Involucrado al inicio y al cierre</td><td>Colabora diariamente</td><td>Involucrado en fases clave</td></tr>
+    <tr><td>Mejor para</td><td>Construcción, manufactura, regulado</td><td>Software, productos digitales, I+D</td><td>TI empresarial, transformación digital</td></tr>
+  </table>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>Factores para Elegir el Ciclo de Vida</h2>
+  <div class="cg c2">
+    <div class="card c">
+      <h3>Usar ciclo Predictivo cuando...</h3>
+      <ul>
+        <li>Los requisitos son claros, estables y bien documentados desde el inicio</li>
+        <li>El entorno regulatorio exige documentación formal y aprobaciones secuenciales</li>
+        <li>Los cambios son muy costosos una vez iniciada la ejecución (obra civil, manufactura)</li>
+        <li>El cliente no puede participar durante la ejecución (solo al inicio y al cierre)</li>
+        <li>El equipo tiene experiencia previa en proyectos similares con el mismo enfoque</li>
+      </ul>
+    </div>
+    <div class="card g">
+      <h3>Usar ciclo Adaptativo cuando...</h3>
+      <ul>
+        <li>Los requisitos son inciertos o cambian frecuentemente (tecnología emergente, startups)</li>
+        <li>El cliente puede participar activamente en revisiones cada 2-4 semanas</li>
+        <li>El valor se puede entregar en incrementos útiles sin esperar al producto final</li>
+        <li>La velocidad de aprendizaje y la adaptación son más valiosas que el plan inicial</li>
+        <li>El equipo domina prácticas ágiles y el contexto organizacional lo permite</li>
+      </ul>
+    </div>
+  </div>
+  <div class="sr" style="margin-top:14px;">
+    <div class="stat"><div class="n" style="color:var(--cyan)">42%</div><div class="l">Proyectos con enfoque<br>híbrido (PMI Pulse 2023)</div></div>
+    <div class="stat"><div class="n" style="color:var(--violet)">26%</div><div class="l">Proyectos<br>100% ágiles</div></div>
+    <div class="stat"><div class="n" style="color:var(--orange)">32%</div><div class="l">Proyectos<br>100% predictivos</div></div>
+    <div class="stat"><div class="n" style="color:var(--red)">2.5x</div><div class="l">Más riesgo de fracaso con<br>ciclo de vida mal elegido</div></div>
+  </div>
+  <div class="box bc"><div class="bt">📰 CASO REAL — PEMEX Exploración Digital</div>
+    <p>PEMEX eligió ciclo de vida <strong>100% predictivo</strong> para un proyecto de análisis predictivo de pozos con requisitos altamente cambiantes. A los 6 meses, los datos disponibles eran distintos a los planificados y los modelos iniciales ya estaban obsoletos. La auditoría recomendó cambiar a <strong>ciclo híbrido</strong>: predictivo para la infraestructura de datos (estable) e iterativo para los modelos analíticos (cambiantes). El rediseño tardó 3 meses pero evitó un fracaso total del proyecto.</p>
+  </div>
+  <div class="box bl"><div class="bt">🔬 ACTIVIDAD PRÁCTICA</div>
+    <p>Para cada uno de estos 5 proyectos, seleccionar el ciclo de vida más apropiado y justificar con 3 criterios: (1) construcción de planta industrial, (2) desarrollo de app móvil para banco, (3) implementación de ERP en empresa manufacturera, (4) investigación de nuevos materiales, (5) organización de evento masivo.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 3: PROJECT CHARTER Y WBS ═══ -->
+<div class="slide" data-s="2">
+  <h2>Sesión 3 <span style="color:var(--cyan)">— Project Charter y WBS: La Base Formal del Proyecto</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>El Project Charter es el <strong>acta de nacimiento del proyecto</strong>: sin ella, el proyecto no existe oficialmente, nadie tiene autoridad formal para actuar y los recursos no pueden comprometerse. Así como una persona sin acta de nacimiento no puede tramitar ningún documento oficial, un PM sin Project Charter no puede exigir recursos ni tomar decisiones vinculantes.</p>
+  </div>
+  <div class="cg c2" style="margin-top:14px;">
+    <div class="card c">
+      <h3>Componentes del Project Charter</h3>
+      <ul>
+        <li><strong>Propósito/Justificación:</strong> ¿por qué existe este proyecto? el dolor de negocio que resuelve</li>
+        <li><strong>Objetivo SMART:</strong> específico, medible, alcanzable, relevante, con tiempo definido</li>
+        <li><strong>Alcance inicial:</strong> qué incluye y qué NO incluye explícitamente</li>
+        <li><strong>Restricciones:</strong> límites de tiempo, costo, tecnología o regulación</li>
+        <li><strong>Supuestos:</strong> condiciones que se asumen verdaderas para planear</li>
+        <li><strong>Riesgos de alto nivel:</strong> los 3-5 riesgos más críticos identificados</li>
+        <li><strong>Stakeholders clave:</strong> sponsor, cliente, equipo central, impactados</li>
+        <li><strong>PM designado + nivel de autoridad:</strong> qué puede decidir sin aprobación</li>
+        <li><strong>Firma del Sponsor:</strong> el acto que "nace" oficialmente el proyecto</li>
+      </ul>
+    </div>
+    <div class="card g">
+      <h3>Objetivo SMART — Ejemplo</h3>
+      <div class="hl" style="background:rgba(239,68,68,.08);border-left:3px solid var(--red);">❌ MAL: "Mejorar el proceso de ventas"</div>
+      <div class="hl" style="background:rgba(16,185,129,.08);border-left:3px solid var(--green);">✅ BIEN: "Implementar un CRM que reduzca el tiempo de respuesta a leads de 48 a 4 horas, aumentando la tasa de conversión del 12% al 18%, antes del 30 de junio, con un presupuesto máximo de $850K."</div>
+      <h3 style="margin-top:16px;">Las exclusiones explícitas</h3>
+      <p>Las exclusiones son tan importantes como el alcance. Si no dices que algo NO está incluido, el cliente asume que sí está:</p>
+      <ul>
+        <li>"No incluye la migración de datos históricos anteriores a 2020"</li>
+        <li>"No incluye capacitación a usuarios de sucursales fuera de CDMX"</li>
+        <li>"No incluye integración con el sistema de nómina"</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="2">
+  <h2>WBS: Descomponiendo el Trabajo en Paquetes Manejables</h2>
+  <div class="cg c2">
+    <div class="card c">
+      <h3>Reglas de la WBS</h3>
+      <ul>
+        <li><strong>Regla del 100%:</strong> la WBS debe contener el 100% del trabajo del proyecto — ni más ni menos. Nada que no esté en la WBS existe en el proyecto.</li>
+        <li><strong>Orientada a entregables:</strong> los nodos de la WBS son entregables (sustantivos), no actividades (verbos)</li>
+        <li><strong>Paquete de trabajo:</strong> el nivel más bajo — puede estimarse, asignarse y controlarse de forma independiente</li>
+        <li><strong>Nivel de detalle:</strong> descomponer hasta que un paquete pueda ser completado por una persona o equipo pequeño en 8-80 horas</li>
+        <li><strong>Diccionario WBS:</strong> documento que define cada paquete: descripción, responsable, duración estimada, costo, criterios de aceptación</li>
+      </ul>
+    </div>
+    <div class="card o">
+      <h3>Ejemplo WBS — CRM Project</h3>
+      <ul style="list-style:none;padding:0;">
+        <li>📦 <strong>1. Proyecto CRM</strong>
+          <ul style="padding-left:20px;">
+            <li>📦 1.1 Gestión del Proyecto
+              <ul style="padding-left:20px;font-size:.8rem;">
+                <li>1.1.1 Project Charter</li>
+                <li>1.1.2 Plan de Proyecto</li>
+                <li>1.1.3 Informes de Avance</li>
+              </ul>
+            </li>
+            <li>📦 1.2 Requerimientos
+              <ul style="padding-left:20px;font-size:.8rem;">
+                <li>1.2.1 Talleres con Ventas</li>
+                <li>1.2.2 Documento de Requisitos</li>
+              </ul>
+            </li>
+            <li>📦 1.3 Implementación
+              <ul style="padding-left:20px;font-size:.8rem;">
+                <li>1.3.1 Configuración del sistema</li>
+                <li>1.3.2 Migración de datos</li>
+                <li>1.3.3 Pruebas UAT</li>
+              </ul>
+            </li>
+            <li>📦 1.4 Capacitación y Lanzamiento</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="box bc"><div class="bt">📰 CASO REAL — Metro CDMX Línea 12</div>
+    <p>El Project Charter de la L12 nunca definió explícitamente los criterios de aceptación para la resistencia del suelo en zona lacustre. Cuando se detectaron grietas en 2013, el constructor argumentaba que había cumplido el alcance; el GDF decía que no. <strong>Tres años de litigios y $7,200M en reforzamiento</strong> después, el problema raíz fue que las exclusiones y criterios de aceptación técnicos nunca se documentaron en el acta de proyecto.</p>
+  </div>
+  <div class="box bl"><div class="bt">🔬 ACTIVIDAD PRÁCTICA</div>
+    <p>Redactar el Project Charter del Proyecto Integrador del seminario: propósito, objetivo SMART, alcance con 3 entregables clave y 3 exclusiones explícitas, 3 restricciones, 2 supuestos y stakeholders clave. Luego construir la WBS de primer y segundo nivel con al menos 4 ramas.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 4: CPM ═══ -->
+<div class="slide" data-s="3">
+  <h2>Sesión 4 <span style="color:var(--cyan)">— Cronograma, CPM y Ruta Crítica</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>La ruta crítica es como el <strong>camino de alta montaña</strong>: hay rutas alternativas con margen de tiempo (holgura), pero la ruta por el pico principal no tiene margen — un retraso de 1 hora ahí retrasa la llegada al campamento 1 hora. No todas las actividades merecen igual atención: el PM debe monitorear obsesivamente solo las actividades de la ruta crítica.</p>
+  </div>
+  <div class="cg c2" style="margin-top:14px;">
+    <div class="card c">
+      <h3>Tipos de Relaciones en la Red CPM</h3>
+      <table>
+        <tr><th>Relación</th><th>Significado</th><th>Ejemplo</th></tr>
+        <tr><td><strong>FS</strong> (Fin-Inicio)</td><td>B inicia cuando A termina</td><td>Diseño → Construcción</td></tr>
+        <tr><td><strong>SS</strong> (Inicio-Inicio)</td><td>B puede iniciar cuando A inicia</td><td>Redactar → Revisar en paralelo</td></tr>
+        <tr><td><strong>FF</strong> (Fin-Fin)</td><td>B termina cuando A termina</td><td>HW y SW: se entregan juntos</td></tr>
+        <tr><td><strong>SF</strong> (Inicio-Fin)</td><td>B termina cuando A inicia</td><td>Guardia nuevo reemplaza al anterior</td></tr>
+      </table>
+    </div>
+    <div class="card g">
+      <h3>Holgura: el Margen de Maniobra</h3>
+      <ul>
+        <li><strong>Holgura Total = LS - ES = LF - EF</strong></li>
+        <li>Tiempo que puede retrasarse sin afectar la fecha final del proyecto</li>
+        <li><strong>Holgura = 0:</strong> actividad en la ruta crítica</li>
+        <li><strong>Holgura Libre:</strong> tiempo que puede retrasarse sin afectar el inicio temprano de su sucesor</li>
+        <li>Las actividades con holgura son candidatas para redistribuir recursos</li>
+        <li>¡Ojo! La holgura puede ser negativa cuando el proyecto ya está atrasado</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="3">
+  <h2>Cálculo CPM: Paso a Paso</h2>
+  <table>
+    <tr><th>Actividad</th><th>Duración</th><th>Predecesoras</th><th>ES</th><th>EF</th><th>LS</th><th>LF</th><th>HT</th><th>Crítica</th></tr>
+    <tr><td>A — Diseño</td><td>5d</td><td>—</td><td>0</td><td>5</td><td>0</td><td>5</td><td>0</td><td>✅</td></tr>
+    <tr><td>B — Compras</td><td>3d</td><td>A</td><td>5</td><td>8</td><td>7</td><td>10</td><td>2</td><td>—</td></tr>
+    <tr><td>C — Desarrollo</td><td>8d</td><td>A</td><td>5</td><td>13</td><td>5</td><td>13</td><td>0</td><td>✅</td></tr>
+    <tr><td>D — Instalación</td><td>2d</td><td>B</td><td>8</td><td>10</td><td>11</td><td>13</td><td>3</td><td>—</td></tr>
+    <tr><td>E — Pruebas</td><td>4d</td><td>C, D</td><td>13</td><td>17</td><td>13</td><td>17</td><td>0</td><td>✅</td></tr>
+  </table>
+  <p style="margin-top:8px;color:var(--cyan);font-size:.85rem;"><strong>Ruta crítica: A → C → E · Duración total: 17 días</strong></p>
+  <div class="cg c2" style="margin-top:12px;">
+    <div class="card v">
+      <h3>Compresión del Cronograma</h3>
+      <ul>
+        <li><strong>Fast Tracking:</strong> hacer en paralelo actividades que originalmente eran secuenciales. Reduce tiempo pero aumenta riesgo de retrabajos.</li>
+        <li><strong>Crashing:</strong> agregar recursos (personas, equipos) a actividades de la ruta crítica para reducir su duración. Aumenta costo, puede disminuir tiempo.</li>
+        <li><strong>Regla:</strong> solo comprimir actividades de la ruta crítica — comprimir las demás no reduce la duración total.</li>
+      </ul>
+    </div>
+    <div class="card o">
+      <h3>Hitos vs Actividades vs Entregables</h3>
+      <ul>
+        <li><strong>Actividad:</strong> trabajo que consume tiempo y recursos (ej: "Desarrollar módulo de reportes")</li>
+        <li><strong>Hito:</strong> evento significativo de duración cero que marca el fin de una fase (ej: "✓ Diseño aprobado")</li>
+        <li><strong>Entregable:</strong> resultado tangible que el cliente puede revisar y aceptar (ej: "Documento de Requisitos firmado")</li>
+        <li>Los hitos son los puntos de control del PM y del Sponsor</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box bc"><div class="bt">📰 CASO REAL — AIFA Aeropuerto Santa Lucía</div>
+    <p>El AIFA tenía cronograma inicial de 3 años. Con CPM y <strong>fast tracking masivo</strong> (pistas, terminales e instalaciones en paralelo), se entregó en <strong>28 meses</strong>. Las actividades de construcción de pistas (ruta crítica) corrieron simultáneamente con las instalaciones internas. El riesgo de retrabajos fue gestionado con supervisión diaria de las interdependencias físicas.</p>
+  </div>
+  <div class="box bl"><div class="bt">🔬 ACTIVIDAD PRÁCTICA</div>
+    <p>Dado un proyecto de 10 actividades con duraciones y dependencias, construir la red CPM en papel: calcular ES/EF/LS/LF para cada actividad, identificar la ruta crítica, calcular la holgura total y proponer una estrategia de compresión para reducir la duración total en 20%.</p>
+  </div>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Click para ver respuesta</div>
+    <p>Si una actividad de la ruta crítica se retrasa 3 días, ¿el proyecto completo se retrasa 3 días? ¿Siempre?</p>
+    <div class="qa"><strong>Generalmente sí, pero no siempre.</strong> Si la ruta crítica tiene holgura negativa (el proyecto ya estaba atrasado), el retraso se suma directamente. Si existe una actividad paralela no crítica que tiene holgura menor a 3 días, esa actividad podría convertirse en la nueva ruta crítica y el retraso podría ser mayor que 3 días. La clave: recalcular el CPM siempre que hay un retraso significativo.</div>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 5: EVM ═══ -->
+<div class="slide" data-s="4">
+  <h2>Sesión 5 <span style="color:var(--cyan)">— Gestión del Valor Ganado (EVM)</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>EVM es como el <strong>tablero de un automóvil</strong>: no solo mide qué tan rápido vas (velocímetro = SPI), sino también cuánto combustible quemas por kilómetro (eficiencia de costo = CPI). Un auto puede ir rápido quemando 3 veces más combustible del previsto. Sin EVM, no sabrías que vas a quedarte sin gasolina hasta que ya sea tarde.</p>
+  </div>
+  <div class="cg c3" style="margin-top:14px;">
+    <div class="card c"><h3>PV — Planned Value</h3><p>Valor del trabajo que <strong>debería haberse completado</strong> hasta hoy según el plan. También llamado BCWS (Budgeted Cost of Work Scheduled).</p><p style="color:var(--cyan);margin-top:8px;font-weight:700;">PV = % planificado × BAC</p></div>
+    <div class="card g"><h3>EV — Earned Value</h3><p>Valor del trabajo que <strong>realmente se ha completado</strong> hasta hoy, medido al presupuesto original. También llamado BCWP (Budgeted Cost of Work Performed).</p><p style="color:var(--green);margin-top:8px;font-weight:700;">EV = % real completado × BAC</p></div>
+    <div class="card o"><h3>AC — Actual Cost</h3><p>Lo que <strong>realmente se ha gastado</strong> para completar el trabajo hasta hoy. También llamado ACWP (Actual Cost of Work Performed).</p><p style="color:var(--orange);margin-top:8px;font-weight:700;">AC = gasto real acumulado</p></div>
+  </div>
+</div>
+
+<div class="slide" data-s="4">
+  <h2>Las Fórmulas EVM que todo PM debe Dominar</h2>
+  <div class="cg c2">
+    <div class="card c">
+      <h3>Varianzas (diferencias absolutas)</h3>
+      <table>
+        <tr><th>Fórmula</th><th>Positivo = </th><th>Negativo = </th></tr>
+        <tr><td><strong>SV = EV − PV</strong></td><td>Adelantado en cronograma</td><td>Retrasado en cronograma</td></tr>
+        <tr><td><strong>CV = EV − AC</strong></td><td>Bajo presupuesto</td><td>Sobre presupuesto</td></tr>
+      </table>
+      <h3 style="margin-top:14px;">Índices de desempeño (eficiencia relativa)</h3>
+      <table>
+        <tr><th>Fórmula</th><th>&gt; 1.0</th><th>&lt; 1.0</th></tr>
+        <tr><td><strong>SPI = EV ÷ PV</strong></td><td>Adelantado</td><td>Retrasado</td></tr>
+        <tr><td><strong>CPI = EV ÷ AC</strong></td><td>Bajo presupuesto</td><td>Sobre presupuesto</td></tr>
+      </table>
+    </div>
+    <div class="card g">
+      <h3>Pronósticos (¿cómo terminaremos?)</h3>
+      <table>
+        <tr><th>Fórmula</th><th>¿Qué responde?</th></tr>
+        <tr><td><strong>EAC = BAC ÷ CPI</strong></td><td>¿Cuánto costará el proyecto al final si el CPI actual se mantiene?</td></tr>
+        <tr><td><strong>ETC = EAC − AC</strong></td><td>¿Cuánto dinero falta por gastar para terminar el proyecto?</td></tr>
+        <tr><td><strong>VAC = BAC − EAC</strong></td><td>¿Cuánto sobre o bajo presupuesto terminaremos? (negativo = sobrecoste)</td></tr>
+      </table>
+      <div style="margin-top:12px;background:rgba(6,182,212,.08);border-left:3px solid var(--cyan);padding:8px 12px;border-radius:0 6px 6px 0;font-size:.82rem;">
+        <strong>Regla de oro del CPI:</strong> estudios del GAO demuestran que el CPI raramente mejora más del 10% después de que el proyecto está al 20% de avance. Si a 20% el CPI es 0.70, es probable que el proyecto final costará ~43% más de lo presupuestado.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="4">
+  <h2>Los 4 Cuadrantes EVM: Interpretando SPI y CPI Combinados</h2>
+  <div class="cg c2">
+    <div class="card g"><h3>✅ SPI &gt; 1 y CPI &gt; 1</h3><p><strong>El mejor escenario.</strong> El proyecto está adelantado en cronograma Y por debajo del presupuesto. Poco común pero posible. Acción: mantener el ritmo, verificar que no haya work bypassed.</p></div>
+    <div class="card o"><h3>⚠️ SPI &gt; 1 y CPI &lt; 1</h3><p><strong>Rápido pero caro.</strong> Se avanza más rápido de lo planeado pero se está gastando más de lo previsto. Causa común: recursos caros extras para acelerar. Acción: revisar eficiencia de recursos.</p></div>
+    <div class="card v"><h3>⚠️ SPI &lt; 1 y CPI &gt; 1</h3><p><strong>Lento pero eficiente.</strong> El proyecto está retrasado pero gasta menos de lo previsto. Causa común: equipo pequeño pero eficiente. Acción: agregar recursos para recuperar cronograma.</p></div>
+    <div class="card r"><h3>🚨 SPI &lt; 1 y CPI &lt; 1</h3><p><strong>El peor escenario.</strong> Retrasado Y sobre presupuesto. Acción inmediata: escalar al Sponsor, revisar alcance, considerar replaneación total. Este es el "iceberg" del PM.</p></div>
+  </div>
+  <div class="box bc"><div class="bt">📰 CASO REAL — Aeropuerto Guadalajara Terminal 2</div>
+    <p>En la semana 24 de 52: CPI = 0.73 (grave sobrecosto), SPI = 0.91. El EVM alertó que las actividades de estructuras civiles eran el problema específico. Con esta información precisa, el PM pudo renegociar el contrato con el subcontratista y reestructurar el plan de trabajo. <strong>Sin EVM, el problema se habría detectado en la semana 45</strong>, cuando ya no había tiempo para corregirlo.</p>
+  </div>
+  <div class="box bl"><div class="bt">🔬 ACTIVIDAD PRÁCTICA — Semana 15 de 30</div>
+    <p>Un proyecto en la semana 15 de 30, BAC = $600K: PV acumulado = $450K, EV = $380K, AC = $420K. Calcular: SV, CV, SPI, CPI, EAC, ETC, VAC. Interpretar el estado del proyecto y recomendar 2 acciones concretas con nombre y apellido del impacto esperado.</p>
+  </div>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Click para ver respuesta</div>
+    <p>Un proyecto tiene SPI = 1.2 y CPI = 0.75. ¿Cómo describirías el estado en una oración al Sponsor?</p>
+    <div class="qa"><strong>"Estamos avanzando 20% más rápido de lo planeado, pero gastamos $1.33 por cada $1.00 de trabajo entregado — si no corregimos la eficiencia de costo, el proyecto terminará 33% sobre presupuesto."</strong> La combinación SPI alto + CPI bajo suele indicar uso de recursos caros para acelerar (horas extra, subcontratistas premium). La solución: evaluar si el adelanto en cronograma justifica el sobrecosto, o reducir la velocidad para recuperar eficiencia.</div>
+  </div>
+</div>
+
+<!-- CIERRE BLOQUE I -->
+<div class="slide cover" data-s="4">
+  <div class="badge">BLOQUE I — CIERRE</div>
+  <h1>Fundamentos de Gestión<br>y Planeación de Proyectos</h1>
+  <p style="max-width:600px;margin:16px auto;color:var(--muted);">Dominar los principios del PMBOK7, seleccionar el ciclo de vida adecuado, construir el Project Charter y la WBS, calcular la ruta crítica y medir el desempeño con EVM son las competencias base de todo director de proyectos profesional.</p>
+  <div class="sr" style="justify-content:center;max-width:800px;margin:20px auto;">
+    <div class="stat"><div class="n" style="color:var(--cyan)">PMBOK7</div><div class="l">12 principios</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">Charter</div><div class="l">Base formal</div></div>
+    <div class="stat"><div class="n" style="color:var(--orange)">WBS</div><div class="l">100% del trabajo</div></div>
+    <div class="stat"><div class="n" style="color:var(--violet)">CPM</div><div class="l">Ruta crítica</div></div>
+    <div class="stat"><div class="n" style="color:var(--pink)">EVM</div><div class="l">SPI · CPI · EAC</div></div>
+  </div>
+  <div class="box bd" style="max-width:600px;margin:0 auto;"><div class="bt">💡 SIGUIENTE — BLOQUE II</div>
+    <p><strong>Agilidad y Liderazgo de Equipos</strong>: Scrum en profundidad, Lean/Kanban, integración DevOps, metodologías híbridas y Power Skills del PM moderno.</p>
+  </div>
+  <div style="margin-top:20px;">
+    <span class="tag">PMBOK7</span><span class="tag">Ciclos de Vida</span><span class="tag">Project Charter</span>
+    <span class="tag">WBS</span><span class="tag">CPM</span><span class="tag">EVM</span><span class="tag">Ruta Crítica</span>
+  </div>
+  <div style="margin-top:16px;font-size:.8rem;color:var(--muted);">
+    <strong style="color:var(--cyan);">Referencias:</strong> PMI (2021). <em>A Guide to the PMBOK® Guide, 7th ed.</em> · Kerzner, H. (2022). <em>Project Management: A Systems Approach to Planning, Scheduling, and Controlling</em> (13th ed.). Wiley. · PMI (2023). <em>Pulse of the Profession: Power Skills</em>.
+  </div>
+</div>
+
+</div><!-- /sc -->
+<div id="footer">
+  <button onclick="prev()">← Anterior</button>
+  <span class="hint">← → · Espacio · Seminario de Titulación · UPIICSA · Dirección y Gestión de Proyectos</span>
+  <button onclick="next()">Siguiente →</button>
+</div>
+<script>
+const slides=document.querySelectorAll('.slide'),total=slides.length;let cur=0;
+const ss=[];slides.forEach((s,i)=>{const v=parseInt(s.dataset.s);if(ss[v]===undefined)ss[v]=i;});
+function go(n){if(n<0||n>=total)return;slides[cur].classList.remove('active');cur=n;slides[cur].classList.add('active');document.getElementById('ctr').textContent=(cur+1)+' / '+total;document.getElementById('pb').style.width=((cur+1)/total*100)+'%';ut();slides[cur].scrollTop=0;}
+function next(){go(cur+1);}function prev(){go(cur-1);}function gts(i){go(ss[i]);}
+function ut(){const v=parseInt(slides[cur].dataset.s);for(let i=0;i<5;i++){const b=document.getElementById('t'+i);if(b)b.classList.toggle('active',i===v);}}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();}if(e.key==='ArrowLeft'){e.preventDefault();prev();}});
+ut();
+</script>
+</body>
+</html>

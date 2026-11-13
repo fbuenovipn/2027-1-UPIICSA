@@ -3,41 +3,47 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bloque V — Deep Learning, NLP, RL y Proyecto Final</title>
+<title>Bloque V — Deep Learning, NLP y Proyecto Integrador</title>
 <style>
-  :root{--bg:#04080f;--card:#0b1628;--border:#1e3a5f;--violet:#7c3aed;--cyan:#06b6d4;--green:#10b981;--orange:#f59e0b;--red:#ef4444;--pink:#ec4899;--yellow:#fbbf24;--text:#e2e8f0;--muted:#64748b;}
+  :root {
+    --bg:#04080f;--card:#0b1628;--border:#1e3a5f;
+    --violet:#7c3aed;--cyan:#06b6d4;--green:#10b981;
+    --orange:#f59e0b;--red:#ef4444;--pink:#ec4899;
+    --yellow:#fbbf24;--text:#e2e8f0;--muted:#64748b;
+  }
   *{box-sizing:border-box;margin:0;padding:0;}
   body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden;height:100vh;}
   #navbar{position:fixed;top:0;left:0;right:0;height:54px;background:rgba(4,8,15,.96);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:100;backdrop-filter:blur(8px);}
-  #navbar .brand{color:var(--violet);font-weight:700;font-size:.85rem;letter-spacing:1px;}
-  #navbar .brand span{color:var(--pink);}
+  #navbar .brand{color:var(--pink);font-weight:700;font-size:.85rem;letter-spacing:1px;}
+  #navbar .brand span{color:var(--cyan);}
   .stabs{display:flex;gap:6px;}
   .stabs button{background:transparent;border:1px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:20px;cursor:pointer;font-size:.75rem;transition:all .2s;}
-  .stabs button.active{background:var(--violet);border-color:var(--violet);color:#fff;font-weight:700;}
-  .stabs button:hover:not(.active){border-color:var(--violet);color:var(--violet);}
+  .stabs button.active{background:var(--pink);border-color:var(--pink);color:#fff;font-weight:700;}
+  .stabs button:hover:not(.active){border-color:var(--pink);color:var(--pink);}
   #ctr{color:var(--muted);font-size:.8rem;min-width:80px;text-align:right;}
-  #pb{position:fixed;top:54px;left:0;height:3px;background:linear-gradient(90deg,var(--violet),var(--pink));transition:width .3s;z-index:100;}
+  #pb{position:fixed;top:54px;left:0;height:3px;background:linear-gradient(90deg,var(--pink),var(--violet));transition:width .3s;z-index:100;}
   #sc{position:fixed;top:57px;left:0;right:0;bottom:40px;overflow:hidden;}
   .slide{position:absolute;top:0;left:0;right:0;bottom:0;padding:28px 48px;display:none;overflow-y:auto;animation:fi .35s ease;}
   .slide.active{display:flex;flex-direction:column;}
   @keyframes fi{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
   #footer{position:fixed;bottom:0;left:0;right:0;height:40px;background:rgba(4,8,15,.96);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:16px;z-index:100;}
   #footer button{background:var(--card);border:1px solid var(--border);color:var(--text);padding:5px 20px;border-radius:6px;cursor:pointer;font-size:.8rem;transition:all .2s;}
-  #footer button:hover{border-color:var(--violet);color:var(--violet);}
+  #footer button:hover{border-color:var(--pink);color:var(--pink);}
   #footer .hint{color:var(--muted);font-size:.72rem;}
   h1{font-size:2rem;font-weight:800;line-height:1.2;margin-bottom:10px;}
   h2{font-size:1.5rem;font-weight:700;margin-bottom:14px;}
-  h3{font-size:1.05rem;font-weight:600;color:var(--violet);margin-bottom:8px;margin-top:12px;}
+  h3{font-size:1.05rem;font-weight:600;color:var(--cyan);margin-bottom:8px;margin-top:12px;}
   p{font-size:.92rem;line-height:1.65;margin-bottom:8px;}
   ul,ol{padding-left:20px;font-size:.9rem;line-height:1.8;}
   li{margin-bottom:4px;}
-  .sub{color:var(--muted);font-size:1rem;}
+  .sub{color:var(--muted);font-size:1rem;margin-bottom:6px;}
+  .tag{display:inline-block;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:2px 10px;font-size:.75rem;color:var(--muted);margin-right:6px;margin-bottom:4px;}
   .cover{align-items:center;justify-content:center;text-align:center;}
-  .cover h1{font-size:2.3rem;background:linear-gradient(135deg,var(--violet),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;}
-  .badge{display:inline-block;border:1px solid var(--violet);border-radius:8px;padding:8px 24px;color:var(--violet);font-size:.9rem;font-weight:700;letter-spacing:2px;margin-bottom:20px;background:rgba(124,58,237,.08);}
+  .cover h1{font-size:2.3rem;background:linear-gradient(135deg,var(--pink),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;}
+  .badge{display:inline-block;border:1px solid var(--pink);border-radius:8px;padding:8px 24px;color:var(--pink);font-size:.9rem;font-weight:700;letter-spacing:2px;margin-bottom:20px;background:rgba(236,72,153,.08);}
   .sg{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:20px;}
-  .sc2{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 16px;width:180px;text-align:left;}
-  .sc2 .num{color:var(--violet);font-size:.7rem;font-weight:700;}
+  .sc2{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 16px;width:168px;text-align:left;}
+  .sc2 .num{color:var(--pink);font-size:.7rem;font-weight:700;}
   .sc2 .nm{font-size:.8rem;margin-top:4px;}
   .cg{display:grid;gap:14px;margin-top:8px;}
   .cg.c2{grid-template-columns:1fr 1fr;}
@@ -54,7 +60,7 @@
   .card p,.card ul,.card li{font-size:.85rem;}
   .box{border-radius:10px;padding:14px 18px;margin:10px 0;}
   .bm{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.4);}
-  .bc{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.4);}
+  .bc{background:rgba(255,159,28,.08);border:1px solid rgba(255,159,28,.4);}
   .bl{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.4);}
   .bd{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.4);}
   .bq{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.4);cursor:pointer;}
@@ -68,7 +74,7 @@
   .qa{display:none;margin-top:8px;padding-top:8px;border-top:1px solid rgba(251,191,36,.3);color:var(--green);font-size:.85rem;}
   .bq.revealed .qa{display:block;}
   table{width:100%;border-collapse:collapse;font-size:.83rem;margin-top:8px;}
-  th{background:#071020;color:var(--violet);text-align:left;padding:8px 12px;border:1px solid var(--border);}
+  th{background:#071020;color:var(--cyan);text-align:left;padding:8px 12px;border:1px solid var(--border);}
   td{padding:7px 12px;border:1px solid var(--border);vertical-align:top;}
   tr:nth-child(even) td{background:rgba(11,22,40,.6);}
   .tl{list-style:none;padding:0;margin-top:8px;}
@@ -78,28 +84,29 @@
   .tl .st.c{background:rgba(6,182,212,.15);border:2px solid var(--cyan);color:var(--cyan);}
   .tl .st.g{background:rgba(16,185,129,.15);border:2px solid var(--green);color:var(--green);}
   .tl .st.o{background:rgba(245,158,11,.15);border:2px solid var(--orange);color:var(--orange);}
+  .tl .st.p{background:rgba(236,72,153,.15);border:2px solid var(--pink);color:var(--pink);}
   .tl .content h4{font-size:.9rem;}
   .tl .content p{font-size:.83rem;color:var(--muted);margin:0;}
   .sr{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0;}
   .stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 18px;flex:1;min-width:120px;text-align:center;}
   .stat .n{font-size:1.8rem;font-weight:800;line-height:1;}
   .stat .l{font-size:.72rem;color:var(--muted);margin-top:4px;}
-  pre{background:#071020;border:1px solid var(--border);border-radius:6px;padding:12px;font-size:.78rem;color:var(--green);overflow-x:auto;margin:8px 0;font-family:'Courier New',monospace;line-height:1.5;}
-  code{background:#071020;padding:2px 6px;border-radius:4px;font-size:.82rem;color:var(--cyan);}
+  .pill{display:inline-block;padding:2px 10px;border-radius:20px;font-size:.75rem;font-weight:600;margin:2px;}
+  .pv{background:rgba(124,58,237,.15);border:1px solid var(--violet);color:var(--violet);}
+  .pc{background:rgba(6,182,212,.15);border:1px solid var(--cyan);color:var(--cyan);}
+  .pg{background:rgba(16,185,129,.15);border:1px solid var(--green);color:var(--green);}
+  .po{background:rgba(245,158,11,.15);border:1px solid var(--orange);color:var(--orange);}
+  .pp{background:rgba(236,72,153,.15);border:1px solid var(--pink);color:var(--pink);}
   .ld{display:flex;flex-direction:column;gap:6px;margin:10px 0;}
   .lr{border-radius:6px;padding:8px 16px;font-size:.82rem;font-weight:600;text-align:center;}
-  .tag{display:inline-block;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:2px 10px;font-size:.75rem;color:var(--muted);margin-right:6px;margin-bottom:4px;}
   .slide::-webkit-scrollbar{width:4px;}
+  .slide::-webkit-scrollbar-track{background:transparent;}
   .slide::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
-  /* Rubric */
-  .rubric{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:8px;margin-top:12px;}
-  .rh{font-weight:700;font-size:.8rem;color:var(--violet);padding:6px;background:rgba(124,58,237,.1);border-radius:4px;}
-  .rc{font-size:.8rem;padding:6px;background:var(--card);border:1px solid var(--border);border-radius:4px;}
 </style>
 </head>
 <body>
 <div id="navbar">
-  <div class="brand">🧠 DEEP <span>LEARNING</span> · BLOQUE V</div>
+  <div class="brand">🤖 IA <span>INDUSTRIA</span> · BLOQUE V</div>
   <div class="stabs">
     <button onclick="gts(0)" id="t0">S21</button>
     <button onclick="gts(1)" id="t1">S22</button>
@@ -107,496 +114,612 @@
     <button onclick="gts(3)" id="t3">S24</button>
     <button onclick="gts(4)" id="t4">S25</button>
   </div>
-  <div id="ctr">1 / 60</div>
+  <div id="ctr">1 / 1</div>
 </div>
-<div id="pb" style="width:1.67%"></div>
+<div id="pb" style="width:1%"></div>
 <div id="sc">
 
 <!-- PORTADA -->
 <div class="slide active cover" data-s="0">
   <div class="badge">BLOQUE V · SESIONES 21 – 25</div>
-  <h1>Deep Learning, NLP,<br>Reinforcement Learning y Proyecto Final</h1>
-  <p class="sub">La vanguardia de la IA aplicada a la industria · 30 horas</p>
+  <h1>Deep Learning, NLP<br>y Proyecto Integrador</h1>
+  <p class="sub">Inteligencia Artificial para la Industria · Seminario de Titulación · 30 horas</p>
   <div class="sg">
     <div class="sc2"><div class="num">SESIÓN 21</div><div class="nm">NLP y Transformers</div></div>
-    <div class="sc2"><div class="num">SESIÓN 22</div><div class="nm">Deep Learning CNN/Transfer</div></div>
+    <div class="sc2"><div class="num">SESIÓN 22</div><div class="nm">Deep Learning y Visión</div></div>
     <div class="sc2"><div class="num">SESIÓN 23</div><div class="nm">Reinforcement Learning</div></div>
     <div class="sc2"><div class="num">SESIÓN 24</div><div class="nm">Taller Proyecto Integrador</div></div>
-    <div class="sc2"><div class="num">SESIÓN 25</div><div class="nm">Defensa Final</div></div>
+    <div class="sc2"><div class="num">SESIÓN 25</div><div class="nm">Defensa Final y Cierre</div></div>
   </div>
   <p style="margin-top:24px;color:var(--muted);font-size:.82rem;">← → o barra espaciadora · Click en S21–S25 para saltar sesión</p>
 </div>
 
 <!-- ═══ SESIÓN 21 ═══ -->
 <div class="slide" data-s="0">
-  <h2>Sesión 21 <span style="color:var(--violet)">— NLP y Transformers: El Lenguaje de la Industria</span></h2>
-  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
-    <p>Antes de los Transformers, los modelos de lenguaje leían texto como <strong>alguien que lee una carta cubriéndola con la mano</strong>: solo veían una palabra a la vez. El mecanismo de <strong>atención</strong> en los Transformers es como leer toda la carta simultáneamente y poder mirar cualquier parte en cualquier momento. Eso cambió todo.</p>
+  <h2>Sesión 21 <span style="color:var(--pink)">— Procesamiento de Lenguaje Natural (NLP) y Transformers</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA DE APERTURA</div>
+    <p>Los embeddings son como el <strong>sistema de coordenadas del significado</strong>: "rey" − "hombre" + "mujer" ≈ "reina". Las palabras se convierten en vectores numéricos que capturan relaciones semánticas. El modelo "entiende" el lenguaje como un mapa geográfico del significado donde las palabras similares viven cerca unas de otras.</p>
   </div>
   <div class="sr" style="margin-top:16px;">
-    <div class="stat"><div class="n" style="color:var(--violet)">2017</div><div class="l">"Attention Is All You Need" — el paper que cambió la NLP (Google Brain)</div></div>
-    <div class="stat"><div class="n" style="color:var(--cyan)">BERT</div><div class="l">Primer modelo preentrenado masivo de comprensión bidireccional (Google, 2018)</div></div>
-    <div class="stat"><div class="n" style="color:var(--pink)">GPT-4</div><div class="l">Estado del arte en generación de texto, razonamiento y código</div></div>
-  </div>
-  <div class="cg c3" style="margin-top:14px;">
-    <div class="card v"><h3>TF-IDF — La Base</h3><p>Term Frequency × Inverse Document Frequency. Representa texto como vector numérico ponderado. Simple, interpretable, funciona bien para clasificación de documentos cortos y búsqueda.</p></div>
-    <div class="card c"><h3>Word Embeddings</h3><p>Word2Vec, GloVe, FastText: representaciones densas que capturan significado semántico. "rey - hombre + mujer ≈ reina". La base conceptual de los LLMs modernos.</p></div>
-    <div class="card g"><h3>Transformers y BERT</h3><p>Atención multi-cabeza: cada token atiende a todos los demás simultáneamente. BERT aprende representaciones bidireccionales preentrenando en enorme corpus. Fine-tuning con pocos datos propios.</p></div>
+    <div class="stat"><div class="n" style="color:var(--pink)">3.3T</div><div class="l">Palabras de texto en internet analizables con NLP</div></div>
+    <div class="stat"><div class="n" style="color:var(--violet)">80%</div><div class="l">De los datos empresariales son texto no estructurado (IDC)</div></div>
+    <div class="stat"><div class="n" style="color:var(--cyan)">GPT-4</div><div class="l">Supera a humanos en benchmarks de comprensión lectora</div></div>
   </div>
 </div>
 
 <div class="slide" data-s="0">
-  <h2>Clasificación de Texto con Hugging Face Transformers</h2>
+  <h2>¿Por Qué el Texto Es Difícil para las Máquinas?</h2>
+  <div class="cg c3">
+    <div class="card r">
+      <h3>El Problema de la Ambigüedad</h3>
+      <ul>
+        <li>"Banco" puede ser institución financiera, mueble o ribera de río</li>
+        <li>"Me llegó el pedido" ≠ "Me llegó un pedido" (artículo cambia todo)</li>
+        <li>El sarcasmo: "¡Claro que el proveedor llegó puntual!" — el contexto lo cambia</li>
+        <li>Los modelos necesitan <strong>contexto completo</strong> para desambiguar</li>
+      </ul>
+    </div>
+    <div class="card o">
+      <h3>El Problema de la Escala</h3>
+      <ul>
+        <li>Una empresa mediana genera 10,000+ emails/mes, 500+ tickets de soporte</li>
+        <li>Revisión manual: imposible o muy costosa</li>
+        <li>Los humanos leen ~200 palabras/minuto; GPT-4 procesa millones en segundos</li>
+        <li>NLP escala donde los humanos no pueden</li>
+      </ul>
+    </div>
+    <div class="card g">
+      <h3>El Problema de la Representación</h3>
+      <ul>
+        <li>Las máquinas solo entienden números, no palabras</li>
+        <li>Solución: convertir palabras a vectores numéricos</li>
+        <li>Que vectores similares = palabras con significados relacionados</li>
+        <li>Eso son los <strong>embeddings</strong>: el puente entre lenguaje y matemáticas</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>La Evolución del NLP: Del Diccionario al Transformer</h2>
+  <ul class="tl">
+    <li><div class="st o">1</div><div class="content"><h4>Bag-of-Words (1950s–2000s)</h4><p>Cuenta la frecuencia de palabras. Ignora el orden: "El perro muerde al hombre" = "El hombre muerde al perro". Funciona para clasificación simple.</p></div></li>
+    <li><div class="st c">2</div><div class="content"><h4>TF-IDF (1980s–2010s)</h4><p>Pondera palabras por su rareza en el corpus. "Falla" en un manual técnico importa más que "el". Mejora la recuperación de documentos.</p></div></li>
+    <li><div class="st g">3</div><div class="content"><h4>Word2Vec / GloVe (2013–2018)</h4><p>Primeros embeddings densos. Aprenden relaciones semánticas. "México" y "España" están cerca en el espacio vectorial por contextos similares.</p></div></li>
+    <li><div class="st v">4</div><div class="content"><h4>BERT / GPT (2018–presente)</h4><p>Transformers con atención bidireccional. Comprenden el contexto completo de la oración. Base de ChatGPT, Gemini y todos los LLMs modernos.</p></div></li>
+    <li><div class="st p">5</div><div class="content"><h4>LLMs Generativos (2022–presente)</h4><p>GPT-4, Claude, Gemini. Generan texto, resumen, traducen, responden preguntas, escriben código. Cambio de paradigma: un modelo para todo.</p></div></li>
+  </ul>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Arquitectura Transformer: La Revolución del "Mecanismo de Atención"</h2>
   <div class="cg c2">
     <div class="card v">
-      <h3>Pipeline de Inferencia (Zero-Shot)</h3>
-      <pre">from transformers import pipeline
-
-# Clasificación sin entrenamiento adicional
-clasificador = pipeline(
-    "zero-shot-classification",
-    model="facebook/bart-large-mnli")
-
-texto = """El compresor C-101 presenta vibración
-excesiva a 50Hz y temperatura de 95°C en los
-rodamientos. Se recomienda parada inmediata."""
-
-etiquetas = ["falla mecánica", "falla eléctrica",
-             "mantenimiento preventivo",
-             "operación normal"]
-
-resultado = clasificador(texto, etiquetas)
-for label, score in zip(resultado['labels'],
-                        resultado['scores']):
-    print(f"{label}: {score:.1%}")</pre>
+      <h3>¿Qué hace la "Atención"?</h3>
+      <p>Al procesar cada palabra, el modelo pregunta: <em>"¿A qué otras palabras de esta oración debo prestarle atención para entender ésta?"</em></p>
+      <p style="margin-top:8px;">Ejemplo: en "El técnico reparó la máquina porque <strong>ella</strong> falló", la atención conecta "ella" → "máquina", no "técnico".</p>
+      <p style="margin-top:8px;">Esto resuelve el problema de dependencias de largo alcance que los modelos anteriores no podían manejar.</p>
     </div>
     <div class="card c">
-      <h3>Fine-tuning BERT para Reportes Técnicos</h3>
-      <pre">from transformers import (AutoTokenizer,
-    AutoModelForSequenceClassification,
-    TrainingArguments, Trainer)
-from datasets import Dataset
-
-# Cargar modelo preentrenado en español
-model_name = "dccuchile/bert-base-spanish-wwm-cased"
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForSequenceClassification.from_pretrained(
-    model_name, num_labels=4)  # 4 tipos de falla
-
-# Tokenizar dataset propio
-def tokenize(examples):
-    return tokenizer(examples['descripcion'],
-        truncation=True, max_length=256,
-        padding='max_length')
-
-dataset = Dataset.from_pandas(df_reportes)
-tokenized = dataset.map(tokenize, batched=True)
-
-# Fine-tuning con Trainer API
-args = TrainingArguments(
-    output_dir="./bert-fallas",
-    num_train_epochs=3,
-    per_device_train_batch_size=16,
-    evaluation_strategy="epoch",
-    save_strategy="epoch",
-    load_best_model_at_end=True)
-
-trainer = Trainer(model=model, args=args,
-    train_dataset=tokenized['train'],
-    eval_dataset=tokenized['test'])
-trainer.train()</pre>
+      <h3>Pipeline NLP Completo</h3>
+      <div class="ld">
+        <div class="lr" style="background:rgba(236,72,153,.1);border:1px solid var(--pink);color:var(--pink);">📝 ENTRADA: Texto crudo ("Falla en compresor C-101")</div>
+        <div class="lr" style="background:rgba(245,158,11,.1);border:1px solid var(--orange);color:var(--orange);">✂️ TOKENIZACIÓN: División en unidades procesables</div>
+        <div class="lr" style="background:rgba(6,182,212,.1);border:1px solid var(--cyan);color:var(--cyan);">🔢 EMBEDDINGS: Conversión a vectores numéricos</div>
+        <div class="lr" style="background:rgba(124,58,237,.1);border:1px solid var(--violet);color:var(--violet);">🧠 TRANSFORMER: Atención + representación contextual</div>
+        <div class="lr" style="background:rgba(16,185,129,.1);border:1px solid var(--green);color:var(--green);">🎯 SALIDA: Clasificación, resumen, generación, extracción</div>
+      </div>
     </div>
   </div>
 </div>
 
 <div class="slide" data-s="0">
-  <h2>NLP Industrial: Casos de Uso Reales</h2>
+  <h2>NLP en la Industria: Casos de Uso por Carrera</h2>
   <table>
-    <tr><th>Caso de Uso</th><th>Técnica NLP</th><th>Impacto</th></tr>
-    <tr><td><strong>Clasificación de tickets de mantenimiento</strong></td><td>BERT fine-tuned en descripciones técnicas</td><td>Reducción 70% en tiempo de triaje y asignación a técnico</td></tr>
-    <tr><td><strong>Extracción de información de contratos</strong></td><td>NER (Named Entity Recognition) + LLM</td><td>Análisis de 1,000 contratos en horas vs semanas</td></tr>
-    <tr><td><strong>Análisis de sentimiento en reseñas</strong></td><td>Transformers multilingüe (XLM-RoBERTa)</td><td>Monitoreo automático de VOC (voz del cliente)</td></tr>
-    <tr><td><strong>QA sobre manuales técnicos</strong></td><td>RAG + BERT (extractive QA)</td><td>Técnicos de campo con asistente que responde en 3 segundos</td></tr>
-    <tr><td><strong>Traducción de especificaciones</strong></td><td>MarianMT / NLLB-200 (Meta)</td><td>Proveedores internacionales integrados sin traductores humanos</td></tr>
+    <tr><th>Área</th><th>Aplicación NLP</th><th>Valor Generado</th></tr>
+    <tr><td><strong>Adm. Industrial</strong></td><td>Clasificación automática de quejas de clientes + análisis de sentimiento de encuestas de satisfacción</td><td>Reducción 70% en tiempo de clasificación manual</td></tr>
+    <tr><td><strong>Ing. Informática</strong></td><td>Generación automática de código, revisión de documentación técnica, chatbots de soporte nivel 1</td><td>Resolución automática 40% de tickets sin intervención humana</td></tr>
+    <tr><td><strong>Ing. Industrial</strong></td><td>Extracción de información de órdenes de trabajo, análisis de reportes de fallas históricas</td><td>Identificación de patrones de falla 10x más rápido</td></tr>
+    <tr><td><strong>Ing. Transporte</strong></td><td>Procesamiento de manifiestos de carga, análisis de regulaciones y normativas de transporte</td><td>Reducción 60% en tiempo de procesamiento documental</td></tr>
+    <tr><td><strong>Ing. Automotriz</strong></td><td>Análisis de reportes de garantías, NER en manuales técnicos, clasificación de defectos por descripción</td><td>Detección temprana de problemas de calidad en 3 semanas</td></tr>
   </table>
-  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Click para ver respuesta</div>
-    <p>Tienes 10,000 reportes históricos de fallas en texto libre (en español) etiquetados con tipo de falla (4 categorías). ¿Usarías TF-IDF + Random Forest o fine-tuning de BERT? ¿Por qué?</p>
-    <div class="qa">Dependería: con <strong>10,000 ejemplos</strong> y texto relativamente corto y técnico, <strong>ambas opciones pueden funcionar bien</strong>. TF-IDF + RF: más rápido de entrenar, interpretable, sin GPU requerida. Fine-tuning BERT: captura matices semánticos, maneja mejor abreviaturas y jerga técnica no vista. Recomendación: empezar con TF-IDF + RF como baseline (fast to implement), luego comparar con BERT fine-tuned. Si la mejora justifica el costo computacional (+5% F1), usar BERT en producción.</div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Caso Real — Banorte y el Análisis de Sentimiento a Escala</h2>
+  <div class="box bc"><div class="bt">📰 CASO REAL MEXICANO</div>
+    <p><strong>Banorte</strong> implementó NLP para analizar más de <strong>100,000 comentarios de clientes en redes sociales mensualmente</strong>. El sistema clasifica automáticamente cada comentario en categorías (servicio, aplicación móvil, cajeros, créditos) y mide el sentimiento (positivo, neutral, negativo) con 89% de precisión.</p>
+    <p style="margin-top:8px;">Resultado más valioso: <strong>detectan tendencias de problemas 3 semanas antes</strong> de que lleguen formalmente a atención al cliente. Cuando el modelo detecta un aumento en comentarios negativos sobre "app caída", el equipo técnico puede actuar antes de que el problema escale.</p>
+  </div>
+  <div class="cg c2" style="margin-top:14px;">
+    <div class="card g">
+      <h3>NER — Reconocimiento de Entidades</h3>
+      <p>Extrae automáticamente información estructurada de texto no estructurado:</p>
+      <ul>
+        <li><strong>Personas</strong>: "El Ing. García aprobó la orden"</li>
+        <li><strong>Organizaciones</strong>: "Proveedor ACME de Monterrey"</li>
+        <li><strong>Fechas</strong>: "próximo martes 15"</li>
+        <li><strong>Cantidades</strong>: "500 unidades a $23.50 c/u"</li>
+        <li><strong>Equipo</strong>: "compresor C-101, turno nocturno"</li>
+      </ul>
+    </div>
+    <div class="card v">
+      <h3>Clasificación de Texto en 3 Pasos</h3>
+      <ol>
+        <li><strong>Definir categorías</strong>: qué queremos clasificar y cuántas clases</li>
+        <li><strong>Crear corpus etiquetado</strong>: ejemplos reales con etiqueta correcta (mínimo 100 por clase)</li>
+        <li><strong>Fine-tuning</strong>: ajustar un modelo pre-entrenado (BERT, RoBERTa) con nuestros datos</li>
+      </ol>
+      <p style="margin-top:8px;font-size:.82rem;color:var(--muted);">Con Hugging Face: horas para clasificar texto con 90%+ precisión usando modelos pre-entrenados.</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Actividad y Reto — Sesión 21</h2>
+  <div class="box bl"><div class="bt">🔬 ACTIVIDAD PRÁCTICA — Clasificación Manual vs. Modelo NLP</div>
+    <p>Reciben 20 tickets de soporte técnico con texto real. Su tarea:</p>
+    <ol style="margin-top:8px;">
+      <li>Clasificar manualmente cada ticket en: Mecánico / Eléctrico / Software / Error de Usuario</li>
+      <li>Registrar su confianza (alta/media/baja) en cada clasificación</li>
+      <li>Comparar con la clasificación de un modelo NLP (resultado dado por el facilitador)</li>
+      <li>Identificar: ¿en qué tipos de tickets falla el modelo? ¿Y el humano?</li>
+      <li>Discusión: ¿qué contexto adicional necesita el modelo que el humano usa intuitivamente?</li>
+    </ol>
+    <p style="margin-top:8px;color:var(--muted);">Materiales: 20 tarjetas de texto impresas o proyectadas. No se requiere computadora.</p>
+  </div>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ EVALUACIÓN — Click para ver respuesta</div>
+    <p>¿Por qué un modelo NLP entrenado con datos en inglés tiene peor desempeño con tickets en español técnico (con términos como "jalar", "tachar", "echar a perder")?</p>
+    <div class="qa"><strong>Distribución shift</strong>: el modelo fue entrenado con una distribución de lenguaje diferente. El español técnico mexicano incluye regionalismos y jerga industrial que no aparecen en los datos de entrenamiento. La solución es <strong>fine-tuning</strong> con datos locales: aunque el modelo pre-entrenado conoce español estándar, necesita ver ejemplos de este vocabulario específico para generalizar correctamente. Es como contratar a alguien con experiencia en manufactura en Europa — entiende el español, pero necesita tiempo para aprender el vocabulario de la planta mexicana.</div>
+  </div>
+  <div class="box bc" style="margin-top:8px;"><div class="bt">🚀 RETO DE APLICACIÓN</div>
+    <p>Diseña un sistema NLP para tu área: (1) ¿Qué corpus de texto tienes disponible? (emails, reportes, tickets, contratos). (2) ¿Qué quieres clasificar o extraer? (3) ¿Cuántas etiquetas necesitas y cuántos ejemplos por etiqueta? (4) ¿Cómo medirías el éxito? (5) ¿Qué proceso manual reemplaza o acelera?</p>
   </div>
 </div>
 
 <!-- ═══ SESIÓN 22 ═══ -->
 <div class="slide" data-s="1">
-  <h2>Sesión 22 <span style="color:var(--pink)">— Deep Learning: CNN, PyTorch y Transfer Learning</span></h2>
-  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
-    <p>Una red neuronal profunda aprende como un <strong>niño que aprende a reconocer objetos</strong>: primero detecta bordes, luego formas, luego partes, finalmente objetos completos. Las capas convolucionales (CNN) son detectores de patrones jerárquicos: de píxeles a texturas a formas a objetos. Transfer Learning es como <strong>contratar a alguien que ya sabe ver</strong> y solo entrenarle para tu problema específico.</p>
+  <h2>Sesión 22 <span style="color:var(--violet)">— Deep Learning y Visión Computacional Industrial</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA DE APERTURA</div>
+    <p>Una CNN aprende a ver como los <strong>bebés humanos</strong>: primero detecta bordes y contrastes (capa 1), luego formas simples como curvas y ángulos (capa 2), luego texturas (capa 3), y finalmente objetos completos como "tornillo defectuoso" o "fisura en soldadura" (últimas capas). No le programamos qué ver — aprende solo viendo millones de imágenes etiquetadas.</p>
   </div>
-  <div class="cg c3" style="margin-top:14px;">
-    <div class="card p"><h3>Redes Neuronales Profundas</h3><p>Capas de neuronas artificiales con funciones de activación no lineales. Aprenden representaciones jerárquicas de los datos. Requieren: muchos datos, GPU, regularización cuidadosa.</p></div>
-    <div class="card v"><h3>CNN — Redes Convolucionales</h3><p>Especializadas en datos con estructura espacial: imágenes, señales de sensores 1D. Capas: Conv2D (detectar patrones) → MaxPool (reducir) → Dense (clasificar). Estado del arte en visión computacional.</p></div>
-    <div class="card g"><h3>Transfer Learning</h3><p>Usar un modelo preentrenado en millones de imágenes (ResNet, EfficientNet) y re-entrenar solo las últimas capas con tus pocos datos. Funciona con 100-1,000 imágenes. El "hack" más poderoso del deep learning.</p></div>
-  </div>
-</div>
-
-<div class="slide" data-s="1">
-  <h2>Inspección Visual de Calidad con Transfer Learning</h2>
-  <div class="cg c2">
-    <div class="card p">
-      <h3>Fine-tuning ResNet50 con PyTorch</h3>
-      <pre">import torch
-import torch.nn as nn
-import torchvision.transforms as transforms
-from torchvision import models, datasets
-from torch.utils.data import DataLoader
-
-# Transformaciones de imagen
-transform = transforms.Compose([
-    transforms.Resize((224, 224)),
-    transforms.RandomHorizontalFlip(),
-    transforms.ColorJitter(brightness=0.2),
-    transforms.ToTensor(),
-    transforms.Normalize([0.485,0.456,0.406],
-                         [0.229,0.224,0.225])])
-
-# Dataset de imágenes de piezas (defecto/ok)
-train_data = datasets.ImageFolder(
-    'data/piezas/train/', transform=transform)
-test_data = datasets.ImageFolder(
-    'data/piezas/test/', transform=transform)
-train_loader = DataLoader(train_data,
-    batch_size=32, shuffle=True, num_workers=4)
-
-# Cargar ResNet50 preentrenado
-modelo = models.resnet50(pretrained=True)
-
-# Congelar todas las capas excepto las últimas
-for param in modelo.parameters():
-    param.requires_grad = False
-
-# Reemplazar última capa para 2 clases
-num_ftrs = modelo.fc.in_features
-modelo.fc = nn.Sequential(
-    nn.Dropout(0.4),
-    nn.Linear(num_ftrs, 2))  # ok / defecto
-
-device = torch.device("cuda" if
-    torch.cuda.is_available() else "cpu")
-modelo = modelo.to(device)</pre>
-    </div>
-    <div class="card g">
-      <h3>Entrenamiento y Evaluación</h3>
-      <pre">criterion = nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(
-    modelo.fc.parameters(), lr=0.001)
-scheduler = torch.optim.lr_scheduler.StepLR(
-    optimizer, step_size=7, gamma=0.1)
-
-# Bucle de entrenamiento
-for epoch in range(15):
-    modelo.train()
-    running_loss, correct = 0.0, 0
-    for inputs, labels in train_loader:
-        inputs, labels = inputs.to(device), \
-                         labels.to(device)
-        optimizer.zero_grad()
-        outputs = modelo(inputs)
-        loss = criterion(outputs, labels)
-        loss.backward()
-        optimizer.step()
-        running_loss += loss.item()
-        _, preds = torch.max(outputs, 1)
-        correct += (preds == labels).sum().item()
-    scheduler.step()
-    acc = correct / len(train_data)
-    print(f"Época {epoch+1}: Loss={running_loss:.3f}, Acc={acc:.1%}")
-
-# Guardar modelo
-torch.save(modelo.state_dict(),
-           'resnet_calidad_v1.pth')</pre>
-    </div>
-  </div>
-  <div class="box bc"><div class="bt">📰 CASO REAL — Foxconn: Inspección Visual con IA</div>
-    <p>Foxconn (fabricante de iPhones) implementó CNNs para inspección de PCBs. El sistema analiza 12 puntos de soldadura por segundo con >99.5% de precisión, vs 92% de inspectores humanos a 60 piezas/hora. Resultado: reducción de 80% en defectos que llegaban al cliente. La cámara industrial + CNN reemplazó 120 inspectores en una línea.</p>
+  <div class="sr" style="margin-top:16px;">
+    <div class="stat"><div class="n" style="color:var(--violet)">99.7%</div><div class="l">Precisión de CNNs en inspección de calidad (vs 94% humano con fatiga)</div></div>
+    <div class="stat"><div class="n" style="color:var(--cyan)">0.1mm</div><div class="l">Defectos detectables por visión computacional industrial</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">30x</div><div class="l">Más rápida la inspección automática vs manual en línea de producción</div></div>
   </div>
 </div>
 
 <div class="slide" data-s="1">
-  <h2>TensorFlow/Keras: Construcción Rápida de Redes</h2>
+  <h2>Redes Neuronales: Del Perceptrón a las Capas Profundas</h2>
   <div class="cg c2">
     <div class="card c">
-      <h3>Red Neuronal para Series de Tiempo (LSTM)</h3>
-      <pre">import tensorflow as tf
-from tensorflow import keras
-
-# LSTM para predicción de consumo energético
-modelo = keras.Sequential([
-    keras.layers.LSTM(128, input_shape=(24, 5),
-        return_sequences=True),  # 24 horas, 5 features
-    keras.layers.Dropout(0.2),
-    keras.layers.LSTM(64, return_sequences=False),
-    keras.layers.Dropout(0.2),
-    keras.layers.Dense(32, activation='relu'),
-    keras.layers.Dense(1)  # predicción siguiente hora
-])
-
-modelo.compile(
-    optimizer=keras.optimizers.Adam(lr=0.001),
-    loss='mse',
-    metrics=['mae'])
-
-# Callbacks para entrenamiento inteligente
-callbacks = [
-    keras.callbacks.EarlyStopping(
-        patience=10, restore_best_weights=True),
-    keras.callbacks.ReduceLROnPlateau(
-        factor=0.5, patience=5),
-    keras.callbacks.ModelCheckpoint(
-        'mejor_lstm.h5', save_best_only=True)
-]
-
-history = modelo.fit(X_train, y_train,
-    epochs=100, batch_size=32,
-    validation_split=0.2,
-    callbacks=callbacks, verbose=1)</pre>
+      <h3>Una Neurona Artificial</h3>
+      <p>Recibe entradas (números), cada una con un <strong>peso</strong> (importancia). Las suma. Si la suma supera un umbral (función de activación), la neurona se "dispara".</p>
+      <p style="margin-top:8px;">Analogía biológica: igual que una neurona real recibe señales eléctricas de otras neuronas y decide si transmitir o no.</p>
+      <p style="margin-top:8px;">Una sola neurona: clasificador lineal simple (como una regresión logística).</p>
     </div>
     <div class="card v">
-      <h3>Autoencoder para Detección de Anomalías</h3>
-      <pre">## Autoencoder — aprende la distribución "normal"
-## y detecta anomalías como puntos difíciles de reconstruir
-
-encoder = keras.Sequential([
-    keras.layers.Dense(32, activation='relu',
-        input_shape=(n_features,)),
-    keras.layers.Dense(16, activation='relu'),
-    keras.layers.Dense(8, activation='relu')  # bottleneck
-], name='encoder')
-
-decoder = keras.Sequential([
-    keras.layers.Dense(16, activation='relu',
-        input_shape=(8,)),
-    keras.layers.Dense(32, activation='relu'),
-    keras.layers.Dense(n_features, activation='linear')
-], name='decoder')
-
-autoencoder = keras.Sequential([encoder, decoder])
-autoencoder.compile(optimizer='adam', loss='mse')
-
-# Entrenar SOLO con datos normales
-autoencoder.fit(X_normal, X_normal,
-    epochs=100, batch_size=32, validation_split=0.1)
-
-# Detectar anomalías por error de reconstrucción
-X_pred = autoencoder.predict(X_test)
-mse_por_punto = np.mean((X_test - X_pred)**2, axis=1)
-threshold = np.percentile(mse_por_punto, 95)  # umbral 95th percentil
-anomalias = mse_por_punto > threshold</pre>
+      <h3>¿Por qué "DEEP"?</h3>
+      <p>Múltiples capas de neuronas apiladas. Cada capa aprende representaciones más abstractas:</p>
+      <ul>
+        <li><strong>Capa 1</strong>: píxeles brutos → bordes y contornos</li>
+        <li><strong>Capa 2</strong>: bordes → formas geométricas</li>
+        <li><strong>Capa 3</strong>: formas → partes de objetos</li>
+        <li><strong>Capa final</strong>: partes → "defecto en soldadura"</li>
+      </ul>
+      <p style="margin-top:8px;font-size:.82rem;color:var(--muted);">El aprendizaje ocurre hacia atrás: backpropagation ajusta los pesos en todas las capas para minimizar el error.</p>
     </div>
+  </div>
+  <div class="box bd"><div class="bt">💡 BACKPROPAGATION — Sin matemáticas</div>
+    <p>El modelo hace una predicción → calcula qué tan equivocado estuvo (función de pérdida) → propaga el error hacia atrás capa por capa → ajusta levemente cada peso → repite millones de veces. Gradiente descendente: siempre moverse en la dirección que reduce el error. Es como descender una montaña con niebla: das un paso, mides si bajaste o subiste, ajustas dirección.</p>
+  </div>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>CNNs para Visión: Cómo "Ven" las Máquinas</h2>
+  <div class="cg c3">
+    <div class="card g">
+      <h3>Convolución</h3>
+      <p>Un "filtro" (ventana pequeña 3×3) desliza sobre la imagen multiplicando sus valores con los píxeles. Diferentes filtros detectan diferentes características: bordes horizontales, verticales, diagonales, texturas.</p>
+      <p style="margin-top:8px;font-size:.82rem;color:var(--muted);">En imágenes de color: 3 canales (R,G,B). La CNN aprende qué combinación de colores y texturas importa.</p>
+    </div>
+    <div class="card o">
+      <h3>Pooling</h3>
+      <p>Reduce la resolución de la imagen: toma el valor máximo de regiones 2×2. Resultado: representación más compacta y robusta a pequeñas variaciones de posición.</p>
+      <p style="margin-top:8px;font-size:.82rem;color:var(--muted);">Un defecto en el tornillo sigue siendo detectable aunque no esté exactamente en el mismo píxel que en las imágenes de entrenamiento.</p>
+    </div>
+    <div class="card p">
+      <h3>Capas Totalmente Conectadas</h3>
+      <p>Al final de las capas convolucionales, las características extraídas se "aplanan" y pasan a una red neuronal clásica que hace la clasificación final.</p>
+      <p style="margin-top:8px;font-size:.82rem;color:var(--muted);">"¿Este patrón de características corresponde a una pieza BUENA o DEFECTUOSA?" Es la decisión final del modelo.</p>
+    </div>
+  </div>
+  <div class="box bc"><div class="bt">📰 CASO REAL — VW México en Puebla</div>
+    <p><strong>Volkswagen de México</strong> implementó visión computacional en su planta de Puebla para inspección automática de carrocerías: detecta rayaduras y defectos de pintura de menos de <strong>0.1mm de diámetro</strong> con 99.7% de precisión. El sistema usa cámaras de alta resolución + CNN entrenada con 500,000 imágenes de defectos históricos. Reemplazó 12 puestos de inspección visual (reasignados a otras áreas), redujo el reproceso en 34% y eliminó prácticamente las reclamaciones de garantía por defectos de pintura.</p>
+  </div>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>Transfer Learning: No Partir de Cero</h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA — El chef que aprende un nuevo platillo</div>
+    <p>Entrenar una CNN desde cero requiere millones de imágenes y semanas de cómputo. Transfer Learning es como contratar a un <strong>chef que ya sabe cocinar</strong> (conoce técnicas, sabores, temperaturas) y enseñarle solo tu platillo específico. Las capas iniciales de ResNet o EfficientNet ya aprendieron a detectar bordes, texturas y formas en 1.2M imágenes de ImageNet. Solo se re-entrena la parte final con tus 500–2000 imágenes de defectos industriales.</p>
+  </div>
+  <div class="cg c2" style="margin-top:14px;">
+    <div class="card c">
+      <h3>Modelos Pre-Entrenados Populares</h3>
+      <ul>
+        <li><strong>ResNet-50</strong>: robusto, disponible en muchas plataformas. Bueno para clasificación industrial.</li>
+        <li><strong>EfficientNet</strong>: balance óptimo precisión/tamaño. Ideal para móvil/edge.</li>
+        <li><strong>YOLO v8</strong>: detección de objetos en tiempo real. Para contar piezas o localizar defectos.</li>
+        <li><strong>SAM (Segment Anything)</strong>: segmentación sin entrenamiento. Para análisis forense de imágenes.</li>
+      </ul>
+    </div>
+    <div class="card v">
+      <h3>Aplicaciones por Carrera</h3>
+      <ul>
+        <li><strong>Automotriz</strong>: detección de defectos en carrocería, soldadura, pintura</li>
+        <li><strong>Industrial</strong>: control de calidad visual de producto terminado, lectura de placas y etiquetas</li>
+        <li><strong>Transporte</strong>: reconocimiento de placas vehiculares, estimación de ocupación de vehículos</li>
+        <li><strong>Informática</strong>: clasificación de documentos escaneados, OCR para digitalización</li>
+        <li><strong>Adm. Industrial</strong>: análisis de imágenes de estantes para control de inventario visual</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>Actividad y Reto — Sesión 22</h2>
+  <div class="box bl"><div class="bt">🔬 ACTIVIDAD PRÁCTICA — El Ojo del Inspector</div>
+    <p>Muestran 10 imágenes de piezas industriales (proyectadas o impresas): algunas buenas, algunas con defectos de distintos tipos.</p>
+    <ol style="margin-top:8px;">
+      <li>Clasificar cada imagen: ¿Buena o Defectuosa? (si defectuosa: ¿qué tipo?)</li>
+      <li>Registrar: ¿Qué características visuales usaste para decidir? (color, forma, textura, posición)</li>
+      <li>Discutir: ¿Qué características son consistentes entre imágenes del mismo defecto?</li>
+      <li>Mapear: ¿A qué "filtros" de CNN corresponderían esas características que identificaste?</li>
+      <li>Reflexión: ¿Qué te da ventaja sobre el modelo? ¿Qué ventaja tiene el modelo sobre ti?</li>
+    </ol>
+    <p style="margin-top:8px;color:var(--muted);">No se requiere computadora. El objetivo es desarrollar intuición sobre lo que aprende una CNN.</p>
+  </div>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ EVALUACIÓN — Click para ver respuesta</div>
+    <p>Un modelo de inspección de calidad tiene 99% de precisión general, pero detecta solo el 60% de los defectos graves. ¿Por qué es inaceptable y cómo lo solucionarías?</p>
+    <div class="qa"><strong>Problema de clases desbalanceadas</strong>: si solo el 1% de las piezas son defectuosas, un modelo que siempre diga "buena" tiene 99% de precisión... pero es inútil. La métrica correcta aquí es el <strong>Recall de la clase "defectuosa"</strong>: ¿qué porcentaje de los defectos reales detectamos? Al 60%, 4 de cada 10 defectos graves pasan sin detectarse. Solución: (1) rebalancear el dataset (sobremuestreo de defectuosas), (2) ajustar el umbral de decisión para ser más conservador (preferir falsos positivos a falsos negativos), (3) usar métricas de evaluación correctas: F1-score, Recall en defectuosas, no solo accuracy global.</div>
+  </div>
+  <div class="box bc" style="margin-top:8px;"><div class="bt">🚀 RETO DE APLICACIÓN</div>
+    <p>Diseña un sistema de visión computacional para tu área: (1) ¿Qué quieres inspeccionar o detectar? (2) ¿Cómo construirías el dataset? (cantidad, cómo etiquetar, cómo capturar). (3) ¿Qué métricas de éxito usarías? (4) ¿Dónde físicamente se integraría en el proceso productivo? (5) ¿Qué hace el sistema cuando no está seguro?</p>
   </div>
 </div>
 
 <!-- ═══ SESIÓN 23 ═══ -->
 <div class="slide" data-s="2">
-  <h2>Sesión 23 <span style="color:var(--cyan)">— Reinforcement Learning: El Agente que Aprende Jugando</span></h2>
-  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
-    <p>Reinforcement Learning es como <strong>entrenar a un perro con premios y castigos</strong>, pero el perro es un algoritmo y puede intentar millones de veces por hora. El agente no aprende de ejemplos etiquetados, sino de la consecuencia de sus acciones en un entorno. Gana recompensas por buenas decisiones, penalidades por malas. Con suficiente práctica, aprende estrategias que ningún humano había imaginado.</p>
+  <h2>Sesión 23 <span style="color:var(--green)">— Reinforcement Learning y Optimización Avanzada con IA</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA DE APERTURA</div>
+    <p>El Reinforcement Learning es como <strong>entrenar a un perro</strong>: no le explicas cómo hacer el truco con instrucciones detalladas. Simplemente le das un premio (recompensa positiva) cuando hace algo correcto y no le das nada cuando falla. Con suficientes repeticiones, el perro descubre por sí mismo la estrategia que maximiza los premios. El "perro" en RL es el agente; el "truco" es la política óptima de decisión.</p>
   </div>
-  <div class="cg c3" style="margin-top:14px;">
-    <div class="card c"><h3>El Paradigma RL</h3><p><strong>Agente</strong> observa el <strong>estado</strong> del entorno, toma una <strong>acción</strong>, recibe una <strong>recompensa</strong> y pasa al siguiente estado. El objetivo: maximizar la recompensa acumulada a largo plazo.</p></div>
-    <div class="card v"><h3>Q-Learning</h3><p>Tabla Q(s,a) que estima el valor esperado de tomar acción a en estado s. Se actualiza con la ecuación de Bellman. Simple, funciona para espacios pequeños de estados y acciones.</p></div>
-    <div class="card g"><h3>Deep Q-Network (DQN)</h3><p>Reemplaza la tabla Q con una red neuronal. Permite estados continuos y de alta dimensión (imágenes, sensores). Inventado por DeepMind para jugar Atari a nivel humano (2013).</p></div>
+  <div class="sr" style="margin-top:16px;">
+    <div class="stat"><div class="n" style="color:var(--green)">22%</div><div class="l">Reducción en tiempos de espera de tráfico con RL (CDMX piloto)</div></div>
+    <div class="stat"><div class="n" style="color:var(--cyan)">40%</div><div class="l">Ahorro energético en centros de datos con RL de DeepMind (Google)</div></div>
+    <div class="stat"><div class="n" style="color:var(--orange)">AlphaGo</div><div class="l">RL superó al campeón mundial de Go en 2016 — sin reglas explícitas</div></div>
   </div>
 </div>
 
 <div class="slide" data-s="2">
-  <h2>RL en Python: Gymnasium + Stable Baselines 3</h2>
+  <h2>Los Componentes del Reinforcement Learning</h2>
   <div class="cg c2">
-    <div class="card c">
-      <h3>Entorno Gymnasium y Primeros Pasos</h3>
-      <pre">import gymnasium as gym
-import numpy as np
-
-# CartPole — equilibrar un palo sobre un carro
-env = gym.make("CartPole-v1",
-               render_mode="human")
-
-# Anatomía del entorno
-print(f"Espacio de estados: {env.observation_space}")
-# Box(4,) — posición, velocidad, ángulo, vel. angular
-print(f"Espacio de acciones: {env.action_space}")
-# Discrete(2) — empujar izq o der
-
-# Episodio con política aleatoria (baseline)
-obs, info = env.reset(seed=42)
-total_reward = 0
-for step in range(500):
-    action = env.action_space.sample()  # aleatorio
-    obs, reward, terminated, truncated, info = env.step(action)
-    total_reward += reward
-    if terminated or truncated:
-        print(f"Episodio terminó en paso {step+1}")
-        print(f"Recompensa total: {total_reward}")
-        obs, info = env.reset()
-        break
-env.close()</pre>
-    </div>
     <div class="card g">
-      <h3>Entrenamiento con PPO (Stable Baselines 3)</h3>
-      <pre">from stable_baselines3 import PPO, DQN, A2C
-from stable_baselines3.common.vec_env import DummyVecEnv
-from stable_baselines3.common.evaluation import evaluate_policy
-import gymnasium as gym
-
-# Crear entorno
-env = DummyVecEnv([lambda: gym.make("CartPole-v1")])
-
-# PPO — Proximal Policy Optimization (el mejor general)
-modelo = PPO(
-    policy="MlpPolicy",
-    env=env,
-    learning_rate=3e-4,
-    n_steps=2048,
-    batch_size=64,
-    n_epochs=10,
-    gamma=0.99,     # factor de descuento
-    gae_lambda=0.95,
-    verbose=1)
-
-# Entrenar por 100k pasos
-modelo.learn(total_timesteps=100_000,
-             progress_bar=True)
-
-# Evaluar política aprendida
-mean_reward, std_reward = evaluate_policy(
-    modelo, env, n_eval_episodes=20)
-print(f"Recompensa media: {mean_reward:.2f} ± {std_reward:.2f}")
-
-# Guardar y cargar
-modelo.save("ppo_cartpole")
-modelo_cargado = PPO.load("ppo_cartpole", env=env)</pre>
+      <h3>El Framework RL</h3>
+      <ul class="tl" style="margin-top:8px;">
+        <li><div class="st g">A</div><div class="content"><h4>Agente</h4><p>El tomador de decisiones. Puede ser un robot, un sistema de control, un algoritmo de scheduling.</p></div></li>
+        <li><div class="st c">E</div><div class="content"><h4>Entorno</h4><p>El mundo con el que interactúa el agente. La planta, el almacén, la red de tráfico.</p></div></li>
+        <li><div class="st o">S</div><div class="content"><h4>Estado</h4><p>La descripción actual del entorno: nivel de inventario, posición del robot, ocupación de máquinas.</p></div></li>
+        <li><div class="st v">A</div><div class="content"><h4>Acción</h4><p>Lo que el agente puede hacer: ordenar X unidades, mover robot a posición Y, asignar operador a tarea Z.</p></div></li>
+        <li><div class="st p">R</div><div class="content"><h4>Recompensa</h4><p>Señal de retroalimentación: +1 por entrega a tiempo, -5 por rotura de stock, +2 por energía ahorrada.</p></div></li>
+      </ul>
+    </div>
+    <div class="card v">
+      <h3>El Ciclo de Aprendizaje</h3>
+      <div class="ld">
+        <div class="lr" style="background:rgba(16,185,129,.1);border:1px solid var(--green);color:var(--green);">1. Agente observa el estado actual del entorno</div>
+        <div class="lr" style="background:rgba(245,158,11,.1);border:1px solid var(--orange);color:var(--orange);">2. Elige una acción (inicialmente aleatoria, luego aprendida)</div>
+        <div class="lr" style="background:rgba(6,182,212,.1);border:1px solid var(--cyan);color:var(--cyan);">3. El entorno transiciona al nuevo estado</div>
+        <div class="lr" style="background:rgba(236,72,153,.1);border:1px solid var(--pink);color:var(--pink);">4. Recibe recompensa (positiva, negativa o cero)</div>
+        <div class="lr" style="background:rgba(124,58,237,.1);border:1px solid var(--violet);color:var(--violet);">5. Actualiza su política: ¿qué acción hacer en este estado?</div>
+      </div>
+      <p style="margin-top:8px;font-size:.82rem;color:var(--muted);">Repite millones de veces hasta converger a la política óptima.</p>
     </div>
   </div>
 </div>
 
 <div class="slide" data-s="2">
-  <h2>RL en Industria: Más Allá de los Videojuegos</h2>
+  <h2>Aplicaciones Industriales del Reinforcement Learning</h2>
   <table>
-    <tr><th>Aplicación Industrial</th><th>Estado</th><th>Acciones</th><th>Recompensa</th></tr>
-    <tr><td><strong>Control de proceso en refinería</strong></td><td>Temperatura, presión, flujo de 50+ sensores</td><td>Ajuste de válvulas y calentadores</td><td>Maximizar rendimiento, minimizar consumo</td></tr>
-    <tr><td><strong>Gestión de red eléctrica</strong></td><td>Demanda por zona, precios spot, generación renovable</td><td>Encender/apagar plantas, redirigir flujo</td><td>Mínimo costo + máxima estabilidad</td></tr>
-    <tr><td><strong>Robot de almacén (Amazon)</strong></td><td>Posición del robot, inventario, órdenes pendientes</td><td>Mover, recoger, depositar</td><td>Máx. órdenes completadas/hora</td></tr>
-    <tr><td><strong>Comercio de materias primas</strong></td><td>Precios históricos, volatilidad, señales macro</td><td>Comprar, mantener, vender</td><td>Rendimiento ajustado por riesgo (Sharpe)</td></tr>
-    <tr><td><strong>Programación de producción</strong></td><td>Cola de órdenes, estado de máquinas, personal</td><td>Asignar orden a máquina y turno</td><td>Mínimo makespan, máx. OEE</td></tr>
+    <tr><th>Dominio</th><th>Problema</th><th>Agente RL</th><th>Recompensa</th></tr>
+    <tr><td><strong>Logística / Transporte</strong></td><td>Optimización de rutas de distribución en tiempo real con tráfico dinámico</td><td>Sistema de ruteo que reasigna vehículos continuamente</td><td>+1 entrega a tiempo, -1 retraso, -0.1 km extra</td></tr>
+    <tr><td><strong>Manufactura</strong></td><td>Scheduling de producción: asignar órdenes a máquinas para minimizar tiempo total</td><td>Programador automático de órdenes de trabajo</td><td>+2 orden entregada, -3 máquina inactiva, -5 urgente retrasada</td></tr>
+    <tr><td><strong>Inventarios</strong></td><td>Decisiones de reorden dinámico: cuánto ordenar y cuándo para minimizar costo total</td><td>Sistema de gestión de inventario autónomo</td><td>-costo de almacenamiento, -costo de rotura de stock</td></tr>
+    <tr><td><strong>Energía / Edificios</strong></td><td>Control del sistema HVAC para minimizar consumo manteniendo temperatura objetivo</td><td>Controlador de temperatura inteligente</td><td>+confort térmico, -consumo kWh, -cambios bruscos</td></tr>
+    <tr><td><strong>Automotriz / Robótica</strong></td><td>Robots de ensamble que aprenden movimientos óptimos para ensamblar piezas</td><td>Brazo robótico con RL para manipulación de piezas</td><td>+ensamble exitoso, -tiempo, -fuerza excesiva</td></tr>
   </table>
-  <div class="box bc"><div class="bt">📰 CASO REAL — Google DeepMind en Data Centers</div>
-    <p>DeepMind entrenó un agente RL para controlar la refrigeración de los data centers de Google. El agente aprendió políticas de control que redujeron el consumo energético de refrigeración en <strong>40%</strong> comparado con los sistemas de control de ingenieros expertos, ahorrando cientos de millones de dólares anuales en electricidad. El agente "inventó" estrategias que los ingenieros no habían considerado.</p>
+</div>
+
+<div class="slide" data-s="2">
+  <h2>Caso Real — Semáforos Inteligentes en CDMX</h2>
+  <div class="box bc"><div class="bt">📰 CASO REAL MEXICANO</div>
+    <p>La Ciudad de México pilotó Reinforcement Learning para optimizar tiempos de semáforos en <strong>10 intersecciones clave del Paseo de la Reforma</strong>. El sistema aprende los patrones de tráfico en tiempo real y ajusta dinámicamente los tiempos de verde/rojo.</p>
+    <p style="margin-top:8px;">El estado incluye: densidad de vehículos por carril, velocidad promedio, hora del día, día de la semana, eventos especiales cercanos. La acción: cuántos segundos dar a cada fase del semáforo. La recompensa: maximizar el flujo total de vehículos minimizando tiempos de espera acumulados.</p>
+    <p style="margin-top:8px;"><strong>Resultado</strong>: reducción del 22% en tiempos de espera en hora pico comparado con tiempos fijos preconfigurados. El sistema también aprendió a "anticipar" el final de un evento en el Foro Sol ajustando los semáforos 15 minutos antes de la salida masiva.</p>
+  </div>
+  <div class="card v" style="margin-top:14px;">
+    <h3>¿Por qué RL aquí y no ML clásico?</h3>
+    <p>El ML supervisado requeriría datos etiquetados de "decisión óptima de semáforo en cada momento" — datos que nadie tiene. RL aprende solo con la recompensa (fluidez del tráfico), <strong>sin necesitar la respuesta correcta</strong>. Aprende descubriendo qué funciona por prueba y error en simulación, luego en campo real.</p>
+  </div>
+</div>
+
+<div class="slide" data-s="2">
+  <h2>Actividad y Reto — Sesión 23</h2>
+  <div class="box bl"><div class="bt">🔬 ACTIVIDAD PRÁCTICA — Simulación del Inventario Dinámico</div>
+    <p>Juego de simulación en papel (grupos de 3–4 personas). Cada ronda representa un día de operación:</p>
+    <ol style="margin-top:8px;">
+      <li>El facilitador revela la demanda del día (dado o carta: 1–10 unidades)</li>
+      <li>El equipo decide cuánto ordenar al proveedor (entrega en 1 día)</li>
+      <li>Penalización: $2 por unidad sobrante en almacén + $5 por unidad faltante (venta perdida)</li>
+      <li>Registrar: inventario inicial, demanda, decisión, costo, inventario final</li>
+      <li>Jugar 15 rondas y comparar estrategias entre equipos</li>
+    </ol>
+    <p style="margin-top:8px;color:var(--muted);">Conexión RL: su estrategia de "cuánto ordenar" es la política. Los costos son la recompensa negativa. RL aprende la política óptima matemáticamente.</p>
+  </div>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ EVALUACIÓN — Click para ver respuesta</div>
+    <p>¿Por qué un agente RL necesita explorar (acciones aleatorias) aunque ya tenga una buena política? ¿No sería mejor siempre elegir la mejor acción conocida?</p>
+    <div class="qa"><strong>El dilema exploración vs. explotación</strong>: si solo explotamos la mejor acción conocida, nunca descubrimos si hay una acción mejor que no hemos probado suficiente. Es como siempre pedir el mismo platillo en el restaurante — puede ser bueno, pero nunca sabes si hay uno mejor. La exploración permite descubrir estrategias superiores a costa de rendimiento a corto plazo. RL usa estrategias como ε-greedy (con probabilidad ε hacer acción aleatoria) para balancear este dilema. En inventarios: a veces ordenar una cantidad "subóptima" según lo aprendido permite descubrir que el proveedor tiene descuentos por volumen en ciertos rangos.</div>
+  </div>
+  <div class="box bc" style="margin-top:8px;"><div class="bt">🚀 RETO DE APLICACIÓN</div>
+    <p>Formula un problema de RL para tu área: (1) ¿Quién es el agente? (2) ¿Qué es el entorno y qué variables lo describen? (3) ¿Qué acciones puede tomar el agente? (4) ¿Cómo defines la función de recompensa? (5) ¿Qué costo tiene un error en este dominio? (6) ¿Es simulable antes de probar en producción?</p>
   </div>
 </div>
 
 <!-- ═══ SESIÓN 24 ═══ -->
 <div class="slide" data-s="3">
-  <h2>Sesión 24 <span style="color:var(--yellow)">— Taller del Proyecto Integrador de IA</span></h2>
-  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
-    <p>El proyecto integrador es el <strong>examen de conducir</strong> del seminario. Puedes haber memorizado el reglamento de tránsito (la teoría), pero demuestras competencia real cuando manejas en la ciudad (un problema real de tu industria) sin instructor. Es donde la teoría se convierte en habilidad profesional.</p>
+  <h2>Sesión 24 <span style="color:var(--orange)">— Taller de Proyecto Integrador: Desarrollo y Revisión</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA DE APERTURA</div>
+    <p>El proyecto integrador es como construir un automóvil: puedes tener las mejores piezas (datos, modelos, código) pero si no <strong>ensamblas correctamente</strong> y no puedes <strong>explicar cómo funciona</strong> a quién lo va a conducir (la dirección), no sirve de nada. El taller de hoy es el ensamble final antes de la prueba de manejo.</p>
   </div>
-  <div class="cg c2" style="margin-top:14px;">
-    <div class="card v">
-      <h3>Requisitos del Proyecto</h3>
-      <ul class="tl" style="margin-top:6px;">
-        <li><div class="st v">1</div><div class="content"><h4>Problema de negocio real</h4><p>Formulación clara del problema, KPI objetivo, impacto económico estimado de la solución</p></div></li>
-        <li><div class="st c">2</div><div class="content"><h4>Pipeline de datos completo</h4><p>Fuentes, limpieza, EDA documentado, feature engineering justificado</p></div></li>
-        <li><div class="st g">3</div><div class="content"><h4>Modelo(s) ML/DL</h4><p>Al menos 2 algoritmos comparados con métricas estándar y justificación de la elección final</p></div></li>
-        <li><div class="st o">4</div><div class="content"><h4>Visualización y comunicación</h4><p>Dashboard interactivo (Plotly, Power BI o Streamlit) con hallazgos clave para tomadores de decisión</p></div></li>
-        <li><div class="st c">5</div><div class="content"><h4>Reproducibilidad</h4><p>Repositorio Git con requirements.txt o environment.yml. Notebook documentado en Google Colab.</p></div></li>
-      </ul>
-    </div>
-    <div class="card g">
-      <h3>Ejemplos de Proyectos por Sector</h3>
-      <ul>
-        <li><strong>Manufactura</strong>: predicción de fallas en línea de producción (mantenimiento predictivo)</li>
-        <li><strong>Logística</strong>: optimización de rutas de última milla con datos históricos + algoritmo genético</li>
-        <li><strong>Retail/FMCG</strong>: predicción de demanda por SKU/punto de venta + análisis de canibalización</li>
-        <li><strong>Energía</strong>: detección de anomalías en consumo eléctrico (posible fraude o equipo defectuoso)</li>
-        <li><strong>Agro-industria</strong>: predicción de rendimiento por parcela usando imágenes satelitales + variables de suelo</li>
-        <li><strong>Salud/Farma</strong>: clasificación de incidentes de calidad en reportes de texto (NLP)</li>
-        <li><strong>Banca</strong>: scoring de crédito con interpretabilidad (SHAP) para cumplimiento regulatorio</li>
-        <li><strong>Construcción</strong>: estimación de costos de proyecto con Random Forest + análisis de desviaciones históricas</li>
-      </ul>
-    </div>
+  <div class="sr" style="margin-top:16px;">
+    <div class="stat"><div class="n" style="color:var(--orange)">6</div><div class="l">Componentes del proyecto integrador evaluados</div></div>
+    <div class="stat"><div class="n" style="color:var(--violet)">15–20</div><div class="l">Minutos de presentación ante panel evaluador</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">80</div><div class="l">Puntos mínimos de 100 para aprobar el seminario</div></div>
   </div>
 </div>
 
 <div class="slide" data-s="3">
-  <h2>Estructura del Notebook Final</h2>
-  <div class="ld">
-    <div class="lr" style="background:rgba(6,182,212,.1);border:1px solid var(--cyan);color:var(--cyan);">📋 SECCIÓN 1 — EXECUTIVE SUMMARY: Problema, solución propuesta, impacto esperado (1 página para directivos)</div>
-    <div class="lr" style="background:rgba(16,185,129,.1);border:1px solid var(--green);color:var(--green);">📊 SECCIÓN 2 — EDA: Descripción del dataset, estadísticas descriptivas, visualizaciones clave, hipótesis de negocio</div>
-    <div class="lr" style="background:rgba(245,158,11,.1);border:1px solid var(--orange);color:var(--orange);">🔧 SECCIÓN 3 — PREPROCESAMIENTO: Limpieza, imputación, encoding, feature engineering con justificación de cada decisión</div>
-    <div class="lr" style="background:rgba(124,58,237,.1);border:1px solid var(--violet);color:var(--violet);">🤖 SECCIÓN 4 — MODELADO: Baseline + mínimo 2 modelos comparados con cross-validation y métricas apropiadas</div>
-    <div class="lr" style="background:rgba(236,72,153,.1);border:1px solid var(--pink);color:var(--pink);">🔍 SECCIÓN 5 — INTERPRETABILIDAD: SHAP values, feature importance, casos de error (análisis de falsos positivos/negativos)</div>
-    <div class="lr" style="background:rgba(251,191,36,.1);border:1px solid var(--yellow);color:var(--yellow);">🚀 SECCIÓN 6 — DEPLOYMENT: API FastAPI o app Streamlit funcionando. Instrucciones de uso.</div>
+  <h2>Estructura del Proyecto Integrador Completo</h2>
+  <ul class="tl">
+    <li><div class="st o">1</div><div class="content"><h4>Business Case del Problema</h4><p>¿Cuál es el problema de negocio? ¿Cuánto cuesta actualmente? ¿Cuál es el valor esperado de resolverlo? Sin esto, el mejor modelo del mundo no tiene sentido.</p></div></li>
+    <li><div class="st c">2</div><div class="content"><h4>Dataset Documentado y EDA</h4><p>Fuente de datos, período, variables, tamaño. EDA: distribuciones, outliers, valores faltantes, correlaciones. ¿Qué descubriste en los datos que no esperabas?</p></div></li>
+    <li><div class="st g">3</div><div class="content"><h4>Modelo de IA Construido y Evaluado</h4><p>¿Qué tipo de modelo? ¿Por qué? Métricas de evaluación apropiadas al problema. Comparación de al menos 2 modelos. ¿Qué limitaciones tiene el modelo elegido?</p></div></li>
+    <li><div class="st v">4</div><div class="content"><h4>Dashboard / App / Visualizaciones</h4><p>¿Cómo verá la dirección los resultados? Power BI, Tableau, Streamlit o presentación visual. Los resultados deben ser interpretables sin código.</p></div></li>
+    <li><div class="st p">5</div><div class="content"><h4>Implementación y Código</h4><p>Notebook de Jupyter documentado en GitHub. El código debe poder ser ejecutado por otro. Incluye README con instrucciones.</p></div></li>
+    <li><div class="st o">6</div><div class="content"><h4>Presentación Ejecutiva (15–20 diapositivas)</h4><p>El problema → los datos → el modelo → los resultados → el impacto económico → las recomendaciones. Sin tecnicismos. Pensada para gerencia y dirección.</p></div></li>
+  </ul>
+</div>
+
+<div class="slide" data-s="3">
+  <h2>Rúbrica del Panel Evaluador</h2>
+  <table>
+    <tr><th>Componente</th><th>Peso</th><th>Criterio Excelente (90–100)</th><th>Criterio Suficiente (70–79)</th></tr>
+    <tr><td><strong>Dominio Técnico</strong></td><td style="color:var(--violet);font-weight:700">25%</td><td>Explica el modelo, sus supuestos, limitaciones y cuándo fallaría. Puede responder preguntas del panel.</td><td>Explica qué hace el modelo pero no sus limitaciones. Dificultad con preguntas no previstas.</td></tr>
+    <tr><td><strong>Impacto Empresarial</strong></td><td style="color:var(--cyan);font-weight:700">25%</td><td>ROI cuantificado con supuestos explícitos. Vincula directamente el modelo con decisiones de negocio.</td><td>Menciona beneficios cualitativos pero no los cuantifica de forma convincente.</td></tr>
+    <tr><td><strong>Calidad de Datos</strong></td><td style="color:var(--green);font-weight:700">20%</td><td>Dataset documentado, limpio, representativo. EDA profundo con hallazgos relevantes presentados.</td><td>Dataset usado pero con poca documentación. EDA superficial.</td></tr>
+    <tr><td><strong>Presentación Ejecutiva</strong></td><td style="color:var(--orange);font-weight:700">15%</td><td>Narrativa clara sin tecnicismos. Visualizaciones que comunican el hallazgo principal. Tiempo bien manejado.</td><td>Mezcla terminología técnica con ejecutiva. Visualizaciones mejorables.</td></tr>
+    <tr><td><strong>Código / Implementación</strong></td><td style="color:var(--pink);font-weight:700">15%</td><td>Código ejecutable, documentado, en GitHub con README. Reproducible por terceros.</td><td>Código funcional pero sin documentación. Difícil de reproducir.</td></tr>
+  </table>
+</div>
+
+<div class="slide" data-s="3">
+  <h2>Los 7 Errores Más Comunes en Proyectos de IA</h2>
+  <div class="cg c2">
+    <div class="card r">
+      <h3>Errores Técnicos</h3>
+      <ul>
+        <li><strong>Data leakage</strong>: usar información del futuro para predecir el futuro (el modelo "hace trampa")</li>
+        <li><strong>Overfitting sin detectar</strong>: modelo 99% en train, 55% en datos nuevos</li>
+        <li><strong>Métricas equivocadas</strong>: usar accuracy en datos desbalanceados</li>
+        <li><strong>No documentar el preprocesamiento</strong>: el modelo funciona pero nadie sabe cómo reproducirlo</li>
+      </ul>
+    </div>
+    <div class="card o">
+      <h3>Errores de Presentación</h3>
+      <ul>
+        <li><strong>Presentar código al panel</strong>: la dirección no necesita ver Python</li>
+        <li><strong>No cuantificar el impacto</strong>: "mejora la eficiencia" sin números no convence</li>
+        <li><strong>Ignorar las limitaciones</strong>: decir que el modelo es perfecto genera desconfianza</li>
+        <li><strong>No tener plan de implementación</strong>: ¿cómo se usaría esto en la operación real?</li>
+      </ul>
+    </div>
   </div>
-  <div class="box bd"><div class="bt">💡 DATO CLAVE — Lo que diferencia un buen proyecto</div>
-    <p>Los mejores proyectos no son los con el modelo más complejo, sino los que <strong>conectan cada decisión técnica con el impacto de negocio</strong>. "Elegí recall como métrica principal porque un falso negativo (falla no detectada) cuesta $50,000 en parada de planta, mientras que un falso positivo (mantenimiento innecesario) solo cuesta $500." Eso es pensar como ingeniero de datos industrial.</p>
+  <div class="box bc"><div class="bt">📰 INSPIRACIÓN — Proyecto que convenció sin código</div>
+    <p>Un equipo de estudiantes de Ing. Industrial implementó un modelo de predicción de fallos en cintas transportadoras para empresa minera. Presentaron a la dirección con <strong>tres diapositivas clave</strong>: (1) "Actualmente gastamos $1.2M/año en paros no programados por fallas de cinta"; (2) "Nuestro modelo predice el 78% de las fallas con 5 días de anticipación"; (3) "Si actuamos en esas fallas, el ahorro estimado es $940K/año, ROI en 4 meses." El panel aprobó presupuesto de implementación. Nunca mencionaron Scikit-learn, Random Forest ni ninguna línea de código.</p>
+  </div>
+</div>
+
+<div class="slide" data-s="3">
+  <h2>Template de Presentación Ejecutiva — Estructura de 15 Diapositivas</h2>
+  <table>
+    <tr><th>#</th><th>Diapositiva</th><th>Contenido clave</th></tr>
+    <tr><td>1</td><td><strong>Portada</strong></td><td>Título del proyecto, equipo, empresa/sector, fecha</td></tr>
+    <tr><td>2</td><td><strong>El Problema</strong></td><td>¿Qué duele? ¿Cuánto cuesta? Dato impactante de la situación actual</td></tr>
+    <tr><td>3</td><td><strong>Datos Disponibles</strong></td><td>Qué datos, de dónde, período, calidad. Una tabla resumen.</td></tr>
+    <tr><td>4</td><td><strong>Hallazgos del EDA</strong></td><td>2–3 hallazgos sorprendentes de los datos. Visualizaciones limpias.</td></tr>
+    <tr><td>5–6</td><td><strong>Nuestra Solución</strong></td><td>¿Qué tipo de modelo? ¿Por qué? Analogía para audiencia no técnica.</td></tr>
+    <tr><td>7–8</td><td><strong>Resultados del Modelo</strong></td><td>¿Qué tan bien predice/clasifica? Métricas en lenguaje de negocio.</td></tr>
+    <tr><td>9</td><td><strong>Dashboard / App</strong></td><td>Captura de pantalla o demo. ¿Cómo lo usaría un operador/gerente?</td></tr>
+    <tr><td>10–11</td><td><strong>Impacto Económico</strong></td><td>ROI, ahorro, mejora de KPI. Con supuestos explícitos.</td></tr>
+    <tr><td>12</td><td><strong>Limitaciones</strong></td><td>¿Cuándo fallaría el modelo? ¿Qué datos adicionales mejorarían?</td></tr>
+    <tr><td>13</td><td><strong>Plan de Implementación</strong></td><td>Fases, responsables, inversión requerida, cronograma.</td></tr>
+    <tr><td>14</td><td><strong>Recomendaciones</strong></td><td>3 acciones concretas que la dirección puede tomar.</td></tr>
+    <tr><td>15</td><td><strong>Cierre y Q&A</strong></td><td>Resumen en 3 bullets. Invitación a preguntas.</td></tr>
+  </table>
+</div>
+
+<div class="slide" data-s="3">
+  <h2>Actividad y Reto — Sesión 24</h2>
+  <div class="box bl"><div class="bt">🔬 ACTIVIDAD — Revisión Cruzada de Proyectos</div>
+    <p>Dinámica de peer review estructurado:</p>
+    <ol style="margin-top:8px;">
+      <li>Cada equipo presenta su avance en <strong>10 minutos</strong> (máximo, sin excepciones)</li>
+      <li>Los otros equipos actúan como panel y llenan la rúbrica del panel evaluador</li>
+      <li>5 minutos de retroalimentación estructurada: (a) lo que funcionó bien, (b) una pregunta que el panel real haría, (c) una sugerencia de mejora concreta</li>
+      <li>Cada equipo registra la retroalimentación y define su plan de acción para la sesión 25</li>
+    </ol>
+    <p style="margin-top:8px;color:var(--muted);">El objetivo no es criticar sino prepararse para el panel real. Las preguntas difíciles ahora evitan sorpresas en la defensa.</p>
+  </div>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ PREGUNTA DE REFLEXIÓN — Click para ver respuesta</div>
+    <p>El panel evaluador pregunta: "Su modelo predice fallas con 82% de precisión. ¿Qué pasa con el 18% restante?" ¿Cómo responder sin perder credibilidad?</p>
+    <div class="qa">La honestidad construye credibilidad, no la destruye. Respuesta efectiva: "El 18% que el modelo no predice correctamente tiene 3 causas principales que identificamos: (1) fallas causadas por errores operativos atípicos no capturados en los datos históricos; (2) sensores con datos faltantes en esos períodos; (3) condiciones de operación fuera del rango de entrenamiento. Para mejorar ese 18%, recomendamos: capturar datos de más sensores, incluir variables de turno y operador, y re-entrenar trimestralmente. El 82% actual ya justifica el ROI proyectado." Un modelo con limitaciones reconocidas es más confiable que uno presentado como perfecto.</div>
+  </div>
+  <div class="box bc" style="margin-top:8px;"><div class="bt">🚀 RETO DE APLICACIÓN</div>
+    <p>Completar antes de Sesión 25: (1) Presentación ejecutiva de 15 diapositivas con el template revisado hoy; (2) Dashboard final o visualizaciones limpias; (3) Código en GitHub con README; (4) Haber practicado la defensa oral al menos 2 veces cronometradas.</p>
   </div>
 </div>
 
 <!-- ═══ SESIÓN 25 ═══ -->
 <div class="slide" data-s="4">
-  <h2>Sesión 25 <span style="color:var(--green)">— Defensa Final: Cómo Presentar tu Proyecto de IA</span></h2>
-  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
-    <p>Una defensa de proyecto de IA es como <strong>vender una solución a un directivo escéptico</strong> en 15 minutos. El directivo no entiende de gradiente descendente ni de cross-entropy loss. Lo que sí entiende es: ¿cuánto dinero ahorra?, ¿cómo funciona en términos simples?, ¿qué pasa si falla? Tu trabajo es traducir ciencia en valor empresarial.</p>
+  <h2>Sesión 25 <span style="color:var(--cyan)">— Presentación Final del Proyecto Integrador y Cierre del Seminario</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA FINAL</div>
+    <p>Han hecho el <strong>viaje completo del científico de datos</strong>: de no saber qué es un DataFrame a construir un modelo que predice el futuro de una organización. El seminario termina, pero el aprendizaje acaba de comenzar. Los datos no paran de crecer, los algoritmos no paran de mejorar — y ahora tienen el lenguaje para entender ambos y el criterio para aplicarlos con responsabilidad.</p>
   </div>
-  <div class="cg c3" style="margin-top:14px;">
-    <div class="card g"><h3>Estructura de la Presentación (15 min)</h3><ol><li>Problema y contexto (2 min)</li><li>Datos utilizados (1 min)</li><li>Solución técnica simplificada (3 min)</li><li>Resultados medibles (3 min)</li><li>Demo en vivo (3 min)</li><li>Inversión y ROI estimado (2 min)</li><li>Preguntas (5 min adicionales)</li></ol></div>
-    <div class="card v"><h3>Cómo Explicar ML sin Tecnicismos</h3><p>En lugar de "Random Forest con 200 árboles de decisión y profundidad máxima 10": <em>"Un comité de 200 expertos independientes que cada uno analiza parte del historial de fallas y vota; la mayoría decide si hay riesgo. El sistema aprendió de 3 años de datos históricos."</em></p></div>
-    <div class="card c"><h3>Manejo de Preguntas Difíciles</h3><ul><li>"¿Y si el modelo se equivoca?" → describir el plan de fallback y monitoreo</li><li>"¿Por qué no Excel?" → mostrar lo que Excel no puede hacer a esa escala</li><li>"¿Es seguro para producción?" → hablar de validación, pruebas en paralelo y rollout gradual</li></ul></div>
+  <div class="sr" style="margin-top:16px;">
+    <div class="stat"><div class="n" style="color:var(--cyan)">150h</div><div class="l">De formación completadas en este seminario</div></div>
+    <div class="stat"><div class="n" style="color:var(--violet)">25</div><div class="l">Sesiones · 5 bloques · 1 proyecto integrador</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">∞</div><div class="l">El potencial de lo que construirán a partir de hoy</div></div>
   </div>
 </div>
 
 <div class="slide" data-s="4">
-  <h2>Rúbrica de Evaluación del Proyecto Final</h2>
-  <table>
-    <tr><th>Criterio</th><th>Excelente (30-25)</th><th>Bueno (24-18)</th><th>Suficiente (17-10)</th></tr>
-    <tr><td><strong>Problema y Datos (20%)</strong></td><td>Problema real con impacto cuantificado, datos propios o representativos del sector</td><td>Problema claro, datos de calidad media con justificación</td><td>Problema genérico, dataset de Kaggle sin adaptación industrial</td></tr>
-    <tr><td><strong>Pipeline Técnico (25%)</strong></td><td>EDA profundo, feature engineering creativo justificado, preprocesamiento robusto</td><td>EDA básico completo, preprocesamiento estándar aplicado correctamente</td><td>Preprocesamiento mínimo, sin EDA significativo</td></tr>
-    <tr><td><strong>Modelado y Evaluación (30%)</strong></td><td>2+ modelos comparados, métricas correctas para el problema, análisis de errores, interpretabilidad</td><td>2 modelos comparados con métricas apropiadas</td><td>1 modelo sin comparación ni análisis de errores</td></tr>
-    <tr><td><strong>Comunicación (25%)</strong></td><td>Dashboard/App funcional, presentación clara para no-técnicos, ROI estimado</td><td>Visualizaciones claras, presentación comprensible</td><td>Resultados solo en notebook, sin visualización ejecutiva</td></tr>
-  </table>
-  <div class="box bl"><div class="bt">🔬 CONSEJOS PARA LA DEFENSA</div>
-    <p>(1) Demo en vivo con datos reales de tu empresa (impacto máximo). (2) Mostrar comparación "antes/después" del proceso manual vs el modelo. (3) Tener preparada una diapositiva de errores: "El modelo se equivoca en estos casos y aquí está cómo los manejamos." La transparencia sobre limitaciones aumenta la confianza. (4) Traer una propuesta de plan de implementación de 90 días.</p>
+  <h2>Estructura de la Defensa Final — Lo que Espera el Panel</h2>
+  <div class="cg c2">
+    <div class="card c">
+      <h3>Protocolo de la Sesión</h3>
+      <ul class="tl" style="margin-top:8px;">
+        <li><div class="st c">1</div><div class="content"><h4>Presentación ejecutiva (15–20 min)</h4><p>Tiempo estricto. Panel puede interrumpir. Cubrir: problema → datos → modelo → resultados → impacto → recomendaciones.</p></div></li>
+        <li><div class="st g">2</div><div class="content"><h4>Preguntas del panel (10 min)</h4><p>Preguntas técnicas y de negocio. El panel puede pedir ver código, datos o defender una decisión de diseño.</p></div></li>
+        <li><div class="st o">3</div><div class="content"><h4>Evaluación formal (5 min)</h4><p>Panel llena la rúbrica. Calificación ponderada: técnica + negocio + datos + presentación + código.</p></div></li>
+        <li><div class="st p">4</div><div class="content"><h4>Entrega de evidencias</h4><p>Informe escrito + código en GitHub + carpeta de evidencias con dataset, notebook y presentación.</p></div></li>
+      </ul>
+    </div>
+    <div class="card v">
+      <h3>Consejos para la Defensa</h3>
+      <ul>
+        <li><strong>Llega 15 min antes</strong>: prueba el proyector, abre el notebook, verifica la demo</li>
+        <li><strong>Empieza con el problema</strong>, no con los datos ni el modelo</li>
+        <li><strong>Habla para el panel más no técnico</strong>: si todos entienden, los técnicos también</li>
+        <li><strong>"No sé, pero puedo investigarlo"</strong> es mejor que inventar una respuesta</li>
+        <li><strong>Defiende tu decisión</strong>: "elegí Random Forest porque..." demuestra criterio</li>
+        <li><strong>El nerviosismo es normal</strong>: practica hasta que el contenido salga solo</li>
+        <li><strong>Termina con la recomendación</strong>: deja al panel pensando en la acción, no en el modelo</li>
+      </ul>
+    </div>
   </div>
 </div>
 
-<!-- CIERRE FINAL DEL SEMINARIO -->
+<div class="slide" data-s="4">
+  <h2>Rúbrica Completa del Panel Evaluador</h2>
+  <table>
+    <tr><th>Componente</th><th>Peso</th><th>Indicadores de Evaluación</th></tr>
+    <tr><td><strong>Dominio Técnico</strong></td><td style="color:var(--violet);font-weight:700">25%</td><td>Explica el modelo y sus supuestos · Conoce las limitaciones · Responde preguntas técnicas del panel · Justifica las decisiones de diseño</td></tr>
+    <tr><td><strong>Impacto Empresarial</strong></td><td style="color:var(--cyan);font-weight:700">25%</td><td>Cuantifica el valor generado (ROI, ahorro, mejora KPI) · Vincula modelo con decisión de negocio · Presenta análisis costo-beneficio con supuestos</td></tr>
+    <tr><td><strong>Calidad de Datos</strong></td><td style="color:var(--green);font-weight:700">20%</td><td>Dataset documentado y justificado · EDA con hallazgos relevantes · Manejo correcto de valores faltantes y outliers · Partición train/test adecuada</td></tr>
+    <tr><td><strong>Presentación Ejecutiva</strong></td><td style="color:var(--orange);font-weight:700">15%</td><td>Narrativa clara sin tecnicismos · Visualizaciones que comunican el hallazgo · Tiempo respetado · Responde preguntas del panel con claridad</td></tr>
+    <tr><td><strong>Código / Implementación</strong></td><td style="color:var(--pink);font-weight:700">15%</td><td>Código ejecutable y documentado · Notebook en GitHub con README · Reproducible por terceros · Comentarios en código</td></tr>
+  </table>
+  <div class="box bd" style="margin-top:14px;"><div class="bt">💡 CALIFICACIÓN MÍNIMA APROBATORIA</div>
+    <p><strong>80 puntos de 100</strong> en el proyecto integrador · Asistencia mínima del 90% (23 de 25 sesiones) · Entrega de los 5 entregables por bloque</p>
+  </div>
+</div>
+
+<div class="slide" data-s="4">
+  <h2>Cómo Manejar las Preguntas Difíciles del Panel</h2>
+  <div class="cg c2">
+    <div class="card r">
+      <h3>Preguntas Técnicas Frecuentes</h3>
+      <ul>
+        <li><strong>"¿Por qué Random Forest y no una red neuronal?"</strong><br><span style="color:var(--muted);font-size:.82rem;">Responde: interpretabilidad, tamaño de dataset, tiempo de entrenamiento, rendimiento comparado.</span></li>
+        <li><strong>"¿Qué pasa si llegan datos con un formato diferente?"</strong><br><span style="color:var(--muted);font-size:.82rem;">Responde: pipeline de validación, manejo de errores, re-entrenamiento periódico.</span></li>
+        <li><strong>"¿El modelo funcionaría para el 2027?"</strong><br><span style="color:var(--muted);font-size:.82rem;">Responde: data drift, monitoreo de desempeño, cadencia de re-entrenamiento.</span></li>
+      </ul>
+    </div>
+    <div class="card o">
+      <h3>Preguntas de Negocio Frecuentes</h3>
+      <ul>
+        <li><strong>"¿Qué necesitamos para implementarlo?"</strong><br><span style="color:var(--muted);font-size:.82rem;">Responde: infraestructura, talento, proceso de validación, costo estimado vs. beneficio.</span></li>
+        <li><strong>"¿Qué riesgos tiene depender de este modelo?"</strong><br><span style="color:var(--muted);font-size:.82rem;">Responde: sesgo en datos históricos, interpretabilidad, necesidad de supervisión humana.</span></li>
+        <li><strong>"¿Cuánto tiempo tomó desarrollarlo?"</strong><br><span style="color:var(--muted);font-size:.82rem;">Responde: fases del proyecto, horas de trabajo, cuellos de botella en limpieza de datos.</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="4">
+  <h2>El Camino Después del Seminario: Certificaciones y Carrera</h2>
+  <div class="cg c2">
+    <div class="card g">
+      <h3>Certificaciones Recomendadas (Orden de Dificultad)</h3>
+      <ul>
+        <li><span class="pill pg">Principiante</span> <strong>Google Data Analytics Professional Certificate</strong> — Coursera, 6 meses, $39/mes</li>
+        <li><span class="pill pc">Intermedio</span> <strong>IBM Data Science Professional Certificate</strong> — Coursera, 10 cursos, ampliamente reconocido</li>
+        <li><span class="pill po">Avanzado</span> <strong>Microsoft Azure AI-900</strong> — Fundamentos de IA en cloud, muy valorado en industria</li>
+        <li><span class="pill pv">Especialista</span> <strong>AWS Machine Learning Specialty</strong> — Para producción cloud, salario premium</li>
+        <li><span class="pill pp">Experto</span> <strong>Google Professional ML Engineer</strong> — Para perfiles de ingeniería de ML senior</li>
+      </ul>
+    </div>
+    <div class="card c">
+      <h3>Roles del Mercado Laboral en IA — México 2024</h3>
+      <table style="margin-top:8px;font-size:.78rem;">
+        <tr><th>Rol</th><th>Salario Mensual (MXN)</th></tr>
+        <tr><td>Analista de Datos Jr.</td><td>$18,000 – $28,000</td></tr>
+        <tr><td>Analista de Datos Sr.</td><td>$32,000 – $50,000</td></tr>
+        <tr><td>Data Scientist Jr.</td><td>$35,000 – $55,000</td></tr>
+        <tr><td>Data Scientist Sr.</td><td>$60,000 – $95,000</td></tr>
+        <tr><td>ML Engineer</td><td>$70,000 – $110,000</td></tr>
+        <tr><td>Data Engineer</td><td>$55,000 – $85,000</td></tr>
+        <tr><td>AI Product Manager</td><td>$65,000 – $100,000</td></tr>
+      </table>
+      <p style="margin-top:6px;font-size:.75rem;color:var(--muted);">Fuente: OCCMundial, LinkedIn Jobs, OCC 2024. Varían por empresa, sector y experiencia.</p>
+    </div>
+  </div>
+</div>
+
+<!-- CIERRE DEL SEMINARIO -->
 <div class="slide cover" data-s="4">
   <div class="badge">BLOQUE V — CIERRE DEL SEMINARIO</div>
-  <h1>De Principiante a<br>Profesional de IA Industrial</h1>
-  <p style="max-width:650px;margin:16px auto;color:var(--muted);">150 horas de formación práctica que transforman profesionales con conocimiento de su industria en arquitectos de soluciones de IA que generan valor medible. El seminario termina, el aprendizaje continúa.</p>
+  <h1>El Viaje Continúa</h1>
+  <p style="max-width:650px;margin:16px auto;color:var(--muted);">Han construido la base más sólida que puede tener un profesional en la era de la IA: no solo saben usar herramientas, saben <em>por qué</em> funcionan, <em>cuándo</em> aplicarlas y <em>cómo</em> comunicar su valor.</p>
   <div class="sr" style="justify-content:center;max-width:800px;margin:20px auto;">
-    <div class="stat"><div class="n" style="color:var(--violet)">🧠</div><div class="l">NLP + Transformers + Hugging Face</div></div>
-    <div class="stat"><div class="n" style="color:var(--pink)">👁️</div><div class="l">CNN + Transfer Learning + PyTorch</div></div>
-    <div class="stat"><div class="n" style="color:var(--cyan)">🎮</div><div class="l">RL + Q-Learning + Stable Baselines</div></div>
-    <div class="stat"><div class="n" style="color:var(--yellow)">🏆</div><div class="l">Proyecto integrador real</div></div>
-    <div class="stat"><div class="n" style="color:var(--green)">🎓</div><div class="l">Defensa ante comité</div></div>
+    <div class="stat"><div class="n" style="color:var(--violet)">NLP</div><div class="l">Texto → Conocimiento</div></div>
+    <div class="stat"><div class="n" style="color:var(--cyan)">CNN</div><div class="l">Imágenes → Decisiones</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">RL</div><div class="l">Aprender → Optimizar</div></div>
+    <div class="stat"><div class="n" style="color:var(--orange)">PI</div><div class="l">Valor → Demostrado</div></div>
   </div>
-  <div class="box bd" style="max-width:650px;margin:16px auto;"><div class="bt">💡 EL VERDADERO VALOR DE ESTE SEMINARIO</div>
-    <p>No es conocer los algoritmos — eso está en Google. El valor es <strong>saber cuál algoritmo usar para cada problema de negocio</strong>, cómo preparar datos industriales reales, cómo medir el éxito en términos del negocio y cómo comunicarlo a quien toma decisiones. Eso es lo que hace un profesional de IA industrial.</p>
+  <div class="box bd" style="max-width:650px;margin:0 auto;"><div class="bt">💡 LO QUE SE LLEVAN</div>
+    <p>Criterio para elegir el modelo correcto · Capacidad de trabajar con datos reales · Habilidad de comunicar resultados técnicos a audiencias no técnicas · Un proyecto concreto en su portafolio · Y la convicción de que los datos, bien interpretados, transforman organizaciones.</p>
   </div>
-  <div style="margin-top:16px;font-size:.8rem;color:var(--muted);max-width:650px;margin-left:auto;margin-right:auto;">
-    <strong style="color:var(--violet);">Referencias Bloque V:</strong><br>
-    Géron (2022) Hands-On ML · Goodfellow et al. (2016) Deep Learning · Tunstall et al. (2022) NLP with Transformers · Sutton &amp; Barto (2018) Reinforcement Learning: An Introduction
+  <div style="margin-top:20px;">
+    <span class="tag">NLP · Transformers</span><span class="tag">Deep Learning · CNN</span><span class="tag">Reinforcement Learning</span>
+    <span class="tag">Proyecto Integrador</span><span class="tag">UPIICSA</span>
   </div>
-  <div style="margin-top:14px;">
-    <span class="tag">PyTorch</span><span class="tag">TensorFlow/Keras</span><span class="tag">Hugging Face</span>
-    <span class="tag">Stable Baselines 3</span><span class="tag">Gymnasium</span><span class="tag">LangChain</span>
-    <span class="tag">FastAPI</span><span class="tag">Streamlit</span><span class="tag">MLflow</span>
+  <div style="margin-top:16px;font-size:.8rem;color:var(--muted);">
+    <strong style="color:var(--cyan);">Referencias:</strong>
+    Goodfellow, I., Bengio, Y., &amp; Courville, A. (2016). <em>Deep Learning</em>. MIT Press. ·
+    Jurafsky, D., &amp; Martin, J. H. (2023). <em>Speech and Language Processing</em> (3a ed.). Stanford. ·
+    Sutton, R. S., &amp; Barto, A. G. (2018). <em>Reinforcement Learning: An Introduction</em> (2a ed.). MIT Press. ·
+    LeCun, Y., Bengio, Y., &amp; Hinton, G. (2015). Deep learning. <em>Nature</em>, 521, 436–444. ·
+    Vaswani, A. et al. (2017). Attention is all you need. <em>Advances in Neural Information Processing Systems</em>, 30.
   </div>
 </div>
 
-</div>
+</div><!-- /sc -->
 <div id="footer">
   <button onclick="prev()">← Anterior</button>
-  <span class="hint">← → · Espacio</span>
+  <span class="hint">← → · Espacio · Seminario de Titulación · UPIICSA · Inteligencia Artificial para la Industria</span>
   <button onclick="next()">Siguiente →</button>
 </div>
 <script>

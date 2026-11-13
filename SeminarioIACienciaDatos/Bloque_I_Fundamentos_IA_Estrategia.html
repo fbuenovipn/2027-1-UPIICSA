@@ -38,7 +38,6 @@
   li{margin-bottom:4px;}
   .sub{color:var(--muted);font-size:1rem;margin-bottom:6px;}
   .tag{display:inline-block;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:2px 10px;font-size:.75rem;color:var(--muted);margin-right:6px;margin-bottom:4px;}
-  /* COVER */
   .cover{align-items:center;justify-content:center;text-align:center;}
   .cover h1{font-size:2.3rem;background:linear-gradient(135deg,var(--violet),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;}
   .badge{display:inline-block;border:1px solid var(--violet);border-radius:8px;padding:8px 24px;color:var(--violet);font-size:.9rem;font-weight:700;letter-spacing:2px;margin-bottom:20px;background:rgba(124,58,237,.08);}
@@ -46,7 +45,6 @@
   .sc2{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 16px;width:168px;text-align:left;}
   .sc2 .num{color:var(--violet);font-size:.7rem;font-weight:700;}
   .sc2 .nm{font-size:.8rem;margin-top:4px;}
-  /* CARDS */
   .cg{display:grid;gap:14px;margin-top:8px;}
   .cg.c2{grid-template-columns:1fr 1fr;}
   .cg.c3{grid-template-columns:1fr 1fr 1fr;}
@@ -60,10 +58,9 @@
   .card.p::before{background:var(--pink);}
   .card h3{margin-top:0;font-size:.95rem;}
   .card p,.card ul,.card li{font-size:.85rem;}
-  /* BOXES */
   .box{border-radius:10px;padding:14px 18px;margin:10px 0;}
   .bm{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.4);}
-  .bc{background:rgba(255,159,28,.08);border:1px solid rgba(255,159,28,.4);}
+  .bc{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.4);}
   .bl{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.4);}
   .bd{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.4);}
   .bq{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.4);cursor:pointer;}
@@ -76,12 +73,10 @@
   .box p,.box li,.box ul{font-size:.87rem;}
   .qa{display:none;margin-top:8px;padding-top:8px;border-top:1px solid rgba(251,191,36,.3);color:var(--green);font-size:.85rem;}
   .bq.revealed .qa{display:block;}
-  /* TABLE */
   table{width:100%;border-collapse:collapse;font-size:.83rem;margin-top:8px;}
   th{background:#071020;color:var(--cyan);text-align:left;padding:8px 12px;border:1px solid var(--border);}
   td{padding:7px 12px;border:1px solid var(--border);vertical-align:top;}
   tr:nth-child(even) td{background:rgba(11,22,40,.6);}
-  /* TIMELINE */
   .tl{list-style:none;padding:0;margin-top:8px;}
   .tl li{display:flex;gap:14px;margin-bottom:12px;align-items:flex-start;}
   .tl .st{min-width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
@@ -92,25 +87,18 @@
   .tl .st.r{background:rgba(239,68,68,.15);border:2px solid var(--red);color:var(--red);}
   .tl .content h4{font-size:.9rem;}
   .tl .content p{font-size:.83rem;color:var(--muted);margin:0;}
-  /* STATS */
   .sr{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0;}
   .stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 18px;flex:1;min-width:120px;text-align:center;}
   .stat .n{font-size:1.8rem;font-weight:800;line-height:1;}
   .stat .l{font-size:.72rem;color:var(--muted);margin-top:4px;}
-  /* PILL */
   .pill{display:inline-block;padding:2px 10px;border-radius:20px;font-size:.75rem;font-weight:600;margin:2px;}
   .pv{background:rgba(124,58,237,.15);border:1px solid var(--violet);color:var(--violet);}
   .pc{background:rgba(6,182,212,.15);border:1px solid var(--cyan);color:var(--cyan);}
   .pg{background:rgba(16,185,129,.15);border:1px solid var(--green);color:var(--green);}
   .po{background:rgba(245,158,11,.15);border:1px solid var(--orange);color:var(--orange);}
   .pr{background:rgba(239,68,68,.15);border:1px solid var(--red);color:var(--red);}
-  /* CODE */
-  pre{background:#071020;border:1px solid var(--border);border-radius:6px;padding:12px;font-size:.8rem;color:var(--green);overflow-x:auto;margin:8px 0;font-family:'Courier New',monospace;}
-  code{background:#071020;padding:2px 6px;border-radius:4px;font-size:.82rem;color:var(--cyan);}
-  /* LAYER */
   .ld{display:flex;flex-direction:column;gap:6px;margin:10px 0;}
   .lr{border-radius:6px;padding:8px 16px;font-size:.82rem;font-weight:600;text-align:center;}
-  /* SCROLL */
   .slide::-webkit-scrollbar{width:4px;}
   .slide::-webkit-scrollbar-track{background:transparent;}
   .slide::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
@@ -126,16 +114,16 @@
     <button onclick="gts(3)" id="t3">S4</button>
     <button onclick="gts(4)" id="t4">S5</button>
   </div>
-  <div id="ctr">1 / 58</div>
+  <div id="ctr">1 / 1</div>
 </div>
-<div id="pb" style="width:1.72%"></div>
+<div id="pb" style="width:0%"></div>
 <div id="sc">
 
-<!-- PORTADA -->
+<!-- ═══ PORTADA ═══ -->
 <div class="slide active cover" data-s="0">
   <div class="badge">BLOQUE I · SESIONES 1 – 5</div>
   <h1>Fundamentos de IA, Datos<br>y Estrategia Empresarial</h1>
-  <p class="sub">Inteligencia Artificial para la Industria · Seminario de Titulación · 30 horas</p>
+  <p class="sub">Inteligencia Artificial para la Industria · Seminario de Titulación UPIICSA · 30 horas</p>
   <div class="sg">
     <div class="sc2"><div class="num">SESIÓN 1</div><div class="nm">Panorama IA e Industria</div></div>
     <div class="sc2"><div class="num">SESIÓN 2</div><div class="nm">Estadística Descriptiva</div></div>
@@ -150,7 +138,7 @@
 <div class="slide" data-s="0">
   <h2>Sesión 1 <span style="color:var(--violet)">— IA en la Industria: Panorama, Casos de Éxito y Ética</span></h2>
   <div class="box bm"><div class="bt">🎭 METÁFORA DE APERTURA</div>
-    <p>La IA es como la <strong>electricidad en 1900</strong>: pocos entendían exactamente cómo funcionaba, pero los que la adoptaron primero transformaron sus industrias de manera irreversible. Los que esperaron a que "madurara" llegaron tarde. Hoy, los datos son el petróleo del siglo XXI — y Python es la refinería.</p>
+    <p>La IA es como la <strong>electricidad en 1900</strong>: pocos entendían exactamente cómo funcionaba, pero los que la adoptaron primero transformaron sus industrias de manera irreversible. Los que esperaron a que "madurara" llegaron tarde. Hoy, los datos son el petróleo del siglo XXI — y quienes saben analizarlos tienen la refinería.</p>
   </div>
   <div class="sr" style="margin-top:16px;">
     <div class="stat"><div class="n" style="color:var(--violet)">$15.7T</div><div class="l">Contribución estimada de la IA al PIB global para 2030 (PwC)</div></div>
@@ -162,341 +150,422 @@
 <div class="slide" data-s="0">
   <h2>El Ecosistema de la IA: ¿Dónde Encajamos?</h2>
   <div class="ld">
-    <div class="lr" style="background:rgba(124,58,237,.12);border:1px solid var(--violet);color:var(--violet);">🧠 INTELIGENCIA ARTIFICIAL — campo más amplio: sistemas que imitan la cognición humana</div>
-    <div class="lr" style="background:rgba(6,182,212,.12);border:1px solid var(--cyan);color:var(--cyan);">📊 MACHINE LEARNING — sistemas que aprenden de datos sin programación explícita de reglas</div>
-    <div class="lr" style="background:rgba(16,185,129,.12);border:1px solid var(--green);color:var(--green);">🔬 DEEP LEARNING — redes neuronales profundas para imágenes, texto, voz y sensores</div>
-    <div class="lr" style="background:rgba(245,158,11,.12);border:1px solid var(--orange);color:var(--orange);">💬 IA GENERATIVA — modelos que crean contenido: texto, código, imágenes, audio (GPT-4, Gemini)</div>
+    <div class="lr" style="background:rgba(124,58,237,.12);border:1px solid var(--violet);color:var(--violet);">🧠 INTELIGENCIA ARTIFICIAL — Campo más amplio: sistemas que imitan la cognición humana para razonar, planificar y aprender</div>
+    <div class="lr" style="background:rgba(6,182,212,.12);border:1px solid var(--cyan);color:var(--cyan);">📊 MACHINE LEARNING — Sistemas que aprenden de datos sin que un programador escriba reglas explícitas; mejoran con experiencia</div>
+    <div class="lr" style="background:rgba(16,185,129,.12);border:1px solid var(--green);color:var(--green);">🔬 DEEP LEARNING — Redes neuronales profundas que procesan imágenes, texto, voz y señales de sensores con alta precisión</div>
+    <div class="lr" style="background:rgba(245,158,11,.12);border:1px solid var(--orange);color:var(--orange);">💬 IA GENERATIVA — Modelos que crean contenido nuevo: texto, código, imágenes, diseños (ChatGPT, Gemini, Copilot)</div>
   </div>
   <div class="cg c3" style="margin-top:14px;">
-    <div class="card c"><h3>Ciencia de Datos</h3><p>Disciplina que extrae conocimiento de datos usando estadística, programación y dominio de negocio. El puente entre los datos y las decisiones.</p></div>
-    <div class="card v"><h3>Analítica Empresarial</h3><p>Aplicación de técnicas cuantitativas para entender el pasado (descriptiva), el presente (diagnóstica) y predecir/optimizar el futuro.</p></div>
-    <div class="card g"><h3>Industria 4.0</h3><p>Convergencia de IoT, Big Data, IA y automatización en la manufactura y logística. Los datos de sensores alimentan los modelos de IA.</p></div>
+    <div class="card c"><h3>Ciencia de Datos</h3><p>Disciplina que extrae conocimiento de datos usando estadística, análisis y dominio de negocio. Es el puente entre los números y las decisiones.</p></div>
+    <div class="card v"><h3>Analítica Empresarial</h3><p>Aplicación de técnicas cuantitativas para entender el pasado (descriptiva), diagnosticar el presente y predecir o prescribir el futuro.</p></div>
+    <div class="card g"><h3>Industria 4.0</h3><p>Convergencia de IoT, Big Data, IA y automatización en manufactura y logística. Los sensores generan los datos que alimentan los modelos.</p></div>
   </div>
 </div>
 
 <div class="slide" data-s="0">
-  <h2>Casos de Éxito por Sector Industrial</h2>
+  <h2>Madurez Analítica: ¿En Qué Nivel Está Tu Organización?</h2>
+  <div class="ld">
+    <div class="lr" style="background:rgba(239,68,68,.1);border:1px solid var(--red);color:var(--red);">📋 NIVEL 1 — DESCRIPTIVA: "¿Qué pasó?" — Reportes manuales, tablas en Excel, KPIs básicos. La mayoría de empresas mexicanas están aquí.</div>
+    <div class="lr" style="background:rgba(245,158,11,.1);border:1px solid var(--orange);color:var(--orange);">🔍 NIVEL 2 — DIAGNÓSTICA: "¿Por qué pasó?" — Dashboards dinámicos, correlaciones, análisis de causa raíz con datos históricos.</div>
+    <div class="lr" style="background:rgba(6,182,212,.1);border:1px solid var(--cyan);color:var(--cyan);">🔮 NIVEL 3 — PREDICTIVA: "¿Qué pasará?" — Modelos estadísticos y de ML para anticipar demanda, fallas y costos futuros.</div>
+    <div class="lr" style="background:rgba(16,185,129,.1);border:1px solid var(--green);color:var(--green);">⚙️ NIVEL 4 — PRESCRIPTIVA: "¿Qué debo hacer?" — Optimización y recomendaciones automáticas que sugieren la mejor acción.</div>
+    <div class="lr" style="background:rgba(124,58,237,.1);border:1px solid var(--violet);color:var(--violet);">🚀 NIVEL 5 — AUTÓNOMA: "El sistema actúa solo" — Decisiones y acciones sin intervención humana (vehículos autónomos, trading algorítmico).</div>
+  </div>
+  <div class="box bd"><div class="bt">💡 REFLEXIÓN</div>
+    <p>El objetivo de este seminario es llevarte del Nivel 1–2 (donde están la mayoría) al Nivel 3–4: saber predecir y optimizar. No es necesario llegar al Nivel 5 para generar un impacto enorme en tu organización.</p>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Casos de Éxito por Sector en México y el Mundo</h2>
   <table>
-    <tr><th>Sector</th><th>Caso de Éxito</th><th>Resultado Medible</th></tr>
-    <tr><td><strong>Manufactura</strong></td><td>Bosch: mantenimiento predictivo con sensores IoT + ML en líneas de producción</td><td>Reducción 25% en tiempo de inactividad no planeado</td></tr>
-    <tr><td><strong>Transporte/Logística</strong></td><td>UPS: algoritmo ORION para optimización de rutas (IA + grafo)</td><td>$400M/año ahorro + 185M km/año menos recorridos</td></tr>
-    <tr><td><strong>Automotriz</strong></td><td>BMW: computer vision para inspección de calidad en pintura de carrocerías</td><td>Detección de defectos 3x más rápida que inspección humana</td></tr>
-    <tr><td><strong>Manufactura MX</strong></td><td>CEMEX: predicción de demanda de cemento por región con ML</td><td>Reducción 15% en exceso de inventario</td></tr>
-    <tr><td><strong>Retail/Admin</strong></td><td>Amazon: motor de recomendación (collaborative filtering)</td><td>35% de ventas generadas por recomendaciones</td></tr>
-    <tr><td><strong>Energía</strong></td><td>CFE: predicción de fallas en transformadores con datos de sensores</td><td>Reducción de cortes imprevistos en 40%</td></tr>
+    <tr><th>Empresa/Sector</th><th>Aplicación de IA</th><th>Resultado</th></tr>
+    <tr><td><strong>CFE (México)</strong></td><td>Machine Learning para predecir fallas en transformadores con datos de sensores</td><td>Reducción 40% en cortes imprevistos de energía</td></tr>
+    <tr><td><strong>CEMEX (México)</strong></td><td>Predicción de demanda de cemento por región con algoritmos de ML</td><td>Reducción 15% en exceso de inventario</td></tr>
+    <tr><td><strong>FEMSA (México)</strong></td><td>Regresión para predecir demanda de bebidas por punto de venta</td><td>Reducción 18% en desabasto y 12% en sobreinventario</td></tr>
+    <tr><td><strong>UPS (EE.UU.)</strong></td><td>Algoritmo ORION para optimización de rutas de reparto</td><td>$400M/año ahorro + 185M km/año menos recorridos</td></tr>
+    <tr><td><strong>BMW (Alemania)</strong></td><td>Visión por computadora para inspección de calidad en carrocerías</td><td>Detección de defectos 3x más rápida que inspección humana</td></tr>
+    <tr><td><strong>Bosch (Alemania)</strong></td><td>Mantenimiento predictivo con sensores IoT + ML en líneas de producción</td><td>Reducción 25% en tiempo de paro no planeado</td></tr>
   </table>
 </div>
 
 <div class="slide" data-s="0">
-  <h2>Ética en IA: Lo que Todo Profesional Debe Saber</h2>
+  <h2>Ética en IA: Lo que Todo Profesional Debe Conocer</h2>
   <div class="cg c2">
     <div class="card r">
-      <h3>Sesgos Algorítmicos</h3>
+      <h3>Riesgos y Sesgos Algorítmicos</h3>
       <ul>
         <li>Un modelo aprende de datos históricos → hereda los sesgos de esos datos</li>
-        <li>Ejemplo: modelo de selección de personal entrenado en CVs históricos que favorecía hombres (Amazon, 2018)</li>
-        <li>Ejemplo: reconocimiento facial con tasa de error 34% en mujeres de piel oscura vs 0.8% en hombres blancos (MIT Media Lab)</li>
-        <li>Solución: auditar datos, diversificar datasets, métricas de fairness</li>
+        <li>Caso Amazon (2018): modelo de selección de personal que favorecía sistemáticamente a hombres sobre mujeres</li>
+        <li>Caso MIT: reconocimiento facial con 34% de error en mujeres de piel oscura vs 0.8% en hombres blancos</li>
+        <li>Riesgo en industria: modelos de crédito, contratación, scoring de proveedores</li>
       </ul>
     </div>
     <div class="card v">
-      <h3>Marco Ético y Regulatorio</h3>
+      <h3>Marco Regulatorio</h3>
       <ul>
-        <li><strong>LFPDPPP</strong>: privacidad de datos personales en México</li>
-        <li><strong>EU AI Act (2024)</strong>: primer marco legal para IA de riesgo alto/bajo</li>
-        <li><strong>NIST AI RMF</strong>: framework de gestión de riesgo en IA</li>
-        <li><strong>UNESCO Rec. on AI (2021)</strong>: principios éticos globales</li>
-        <li>Principios clave: transparencia, explicabilidad, fairness, privacidad, responsabilidad</li>
+        <li><strong>LFPDPPP</strong>: Ley Federal de Protección de Datos en México</li>
+        <li><strong>EU AI Act (2024)</strong>: primer marco legal global para IA de alto riesgo</li>
+        <li><strong>NIST AI RMF</strong>: framework de gestión de riesgos en IA del gobierno de EE.UU.</li>
+        <li>Principios éticos clave: transparencia, explicabilidad, equidad, privacidad y responsabilidad</li>
+        <li>Pregunta clave: ¿Puede mi organización <em>explicar</em> por qué el modelo tomó esa decisión?</li>
       </ul>
     </div>
   </div>
-  <div class="box bc"><div class="bt">📰 CASO REAL — Decisiones con consecuencias reales</div>
-    <p>Un banco en EE.UU. usó un modelo de scoring crediticio que daba <strong>límites 20x menores a mujeres que a hombres con el mismo perfil financiero</strong> (incluyendo al cofundador del algoritmo y su esposa). El modelo había aprendido correlaciones históricas de deuda que reflejaban desigualdad estructural. Resultado: investigación del CFPB y revisión completa del sistema.</p>
+  <div class="box bc"><div class="bt">📰 CASO REAL — Decisiones automáticas con consecuencias reales</div>
+    <p>Un banco en EE.UU. usó un modelo de scoring crediticio que otorgaba <strong>límites 20 veces menores a mujeres que a hombres con el mismo perfil financiero</strong>. El modelo había aprendido correlaciones históricas que reflejaban desigualdad estructural, no capacidad real de pago. Resultado: investigación regulatoria y rediseño completo del sistema.</p>
   </div>
 </div>
 
 <div class="slide" data-s="0">
-  <h2>Madurez Analítica: ¿Dónde Está Tu Organización?</h2>
-  <div class="ld">
-    <div class="lr" style="background:rgba(239,68,68,.1);border:1px solid var(--red);color:var(--red);">📋 NIVEL 1 — DESCRIPTIVA: "¿Qué pasó?" — Reportes manuales, Excel, KPIs básicos. La mayoría de empresas MX.</div>
-    <div class="lr" style="background:rgba(245,158,11,.1);border:1px solid var(--orange);color:var(--orange);">🔍 NIVEL 2 — DIAGNÓSTICA: "¿Por qué pasó?" — Dashboards, correlaciones, análisis de causa raíz con datos.</div>
-    <div class="lr" style="background:rgba(6,182,212,.1);border:1px solid var(--cyan);color:var(--cyan);">🔮 NIVEL 3 — PREDICTIVA: "¿Qué pasará?" — Modelos ML para anticipar demanda, fallas, costos.</div>
-    <div class="lr" style="background:rgba(16,185,129,.1);border:1px solid var(--green);color:var(--green);">⚙️ NIVEL 4 — PRESCRIPTIVA: "¿Qué hacer?" — Optimización, recomendaciones automáticas, agentes IA.</div>
-    <div class="lr" style="background:rgba(124,58,237,.1);border:1px solid var(--violet);color:var(--violet);">🚀 NIVEL 5 — AUTÓNOMA: "¿Hacerlo solo?" — Sistemas de decisión autónoma (ej. vehículos autónomos, trading algorítmico).</div>
+  <h2>Hoja de Ruta de IA: Del Diagnóstico al Valor Empresarial</h2>
+  <ul class="tl">
+    <li><div class="st v">1</div><div class="content"><h4>Diagnóstico de Madurez</h4><p>Evaluar el estado actual en 5 dimensiones: datos disponibles, tecnología, talento humano, procesos documentados y cultura organizacional hacia la data.</p></div></li>
+    <li><div class="st c">2</div><div class="content"><h4>Identificar Quick Wins</h4><p>Proyectos de IA de alto impacto y bajo riesgo: reportes automatizados, alertas tempranas, dashboards. Generan confianza y financian proyectos mayores.</p></div></li>
+    <li><div class="st g">3</div><div class="content"><h4>Proyectos Estratégicos (6–18 meses)</h4><p>Modelos predictivos de demanda, mantenimiento predictivo, segmentación de clientes. Requieren datos históricos limpios y un equipo capacitado.</p></div></li>
+    <li><div class="st o">4</div><div class="content"><h4>Gobernanza y Ética</h4><p>Políticas de uso responsable de datos, roles y responsabilidades, revisión de sesgos, cumplimiento regulatorio y auditabilidad de modelos.</p></div></li>
+    <li><div class="st r">5</div><div class="content"><h4>Cultura de Datos</h4><p>El mayor habilitador. Sin cultura, la mejor tecnología fracasa. Capacitación continua, decisiones basadas en evidencia, no en intuición sola.</p></div></li>
+  </ul>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Sesión 1 — Evaluación y Reto de Aplicación</h2>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Click para revelar respuesta</div>
+    <p>Una empresa de transporte usa un algoritmo para asignar rutas a sus conductores. Los conductores en zonas periféricas siempre reciben las rutas menos rentables. ¿Cuál es el riesgo de IA presente aquí y qué acción gerencial tomarías?</p>
+    <div class="qa"><strong>Sesgo de selección histórica:</strong> el algoritmo probablemente aprendió de asignaciones históricas que ya favorecían ciertas zonas. La acción gerencial es: (1) auditar los datos de entrenamiento buscando patrones de discriminación, (2) revisar la función objetivo del algoritmo — ¿optimiza solo rentabilidad o también equidad?, (3) incorporar una restricción de equidad mínima en la asignación, (4) documentar el modelo según regulaciones de transparencia.</div>
   </div>
-  <div class="box bl"><div class="bt">🔬 ACTIVIDAD PRÁCTICA</div>
-    <p>Diagnóstico de madurez analítica: evaluar una empresa del sector de tu carrera en 5 dimensiones (datos, tecnología, talento, procesos, cultura). Identificar el nivel actual y diseñar la hoja de ruta de IA a 18 meses con quick wins y proyectos estratégicos.</p>
+  <div class="box bl"><div class="bt">🔬 ACTIVIDAD PRÁCTICA — Diagnóstico de Madurez Analítica</div>
+    <p><strong>Instrucciones (en equipos de 3–4 personas):</strong></p>
+    <ol style="margin-top:8px;">
+      <li>Elegir una empresa real del sector de alguno de los integrantes del equipo</li>
+      <li>Evaluar del 1 al 5 cada dimensión: Datos, Tecnología, Talento, Procesos, Cultura</li>
+      <li>Calcular el nivel de madurez promedio del equipo</li>
+      <li>Identificar 2 "quick wins" de IA que esa empresa podría implementar en 90 días</li>
+      <li>Presentar en 3 minutos ante el grupo: situación actual y propuesta de hoja de ruta</li>
+    </ol>
+  </div>
+  <div class="box bm"><div class="bt">🏆 RETO DE APLICACIÓN — Entregable del Bloque</div>
+    <p>Redactar un <strong>brief ejecutivo de 1 página</strong> para la dirección de una empresa de tu sector: (a) diagnóstico de madurez analítica actual, (b) 1 caso de uso de IA con potencial de impacto medible, (c) riesgos éticos identificados y cómo mitigarlos, (d) inversión estimada y retorno esperado.</p>
   </div>
 </div>
 
 <!-- ═══ SESIÓN 2 ═══ -->
 <div class="slide" data-s="1">
   <h2>Sesión 2 <span style="color:var(--cyan)">— Estadística Descriptiva para Decisiones Empresariales</span></h2>
-  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
-    <p>La estadística descriptiva es el <strong>espejo retrovisor de tu negocio</strong>. No te dice a dónde ir (eso es la predictiva), pero te muestra exactamente dónde has estado, a qué velocidad y si hay obstáculos que debiste haber evitado. Sin ese espejo, manejas a ciegas por el pasado.</p>
+  <div class="box bm"><div class="bt">🎭 METÁFORA DE APERTURA</div>
+    <p>La estadística descriptiva es el <strong>espejo retrovisor de tu negocio</strong>. No te dice a dónde ir (eso lo hace la estadística predictiva), pero te muestra exactamente dónde has estado, a qué velocidad ibas y si había obstáculos que debiste haber evitado. Sin ese espejo, conduces a ciegas mirando solo hacia adelante.</p>
   </div>
   <div class="cg c3" style="margin-top:14px;">
-    <div class="card c"><h3>Variables Cuantitativas</h3><p>Numéricas continuas (temperatura, tiempo, costo) o discretas (unidades, número de fallas). Permiten operaciones matemáticas.</p></div>
-    <div class="card v"><h3>Variables Cualitativas</h3><p>Nominales (tipo de falla, proveedor) u ordinales (nivel de calidad: A/B/C). Requieren codificación para ML.</p></div>
-    <div class="card g"><h3>Escalas de Medición</h3><p>Nominal &lt; Ordinal &lt; Intervalo &lt; Razón. La escala determina qué operaciones estadísticas son válidas.</p></div>
+    <div class="card c"><h3>Variables Cuantitativas</h3><p>Numéricas continuas (temperatura, tiempo de ciclo, costo de flete) o discretas (unidades producidas, número de fallas). Permiten operaciones matemáticas directas.</p></div>
+    <div class="card v"><h3>Variables Cualitativas</h3><p>Nominales (tipo de falla, proveedor, región) u ordinales (nivel de calidad: Alto/Medio/Bajo). Se codifican para análisis estadístico.</p></div>
+    <div class="card g"><h3>Escalas de Medición</h3><p>Nominal → Ordinal → Intervalo → Razón. La escala determina qué operaciones estadísticas son válidas. No todos los promedios tienen sentido.</p></div>
   </div>
 </div>
 
 <div class="slide" data-s="1">
-  <h2>Medidas de Tendencia Central y Dispersión</h2>
+  <h2>Medidas de Tendencia Central: ¿Dónde Está el Centro?</h2>
   <div class="cg c2">
     <div class="card c">
-      <h3>Tendencia Central — ¿Dónde está el centro?</h3>
-      <ul>
-        <li><strong>Media (μ)</strong>: promedio aritmético. Sensible a valores extremos.</li>
-        <li><strong>Mediana</strong>: valor central al ordenar. Robusta ante outliers.</li>
-        <li><strong>Moda</strong>: valor más frecuente. Útil en variables categóricas.</li>
-      </ul>
-      <div class="box bd" style="margin-top:8px;"><div class="bt">💡 REGLA PRÁCTICA</div>
-        <p>Si la media ≫ mediana: distribución sesgada a la derecha (outliers altos). Usa mediana para salarios, tiempos de entrega, precios de vivienda.</p>
-      </div>
+      <h3>Las 3 Medidas Clave</h3>
+      <table style="margin-top:8px;">
+        <tr><th>Medida</th><th>Qué mide</th><th>Cuándo usarla</th></tr>
+        <tr><td><strong>Media (μ)</strong></td><td>Promedio aritmético</td><td>Datos sin valores extremos. Sensible a outliers.</td></tr>
+        <tr><td><strong>Mediana</strong></td><td>Valor central al ordenar</td><td>Salarios, tiempos de entrega, precios. Robusta ante outliers.</td></tr>
+        <tr><td><strong>Moda</strong></td><td>Valor más frecuente</td><td>Variables categóricas: tipo de falla más común, producto más vendido.</td></tr>
+      </table>
     </div>
     <div class="card v">
-      <h3>Dispersión — ¿Qué tan dispersos están?</h3>
-      <ul>
-        <li><strong>Varianza (σ²)</strong>: promedio de desviaciones al cuadrado</li>
-        <li><strong>Desviación estándar (σ)</strong>: raíz de la varianza, mismas unidades que los datos</li>
-        <li><strong>Rango intercuartílico (IQR)</strong>: Q3-Q1, robusto ante outliers</li>
-        <li><strong>Coeficiente de variación</strong>: σ/μ × 100 — compara dispersión de variables con distinta escala</li>
-      </ul>
+      <h3>¿Cuándo el Promedio Miente?</h3>
+      <p>Si la <strong>media es muy mayor que la mediana</strong>, la distribución está sesgada hacia la derecha: hay valores extremos altos que "jalan" el promedio hacia arriba.</p>
+      <div class="box bd" style="margin-top:8px;"><div class="bt">💡 EJEMPLO</div>
+        <p>Empresa con 10 empleados: 9 ganan $12,000 y el director gana $200,000. <br>Media = $29,800 · Mediana = $12,000.<br>¿Cuál refleja mejor la realidad de los empleados?</p>
+      </div>
     </div>
   </div>
-  <div class="box bc"><div class="bt">📰 CASO REAL — El promedio que engaña</div>
-    <p>Una planta manufacturera reportaba tiempo promedio de ciclo de 4.2 min/pieza (excelente). Pero la desviación estándar era 3.1 min — altísima. Algunas piezas tomaban 12+ min. La línea tenía un cuello de botella oculto que el promedio enmascaraba. El análisis de distribución reveló el problema real.</p>
-  </div>
 </div>
 
 <div class="slide" data-s="1">
-  <h2>Visualización Estadística: El Arte de Mostrar Datos</h2>
+  <h2>Medidas de Dispersión: ¿Qué Tan Homogéneos Son los Datos?</h2>
   <div class="cg c3">
-    <div class="card c"><h3>Histograma</h3><p>Distribución de una variable continua. Revela: forma (normal, sesgada, bimodal), outliers y la "personalidad" del proceso.</p>
-    <pre>import matplotlib.pyplot as plt
-plt.hist(df['tiempo_ciclo'],
-  bins=30, color='#06b6d4')
-plt.xlabel('Minutos')
-plt.show()</pre></div>
-    <div class="card v"><h3>Diagrama de Caja (Boxplot)</h3><p>Muestra mediana, cuartiles y outliers en una sola figura. Ideal para comparar múltiples grupos.</p>
-    <pre>import seaborn as sns
-sns.boxplot(data=df,
-  x='turno', y='defectos',
-  palette='viridis')</pre></div>
-    <div class="card g"><h3>Tabla de Frecuencia</h3><p>Resumen de distribución de categorías. Primer paso del análisis univariado para variables categóricas.</p>
-    <pre>freq = (df['tipo_falla']
-  .value_counts(normalize=True)
-  .mul(100).round(1))
-print(freq)</pre></div>
+    <div class="card o">
+      <h3>Rango</h3>
+      <p>Diferencia entre el máximo y el mínimo. Fácil de calcular pero muy sensible a outliers.</p>
+      <p style="color:var(--muted);font-size:.82rem;">Rango = Máx – Mín</p>
+    </div>
+    <div class="card c">
+      <h3>Desviación Estándar (σ)</h3>
+      <p>Mide cuánto se alejan los datos del promedio, en las mismas unidades que los datos. Es la medida de variabilidad más usada en la industria.</p>
+      <p style="color:var(--muted);font-size:.82rem;">σ pequeña = proceso estable · σ grande = proceso variable e impredecible</p>
+    </div>
+    <div class="card v">
+      <h3>Rango Intercuartílico (IQR)</h3>
+      <p>Diferencia entre el percentil 75 (Q3) y el percentil 25 (Q1). Contiene el 50% central de los datos. Robusto ante valores extremos.</p>
+      <p style="color:var(--muted);font-size:.82rem;">IQR = Q3 – Q1<br>Outliers: &lt; Q1 – 1.5×IQR  o  &gt; Q3 + 1.5×IQR</p>
+    </div>
   </div>
-  <div class="box bl"><div class="bt">🔬 LABORATORIO PYTHON</div>
-    <p>Dataset de producción/logística: (1) Calcular media, mediana, moda, IQR para cada variable numérica; (2) Histogramas y boxplots; (3) Identificar outliers con regla IQR (Q1-1.5×IQR, Q3+1.5×IQR); (4) Redactar reporte estadístico ejecutivo de 1 página.</p>
+  <div class="box bc"><div class="bt">📰 CASO REAL — La desviación que reveló el problema</div>
+    <p>Una planta manufacturera reportaba tiempo promedio de ciclo de <strong>4.2 minutos/pieza</strong> — aparentemente excelente. Pero la desviación estándar era 3.1 minutos. Algunas piezas tomaban 12+ minutos. La línea tenía un cuello de botella oculto que el promedio enmascaraba. Solo al ver la distribución completa se identificó la máquina problemática.</p>
   </div>
 </div>
 
 <div class="slide" data-s="1">
-  <h2>Estadística en Acción: Análisis de KPIs Industriales</h2>
+  <h2>Visualización Estadística: El Arte de Mostrar los Datos</h2>
+  <table>
+    <tr><th>Gráfico</th><th>¿Qué muestra?</th><th>Mejor para...</th></tr>
+    <tr><td><strong>Histograma</strong></td><td>Distribución de frecuencias de una variable continua</td><td>Ver si el proceso es normal, sesgado o bimodal. Detectar outliers visualmente.</td></tr>
+    <tr><td><strong>Diagrama de Caja (Boxplot)</strong></td><td>Mediana, Q1, Q3, bigotes y outliers</td><td>Comparar múltiples grupos: ¿el turno A produce más defectos que el turno B?</td></tr>
+    <tr><td><strong>Gráfico de Dispersión</strong></td><td>Relación entre dos variables numéricas</td><td>Identificar correlaciones antes de construir un modelo predictivo.</td></tr>
+    <tr><td><strong>Gráfico de Líneas</strong></td><td>Evolución de una variable en el tiempo</td><td>Monitorear KPIs, detectar tendencias, estacionalidad o anomalías.</td></tr>
+    <tr><td><strong>Heatmap de Correlación</strong></td><td>Fuerza de relación entre múltiples variables</td><td>Identificar qué variables están más relacionadas antes de un análisis.</td></tr>
+  </table>
+  <div class="box bd"><div class="bt">💡 REGLA DE ORO</div>
+    <p>Antes de cualquier análisis: <strong>visualiza tus datos</strong>. Los números resumen, pero las gráficas revelan patrones, outliers y problemas que las tablas ocultan. "Grafica primero, calcula después" es el mantra del analista de datos.</p>
+  </div>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>Estadística Descriptiva en KPIs Industriales</h2>
   <div class="cg c2">
     <div class="card o">
-      <h3>KPIs con Estadística — Manufactura</h3>
+      <h3>Manufactura — OEE y Calidad</h3>
       <ul>
-        <li><strong>OEE</strong> (Overall Equipment Effectiveness): media × disponibilidad × calidad</li>
-        <li>Desviación estándar del OEE por turno → variabilidad del proceso</li>
-        <li>Histograma de tiempo entre fallas (MTBF) → distribución exponencial</li>
-        <li>Boxplot de defectos por operador → identificar variabilidad humana</li>
+        <li>OEE (Overall Equipment Effectiveness): media de disponibilidad × rendimiento × calidad</li>
+        <li>Desviación estándar del OEE por turno → variabilidad entre operadores</li>
+        <li>Distribución del Tiempo Entre Fallas (MTBF) → vida útil del equipo</li>
+        <li>Boxplot de defectos por proveedor → identificar proveedores inconsistentes</li>
       </ul>
     </div>
     <div class="card c">
-      <h3>KPIs con Estadística — Logística/Transporte</h3>
+      <h3>Logística y Transporte</h3>
       <ul>
-        <li>Distribución de tiempos de entrega: ¿normal o sesgada?</li>
-        <li>Percentil 95 del tiempo de entrega: promesa de servicio confiable</li>
-        <li>IQR de costos de flete por ruta: detectar rutas anómalas</li>
-        <li>Histograma de ocupación de vehículos: capacidad subutilizada</li>
+        <li>Distribución de tiempos de entrega: ¿normal o sesgada a la derecha?</li>
+        <li>Percentil 95 del tiempo de entrega: promesa de servicio confiable al cliente</li>
+        <li>IQR del costo de flete por ruta: detectar rutas anómalas o ineficientes</li>
+        <li>Histograma de ocupación de vehículos: identificar capacidad subutilizada</li>
       </ul>
     </div>
   </div>
-  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Click para ver respuesta</div>
-    <p>Una empresa reporta que el tiempo promedio de entrega es 2.3 días. El cliente se queja de que "siempre llega tarde". ¿Qué estadística adicional pedirías para entender el problema real?</p>
-    <div class="qa"><strong>Mediana</strong> (para saber si el promedio está distorsionado por casos extremos), <strong>desviación estándar</strong> (alta variabilidad = entregas impredecibles), <strong>percentil 90</strong> (si el P90 es 5 días, el 10% de los clientes espera mucho más que el promedio) y <strong>distribución por zona o cliente</strong> (¿hay segmentos que siempre llegan tarde?). El promedio solo cuenta la mitad de la historia.</div>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Click para revelar respuesta</div>
+    <p>Una empresa reporta que el tiempo promedio de entrega es 2.3 días y el cliente se queja de que "siempre llega tarde". ¿Qué estadística adicional pedirías para entender el problema real?</p>
+    <div class="qa"><strong>Mediana</strong> (¿está el promedio distorsionado por casos extremos?), <strong>desviación estándar</strong> (alta variabilidad = entregas impredecibles, el promedio no sirve como promesa), <strong>percentil 90</strong> (si es 5 días, el 10% de los clientes espera más del doble del promedio) y <strong>distribución por zona o cliente</strong> (¿hay segmentos con sistematicamente peor servicio?). El promedio solo cuenta la mitad de la historia.</div>
+  </div>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>Sesión 2 — Práctica y Reto de Aplicación</h2>
+  <div class="box bl"><div class="bt">🔬 ACTIVIDAD PRÁCTICA — Análisis Estadístico en Excel</div>
+    <p><strong>Instrucciones (individual o en pareja):</strong></p>
+    <ol style="margin-top:8px;">
+      <li>Abrir la tabla de datos de producción/logística proporcionada (hoja de Excel)</li>
+      <li>Calcular: media, mediana, moda, desviación estándar, mínimo, máximo e IQR para cada variable numérica</li>
+      <li>Crear un histograma de la variable "tiempo de ciclo" o "tiempo de entrega"</li>
+      <li>Identificar al menos 2 outliers usando la regla IQR (Q1 – 1.5×IQR, Q3 + 1.5×IQR)</li>
+      <li>Redactar 3 conclusiones gerenciales basadas en los números (ej: "El proceso es altamente variable y se recomienda...")</li>
+    </ol>
+  </div>
+  <div class="box bm"><div class="bt">🏆 RETO DE APLICACIÓN — Entregable</div>
+    <p>Recolectar datos reales de tu área laboral o empresa (mínimo 20 observaciones de cualquier variable numérica: tiempos, costos, unidades, calificaciones). Calcular las 5 medidas estadísticas clave, crear 2 gráficos, identificar outliers y redactar un reporte ejecutivo de media página con hallazgos y recomendaciones para la gerencia.</p>
   </div>
 </div>
 
 <!-- ═══ SESIÓN 3 ═══ -->
 <div class="slide" data-s="2">
   <h2>Sesión 3 <span style="color:var(--green)">— Estadística Inferencial y Pruebas de Hipótesis</span></h2>
-  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
-    <p>La estadística inferencial es como <strong>probar la sopa con una cucharada</strong> sin tener que comerte toda la olla. A partir de una muestra bien tomada, puedes hacer afirmaciones sobre toda la población con un nivel de confianza cuantificable. El truco está en saber cuándo la "cucharada" representa bien a la "olla" completa.</p>
+  <div class="box bm"><div class="bt">🎭 METÁFORA DE APERTURA</div>
+    <p>La estadística inferencial es como <strong>probar la sopa con una cucharada sin comerte toda la olla</strong>. A partir de una muestra bien tomada, puedes hacer afirmaciones sobre toda la población con un nivel de confianza cuantificable. El truco está en saber cuándo esa "cucharada" realmente representa la "olla" completa — y cuándo es solo la capa de arriba.</p>
   </div>
   <div class="cg c3" style="margin-top:14px;">
-    <div class="card g"><h3>Muestreo</h3><p>Seleccionar un subconjunto representativo de la población. Muestreo aleatorio simple, estratificado, por conglomerados. El tamaño de muestra determina el margen de error.</p></div>
-    <div class="card c"><h3>Estimación Puntual</h3><p>Usar un estadístico muestral (ẋ, p̂) para estimar el parámetro poblacional (μ, π). La estimación es exacta en la muestra, aproximada para la población.</p></div>
-    <div class="card v"><h3>Intervalo de Confianza</h3><p>Rango probable donde cae el parámetro poblacional. "Con 95% de confianza, el costo promedio de falla está entre $12,400 y $15,600."</p></div>
+    <div class="card g"><h3>Población vs. Muestra</h3><p>La población es el conjunto completo (todos los camiones, todas las piezas, todos los clientes). La muestra es el subconjunto que analizamos. El objetivo es inferir propiedades de la población a partir de la muestra.</p></div>
+    <div class="card c"><h3>Muestreo Representativo</h3><p>No toda muestra vale. Un muestreo sesgado produce conclusiones erróneas. Tipos: aleatorio simple, estratificado (por turno, región, proveedor), sistemático (cada N piezas) y por conglomerados.</p></div>
+    <div class="card v"><h3>Intervalo de Confianza</h3><p>Rango en el que probablemente cae el parámetro real de la población. "Con 95% de confianza, el costo promedio de falla está entre $12,400 y $15,600." No es exacto, pero es cuantificable.</p></div>
   </div>
 </div>
 
 <div class="slide" data-s="2">
   <h2>Pruebas de Hipótesis: Tomar Decisiones con Evidencia</h2>
   <ul class="tl">
-    <li><div class="st c">H₀</div><div class="content"><h4>Hipótesis Nula (H₀)</h4><p>La afirmación de "no hay efecto / no hay diferencia". Se rechaza solo con evidencia suficiente. Ej: "El nuevo proveedor NO reduce el tiempo de entrega."</p></div></li>
-    <li><div class="st v">H₁</div><div class="content"><h4>Hipótesis Alternativa (H₁)</h4><p>Lo que queremos demostrar con los datos. Ej: "El nuevo proveedor SÍ reduce el tiempo de entrega."</p></div></li>
-    <li><div class="st g">p</div><div class="content"><h4>p-value</h4><p>Probabilidad de observar los datos actuales (o más extremos) si H₀ fuera verdadera. Si p &lt; 0.05 → evidencia suficiente para rechazar H₀.</p></div></li>
-    <li><div class="st o">α</div><div class="content"><h4>Nivel de Significancia (α)</h4><p>Umbral de decisión. α = 0.05 es el estándar. Implica 5% de probabilidad de cometer Error Tipo I (rechazar H₀ cuando es verdadera).</p></div></li>
+    <li><div class="st c">H₀</div><div class="content"><h4>Hipótesis Nula (H₀) — La posición de "no hay cambio"</h4><p>Afirma que no existe diferencia o efecto significativo. Es la hipótesis que se pone a prueba. Ej: "El nuevo proveedor NO reduce el tiempo de entrega."</p></div></li>
+    <li><div class="st v">H₁</div><div class="content"><h4>Hipótesis Alternativa (H₁) — Lo que queremos demostrar</h4><p>Afirma que sí existe un efecto real. Se acepta solo si la evidencia es suficientemente fuerte. Ej: "El nuevo proveedor SÍ reduce el tiempo de entrega."</p></div></li>
+    <li><div class="st g">p</div><div class="content"><h4>p-value — La probabilidad de equivocarse al rechazar H₀</h4><p>Probabilidad de observar estos datos (o más extremos) si H₀ fuera verdadera. Si p &lt; 0.05 → hay evidencia suficiente para rechazar H₀ y aceptar H₁.</p></div></li>
+    <li><div class="st o">α</div><div class="content"><h4>Nivel de Significancia (α) — El umbral de decisión</h4><p>Estándar: α = 0.05 (5%). Significa que aceptamos un 5% de probabilidad de rechazar H₀ cuando en realidad era verdadera (Error Tipo I: "falsa alarma").</p></div></li>
   </ul>
-  <div class="box bd"><div class="bt">💡 DATO CLAVE — El p-value NO dice lo que crees</div>
-    <p>p &lt; 0.05 NO significa que H₁ tiene 95% de probabilidad de ser verdadera. Significa que si H₀ fuera verdadera, habría solo 5% de probabilidad de ver estos datos. Distinción sutil pero crítica para no sobre-interpretar resultados.</p>
-  </div>
 </div>
 
 <div class="slide" data-s="2">
-  <h2>Pruebas Estadísticas: Cuál Usar en Cada Caso</h2>
+  <h2>¿Qué Prueba Estadística Usar?</h2>
   <table>
-    <tr><th>Situación</th><th>Prueba</th><th>Ejemplo Industrial</th></tr>
-    <tr><td>Comparar media de 1 grupo vs valor conocido</td><td>t-test de 1 muestra</td><td>¿El rendimiento medio de la planta es igual al estándar de 95%?</td></tr>
-    <tr><td>Comparar medias de 2 grupos independientes</td><td>t-test de 2 muestras</td><td>¿El turno A y turno B producen la misma cantidad de defectos?</td></tr>
-    <tr><td>Comparar medias de 3+ grupos</td><td>ANOVA de una vía</td><td>¿Hay diferencia significativa en tiempo de ciclo entre 4 líneas de producción?</td></tr>
-    <tr><td>Comparar antes y después (mismas unidades)</td><td>t-test pareado</td><td>¿El mantenimiento preventivo redujo el tiempo de falla en las mismas máquinas?</td></tr>
-    <tr><td>Comparar proporciones</td><td>Prueba Z para proporción</td><td>¿El porcentaje de defectos bajó de 3% a 1.8% después del cambio de proveedor?</td></tr>
+    <tr><th>Situación</th><th>Prueba</th><th>Ejemplo en Industria</th></tr>
+    <tr><td>Comparar media de 1 grupo vs valor de referencia</td><td>t-test de 1 muestra</td><td>¿El rendimiento de la planta es igual al estándar de 95%?</td></tr>
+    <tr><td>Comparar medias de 2 grupos independientes</td><td>t-test de 2 muestras</td><td>¿El turno A y el turno B producen igual número de defectos?</td></tr>
+    <tr><td>Comparar medias de 3 o más grupos</td><td>ANOVA de una vía</td><td>¿Hay diferencia entre 4 líneas de producción en tiempo de ciclo?</td></tr>
+    <tr><td>Comparar antes y después en las mismas unidades</td><td>t-test pareado</td><td>¿El mantenimiento preventivo redujo fallas en las mismas máquinas?</td></tr>
+    <tr><td>Comparar proporciones (% de defectos, % de entregas a tiempo)</td><td>Prueba Z para proporción</td><td>¿Los defectos bajaron de 3% a 1.8% tras cambiar de proveedor?</td></tr>
   </table>
-  <div class="box bl"><div class="bt">🔬 LABORATORIO — Python + SciPy</div>
-    <pre>from scipy import stats
-# t-test dos muestras
-turno_a = df[df['turno']=='A']['defectos']
-turno_b = df[df['turno']=='B']['defectos']
-t_stat, p_valor = stats.ttest_ind(turno_a, turno_b)
-print(f"p-value: {p_valor:.4f}")
-if p_valor &lt; 0.05:
-    print("Diferencia estadísticamente significativa")</pre>
+  <div class="box bd"><div class="bt">💡 DATO CLAVE — Lo que p-value NO significa</div>
+    <p>Un p &lt; 0.05 NO quiere decir que H₁ tiene 95% de probabilidad de ser verdadera. Significa que si H₀ fuera verdadera, solo habría 5% de probabilidad de ver estos datos. Esta distinción es sutil pero crítica para no sobre-interpretar resultados estadísticos en reportes ejecutivos.</p>
   </div>
 </div>
 
 <div class="slide" data-s="2">
-  <h2>Distribución Normal y Teorema del Límite Central</h2>
+  <h2>Distribución Normal y el Teorema del Límite Central</h2>
   <div class="cg c2">
     <div class="card v">
-      <h3>La Campana de Gauss en la Industria</h3>
+      <h3>La Curva Campana en la Industria</h3>
       <ul>
-        <li>La mayoría de procesos naturales siguen una distribución aproximadamente normal</li>
-        <li>Regla 68-95-99.7: el 68% de datos cae en μ ± 1σ; 95% en μ ± 2σ; 99.7% en μ ± 3σ</li>
-        <li>Control de calidad Six Sigma: reducir variabilidad a ±6σ → 3.4 defectos por millón</li>
-        <li>Verificar normalidad: histograma + Q-Q plot + prueba Shapiro-Wilk</li>
+        <li>La mayoría de procesos industriales bien controlados siguen una distribución aproximadamente normal</li>
+        <li><strong>Regla 68-95-99.7:</strong> el 68% de datos cae en μ ± 1σ; 95% en μ ± 2σ; 99.7% en μ ± 3σ</li>
+        <li>Control de calidad Six Sigma: reducir variabilidad a ±6σ → solo 3.4 defectos por millón de oportunidades</li>
+        <li>Verificación de normalidad: histograma simétrico + Q-Q plot en línea recta</li>
       </ul>
     </div>
     <div class="card g">
       <h3>Teorema del Límite Central (TLC)</h3>
-      <p>La distribución de las medias muestrales se aproxima a una normal, <strong>sin importar la distribución original</strong>, cuando el tamaño de muestra es suficientemente grande (n ≥ 30).</p>
-      <p style="margin-top:8px;color:var(--muted);font-size:.82rem;">Implicación práctica: puedo usar pruebas basadas en la normal (t-test, z-test) incluso si mis datos de producción no son normales, siempre que tome muestras suficientemente grandes.</p>
+      <p>La distribución de los promedios de muchas muestras se acerca a una distribución normal, <strong>sin importar la distribución original</strong>, cuando cada muestra tiene al menos 30 observaciones.</p>
+      <p style="margin-top:8px;color:var(--muted);font-size:.82rem;">Implicación práctica: puedo usar pruebas estadísticas basadas en la normal incluso si mis datos de producción no son perfectamente normales, siempre que tome muestras suficientemente grandes.</p>
     </div>
   </div>
-  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Click para ver respuesta</div>
-    <p>Una empresa automotriz introduce un nuevo adhesivo estructural. Toma 25 muestras de fuerza de adhesión. Obtiene t = 2.8 y p = 0.009 comparando con el adhesivo anterior. ¿Qué concluyes?</p>
-    <div class="qa">Con p = 0.009 &lt; 0.05, existe evidencia estadísticamente significativa de que hay una diferencia en la fuerza de adhesión. Sin embargo, significancia estadística ≠ significancia práctica. Debes también verificar: (1) el tamaño del efecto (¿cuánto mayor es la fuerza?), (2) si la diferencia es relevante para el proceso de ensamble, (3) si n=25 es representativo de la variabilidad de producción real.</div>
+  <div class="box bc"><div class="bt">📰 CASO REAL — Validar una mejora con datos</div>
+    <p>Una empresa transportista mexicana introdujo un nuevo proveedor de llantas que supuestamente aumentaba la vida útil. Se tomaron 30 vehículos con llantas viejas y 30 con las nuevas, midiendo km recorridos hasta desgaste. Con t-test de 2 muestras, p = 0.003 → evidencia estadística sólida de que las llantas nuevas duran más. La decisión de cambio de proveedor se sustentó con datos, no con intuición.</p>
+  </div>
+</div>
+
+<div class="slide" data-s="2">
+  <h2>Sesión 3 — Evaluación y Reto de Aplicación</h2>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Click para revelar respuesta</div>
+    <p>Una empresa implementa un nuevo proceso de soldadura. Mide la resistencia de 25 uniones antes y después del cambio. Obtiene t = 2.8 y p = 0.009 con un t-test pareado. ¿Qué concluye y qué acción gerencial toma?</p>
+    <div class="qa">Con p = 0.009 &lt; 0.05, existe <strong>evidencia estadísticamente significativa</strong> de que el nuevo proceso produce uniones con diferente resistencia. Sin embargo, significancia estadística ≠ significancia práctica. Debes también verificar: (1) ¿cuánto mayor es la resistencia en términos concretos?, (2) ¿la diferencia es suficiente para justificar el cambio de proceso considerando los costos?, (3) n=25 es moderado — confirmar con más muestras antes de cambiar toda la línea.</div>
+  </div>
+  <div class="box bl"><div class="bt">🔬 ACTIVIDAD PRÁCTICA — Interpretar Resultados Estadísticos</div>
+    <p><strong>Escenario:</strong> Se te presenta una tabla con resultados de pruebas estadísticas pre-calculadas para 3 escenarios industriales (mantenimiento, logística, calidad). Para cada uno debes:</p>
+    <ol style="margin-top:8px;">
+      <li>Identificar si se rechaza o no H₀ según el p-value</li>
+      <li>Redactar la conclusión en lenguaje de negocio (sin jerga estadística)</li>
+      <li>Proponer la acción gerencial que se derivaría del resultado</li>
+      <li>Señalar al menos una limitación del análisis o dato que faltaría pedir</li>
+    </ol>
   </div>
 </div>
 
 <!-- ═══ SESIÓN 4 ═══ -->
 <div class="slide" data-s="3">
   <h2>Sesión 4 <span style="color:var(--orange)">— Modelos de Regresión para Predicción Empresarial</span></h2>
-  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
-    <p>La regresión lineal es como <strong>tender un cable de tensión entre puntos de datos dispersos</strong>. El modelo busca la línea que minimiza la distancia total de todos los puntos al cable. Una vez que tienes ese cable, puedes deslizarte por él hacia el futuro y decir: "Si el input es X, el output esperado es Y." Eso es predicción.</p>
+  <div class="box bm"><div class="bt">🎭 METÁFORA DE APERTURA</div>
+    <p>La regresión lineal es como <strong>tender un cable de tensión entre puntos de datos dispersos</strong>. El modelo busca la línea recta que minimiza la distancia total de todos los puntos al cable. Una vez que tienes ese cable, puedes deslizarte por él hacia el futuro y decir: "Si el input es X, el output esperado será Y." Eso es predicción cuantificable.</p>
   </div>
   <div class="cg c3" style="margin-top:14px;">
-    <div class="card o"><h3>Correlación de Pearson</h3><p>Mide la fuerza y dirección de la relación lineal entre dos variables. Rango: -1 a +1. &gt;0.7 = correlación fuerte. Pero correlación ≠ causalidad.</p></div>
-    <div class="card c"><h3>Regresión Lineal Simple</h3><p>Y = β₀ + β₁X + ε. Un predictor. Interpreta β₁: "por cada unidad adicional de X, Y aumenta/disminuye en β₁ unidades, manteniendo todo lo demás constante."</p></div>
-    <div class="card v"><h3>Regresión Lineal Múltiple</h3><p>Y = β₀ + β₁X₁ + β₂X₂ + ... + βₙXₙ. Varios predictores. Cuidado: multicolinealidad (predictores muy correlacionados entre sí distorsionan los coeficientes).</p></div>
+    <div class="card o"><h3>Correlación de Pearson</h3><p>Mide la fuerza y dirección de la relación lineal entre dos variables. Rango: de -1 a +1. Mayor a 0.7 = correlación fuerte. Importante: <em>correlación no implica causalidad.</em></p></div>
+    <div class="card c"><h3>Regresión Simple</h3><p>Una variable para predecir otra. Ejemplo: temperatura → consumo de energía. La ecuación Y = a + bX permite calcular predicciones directamente.</p></div>
+    <div class="card v"><h3>Regresión Múltiple</h3><p>Varios factores predicen simultáneamente una variable objetivo. Ejemplo: precio + temporada + zona → demanda de producto. Más precisa pero más difícil de interpretar.</p></div>
   </div>
 </div>
 
 <div class="slide" data-s="3">
-  <h2>Construyendo un Modelo de Regresión con Python</h2>
-  <div class="cg c2">
-    <div class="card c">
-      <h3>Flujo de Trabajo Completo</h3>
-      <ul>
-        <li><strong>1. EDA</strong>: scatter plot X vs Y, correlaciones</li>
-        <li><strong>2. Dividir</strong>: 80% train / 20% test</li>
-        <li><strong>3. Entrenar</strong>: ajustar el modelo en train</li>
-        <li><strong>4. Evaluar</strong>: medir error en test (datos no vistos)</li>
-        <li><strong>5. Interpretar</strong>: coeficientes + intervalos de confianza</li>
-        <li><strong>6. Comunicar</strong>: traducir al lenguaje del negocio</li>
-      </ul>
-    </div>
-    <div class="card v">
-      <h3>Código Esencial</h3>
-      <pre>from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import r2_score, mean_squared_error
-import numpy as np
-
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42)
-
-model = LinearRegression()
-model.fit(X_train, y_train)
-
-y_pred = model.predict(X_test)
-r2 = r2_score(y_test, y_pred)
-rmse = np.sqrt(mean_squared_error(y_test, y_pred))
-print(f"R²: {r2:.3f} | RMSE: {rmse:.2f}")</pre>
-    </div>
+  <h2>Cómo Funciona un Modelo de Regresión — Sin Matemáticas Avanzadas</h2>
+  <div class="ld">
+    <div class="lr" style="background:rgba(245,158,11,.1);border:1px solid var(--orange);color:var(--orange);">📊 PASO 1 — DATOS HISTÓRICOS: Recopilar pares (X, Y) de observaciones pasadas. Ej: (horas trabajadas, unidades producidas) para 100 semanas.</div>
+    <div class="lr" style="background:rgba(6,182,212,.1);border:1px solid var(--cyan);color:var(--cyan);">📈 PASO 2 — ENCONTRAR LA LÍNEA: El algoritmo ajusta una recta que pase "lo más cerca posible" de todos los puntos. La distancia de cada punto a la línea se llama "residual" o error.</div>
+    <div class="lr" style="background:rgba(16,185,129,.1);border:1px solid var(--green);color:var(--green);">✅ PASO 3 — VALIDAR: Medir qué tan bien predice el modelo en datos que NO usó para entrenarse. Si predice bien datos nuevos, el modelo es confiable para el futuro.</div>
+    <div class="lr" style="background:rgba(124,58,237,.1);border:1px solid var(--violet);color:var(--violet);">🔮 PASO 4 — PREDECIR: Con la ecuación del modelo, ingresar nuevos valores de X y obtener la predicción de Y. La dirección recibe el pronóstico con su intervalo de confianza.</div>
+  </div>
+  <div class="box bd"><div class="bt">💡 LA ECUACIÓN EN PALABRAS</div>
+    <p>Demanda prevista = 420 + (3.2 × temperatura) − (15 × días de lluvia) + (80 × si es fin de semana)<br>
+    Cada coeficiente dice: "si esta variable sube 1 unidad, la demanda cambia en X unidades, manteniendo todo lo demás igual."</p>
   </div>
 </div>
 
 <div class="slide" data-s="3">
   <h2>Métricas de Evaluación de Modelos Predictivos</h2>
   <table>
-    <tr><th>Métrica</th><th>Fórmula</th><th>Interpretación</th><th>Cuándo usarla</th></tr>
-    <tr><td><strong>R²</strong></td><td>1 - SS_res/SS_tot</td><td>% de varianza explicada por el modelo. 1.0 = perfecto, 0 = inútil.</td><td>Siempre. El primer número a reportar.</td></tr>
-    <tr><td><strong>RMSE</strong></td><td>√(Σ(y-ŷ)²/n)</td><td>Error en las mismas unidades que Y. Penaliza errores grandes.</td><td>Cuando los errores grandes son más costosos.</td></tr>
-    <tr><td><strong>MAE</strong></td><td>Σ|y-ŷ|/n</td><td>Error absoluto promedio. Más robusto ante outliers que RMSE.</td><td>Cuando todos los errores tienen el mismo peso.</td></tr>
-    <tr><td><strong>MAPE</strong></td><td>Σ|y-ŷ|/y × 100</td><td>Error porcentual promedio. Intuitivo para la dirección.</td><td>Comparar modelos con escalas distintas.</td></tr>
+    <tr><th>Métrica</th><th>¿Qué mide?</th><th>Interpretación práctica</th></tr>
+    <tr><td><strong>R² (R cuadrada)</strong></td><td>% de la variación en Y que explica el modelo</td><td>R² = 0.85 → el modelo explica el 85% de la variación. El 15% restante es por factores no incluidos.</td></tr>
+    <tr><td><strong>RMSE</strong></td><td>Error típico de predicción, en las mismas unidades que Y</td><td>RMSE = 50 unidades → en promedio, las predicciones se desvían ±50 unidades del valor real.</td></tr>
+    <tr><td><strong>MAE</strong></td><td>Error absoluto promedio</td><td>MAE = 35 unidades → la predicción típica se aleja 35 unidades. Más intuitivo que RMSE.</td></tr>
+    <tr><td><strong>MAPE</strong></td><td>Error porcentual promedio</td><td>MAPE = 8% → las predicciones se equivocan, en promedio, en un 8%. Fácil de comunicar a dirección.</td></tr>
   </table>
-  <div class="box bc"><div class="bt">📰 CASO REAL — Predicción de demanda en FEMSA</div>
-    <p>FEMSA implementó modelos de regresión múltiple para predecir la demanda de bebidas por punto de venta, incorporando variables de temperatura, días festivos, eventos locales y precios de la competencia. Resultado: reducción del 18% en desabasto y 12% en sobreinventario, mejorando el nivel de servicio a los distribuidores.</p>
+  <div class="box bc"><div class="bt">📰 CASO REAL — FEMSA y la predicción de demanda</div>
+    <p>FEMSA implementó modelos de regresión múltiple para predecir demanda de bebidas por punto de venta, incorporando temperatura, días festivos, eventos locales y precios de competencia. Resultado: <strong>reducción del 18% en desabasto</strong> (el distribuidor nunca se queda sin producto) y <strong>12% menos sobreinventario</strong> (menos producto vencido o perecedero).</p>
   </div>
 </div>
 
 <div class="slide" data-s="3">
-  <h2>Series de Tiempo: El Tiempo Como Predictor</h2>
+  <h2>Series de Tiempo: Cuando el Pasado Predice el Futuro</h2>
   <div class="cg c2">
     <div class="card o">
       <h3>Componentes de una Serie de Tiempo</h3>
       <ul>
-        <li><strong>Tendencia (T)</strong>: dirección general a largo plazo (crecimiento/decrecimiento)</li>
-        <li><strong>Estacionalidad (S)</strong>: patrón repetitivo en períodos fijos (ventas navideñas, clima)</li>
-        <li><strong>Ciclicidad (C)</strong>: fluctuaciones a largo plazo no periódicas (ciclos económicos)</li>
-        <li><strong>Ruido/Irregular (R)</strong>: variación aleatoria no explicable</li>
+        <li><strong>Tendencia (T):</strong> dirección general a largo plazo. Las ventas crecen 5% anual.</li>
+        <li><strong>Estacionalidad (S):</strong> patrón que se repite cada año, mes o semana. Ventas navideñas, verano, etc.</li>
+        <li><strong>Ciclicidad (C):</strong> fluctuaciones a largo plazo vinculadas a ciclos económicos.</li>
+        <li><strong>Ruido/Irregular (R):</strong> variación aleatoria no explicable. Eventos inesperados.</li>
       </ul>
-      <p style="margin-top:8px;font-size:.82rem;color:var(--muted);">Modelo aditivo: Y = T + S + C + R</p>
     </div>
     <div class="card g">
-      <h3>Métodos de Pronóstico</h3>
-      <ul>
-        <li><strong>Suavizamiento Exponencial</strong>: pesos mayores a datos recientes</li>
-        <li><strong>ARIMA</strong>: modelo autorregresivo + media móvil integrado</li>
-        <li><strong>Prophet (Facebook)</strong>: series con estacionalidad múltiple, fácil de usar</li>
-        <li><strong>LSTM</strong>: redes neuronales para series complejas</li>
-      </ul>
-      <pre style="margin-top:8px;">from prophet import Prophet
-model = Prophet(seasonality_mode='multiplicative')
-model.fit(df_train)
-forecast = model.predict(df_future)</pre>
+      <h3>Métodos de Pronóstico — Sin Código</h3>
+      <table style="margin-top:8px;">
+        <tr><th>Método</th><th>Cuándo usarlo</th></tr>
+        <tr><td>Promedio móvil</td><td>Datos estables sin tendencia clara</td></tr>
+        <tr><td>Suavizamiento exponencial</td><td>Pesos mayores a datos recientes</td></tr>
+        <tr><td>Regresión con variables de tiempo</td><td>Cuando hay tendencia lineal clara</td></tr>
+        <tr><td>Modelos automáticos (Prophet)</td><td>Estacionalidad múltiple, fácil de usar</td></tr>
+      </table>
     </div>
+  </div>
+</div>
+
+<div class="slide" data-s="3">
+  <h2>Sesión 4 — Evaluación y Reto de Aplicación</h2>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Click para revelar respuesta</div>
+    <p>Un modelo de predicción de demanda tiene R² = 0.62 y MAPE = 22%. La dirección pregunta: "¿Es bueno este modelo?" ¿Cómo responderías?</p>
+    <div class="qa">La respuesta depende del contexto. R² = 0.62 significa que el modelo explica el 62% de la variación — aceptable para datos de ventas muy volátiles, pero insuficiente si la demanda es estable. MAPE = 22% es alto: las predicciones se equivocan en promedio un 22%, lo que puede resultar costoso en inventarios. Acciones: (1) agregar variables explicativas (precio, promociones, clima), (2) verificar outliers en los datos de entrenamiento, (3) comparar contra el benchmark de predicción naïve (usar el valor del mes anterior). Un modelo es "bueno" si supera claramente al método más simple disponible y si su error es tolerable para el costo de las decisiones que soporta.</div>
+  </div>
+  <div class="box bl"><div class="bt">🔬 ACTIVIDAD PRÁCTICA — Interpretar un Modelo de Regresión</div>
+    <p><strong>Instrucciones:</strong> Se te proporciona una tabla de resultados de regresión (coeficientes, R², RMSE, gráfica de predicción vs real) ya calculada. Debes:</p>
+    <ol style="margin-top:8px;">
+      <li>Escribir la ecuación de predicción con los coeficientes dados</li>
+      <li>Calcular manualmente 3 predicciones usando la ecuación (calculadora o Excel)</li>
+      <li>Evaluar si el modelo es "suficientemente bueno" para tomar decisiones de inventario</li>
+      <li>Identificar qué variables adicionales mejorarían el modelo</li>
+      <li>Redactar 1 párrafo explicando el modelo a un gerente no técnico</li>
+    </ol>
   </div>
 </div>
 
 <!-- ═══ SESIÓN 5 ═══ -->
 <div class="slide" data-s="4">
   <h2>Sesión 5 <span style="color:var(--pink)">— IA Generativa, Prompt Engineering y Agentes LLM</span></h2>
-  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
-    <p>Un LLM es como un <strong>asistente con una biblioteca de millones de libros memorizada</strong>. No "piensa" como humano, sino que predice la siguiente palabra más probable dado el contexto. El prompt engineering es el arte de darle instrucciones tan precisas que las palabras más probables que genera son exactamente las que necesitas.</p>
+  <div class="box bm"><div class="bt">🎭 METÁFORA DE APERTURA</div>
+    <p>Un LLM es como un <strong>asistente que memorizó millones de libros, reportes y documentos</strong>, pero no "piensa" como un humano: predice cuál es la siguiente palabra más probable dado el contexto. El <em>prompt engineering</em> es el arte de darle instrucciones tan precisas y bien estructuradas que las palabras más probables que genera son exactamente las que tú necesitas.</p>
   </div>
   <div class="sr" style="margin-top:16px;">
-    <div class="stat"><div class="n" style="color:var(--pink)">GPT-4</div><div class="lbl" style="font-size:.72rem;color:var(--muted);">~1.76T parámetros estimados</div></div>
-    <div class="stat"><div class="n" style="color:var(--violet)">100T</div><div class="lbl" style="font-size:.72rem;color:var(--muted);">tokens de entrenamiento (GPT-4)</div></div>
-    <div class="stat"><div class="n" style="color:var(--cyan)">40%</div><div class="lbl" style="font-size:.72rem;color:var(--muted);">aumento de productividad en tareas de conocimiento (McKinsey 2023)</div></div>
+    <div class="stat"><div class="n" style="color:var(--pink)">GPT-4</div><div class="l">Modelo de lenguaje con ~1.76T parámetros estimados (OpenAI)</div></div>
+    <div class="stat"><div class="n" style="color:var(--violet)">40%</div><div class="l">Aumento de productividad en tareas de conocimiento con IA generativa (McKinsey, 2023)</div></div>
+    <div class="stat"><div class="n" style="color:var(--cyan)">300M</div><div class="l">Usuarios activos de ChatGPT en 2024 (OpenAI)</div></div>
+  </div>
+</div>
+
+<div class="slide" data-s="4">
+  <h2>¿Qué es un LLM y Por Qué Importa en la Industria?</h2>
+  <div class="cg c2">
+    <div class="card v">
+      <h3>Modelos de Lenguaje Grande (LLM)</h3>
+      <ul>
+        <li>Redes neuronales entrenadas con enormes cantidades de texto de internet, libros, código y documentos</li>
+        <li>Aprenden patrones estadísticos del lenguaje: qué palabras siguen a otras en qué contextos</li>
+        <li>Pueden generar texto, resumir, traducir, clasificar, responder preguntas, escribir código y analizar datos</li>
+        <li>No "entienden" en el sentido humano — son predicción estadística muy sofisticada</li>
+      </ul>
+    </div>
+    <div class="card c">
+      <h3>Casos de Uso Empresariales Inmediatos</h3>
+      <ul>
+        <li>Redacción automática de reportes ejecutivos a partir de datos</li>
+        <li>Clasificación y triaje de tickets de soporte o quejas de clientes</li>
+        <li>Extracción de información clave de contratos y licitaciones</li>
+        <li>Asistente de troubleshooting que consulta manuales técnicos</li>
+        <li>Generación de comunicados, correos y presentaciones</li>
+        <li>Análisis de sentimiento en encuestas de satisfacción</li>
+      </ul>
+    </div>
   </div>
 </div>
 
@@ -505,113 +574,139 @@ forecast = model.predict(df_future)</pre>
   <div class="cg c3">
     <div class="card c">
       <h3>Zero-Shot</h3>
-      <p>Sin ejemplos. El modelo usa su conocimiento general.</p>
-      <pre>"Clasifica este ticket de soporte en:
-[mecánico, eléctrico, software, otro]:
-'El motor hace un ruido al arrancar'"</pre>
+      <p>Sin ejemplos. El modelo usa su conocimiento general para realizar la tarea.</p>
+      <div class="box bd" style="margin-top:8px;"><div class="bt">EJEMPLO</div>
+        <p>"Clasifica este ticket de soporte en [mecánico / eléctrico / software / otro]: 'El motor hace un ruido al arrancar'"</p>
+      </div>
     </div>
     <div class="card v">
       <h3>Few-Shot</h3>
-      <p>Con 2-5 ejemplos. El modelo aprende el patrón.</p>
-      <pre>"Ejemplos:
-Input: 'pantalla negra' → software
-Input: 'fusible quemado' → eléctrico
-Input: 'vibración excesiva' → mecánico
-
-Ahora clasifica: 'aceite en el piso'"</pre>
+      <p>Con 2–5 ejemplos. El modelo aprende el patrón y lo aplica al nuevo caso.</p>
+      <div class="box bd" style="margin-top:8px;"><div class="bt">EJEMPLO</div>
+        <p>"Ejemplos: 'pantalla negra'→software · 'fusible quemado'→eléctrico · 'vibración excesiva'→mecánico<br>Ahora clasifica: 'aceite en el piso'"</p>
+      </div>
     </div>
     <div class="card g">
       <h3>Chain-of-Thought</h3>
-      <p>Fuerza al modelo a razonar paso a paso.</p>
-      <pre>"Analiza este KPI de producción:
-Eficiencia: 72%, Meta: 85%.
-Piensa paso a paso:
-1. ¿Cuál es la brecha?
-2. ¿Qué podría causarla?
-3. ¿Qué datos adicionales pides?
-4. ¿Qué recomiendas?"</pre>
+      <p>Se pide al modelo que razone paso a paso antes de dar la respuesta final.</p>
+      <div class="box bd" style="margin-top:8px;"><div class="bt">EJEMPLO</div>
+        <p>"Analiza este KPI: Eficiencia 72%, Meta 85%. Piensa paso a paso: 1) ¿Cuál es la brecha? 2) ¿Qué podría causarla? 3) ¿Qué recomiendas?"</p>
+      </div>
     </div>
   </div>
-  <div class="box bc"><div class="bt">📰 CASO REAL — GitHub Copilot en Industria</div>
-    <p>Bosch integró GitHub Copilot para que sus ingenieros de datos generaran código de análisis de telemetría de vehículos. Resultado: <strong>55% de reducción en tiempo de escritura de código</strong> y menos errores de sintaxis. Los ingenieros se enfocan en el diseño de la solución, no en la implementación mecánica.</p>
+  <div class="box bc"><div class="bt">📰 CASO REAL — Bosch y GitHub Copilot</div>
+    <p>Bosch integró GitHub Copilot para que sus ingenieros generaran código de análisis de telemetría vehicular. Resultado: <strong>55% de reducción en tiempo de escritura de código</strong> y menos errores de sintaxis. Los ingenieros se enfocan en el diseño de la solución, no en la implementación mecánica.</p>
   </div>
 </div>
 
 <div class="slide" data-s="4">
-  <h2>RAG: Cuando el LLM Consulta TU Documentación</h2>
+  <h2>RAG: Cuando el LLM Consulta TU Propia Documentación</h2>
   <div class="box bm"><div class="bt">🎭 METÁFORA</div>
-    <p>RAG (Retrieval-Augmented Generation) es como darle al asistente acceso a <strong>tu biblioteca interna antes de responder</strong>. En lugar de responder desde su memoria general (que puede alucinar), primero busca en tus documentos, manuales y políticas, y luego genera la respuesta con esa información específica como contexto.</p>
+    <p>RAG (Retrieval-Augmented Generation) es como darle al asistente acceso a <strong>tu biblioteca interna antes de responder</strong>. En lugar de responder desde su memoria general (que puede "alucinar" datos incorrectos), primero busca en tus documentos, manuales y políticas, y luego genera la respuesta usando esa información específica como contexto verificado.</p>
   </div>
   <div class="ld" style="margin-top:14px;">
-    <div class="lr" style="background:rgba(245,158,11,.1);border:1px solid var(--orange);color:var(--orange);">📄 1. INGESTA — Cargar documentos (PDFs, manuales, normas) y dividirlos en chunks de texto</div>
-    <div class="lr" style="background:rgba(6,182,212,.1);border:1px solid var(--cyan);color:var(--cyan);">🔢 2. EMBEDDINGS — Convertir chunks a vectores numéricos que capturan el significado semántico</div>
-    <div class="lr" style="background:rgba(16,185,129,.1);border:1px solid var(--green);color:var(--green);">🗄️ 3. VECTOR STORE — Almacenar vectores en base de datos vectorial (Chroma, Pinecone, FAISS)</div>
-    <div class="lr" style="background:rgba(124,58,237,.1);border:1px solid var(--violet);color:var(--violet);">🔍 4. RETRIEVAL — Al recibir pregunta: buscar chunks más similares semánticamente</div>
-    <div class="lr" style="background:rgba(236,72,153,.1);border:1px solid var(--pink);color:var(--pink);">💬 5. GENERACIÓN — LLM genera respuesta usando la pregunta + chunks recuperados como contexto</div>
+    <div class="lr" style="background:rgba(245,158,11,.1);border:1px solid var(--orange);color:var(--orange);">📄 1. INGESTA — Cargar los documentos de la empresa: manuales técnicos, normas, contratos, reportes en PDF o Word</div>
+    <div class="lr" style="background:rgba(6,182,212,.1);border:1px solid var(--cyan);color:var(--cyan);">🔢 2. VECTORIZACIÓN — Convertir fragmentos de texto en números que capturan el significado semántico del contenido</div>
+    <div class="lr" style="background:rgba(16,185,129,.1);border:1px solid var(--green);color:var(--green);">🗄️ 3. ALMACENAMIENTO — Guardar los vectores en una base de datos especializada para búsqueda semántica rápida</div>
+    <div class="lr" style="background:rgba(124,58,237,.1);border:1px solid var(--violet);color:var(--violet);">🔍 4. BÚSQUEDA — Al recibir una pregunta: identificar los fragmentos de documentos más relevantes semánticamente</div>
+    <div class="lr" style="background:rgba(236,72,153,.1);border:1px solid var(--pink);color:var(--pink);">💬 5. GENERACIÓN — El LLM produce la respuesta usando la pregunta + los fragmentos recuperados como contexto</div>
   </div>
 </div>
 
 <div class="slide" data-s="4">
-  <h2>LangFlow: RAG sin (casi) Código</h2>
+  <h2>IA Generativa en la Empresa: Oportunidades y Límites Éticos</h2>
   <div class="cg c2">
-    <div class="card v">
-      <h3>¿Qué es LangFlow?</h3>
-      <p>Interfaz visual de flujo (no-code/low-code) para construir aplicaciones de IA generativa con LangChain. Conectas nodos de forma visual: carga de documentos → embeddings → vector store → LLM → respuesta.</p>
-      <p style="margin-top:8px;color:var(--muted);font-size:.82rem;">Ideal para prototipar rápido. En producción, se convierte a código Python.</p>
-    </div>
     <div class="card g">
-      <h3>Casos de Uso Empresariales</h3>
+      <h3>Oportunidades de Impacto</h3>
       <ul>
-        <li>Asistente que responde preguntas sobre manuales técnicos de planta</li>
-        <li>Chatbot de RH que consulta políticas y contratos colectivos</li>
-        <li>Generador automático de reportes a partir de datos de sensores</li>
-        <li>Extractor de información clave de contratos o licitaciones</li>
-        <li>Asistente de troubleshooting que consulta historial de mantenimiento</li>
+        <li>Reducción dramática del tiempo en tareas de redacción, resumen y análisis de texto</li>
+        <li>Democratización del acceso a información técnica compleja en lenguaje sencillo</li>
+        <li>Prototipado rápido de soluciones de análisis sin esperar al equipo de TI</li>
+        <li>Asistentes 24/7 para operadores, técnicos y personal de campo</li>
+        <li>Generación de reportes automáticos desde bases de datos en segundos</li>
+      </ul>
+    </div>
+    <div class="card r">
+      <h3>Riesgos y Limitaciones</h3>
+      <ul>
+        <li><strong>Alucinaciones:</strong> el modelo genera información incorrecta con confianza. Siempre verificar datos críticos.</li>
+        <li><strong>Fuga de datos confidenciales:</strong> no introducir información sensible en modelos externos sin revisar políticas de privacidad.</li>
+        <li><strong>Sesgo en las respuestas:</strong> el modelo refleja sesgos de sus datos de entrenamiento.</li>
+        <li><strong>Dependencia excesiva:</strong> el criterio profesional humano sigue siendo irremplazable para decisiones críticas.</li>
       </ul>
     </div>
   </div>
-  <div class="box bl"><div class="bt">🔬 PRÁCTICA — Construir tu primer asistente RAG</div>
-    <p>En LangFlow: cargar PDF del manual técnico de un equipo industrial → configurar OpenAI Embeddings → Chroma vector store → GPT-4o-mini → probar preguntas como "¿Cuál es el procedimiento de mantenimiento preventivo del compresor C-101?" → evaluar calidad de respuestas.</p>
+  <div class="box bc"><div class="bt">📰 CASO REAL — Empresa logística en México</div>
+    <p>Una empresa transportista implementó un asistente RAG que permite a sus operadores consultar manuales técnicos en lenguaje natural: "¿Qué hago si la presión de aceite del motor baja a 15 psi en ruta?" El sistema responde en segundos con el procedimiento correcto del manual. Resultado: reducción del 60% en tiempo de resolución de incidencias en campo.</p>
   </div>
 </div>
 
-<!-- CIERRE BLOQUE I -->
+<div class="slide" data-s="4">
+  <h2>Sesión 5 — Evaluación y Reto de Aplicación</h2>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Click para revelar respuesta</div>
+    <p>Una empresa quiere usar ChatGPT para analizar las quejas de sus clientes y generar informes semanales. El gerente pregunta: "¿Podemos confiar en los resultados sin revisión humana?" ¿Qué le responderías?</p>
+    <div class="qa">La respuesta es <strong>no, no sin revisión humana</strong> para decisiones críticas. ChatGPT puede "alucinar" datos, omitir matices y no tiene acceso a datos internos más recientes que su entrenamiento. Las recomendaciones: (1) usarlo para un primer borrador de análisis, no como resultado final, (2) un analista debe validar las conclusiones contra los datos originales, (3) implementar RAG si se necesita acceso a documentos internos específicos, (4) establecer un proceso de revisión y aprobación antes de que el informe llegue a la dirección. La IA amplifica la capacidad del analista, no lo reemplaza.</div>
+  </div>
+  <div class="box bl"><div class="bt">🔬 ACTIVIDAD PRÁCTICA — Diseñar Prompts Efectivos</div>
+    <p><strong>Instrucciones (en equipos):</strong></p>
+    <ol style="margin-top:8px;">
+      <li>Elegir un problema real de su sector (clasificar fallas, resumir un reporte, responder a una queja)</li>
+      <li>Escribir un prompt Zero-Shot para ese problema</li>
+      <li>Escribir un prompt Few-Shot con 3 ejemplos reales</li>
+      <li>Escribir un prompt Chain-of-Thought que fuerce razonamiento paso a paso</li>
+      <li>Probar los 3 prompts en ChatGPT y comparar la calidad de las respuestas</li>
+      <li>Concluir: ¿Cuál técnica genera el resultado más útil y por qué?</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ═══ CIERRE BLOQUE I ═══ -->
 <div class="slide cover" data-s="4">
   <div class="badge">BLOQUE I — CIERRE</div>
-  <h1>El Fundamento que Cambia Todo</h1>
-  <p style="max-width:600px;margin:16px auto;color:var(--muted);">Entiender el panorama de la IA, cuantificar con estadística, predecir con regresión y augmentar con IA generativa: estas son las competencias que separan al profesional del futuro del profesional del pasado.</p>
+  <h1>Los Cimientos de Todo lo que Viene</h1>
+  <p style="max-width:620px;margin:16px auto;color:var(--muted);">Entender el panorama de la IA, cuantificar con estadística, inferir con evidencia, predecir con regresión y ampliar capacidades con IA generativa: estas son las competencias que habilitan todo el trabajo de los bloques siguientes.</p>
   <div class="sr" style="justify-content:center;max-width:700px;margin:20px auto;">
-    <div class="stat"><div class="n" style="color:var(--violet)">IA</div><div class="l">Panorama y ética</div></div>
-    <div class="stat"><div class="n" style="color:var(--cyan)">Σ</div><div class="l">Estadística descriptiva</div></div>
-    <div class="stat"><div class="n" style="color:var(--green)">H₀</div><div class="l">Inferencia y decisiones</div></div>
-    <div class="stat"><div class="n" style="color:var(--orange)">R²</div><div class="l">Predicción y regresión</div></div>
-    <div class="stat"><div class="n" style="color:var(--pink)">RAG</div><div class="l">IA generativa y LLMs</div></div>
+    <div class="stat"><div class="n" style="color:var(--violet)">IA</div><div class="l">Panorama y ética organizacional</div></div>
+    <div class="stat"><div class="n" style="color:var(--cyan)">Σ</div><div class="l">Estadística descriptiva y KPIs</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">H₀</div><div class="l">Inferencia y decisiones con evidencia</div></div>
+    <div class="stat"><div class="n" style="color:var(--orange)">R²</div><div class="l">Predicción y regresión empresarial</div></div>
+    <div class="stat"><div class="n" style="color:var(--pink)">RAG</div><div class="l">IA generativa y agentes LLM</div></div>
   </div>
-  <div class="box bd" style="max-width:600px;margin:0 auto;"><div class="bt">💡 SIGUIENTE — BLOQUE II</div>
-    <p><strong>Python e Ingeniería de Datos</strong>: dominar el lenguaje de la IA, construir pipelines de datos robustos e integrar fuentes relacionales, NoSQL y APIs para alimentar los modelos.</p>
+  <div class="box bd" style="max-width:620px;margin:0 auto;"><div class="bt">💡 SIGUIENTE — BLOQUE II</div>
+    <p><strong>Python e Ingeniería de Datos:</strong> dominar el lenguaje de la IA de forma conceptual, entender cómo funcionan los pipelines de datos, integrar fuentes relacionales y NoSQL, y realizar análisis exploratorio estructurado.</p>
   </div>
   <div style="margin-top:20px;">
-    <span class="tag">Madurez Analítica</span><span class="tag">Pandas</span><span class="tag">SciPy</span>
-    <span class="tag">Scikit-learn</span><span class="tag">Prophet</span><span class="tag">LangChain</span><span class="tag">LangFlow</span>
+    <span class="pill pv">Madurez Analítica</span>
+    <span class="pill pc">Estadística Descriptiva</span>
+    <span class="pill pg">Pruebas de Hipótesis</span>
+    <span class="pill po">Modelos Predictivos</span>
+    <span class="pill pr">IA Generativa</span>
   </div>
-  <div style="margin-top:16px;font-size:.8rem;color:var(--muted);">
-    <strong style="color:var(--cyan);">Referencias:</strong> McKinney (2022) Python for Data Analysis · Provost &amp; Fawcett (2013) Data Science for Business · VanderPlas (2022) Python Data Science Handbook
+  <div style="margin-top:16px;font-size:.8rem;color:var(--muted);max-width:720px;margin-left:auto;margin-right:auto;text-align:left;">
+    <strong style="color:var(--cyan);">Referencias bibliográficas:</strong><br>
+    McKinney, W. (2022). <em>Python for Data Analysis</em> (3a ed.). O'Reilly Media.<br>
+    Provost, F., &amp; Fawcett, T. (2013). <em>Data Science for Business</em>. O'Reilly Media.<br>
+    Russell, S., &amp; Norvig, P. (2022). <em>Artificial Intelligence: A Modern Approach</em> (4a ed.). Pearson.<br>
+    VanderPlas, J. (2022). <em>Python Data Science Handbook</em>. O'Reilly Media.<br>
+    PwC. (2017). <em>Sizing the prize: What's the real value of AI for your business and how can you capitalise?</em> PricewaterhouseCoopers.
   </div>
 </div>
 
 </div><!-- /sc -->
 <div id="footer">
   <button onclick="prev()">← Anterior</button>
-  <span class="hint">← → · Espacio</span>
+  <span class="hint">← → · Espacio · S1–S5 para saltar sesión</span>
   <button onclick="next()">Siguiente →</button>
 </div>
 <script>
 const slides=document.querySelectorAll('.slide'),total=slides.length;let cur=0;
 const ss=[];slides.forEach((s,i)=>{const v=parseInt(s.dataset.s);if(ss[v]===undefined)ss[v]=i;});
 function go(n){if(n<0||n>=total)return;slides[cur].classList.remove('active');cur=n;slides[cur].classList.add('active');document.getElementById('ctr').textContent=(cur+1)+' / '+total;document.getElementById('pb').style.width=((cur+1)/total*100)+'%';ut();slides[cur].scrollTop=0;}
-function next(){go(cur+1);}function prev(){go(cur-1);}function gts(i){go(ss[i]);}
+function next(){go(cur+1);}function prev(){go(cur-1);}function gts(i){if(ss[i]!==undefined)go(ss[i]);}
 function ut(){const v=parseInt(slides[cur].dataset.s);for(let i=0;i<5;i++){const b=document.getElementById('t'+i);if(b)b.classList.toggle('active',i===v);}}
 document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();}if(e.key==='ArrowLeft'){e.preventDefault();prev();}});
+document.getElementById('ctr').textContent='1 / '+total;
+document.getElementById('pb').style.width=(1/total*100)+'%';
 ut();
 </script>
 </body>

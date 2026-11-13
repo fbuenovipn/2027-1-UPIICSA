@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloque II — Agilidad y Liderazgo de Equipos</title>
+<style>
+  :root{--bg:#04080f;--card:#0b1628;--border:#1e3a5f;--violet:#7c3aed;--cyan:#06b6d4;--green:#10b981;--orange:#f59e0b;--red:#ef4444;--pink:#ec4899;--yellow:#fbbf24;--text:#e2e8f0;--muted:#64748b;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden;height:100vh;}
+  #navbar{position:fixed;top:0;left:0;right:0;height:54px;background:rgba(4,8,15,.96);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:100;backdrop-filter:blur(8px);}
+  #navbar .brand{color:var(--green);font-weight:700;font-size:.85rem;letter-spacing:1px;}
+  #navbar .brand span{color:var(--muted);}
+  .stabs{display:flex;gap:6px;}
+  .stabs button{background:transparent;border:1px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:20px;cursor:pointer;font-size:.75rem;transition:all .2s;}
+  .stabs button.active{background:var(--green);border-color:var(--green);color:#000;font-weight:700;}
+  .stabs button:hover:not(.active){border-color:var(--green);color:var(--green);}
+  #ctr{color:var(--muted);font-size:.8rem;min-width:80px;text-align:right;}
+  #pb{position:fixed;top:54px;left:0;height:3px;background:linear-gradient(90deg,#064e3b,var(--green));transition:width .3s;z-index:100;}
+  #sc{position:fixed;top:57px;left:0;right:0;bottom:40px;overflow:hidden;}
+  .slide{position:absolute;top:0;left:0;right:0;bottom:0;padding:28px 48px;display:none;overflow-y:auto;animation:fi .35s ease;}
+  .slide.active{display:flex;flex-direction:column;}
+  @keyframes fi{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+  #footer{position:fixed;bottom:0;left:0;right:0;height:40px;background:rgba(4,8,15,.96);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:16px;z-index:100;}
+  #footer button{background:var(--card);border:1px solid var(--border);color:var(--text);padding:5px 20px;border-radius:6px;cursor:pointer;font-size:.8rem;transition:all .2s;}
+  #footer button:hover{border-color:var(--green);color:var(--green);}
+  #footer .hint{color:var(--muted);font-size:.72rem;}
+  h1{font-size:2rem;font-weight:800;line-height:1.2;margin-bottom:10px;}
+  h2{font-size:1.5rem;font-weight:700;margin-bottom:14px;}
+  h3{font-size:1.05rem;font-weight:600;color:var(--green);margin-bottom:8px;margin-top:12px;}
+  p{font-size:.92rem;line-height:1.65;margin-bottom:8px;}
+  ul,ol{padding-left:20px;font-size:.9rem;line-height:1.8;}
+  li{margin-bottom:4px;}
+  .sub{color:var(--muted);font-size:1rem;margin-bottom:6px;}
+  .tag{display:inline-block;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:2px 10px;font-size:.75rem;color:var(--muted);margin-right:6px;margin-bottom:4px;}
+  .cover{align-items:center;justify-content:center;text-align:center;}
+  .cover h1{font-size:2.3rem;background:linear-gradient(135deg,var(--green),#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;}
+  .badge{display:inline-block;border:1px solid var(--green);border-radius:8px;padding:8px 24px;color:var(--green);font-size:.9rem;font-weight:700;letter-spacing:2px;margin-bottom:20px;background:rgba(16,185,129,.08);}
+  .sg{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:20px;}
+  .sc2{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 16px;width:168px;text-align:left;}
+  .sc2 .num{color:var(--green);font-size:.7rem;font-weight:700;}
+  .sc2 .nm{font-size:.8rem;margin-top:4px;}
+  .cg{display:grid;gap:14px;margin-top:8px;}
+  .cg.c2{grid-template-columns:1fr 1fr;}
+  .cg.c3{grid-template-columns:1fr 1fr 1fr;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;position:relative;overflow:hidden;}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+  .card.v::before{background:var(--violet);}
+  .card.c::before{background:var(--cyan);}
+  .card.g::before{background:var(--green);}
+  .card.o::before{background:var(--orange);}
+  .card.r::before{background:var(--red);}
+  .card h3{margin-top:0;font-size:.95rem;}
+  .card p,.card ul,.card li{font-size:.85rem;}
+  .box{border-radius:10px;padding:14px 18px;margin:10px 0;}
+  .bm{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.4);}
+  .bc{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.4);}
+  .bl{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.4);}
+  .bd{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.4);}
+  .bq{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.4);cursor:pointer;}
+  .bt{font-weight:700;font-size:.8rem;margin-bottom:6px;letter-spacing:.5px;}
+  .bm .bt{color:var(--violet);}
+  .bc .bt{color:var(--orange);}
+  .bl .bt{color:var(--green);}
+  .bd .bt{color:var(--cyan);}
+  .bq .bt{color:var(--yellow);}
+  .box p,.box li,.box ul{font-size:.87rem;}
+  .qa{display:none;margin-top:8px;padding-top:8px;border-top:1px solid rgba(251,191,36,.3);color:var(--green);font-size:.85rem;}
+  .bq.revealed .qa{display:block;}
+  table{width:100%;border-collapse:collapse;font-size:.83rem;margin-top:8px;}
+  th{background:#071020;color:var(--green);text-align:left;padding:8px 12px;border:1px solid var(--border);}
+  td{padding:7px 12px;border:1px solid var(--border);vertical-align:top;}
+  tr:nth-child(even) td{background:rgba(11,22,40,.6);}
+  .sr{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0;}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 18px;flex:1;min-width:120px;text-align:center;}
+  .stat .n{font-size:1.8rem;font-weight:800;line-height:1;}
+  .stat .l{font-size:.72rem;color:var(--muted);margin-top:4px;}
+  .tl{list-style:none;padding:0;margin-top:8px;}
+  .tl li{display:flex;gap:14px;margin-bottom:12px;align-items:flex-start;}
+  .tl .st{min-width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+  .tl .st.c{background:rgba(6,182,212,.15);border:2px solid var(--cyan);color:var(--cyan);}
+  .tl .st.g{background:rgba(16,185,129,.15);border:2px solid var(--green);color:var(--green);}
+  .tl .st.o{background:rgba(245,158,11,.15);border:2px solid var(--orange);color:var(--orange);}
+  .tl .st.v{background:rgba(124,58,237,.15);border:2px solid var(--violet);color:var(--violet);}
+  .tl .content h4{font-size:.9rem;}
+  .tl .content p{font-size:.83rem;color:var(--muted);margin:0;}
+  .slide::-webkit-scrollbar{width:4px;}
+  .slide::-webkit-scrollbar-track{background:transparent;}
+  .slide::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+  .kb{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0;}
+  .kc{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:6px 12px;font-size:.82rem;text-align:center;flex:1;min-width:80px;}
+  .kc .kn{font-size:1.1rem;font-weight:700;margin-bottom:2px;}
+</style>
+</head>
+<body>
+<div id="navbar">
+  <div class="brand">📋 PROYECTOS <span>· BLOQUE II</span></div>
+  <div class="stabs">
+    <button onclick="gts(0)" id="t0">S6</button>
+    <button onclick="gts(1)" id="t1">S7</button>
+    <button onclick="gts(2)" id="t2">S8</button>
+    <button onclick="gts(3)" id="t3">S9</button>
+    <button onclick="gts(4)" id="t4">S10</button>
+  </div>
+  <div id="ctr">1 / 1</div>
+</div>
+<div id="pb" style="width:3%"></div>
+<div id="sc">
+
+<!-- PORTADA -->
+<div class="slide active cover" data-s="0">
+  <div class="badge">BLOQUE II · SESIONES 6 – 10</div>
+  <h1>Agilidad y Liderazgo<br>de Equipos</h1>
+  <p class="sub">Dirección y Gestión de Proyectos · Seminario de Titulación · UPIICSA · 30 horas</p>
+  <div class="sg">
+    <div class="sc2"><div class="num">SESIÓN 6</div><div class="nm">Scrum en Profundidad</div></div>
+    <div class="sc2"><div class="num">SESIÓN 7</div><div class="nm">Lean y Kanban</div></div>
+    <div class="sc2"><div class="num">SESIÓN 8</div><div class="nm">DevOps y Entrega Continua</div></div>
+    <div class="sc2"><div class="num">SESIÓN 9</div><div class="nm">Metodologías Híbridas</div></div>
+    <div class="sc2"><div class="num">SESIÓN 10</div><div class="nm">Power Skills del PM Moderno</div></div>
+  </div>
+  <p style="margin-top:24px;color:var(--muted);font-size:.82rem;">← → o barra espaciadora · Click en S6–S10 para saltar sesión</p>
+</div>
+
+<!-- ═══ SESIÓN 6: SCRUM ═══ -->
+<div class="slide" data-s="0">
+  <h2>Sesión 6 <span style="color:var(--green)">— Scrum en Profundidad</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Scrum es como un <strong>partido de rugby</strong> (de ahí el nombre): el equipo se mueve unido hacia la meta, en iteraciones cortas e intensas, con roles claros y retroalimentación constante. No hay "pasar la pelota y olvidarse" — todos son responsables del resultado y se apoyan mutuamente. El Sprint es el partido; el backlog es el plan de juego.</p>
+  </div>
+  <div class="sr" style="margin-top:14px;">
+    <div class="stat"><div class="n" style="color:var(--green)">58%</div><div class="l">Organizaciones usan<br>Scrum (Scrum Alliance 2023)</div></div>
+    <div class="stat"><div class="n" style="color:var(--cyan)">2 sem</div><div class="l">Sprint más común<br>(60% de equipos)</div></div>
+    <div class="stat"><div class="n" style="color:var(--orange)">3x</div><div class="l">Mayor velocidad de<br>entrega vs cascada</div></div>
+    <div class="stat"><div class="n" style="color:var(--violet)">7±2</div><div class="l">Tamaño óptimo<br>del equipo Scrum</div></div>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>El Marco Scrum: 3 Roles, 5 Eventos, 3 Artefactos</h2>
+  <div class="cg c3">
+    <div class="card g">
+      <h3>Los 3 Roles</h3>
+      <ul>
+        <li><strong>Product Owner:</strong> maximiza el valor del producto. Dueño del Product Backlog. Prioriza las historias de usuario. Acepta o rechaza los entregables del sprint. Es el representante del negocio.</li>
+        <li><strong>Scrum Master:</strong> facilitador y coach. Elimina impedimentos. Protege al equipo de interrupciones externas. Asegura que Scrum se entienda y practique correctamente.</li>
+        <li><strong>Equipo de Desarrollo:</strong> auto-organizado y multifuncional. Decide cómo hacer el trabajo. Responsable colectivamente de la calidad. 3-9 personas.</li>
+      </ul>
+    </div>
+    <div class="card c">
+      <h3>Los 5 Eventos</h3>
+      <ul>
+        <li><strong>Sprint (1-4 sem):</strong> el contenedor de todos los demás eventos. Duración fija e inamovible.</li>
+        <li><strong>Sprint Planning (8h max):</strong> ¿qué haremos este sprint? ¿cómo lo haremos?</li>
+        <li><strong>Daily Scrum (15 min):</strong> sincronización diaria: ¿qué hice ayer? ¿qué haré hoy? ¿hay impedimentos?</li>
+        <li><strong>Sprint Review (4h max):</strong> demostrar el incremento al cliente/stakeholders. Feedback real.</li>
+        <li><strong>Sprint Retrospective (3h max):</strong> ¿cómo mejorar como equipo? Acciones concretas para el próximo sprint.</li>
+      </ul>
+    </div>
+    <div class="card o">
+      <h3>Los 3 Artefactos</h3>
+      <ul>
+        <li><strong>Product Backlog:</strong> lista ordenada de todo lo que se necesita hacer. Siempre actualizado. El PO lo prioriza constantemente.</li>
+        <li><strong>Sprint Backlog:</strong> subconjunto del Product Backlog seleccionado para este sprint + el plan para entregarlo.</li>
+        <li><strong>Incremento:</strong> la suma de todos los ítems del backlog completados durante el sprint. Debe ser funcional, integrado y potencialmente entregable.</li>
+      </ul>
+      <p style="margin-top:8px;font-size:.82rem;color:var(--muted);">Compromisos: Product Goal · Sprint Goal · Definition of Done</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Historias de Usuario y Estimación con Planning Poker</h2>
+  <div class="cg c2">
+    <div class="card g">
+      <h3>Anatomía de una Historia de Usuario</h3>
+      <div style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.3);border-radius:8px;padding:12px;margin:8px 0;">
+        <p style="margin:0;font-size:.9rem;"><strong>Como</strong> gerente de ventas,<br><strong>quiero</strong> ver un dashboard con mis KPIs en tiempo real,<br><strong>para</strong> tomar decisiones sin esperar el reporte semanal.</p>
+      </div>
+      <h3>Criterios de Aceptación</h3>
+      <ul>
+        <li>Dado que el usuario accede al dashboard, cuando selecciona un rango de fechas, entonces el sistema muestra las métricas actualizadas en menos de 3 segundos</li>
+        <li>Dado que hay más de 1,000 registros, cuando se filtra por región, entonces el tiempo de respuesta no excede 5 segundos</li>
+      </ul>
+    </div>
+    <div class="card v">
+      <h3>Planning Poker — Estimación por Consenso</h3>
+      <ul>
+        <li>Cada miembro estima independientemente usando la secuencia Fibonacci: 1, 2, 3, 5, 8, 13, 21, ?, ∞</li>
+        <li>Todos revelan al mismo tiempo para evitar anclar la estimación de los demás</li>
+        <li>Cuando hay divergencia significativa (ej: alguien pone 3 y otro pone 13): discusión para entender las diferencias de perspectiva</li>
+        <li>Las unidades son Story Points — esfuerzo relativo, no horas absolutas</li>
+        <li>La velocidad del equipo (velocity) = story points completados por sprint en promedio</li>
+      </ul>
+      <p style="margin-top:8px;font-size:.82rem;color:var(--muted);">Regla: la estimación refleja complejidad + incertidumbre + esfuerzo — no solo tiempo.</p>
+    </div>
+  </div>
+  <div class="box bc"><div class="bt">📰 CASO REAL — BBVA México App Móvil</div>
+    <p>BBVA implementó Scrum para el rediseño de su app: equipos de 8 personas con sprints de 2 semanas. <strong>En 6 meses entregaron 24 incrementos funcionales</strong> vs el plan original de 1 entrega grande al año. La tasa de adopción de nuevas funciones subió 3x porque el feedback del usuario se incorporaba cada 2 semanas.</p>
+  </div>
+  <div class="box bl"><div class="bt">🔬 ACTIVIDAD PRÁCTICA — Sprint Simulado</div>
+    <p>Realizar un sprint de 45 minutos: (1) Backlog con 10 historias de usuario del Proyecto Integrador, (2) Sprint Planning: seleccionar 3 historias para el sprint, (3) Daily Scrum de 5 min, (4) Sprint Review: presentar lo "entregado", (5) Retrospectiva: 1 bueno, 1 malo, 1 acción de mejora.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 7: LEAN Y KANBAN ═══ -->
+<div class="slide" data-s="1">
+  <h2>Sesión 7 <span style="color:var(--green)">— Lean y Kanban: Fluidez sin Desperdicios</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Lean es como el <strong>sistema de producción de Toyota</strong> (de donde nació): eliminar todo lo que no agrega valor al cliente final, como una cadena de producción donde cada estación hace exactamente lo que se necesita, ni más ni menos, justo a tiempo para la siguiente estación. El "just in time" aplica también a los proyectos.</p>
+  </div>
+  <div class="cg c2" style="margin-top:14px;">
+    <div class="card g">
+      <h3>Los 7 Desperdicios de Lean (TIMWOOD)</h3>
+      <ul>
+        <li><strong>T</strong>ransporte: mover información/trabajo innecesariamente</li>
+        <li><strong>I</strong>nventario: trabajo en curso excesivo (WIP)</li>
+        <li><strong>M</strong>ovimiento: búsqueda de información, reuniones innecesarias</li>
+        <li><strong>W</strong>aiting (espera): bloqueos entre equipos, aprobaciones lentas</li>
+        <li><strong>O</strong>verproduction: hacer más de lo que el cliente necesita ahora</li>
+        <li><strong>O</strong>ver-processing: pasos que no agregan valor al cliente</li>
+        <li><strong>D</strong>efects (defectos): retrabajos, correcciones, bugs</li>
+      </ul>
+    </div>
+    <div class="card c">
+      <h3>Los 5 Principios de Lean</h3>
+      <ul>
+        <li><strong>1. Definir valor:</strong> solo desde la perspectiva del cliente — ¿qué pagaría?</li>
+        <li><strong>2. Mapear el flujo de valor:</strong> identificar todos los pasos y cuáles agregan valor vs cuáles son desperdicio</li>
+        <li><strong>3. Crear flujo continuo:</strong> eliminar cuellos de botella, hacer fluir el trabajo sin interrupciones</li>
+        <li><strong>4. Sistema Pull:</strong> producir solo cuando hay demanda real, no empujar trabajo</li>
+        <li><strong>5. Buscar la perfección:</strong> mejora continua (Kaizen) — el desperdicio nunca se elimina completamente</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>Kanban: Visualizar el Trabajo para Mejorar el Flujo</h2>
+  <div class="cg c2">
+    <div class="card g">
+      <h3>El Tablero Kanban y sus Reglas</h3>
+      <div style="display:flex;gap:8px;margin:10px 0;">
+        <div style="flex:1;background:#071020;border:1px solid var(--border);border-radius:6px;padding:8px;text-align:center;">
+          <div style="color:var(--muted);font-size:.75rem;margin-bottom:6px;">BACKLOG</div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:4px;padding:4px;font-size:.75rem;margin-bottom:4px;">Historia A</div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:4px;padding:4px;font-size:.75rem;margin-bottom:4px;">Historia B</div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:4px;padding:4px;font-size:.75rem;">Historia C</div>
+        </div>
+        <div style="flex:1;background:#071020;border:1px solid var(--green);border-radius:6px;padding:8px;text-align:center;">
+          <div style="color:var(--green);font-size:.75rem;margin-bottom:6px;">EN PROGRESO (WIP=2)</div>
+          <div style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:4px;padding:4px;font-size:.75rem;margin-bottom:4px;">Historia D</div>
+          <div style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:4px;padding:4px;font-size:.75rem;">Historia E</div>
+        </div>
+        <div style="flex:1;background:#071020;border:1px solid var(--border);border-radius:6px;padding:8px;text-align:center;">
+          <div style="color:var(--muted);font-size:.75rem;margin-bottom:6px;">REVISIÓN</div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:4px;padding:4px;font-size:.75rem;">Historia F</div>
+        </div>
+        <div style="flex:1;background:#071020;border:1px solid var(--border);border-radius:6px;padding:8px;text-align:center;">
+          <div style="color:var(--muted);font-size:.75rem;margin-bottom:6px;">LISTO ✓</div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:4px;padding:4px;font-size:.75rem;margin-bottom:4px;">Historia G</div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:4px;padding:4px;font-size:.75rem;">Historia H</div>
+        </div>
+      </div>
+      <ul>
+        <li><strong>WIP Limit:</strong> limitar el trabajo en progreso (máximo 2 en el ejemplo) es la regla más importante de Kanban — fuerza al equipo a terminar antes de empezar</li>
+        <li><strong>Pull, no Push:</strong> el equipo jala trabajo cuando tiene capacidad, no recibe trabajo empujado</li>
+        <li><strong>Lead Time:</strong> tiempo desde que se solicita hasta que se entrega</li>
+        <li><strong>Cycle Time:</strong> tiempo desde que se inicia el trabajo hasta que se completa</li>
+      </ul>
+    </div>
+    <div class="card o">
+      <h3>Kanban vs Scrum: ¿Cuándo usar cada uno?</h3>
+      <table>
+        <tr><th></th><th>Scrum</th><th>Kanban</th></tr>
+        <tr><td>Cadencia</td><td>Sprints fijos</td><td>Flujo continuo</td></tr>
+        <tr><td>Cambios</td><td>Solo entre sprints</td><td>En cualquier momento</td></tr>
+        <tr><td>Mejor para</td><td>Desarrollo de producto</td><td>Soporte, operaciones, mantenimiento</td></tr>
+        <tr><td>Compromisos</td><td>Sprint Goal compartido</td><td>No hay compromisos de grupo</td></tr>
+        <tr><td>Retrospectiva</td><td>Al final de cada sprint</td><td>Cuando el equipo lo necesita</td></tr>
+      </table>
+      <p style="margin-top:10px;font-size:.83rem;"><strong>Scrumban:</strong> híbrido de ambos — cadencia de sprints de Scrum + flujo visual y WIP limits de Kanban. Muy popular en equipos de mantenimiento que también tienen nuevas features.</p>
+    </div>
+  </div>
+  <div class="box bc"><div class="bt">📰 CASO REAL — OXXO Gestión de Incidencias</div>
+    <p>OXXO implementó Kanban para el equipo de TI que atiende las +21,000 tiendas. Con WIP limit de 5 incidencias por analista, el <strong>tiempo promedio de resolución bajó de 4.2 horas a 1.8 horas</strong> en 90 días. El problema anterior era que cada analista tenía 15-20 tickets abiertos — el multitasking extremo impedía resolver cualquiera en tiempo razonable.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 8: DEVOPS ═══ -->
+<div class="slide" data-s="2">
+  <h2>Sesión 8 <span style="color:var(--green)">— DevOps y la Cultura de Entrega Continua</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>DevOps es como una <strong>línea de ensamble moderna vs la fábrica tradicional</strong>: en la fábrica tradicional, diseño, manufactura y control de calidad son departamentos separados con muros entre ellos. En la línea moderna, diseñadores, ensambladores e inspectores trabajan lado a lado, con feedback instantáneo, y cada auto sale ya revisado. DevOps derriba el muro entre desarrolladores y operaciones.</p>
+  </div>
+  <div class="cg c3" style="margin-top:14px;">
+    <div class="card g"><h3>¿Qué es DevOps?</h3><p>Una cultura, no una herramienta. Combina <strong>Dev</strong>elopment (desarrollo) y <strong>Op</strong>eration<strong>s</strong> (operaciones) para acortar el ciclo de entrega de software sin sacrificar calidad. El objetivo: que los cambios pasen de idea a producción en horas, no semanas.</p></div>
+    <div class="card c"><h3>Los 3 Pilares</h3><ul><li><strong>Flow:</strong> el trabajo fluye en una sola dirección, rápido, del desarrollo a operaciones</li><li><strong>Feedback:</strong> los problemas se detectan inmediatamente y el feedback fluye hacia atrás</li><li><strong>Continual Learning:</strong> los experimentos fallidos son fuentes de aprendizaje, no errores a ocultar</li></ul></div>
+    <div class="card o"><h3>Métricas DORA</h3><ul><li><strong>Deployment Frequency:</strong> ¿con qué frecuencia se despliega a producción? (élite: múltiples veces al día)</li><li><strong>Lead Time for Changes:</strong> del commit a producción (élite: &lt;1 hora)</li><li><strong>MTTR:</strong> tiempo para restaurar el servicio tras un fallo (élite: &lt;1 hora)</li><li><strong>Change Failure Rate:</strong> % de despliegues que causan un incidente (élite: &lt;15%)</li></ul></div>
+  </div>
+</div>
+
+<div class="slide" data-s="2">
+  <h2>El Pipeline CI/CD: Automatizando la Calidad</h2>
+  <div style="display:flex;gap:0;margin:14px 0;overflow:hidden;border-radius:8px;border:1px solid var(--border);">
+    <div style="flex:1;background:rgba(16,185,129,.1);padding:12px;text-align:center;border-right:1px solid var(--border);">
+      <div style="font-size:1.2rem;">👨‍💻</div>
+      <div style="font-size:.78rem;font-weight:700;color:var(--green);margin:4px 0;">COMMIT</div>
+      <div style="font-size:.7rem;color:var(--muted);">Desarrollador empuja código</div>
+    </div>
+    <div style="flex:1;background:rgba(6,182,212,.1);padding:12px;text-align:center;border-right:1px solid var(--border);">
+      <div style="font-size:1.2rem;">🔨</div>
+      <div style="font-size:.78rem;font-weight:700;color:var(--cyan);margin:4px 0;">BUILD</div>
+      <div style="font-size:.7rem;color:var(--muted);">Compilación automática</div>
+    </div>
+    <div style="flex:1;background:rgba(124,58,237,.1);padding:12px;text-align:center;border-right:1px solid var(--border);">
+      <div style="font-size:1.2rem;">🧪</div>
+      <div style="font-size:.78rem;font-weight:700;color:var(--violet);margin:4px 0;">TEST</div>
+      <div style="font-size:.7rem;color:var(--muted);">Pruebas automatizadas</div>
+    </div>
+    <div style="flex:1;background:rgba(245,158,11,.1);padding:12px;text-align:center;border-right:1px solid var(--border);">
+      <div style="font-size:1.2rem;">🔍</div>
+      <div style="font-size:.78rem;font-weight:700;color:var(--orange);margin:4px 0;">SCAN</div>
+      <div style="font-size:.7rem;color:var(--muted);">Análisis de seguridad</div>
+    </div>
+    <div style="flex:1;background:rgba(239,68,68,.1);padding:12px;text-align:center;border-right:1px solid var(--border);">
+      <div style="font-size:1.2rem;">🚀</div>
+      <div style="font-size:.78rem;font-weight:700;color:var(--red);margin:4px 0;">STAGING</div>
+      <div style="font-size:.7rem;color:var(--muted);">Ambiente de pre-producción</div>
+    </div>
+    <div style="flex:1;background:rgba(16,185,129,.15);padding:12px;text-align:center;">
+      <div style="font-size:1.2rem;">✅</div>
+      <div style="font-size:.78rem;font-weight:700;color:var(--green);margin:4px 0;">DEPLOY</div>
+      <div style="font-size:.7rem;color:var(--muted);">Producción automática</div>
+    </div>
+  </div>
+  <div class="cg c2">
+    <div class="card g">
+      <h3>El Rol del PM en DevOps</h3>
+      <ul>
+        <li>El PM <strong>no gestiona sprints aislados</strong> — gestiona el flujo completo del valor: desde la idea hasta el impacto en el usuario</li>
+        <li>Facilitar la colaboración Dev-Ops: sesiones de diseño de operabilidad desde el inicio</li>
+        <li>Monitorear las métricas DORA como indicadores de salud del equipo</li>
+        <li>Proteger al equipo de interrupciones: el pipeline CI/CD solo funciona con foco sostenido</li>
+        <li>Gestionar la deuda técnica como parte del backlog — no solo features</li>
+      </ul>
+    </div>
+    <div class="card c">
+      <h3>DevOps y la Gestión del Cambio Organizacional</h3>
+      <ul>
+        <li>DevOps no es solo herramientas — es <strong>cultura</strong>. Los silos Dev/Ops son el enemigo.</li>
+        <li>Resistencia típica: Ops teme perder control; Dev teme más responsabilidad operacional</li>
+        <li>Estrategia: comenzar con un "equipo piloto" cross-funcional, demostrar resultados en 90 días</li>
+        <li>El modelo de "you build it, you run it" (Werner Vogels, AWS): quien construye el software, lo opera — máxima responsabilidad y feedback</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box bc"><div class="bt">📰 CASO REAL — Rappi México</div>
+    <p>Rappi implementó DevOps con CI/CD completo: pasó de <strong>2 releases mensuales a 15+ deploys diarios</strong>. El MTTR (tiempo de recuperación ante fallos) bajó de 4 horas a 18 minutos. Para el PM, el beneficio fue que podía prometer features al negocio con predictibilidad real — el backlog se ejecutaba en días, no meses.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 9: METODOLOGÍAS HÍBRIDAS ═══ -->
+<div class="slide" data-s="3">
+  <h2>Sesión 9 <span style="color:var(--green)">— Metodologías Híbridas: Lo Mejor de Dos Mundos</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Un enfoque híbrido es como un <strong>automóvil híbrido</strong>: usa gasolina (predictivo) para las autopistas donde la eficiencia de ruta planificada es óptima, y motor eléctrico (ágil) para la ciudad donde la adaptación constante al tráfico es lo que importa. No es "ni lo uno ni lo otro" — es usar cada motor donde es más eficiente.</p>
+  </div>
+  <div class="cg c2" style="margin-top:14px;">
+    <div class="card g">
+      <h3>Modelos Híbridos Comunes</h3>
+      <ul>
+        <li><strong>PMBOK + Scrum:</strong> Project Charter, WBS y cronograma predictivo para la estructura; sprints ágiles para la ejecución de los entregables de software</li>
+        <li><strong>PRINCE2 + Kanban:</strong> governance y control de etapas de PRINCE2 + flujo visual continuo de Kanban para el trabajo diario</li>
+        <li><strong>Fases predictivas con ejecución ágil:</strong> análisis de requisitos y diseño de arquitectura en cascada; implementación en sprints; pruebas integradas continuas</li>
+        <li><strong>Programas SAFe con proyectos internos Scrum:</strong> el programa tiene PI Planning trimestral; cada proyecto interno usa sus propios sprints de 2 semanas</li>
+      </ul>
+    </div>
+    <div class="card o">
+      <h3>Cuándo es Apropiado el Híbrido</h3>
+      <ul>
+        <li>El proyecto tiene componentes con diferentes niveles de incertidumbre (infraestructura fija + software evolutivo)</li>
+        <li>Los stakeholders necesitan los contratos y la predictibilidad de cascada, pero el equipo entrega en sprints</li>
+        <li>Existen requisitos regulatorios rígidos (fase de diseño y aprobación) + implementación ágil</li>
+        <li>Proyectos de TI empresarial: ERP (núcleo predefinido) + módulos a medida (ágil)</li>
+        <li>El equipo tiene experiencia mixta: algunos habituados a cascada, otros a ágil</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="3">
+  <h2>Diseñando tu Metodología Híbrida</h2>
+  <ul class="tl">
+    <li><div class="st g">1</div><div class="content"><h4>Mapear el proyecto por zonas de incertidumbre</h4><p>Alta certeza = predictivo; alta incertidumbre = ágil. No todo el proyecto necesita el mismo enfoque.</p></div></li>
+    <li><div class="st c">2</div><div class="content"><h4>Definir los puntos de integración</h4><p>¿Cómo se conectan las fases predictivas con los sprints ágiles? ¿Cuándo un artefacto predictivo se convierte en input del backlog ágil?</p></div></li>
+    <li><div class="st o">3</div><div class="content"><h4>Elegir los artefactos de cada metodología</h4><p>Del predictivo: Project Charter, WBS, cronograma de hitos, registro de riesgos. Del ágil: Product Backlog, sprints, definition of done, retrospectivas.</p></div></li>
+    <li><div class="st v">4</div><div class="content"><h4>Definir los roles y sus responsabilidades híbridas</h4><p>¿El PM es también Scrum Master? ¿El cliente es también Product Owner? Claridad de roles evita conflictos de autoridad.</p></div></li>
+    <li><div class="st g">5</div><div class="content"><h4>Comunicar el enfoque a todos los stakeholders</h4><p>Los stakeholders acostumbrados a cascada necesitan entender por qué algunos entregables llegan en sprints y no al final.</p></div></li>
+  </ul>
+  <div class="box bc"><div class="bt">📰 CASO REAL — CFE Transformación Digital</div>
+    <p>CFE implementó su plataforma de medidores inteligentes con enfoque híbrido: <strong>predictivo</strong> para la instalación física de los 3.2 millones de medidores (infraestructura civil, logística, contratos) + <strong>ágil</strong> para el software de gestión de energía (módulos entregados cada 3 semanas con feedback de usuarios). El resultado: la infraestructura se entregó en tiempo y forma; el software se adaptó a 7 cambios regulatorios durante la ejecución sin retrasar el proyecto global.</p>
+  </div>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Click para ver respuesta</div>
+    <p>Un director general dice: "Quiero hacer ágil para que los proyectos sean más rápidos". ¿Es una buena razón para adoptar Scrum?</p>
+    <div class="qa"><strong>Parcialmente.</strong> Ágil no garantiza velocidad — garantiza entrega de valor más frecuente y adaptabilidad. Los proyectos ágiles a veces toman más tiempo total pero entregan valor parcial mucho antes. La razón correcta para adoptar ágil es: mayor incertidumbre en los requisitos, necesidad de feedback frecuente del cliente, o valor en entregas incrementales. Si el objetivo es solo velocidad en proyectos con requisitos claros, el predictivo bien ejecutado puede ser más rápido.</div>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 10: POWER SKILLS ═══ -->
+<div class="slide" data-s="4">
+  <h2>Sesión 10 <span style="color:var(--green)">— Power Skills del PM Moderno</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Las Power Skills son como el <strong>sistema operativo de un PM</strong>: las habilidades técnicas (EVM, CPM, Scrum) son las aplicaciones que instalas, pero sin un buen sistema operativo (liderazgo, comunicación, inteligencia emocional, negociación), las apps no corren eficientemente — o se cuelgan bajo presión.</p>
+  </div>
+  <div class="sr" style="margin-top:14px;">
+    <div class="stat"><div class="n" style="color:var(--green)">82%</div><div class="l">Organizaciones identifican<br>Power Skills como críticas (PMI 2023)</div></div>
+    <div class="stat"><div class="n" style="color:var(--cyan)">56%</div><div class="l">Proyectos fallidos por<br>problemas de comunicación</div></div>
+    <div class="stat"><div class="n" style="color:var(--orange)">1.4x</div><div class="l">Más productivos los equipos<br>con alta inteligencia emocional</div></div>
+  </div>
+</div>
+
+<div class="slide" data-s="4">
+  <h2>Las 5 Power Skills Prioritarias del PM</h2>
+  <div class="cg c2">
+    <div class="card g">
+      <h3>1. Comunicación Estratégica</h3>
+      <ul>
+        <li><strong>Escucha activa:</strong> entender lo que el stakeholder necesita, no solo lo que dice</li>
+        <li><strong>Comunicación por audiencia:</strong> el Sponsor quiere ROI; el equipo quiere claridad; el cliente quiere valor</li>
+        <li><strong>Comunicación de crisis:</strong> dar malas noticias pronto, con datos, con plan — no al final cuando ya es tarde</li>
+        <li><strong>Regla de oro:</strong> ningún stakeholder debe enterarse de un problema por otro canal antes de que el PM lo comunique</li>
+      </ul>
+      <h3>2. Negociación Win-Win</h3>
+      <ul>
+        <li>Separar la persona del problema — no es personal, es de negocios</li>
+        <li>Preparar BATNA: Best Alternative to Negotiated Agreement — tu límite mínimo</li>
+        <li>Buscar intereses, no posiciones — ¿qué necesita la otra parte en realidad?</li>
+      </ul>
+    </div>
+    <div class="card c">
+      <h3>3. Inteligencia Emocional (IE)</h3>
+      <ul>
+        <li><strong>Autoconciencia:</strong> reconocer tus propias emociones antes de reaccionar</li>
+        <li><strong>Autoregulación:</strong> gestionar el estrés y las reacciones bajo presión</li>
+        <li><strong>Empatía:</strong> entender las motivaciones y miedos del equipo y stakeholders</li>
+        <li><strong>Habilidades sociales:</strong> influir sin autoridad formal — el PM raramente tiene autoridad directa sobre el equipo</li>
+      </ul>
+      <h3>4. Liderazgo Situacional</h3>
+      <ul>
+        <li><strong>Directivo:</strong> para alguien nuevo en la tarea — instrucciones claras y seguimiento cercano</li>
+        <li><strong>Coach:</strong> para alguien con capacidad pero baja confianza — apoyo + tarea clara</li>
+        <li><strong>Apoyo:</strong> para alguien competente pero con baja motivación — motivación + autonomía</li>
+        <li><strong>Delegador:</strong> para alguien competente y motivado — resultados, no procesos</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="4">
+  <h2>Gestión de Conflictos y Facilitación de Equipos</h2>
+  <div class="cg c2">
+    <div class="card o">
+      <h3>Los 5 Modos de Gestión de Conflictos (Thomas-Kilmann)</h3>
+      <table>
+        <tr><th>Modo</th><th>Cuándo usarlo</th></tr>
+        <tr><td><strong>Colaborar</strong> (ganar-ganar)</td><td>El conflicto es importante para ambas partes; hay tiempo y voluntad para explorar</td></tr>
+        <tr><td><strong>Comprometer</strong></td><td>Ambas partes necesitan algo urgente; solución temporal aceptable</td></tr>
+        <tr><td><strong>Acomodar</strong></td><td>El tema es más importante para la otra parte; construir relación a largo plazo</td></tr>
+        <tr><td><strong>Competir</strong></td><td>Decisión urgente; principios innegociables; la otra parte está equivocada</td></tr>
+        <tr><td><strong>Evitar</strong></td><td>El conflicto es trivial; necesitas tiempo para prepararte; otros lo resolverán mejor</td></tr>
+      </table>
+      <p style="margin-top:8px;font-size:.82rem;color:var(--muted);">PMI recomienda Colaborar como el modo predeterminado — solo cambiar cuando el contexto lo justifica.</p>
+    </div>
+    <div class="card v">
+      <h3>Facilitación de Talleres y Reuniones</h3>
+      <ul>
+        <li><strong>Regla de las 3 P:</strong> toda reunión necesita Propósito (¿para qué?), Proceso (¿cómo?) y Participantes (¿quiénes deben estar?)</li>
+        <li><strong>Agenda + tiempo asignado:</strong> publicar antes, respetar durante — el PM es el guardián del tiempo</li>
+        <li><strong>Gestión de los "vampiros de reunión":</strong> quien monopoliza la conversación, digresiones, conflictos latentes</li>
+        <li><strong>Cierre con compromisos:</strong> toda reunión debe terminar con 3 columnas: acción, responsable, fecha</li>
+        <li><strong>Las reuniones que pueden ser email:</strong> la mejor facilidad es no tener la reunión — solo cuando el diálogo agrega valor sobre la lectura</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box bl"><div class="bt">🔬 ACTIVIDAD PRÁCTICA — Simulación de Conflicto</div>
+    <p>Role-play en equipos de 3: escenario donde el cliente quiere agregar una feature importante en la última semana del sprint, el equipo dice que no es posible sin comprometer la calidad, y el PM debe facilitar la conversación. Aplicar el modo Thomas-Kilmann apropiado. Debrief grupal: ¿qué funcionó? ¿qué cambiarían?</p>
+  </div>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Click para ver respuesta</div>
+    <p>El PM "no tiene autoridad formal" sobre los miembros del equipo. ¿Cómo puede entonces lograr que el equipo cumpla compromisos?</p>
+    <div class="qa"><strong>A través del liderazgo por influencia, no por autoridad:</strong> (1) Crear visión compartida — el equipo trabaja por el objetivo, no por el PM; (2) Ganar credibilidad técnica y personal — el equipo sigue a quien respeta; (3) Remover impedimentos — el PM demuestra valor facilitando, no mandando; (4) Reconocimiento y retroalimentación positiva; (5) Involucrar al equipo en la planificación — nadie defiende un plan que no construyó. La autoridad formal es el último recurso, no el primero.</div>
+  </div>
+</div>
+
+<!-- CIERRE BLOQUE II -->
+<div class="slide cover" data-s="4">
+  <div class="badge">BLOQUE II — CIERRE</div>
+  <h1>Agilidad y Liderazgo<br>de Equipos</h1>
+  <p style="max-width:600px;margin:16px auto;color:var(--muted);">Dominar Scrum, Lean/Kanban, DevOps y los enfoques híbridos, combinado con las Power Skills de comunicación, liderazgo situacional e inteligencia emocional, es lo que distingue al PM técnico del director de proyectos de alto impacto.</p>
+  <div class="sr" style="justify-content:center;max-width:800px;margin:20px auto;">
+    <div class="stat"><div class="n" style="color:var(--green)">Scrum</div><div class="l">3 roles · 5 eventos</div></div>
+    <div class="stat"><div class="n" style="color:var(--cyan)">Lean</div><div class="l">7 desperdicios</div></div>
+    <div class="stat"><div class="n" style="color:var(--orange)">DevOps</div><div class="l">CI/CD · DORA</div></div>
+    <div class="stat"><div class="n" style="color:var(--violet)">Híbrido</div><div class="l">Lo mejor de cada uno</div></div>
+    <div class="stat"><div class="n" style="color:var(--pink)">IE</div><div class="l">Power Skills</div></div>
+  </div>
+  <div class="box bd" style="max-width:600px;margin:0 auto;"><div class="bt">💡 SIGUIENTE — BLOQUE III</div>
+    <p><strong>Control, Riesgos y Calidad</strong>: gestión de riesgos cuantitativa, monitoreo avanzado con EVM, calidad en proyectos, gestión de stakeholders y dashboards ejecutivos.</p>
+  </div>
+  <div style="margin-top:20px;">
+    <span class="tag">Scrum</span><span class="tag">Kanban</span><span class="tag">Lean</span>
+    <span class="tag">DevOps</span><span class="tag">Híbrido</span><span class="tag">Power Skills</span><span class="tag">Liderazgo Situacional</span>
+  </div>
+  <div style="margin-top:16px;font-size:.8rem;color:var(--muted);">
+    <strong style="color:var(--green);">Referencias:</strong> Schwaber, K. &amp; Sutherland, J. (2020). <em>The Scrum Guide</em>. Scrum.org · Anderson, D. J. (2010). <em>Kanban: Successful Evolutionary Change</em>. Blue Hole Press · PMI (2023). <em>Pulse of the Profession: Power Skills — Redefining Project Success</em>.
+  </div>
+</div>
+
+</div><!-- /sc -->
+<div id="footer">
+  <button onclick="prev()">← Anterior</button>
+  <span class="hint">← → · Espacio · Seminario de Titulación · UPIICSA · Dirección y Gestión de Proyectos</span>
+  <button onclick="next()">Siguiente →</button>
+</div>
+<script>
+const slides=document.querySelectorAll('.slide'),total=slides.length;let cur=0;
+const ss=[];slides.forEach((s,i)=>{const v=parseInt(s.dataset.s);if(ss[v]===undefined)ss[v]=i;});
+function go(n){if(n<0||n>=total)return;slides[cur].classList.remove('active');cur=n;slides[cur].classList.add('active');document.getElementById('ctr').textContent=(cur+1)+' / '+total;document.getElementById('pb').style.width=((cur+1)/total*100)+'%';ut();slides[cur].scrollTop=0;}
+function next(){go(cur+1);}function prev(){go(cur-1);}function gts(i){go(ss[i]);}
+function ut(){const v=parseInt(slides[cur].dataset.s);for(let i=0;i<5;i++){const b=document.getElementById('t'+i);if(b)b.classList.toggle('active',i===v);}}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();}if(e.key==='ArrowLeft'){e.preventDefault();prev();}});
+ut();
+</script>
+</body>
+</html>

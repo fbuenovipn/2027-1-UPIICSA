@@ -3,42 +3,50 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bloque III — Machine Learning Aplicado</title>
+<title>Bloque III — Machine Learning y Modelos Predictivos</title>
 <style>
-  :root{--bg:#04080f;--card:#0b1628;--border:#1e3a5f;--violet:#7c3aed;--cyan:#06b6d4;--green:#10b981;--orange:#f59e0b;--red:#ef4444;--pink:#ec4899;--yellow:#fbbf24;--text:#e2e8f0;--muted:#64748b;}
+  :root {
+    --bg:#04080f;--card:#0b1628;--border:#1e3a5f;
+    --violet:#7c3aed;--cyan:#06b6d4;--green:#10b981;
+    --orange:#f59e0b;--red:#ef4444;--pink:#ec4899;
+    --yellow:#fbbf24;--text:#e2e8f0;--muted:#64748b;
+  }
   *{box-sizing:border-box;margin:0;padding:0;}
   body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden;height:100vh;}
   #navbar{position:fixed;top:0;left:0;right:0;height:54px;background:rgba(4,8,15,.96);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:100;backdrop-filter:blur(8px);}
-  #navbar .brand{color:var(--green);font-weight:700;font-size:.85rem;letter-spacing:1px;}
-  #navbar .brand span{color:var(--orange);}
+  #navbar .brand{color:var(--violet);font-weight:700;font-size:.85rem;letter-spacing:1px;}
+  #navbar .brand span{color:var(--cyan);}
   .stabs{display:flex;gap:6px;}
   .stabs button{background:transparent;border:1px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:20px;cursor:pointer;font-size:.75rem;transition:all .2s;}
-  .stabs button.active{background:var(--green);border-color:var(--green);color:#000;font-weight:700;}
-  .stabs button:hover:not(.active){border-color:var(--green);color:var(--green);}
+  .stabs button.active{background:var(--violet);border-color:var(--violet);color:#fff;font-weight:700;}
+  .stabs button:hover:not(.active){border-color:var(--violet);color:var(--violet);}
   #ctr{color:var(--muted);font-size:.8rem;min-width:80px;text-align:right;}
-  #pb{position:fixed;top:54px;left:0;height:3px;background:linear-gradient(90deg,var(--green),var(--orange));transition:width .3s;z-index:100;}
+  #pb{position:fixed;top:54px;left:0;height:3px;background:linear-gradient(90deg,var(--violet),var(--cyan));transition:width .3s;z-index:100;}
   #sc{position:fixed;top:57px;left:0;right:0;bottom:40px;overflow:hidden;}
   .slide{position:absolute;top:0;left:0;right:0;bottom:0;padding:28px 48px;display:none;overflow-y:auto;animation:fi .35s ease;}
   .slide.active{display:flex;flex-direction:column;}
   @keyframes fi{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
   #footer{position:fixed;bottom:0;left:0;right:0;height:40px;background:rgba(4,8,15,.96);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:16px;z-index:100;}
   #footer button{background:var(--card);border:1px solid var(--border);color:var(--text);padding:5px 20px;border-radius:6px;cursor:pointer;font-size:.8rem;transition:all .2s;}
-  #footer button:hover{border-color:var(--green);color:var(--green);}
+  #footer button:hover{border-color:var(--violet);color:var(--violet);}
   #footer .hint{color:var(--muted);font-size:.72rem;}
   h1{font-size:2rem;font-weight:800;line-height:1.2;margin-bottom:10px;}
   h2{font-size:1.5rem;font-weight:700;margin-bottom:14px;}
-  h3{font-size:1.05rem;font-weight:600;color:var(--green);margin-bottom:8px;margin-top:12px;}
+  h3{font-size:1.05rem;font-weight:600;color:var(--cyan);margin-bottom:8px;margin-top:12px;}
   p{font-size:.92rem;line-height:1.65;margin-bottom:8px;}
   ul,ol{padding-left:20px;font-size:.9rem;line-height:1.8;}
   li{margin-bottom:4px;}
-  .sub{color:var(--muted);font-size:1rem;}
+  .sub{color:var(--muted);font-size:1rem;margin-bottom:6px;}
+  .tag{display:inline-block;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:2px 10px;font-size:.75rem;color:var(--muted);margin-right:6px;margin-bottom:4px;}
+  /* COVER */
   .cover{align-items:center;justify-content:center;text-align:center;}
-  .cover h1{font-size:2.3rem;background:linear-gradient(135deg,var(--green),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;}
-  .badge{display:inline-block;border:1px solid var(--green);border-radius:8px;padding:8px 24px;color:var(--green);font-size:.9rem;font-weight:700;letter-spacing:2px;margin-bottom:20px;background:rgba(16,185,129,.08);}
+  .cover h1{font-size:2.3rem;background:linear-gradient(135deg,var(--violet),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;}
+  .badge{display:inline-block;border:1px solid var(--violet);border-radius:8px;padding:8px 24px;color:var(--violet);font-size:.9rem;font-weight:700;letter-spacing:2px;margin-bottom:20px;background:rgba(124,58,237,.08);}
   .sg{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:20px;}
-  .sc2{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 16px;width:180px;text-align:left;}
-  .sc2 .num{color:var(--green);font-size:.7rem;font-weight:700;}
+  .sc2{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 16px;width:168px;text-align:left;}
+  .sc2 .num{color:var(--violet);font-size:.7rem;font-weight:700;}
   .sc2 .nm{font-size:.8rem;margin-top:4px;}
+  /* CARDS */
   .cg{display:grid;gap:14px;margin-top:8px;}
   .cg.c2{grid-template-columns:1fr 1fr;}
   .cg.c3{grid-template-columns:1fr 1fr 1fr;}
@@ -52,9 +60,10 @@
   .card.p::before{background:var(--pink);}
   .card h3{margin-top:0;font-size:.95rem;}
   .card p,.card ul,.card li{font-size:.85rem;}
+  /* BOXES */
   .box{border-radius:10px;padding:14px 18px;margin:10px 0;}
   .bm{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.4);}
-  .bc{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.4);}
+  .bc{background:rgba(255,159,28,.08);border:1px solid rgba(255,159,28,.4);}
   .bl{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.4);}
   .bd{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.4);}
   .bq{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.4);cursor:pointer;}
@@ -67,10 +76,12 @@
   .box p,.box li,.box ul{font-size:.87rem;}
   .qa{display:none;margin-top:8px;padding-top:8px;border-top:1px solid rgba(251,191,36,.3);color:var(--green);font-size:.85rem;}
   .bq.revealed .qa{display:block;}
+  /* TABLE */
   table{width:100%;border-collapse:collapse;font-size:.83rem;margin-top:8px;}
-  th{background:#071020;color:var(--green);text-align:left;padding:8px 12px;border:1px solid var(--border);}
+  th{background:#071020;color:var(--cyan);text-align:left;padding:8px 12px;border:1px solid var(--border);}
   td{padding:7px 12px;border:1px solid var(--border);vertical-align:top;}
   tr:nth-child(even) td{background:rgba(11,22,40,.6);}
+  /* TIMELINE */
   .tl{list-style:none;padding:0;margin-top:8px;}
   .tl li{display:flex;gap:14px;margin-bottom:12px;align-items:flex-start;}
   .tl .st{min-width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
@@ -78,24 +89,49 @@
   .tl .st.c{background:rgba(6,182,212,.15);border:2px solid var(--cyan);color:var(--cyan);}
   .tl .st.g{background:rgba(16,185,129,.15);border:2px solid var(--green);color:var(--green);}
   .tl .st.o{background:rgba(245,158,11,.15);border:2px solid var(--orange);color:var(--orange);}
+  .tl .st.r{background:rgba(239,68,68,.15);border:2px solid var(--red);color:var(--red);}
   .tl .content h4{font-size:.9rem;}
   .tl .content p{font-size:.83rem;color:var(--muted);margin:0;}
+  /* STATS */
   .sr{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0;}
   .stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 18px;flex:1;min-width:120px;text-align:center;}
   .stat .n{font-size:1.8rem;font-weight:800;line-height:1;}
   .stat .l{font-size:.72rem;color:var(--muted);margin-top:4px;}
-  pre{background:#071020;border:1px solid var(--border);border-radius:6px;padding:12px;font-size:.78rem;color:var(--green);overflow-x:auto;margin:8px 0;font-family:'Courier New',monospace;line-height:1.5;}
-  code{background:#071020;padding:2px 6px;border-radius:4px;font-size:.82rem;color:var(--cyan);}
+  /* PILL */
+  .pill{display:inline-block;padding:2px 10px;border-radius:20px;font-size:.75rem;font-weight:600;margin:2px;}
+  .pv{background:rgba(124,58,237,.15);border:1px solid var(--violet);color:var(--violet);}
+  .pc{background:rgba(6,182,212,.15);border:1px solid var(--cyan);color:var(--cyan);}
+  .pg{background:rgba(16,185,129,.15);border:1px solid var(--green);color:var(--green);}
+  .po{background:rgba(245,158,11,.15);border:1px solid var(--orange);color:var(--orange);}
+  .pr{background:rgba(239,68,68,.15);border:1px solid var(--red);color:var(--red);}
+  /* LAYER */
   .ld{display:flex;flex-direction:column;gap:6px;margin:10px 0;}
   .lr{border-radius:6px;padding:8px 16px;font-size:.82rem;font-weight:600;text-align:center;}
-  .tag{display:inline-block;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:2px 10px;font-size:.75rem;color:var(--muted);margin-right:6px;margin-bottom:4px;}
+  /* SCROLL */
   .slide::-webkit-scrollbar{width:4px;}
+  .slide::-webkit-scrollbar-track{background:transparent;}
   .slide::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+  /* STEP */
+  .steps{display:flex;gap:0;margin:14px 0;flex-wrap:wrap;}
+  .step{flex:1;min-width:140px;background:var(--card);border:1px solid var(--border);padding:12px 14px;position:relative;}
+  .step:first-child{border-radius:8px 0 0 8px;}
+  .step:last-child{border-radius:0 8px 8px 0;}
+  .step .snum{font-size:1.4rem;font-weight:800;color:var(--violet);line-height:1;}
+  .step .stit{font-size:.8rem;font-weight:700;margin-top:4px;color:var(--cyan);}
+  .step .sdesc{font-size:.75rem;color:var(--muted);margin-top:4px;}
+  /* MATRIX */
+  .matrix{display:grid;grid-template-columns:auto 1fr 1fr;gap:4px;margin:14px 0;font-size:.82rem;}
+  .mx{background:var(--card);border:1px solid var(--border);padding:10px;border-radius:6px;text-align:center;}
+  .mx.head{background:#071020;color:var(--cyan);font-weight:700;}
+  .mx.tp{background:rgba(16,185,129,.12);border-color:var(--green);color:var(--green);font-weight:700;}
+  .mx.fp{background:rgba(239,68,68,.12);border-color:var(--red);color:var(--red);font-weight:700;}
+  .mx.fn{background:rgba(245,158,11,.12);border-color:var(--orange);color:var(--orange);font-weight:700;}
+  .mx.tn{background:rgba(6,182,212,.12);border-color:var(--cyan);font-weight:700;}
 </style>
 </head>
 <body>
 <div id="navbar">
-  <div class="brand">🤖 ML <span>INDUSTRIA</span> · BLOQUE III</div>
+  <div class="brand">🤖 IA <span>INDUSTRIA</span> · BLOQUE III</div>
   <div class="stabs">
     <button onclick="gts(0)" id="t0">S11</button>
     <button onclick="gts(1)" id="t1">S12</button>
@@ -103,552 +139,654 @@
     <button onclick="gts(3)" id="t3">S14</button>
     <button onclick="gts(4)" id="t4">S15</button>
   </div>
-  <div id="ctr">1 / 58</div>
+  <div id="ctr">1 / 1</div>
 </div>
-<div id="pb" style="width:1.72%"></div>
+<div id="pb" style="width:1%"></div>
 <div id="sc">
 
 <!-- PORTADA -->
 <div class="slide active cover" data-s="0">
   <div class="badge">BLOQUE III · SESIONES 11 – 15</div>
-  <h1>Machine Learning<br>Aplicado a la Industria</h1>
-  <p class="sub">Del feature engineering al AutoML · 30 horas</p>
+  <h1>Machine Learning<br>y Modelos Predictivos</h1>
+  <p class="sub">Inteligencia Artificial para la Industria · Seminario de Titulación · 30 horas</p>
   <div class="sg">
-    <div class="sc2"><div class="num">SESIÓN 11</div><div class="nm">Preprocesamiento Avanzado</div></div>
-    <div class="sc2"><div class="num">SESIÓN 12</div><div class="nm">Clustering No Supervisado</div></div>
-    <div class="sc2"><div class="num">SESIÓN 13</div><div class="nm">Clasificación y Predicción</div></div>
-    <div class="sc2"><div class="num">SESIÓN 14</div><div class="nm">Flujo ML Completo</div></div>
-    <div class="sc2"><div class="num">SESIÓN 15</div><div class="nm">AutoML + Metaheurísticas</div></div>
+    <div class="sc2"><div class="num">SESIÓN 11</div><div class="nm">Preprocesamiento y Feature Engineering</div></div>
+    <div class="sc2"><div class="num">SESIÓN 12</div><div class="nm">Clustering y Segmentación</div></div>
+    <div class="sc2"><div class="num">SESIÓN 13</div><div class="nm">Clasificación Supervisada</div></div>
+    <div class="sc2"><div class="num">SESIÓN 14</div><div class="nm">Flujos de Trabajo ML</div></div>
+    <div class="sc2"><div class="num">SESIÓN 15</div><div class="nm">AutoML y Metaheurísticas</div></div>
   </div>
   <p style="margin-top:24px;color:var(--muted);font-size:.82rem;">← → o barra espaciadora · Click en S11–S15 para saltar sesión</p>
 </div>
 
 <!-- ═══ SESIÓN 11 ═══ -->
 <div class="slide" data-s="0">
-  <h2>Sesión 11 <span style="color:var(--green)">— Preprocesamiento Avanzado y Feature Engineering</span></h2>
-  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
-    <p>El feature engineering es como <strong>preparar los ingredientes antes de cocinar</strong>. Con los mejores ingredientes mal preparados (datos crudos, mal escalados, con categorías sin codificar), incluso el mejor chef (modelo ML) producirá un plato mediocre. La calidad de las features determina el techo del modelo, más que el algoritmo elegido.</p>
+  <h2>Sesión 11 <span style="color:var(--violet)">— Preprocesamiento Avanzado y Feature Engineering</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA DE APERTURA</div>
+    <p>El preprocesamiento es como <strong>preparar los ingredientes antes de cocinar</strong>. Puedes tener la mejor receta (algoritmo) del mundo, pero si tus datos llegan sin limpiar, con valores faltantes o sin la escala correcta, el modelo será incomible. Un chef con ingredientes frescos y bien cortados siempre supera a uno con la mejor técnica pero ingredientes en mal estado.</p>
   </div>
-  <div class="cg c3" style="margin-top:14px;">
-    <div class="card g"><h3>Imputación de Datos</h3><p><strong>Simple</strong>: media/mediana/moda. <strong>KNN Imputer</strong>: usa los k vecinos más similares. <strong>IterativeImputer</strong>: itera entre variables para imputación multivariada. Sklearn lo hace con una línea de código.</p></div>
-    <div class="card c"><h3>Escalado y Normalización</h3><p><strong>StandardScaler</strong>: z-score (media 0, std 1). Necesario para SVM, redes neuronales, PCA. <strong>MinMaxScaler</strong>: escala a [0,1]. <strong>RobustScaler</strong>: usa IQR, robusto ante outliers.</p></div>
-    <div class="card o"><h3>Codificación Categórica</h3><p><strong>One-Hot</strong>: dummy variables (turno A/B/C → 3 columnas binarias). <strong>Label Encoder</strong>: ordinal (A=0, B=1, C=2). <strong>Target Encoder</strong>: reemplaza categoría por media del target (evita alta dimensionalidad).</p></div>
+  <div class="sr" style="margin-top:16px;">
+    <div class="stat"><div class="n" style="color:var(--violet)">80%</div><div class="l">del tiempo en un proyecto ML se invierte en preprocesamiento de datos (encuesta KDnuggets)</div></div>
+    <div class="stat"><div class="n" style="color:var(--cyan)">60%</div><div class="l">de los proyectos de ML fallan por datos de baja calidad, no por algoritmos incorrectos</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">3-10x</div><div class="l">mejora en rendimiento del modelo con buen feature engineering vs. datos crudos</div></div>
   </div>
 </div>
 
 <div class="slide" data-s="0">
-  <h2>Feature Engineering: Crear Variables que el Modelo No Puede Ver</h2>
-  <div class="cg c2">
-    <div class="card g">
-      <h3>Features Derivadas de Tiempo</h3>
-      <pre>df['hora'] = df['timestamp'].dt.hour
-df['dia_semana'] = df['timestamp'].dt.dayofweek
-df['es_fin_semana'] = df['dia_semana'].isin([5,6]).astype(int)
-df['turno'] = pd.cut(df['hora'],
-    bins=[0,8,16,24], labels=['noche','mañana','tarde'])
-
-# Lag features — valores anteriores como predictores
-df['prod_t-1'] = df['produccion'].shift(1)   # 1 hora atrás
-df['prod_t-24'] = df['produccion'].shift(24) # 24 horas atrás
-
-# Rolling statistics — tendencia reciente
-df['media_7d'] = df['produccion'].rolling(7).mean()
-df['std_7d'] = df['produccion'].rolling(7).std()</pre>
+  <h2>¿Qué Problemas Tienen los Datos Reales?</h2>
+  <div class="cg c3">
+    <div class="card r">
+      <h3>Valores Faltantes (Missing Data)</h3>
+      <ul>
+        <li>Sensor desconectado → temperatura = NULL</li>
+        <li>Empleado no registró turno en el sistema</li>
+        <li>Cliente no respondió campo en formulario</li>
+        <li>Error de integración entre sistemas</li>
+      </ul>
+      <div class="box bd" style="margin-top:8px;"><div class="bt">¿QUÉ HACER?</div>
+        <p>Eliminar fila (si es &lt;5% y aleatoria) · Imputar con media/mediana · Imputar con valor de registro anterior · Marcar como categoría "desconocido"</p>
+      </div>
+    </div>
+    <div class="card o">
+      <h3>Valores Atípicos (Outliers)</h3>
+      <ul>
+        <li>Sensor devuelve temperatura de 9,999°C (error de lectura)</li>
+        <li>Tiempo de ciclo de 0.001 segundos (error de registro)</li>
+        <li>Pedido de 1,000,000 unidades (posiblemente real)</li>
+        <li>¿Es anomalía real o error de medición?</li>
+      </ul>
+      <div class="box bd" style="margin-top:8px;"><div class="bt">REGLA IQR</div>
+        <p>Outlier si valor &lt; Q1 − 1.5×IQR o &gt; Q3 + 1.5×IQR. Puede eliminarse, corregirse o preservarse según el contexto.</p>
+      </div>
     </div>
     <div class="card v">
-      <h3>Features de Dominio Industrial</h3>
-      <pre># OEE compuesto desde sus componentes
-df['oee'] = (df['disponibilidad'] *
-             df['rendimiento'] *
-             df['calidad'])
-
-# Temperatura × humedad → índice de estrés térmico
-df['stress_termico'] = df['temp'] * df['humedad'] / 100
-
-# Interacciones entre variables
-df['vel_x_temp'] = df['velocidad'] * df['temperatura']
-df['ratio_defectos'] = df['defectos'] / df['produccion'].clip(1)
-
-# Encoding cíclico de tiempo (para ML)
-import numpy as np
-df['hora_sin'] = np.sin(2*np.pi*df['hora']/24)
-df['hora_cos'] = np.cos(2*np.pi*df['hora']/24)</pre>
+      <h3>Escala Incompatible</h3>
+      <ul>
+        <li>Temperatura: 20–80°C vs Presión: 0.001–0.1 bar</li>
+        <li>Distancia: 1–5,000 km vs Tiempo: 1–24 horas</li>
+        <li>Los algoritmos que usan distancias (K-Means, SVM) se "confunden" cuando las escalas son muy distintas</li>
+        <li>La variable con rango mayor domina el modelo</li>
+      </ul>
     </div>
-  </div>
-  <div class="box bl"><div class="bt">🔬 LABORATORIO — Pipeline de Preprocesamiento</div>
-    <p>Usar sklearn Pipeline para encadenar: SimpleImputer → RobustScaler → OneHotEncoder (con ColumnTransformer para tratar numéricas y categóricas por separado) → modelo. Ventaja: fit() en train, transform() en test. Sin data leakage garantizado.</p>
   </div>
 </div>
 
 <div class="slide" data-s="0">
-  <h2>Selección de Features: Eliminar el Ruido</h2>
+  <h2>Transformaciones: Poner los Datos en el Mismo Idioma</h2>
   <table>
-    <tr><th>Método</th><th>Cómo funciona</th><th>Cuándo usarlo</th></tr>
-    <tr><td><strong>Varianza umbral</strong></td><td>Elimina features con varianza casi cero (sin información)</td><td>Primer filtro antes de cualquier análisis</td></tr>
-    <tr><td><strong>Correlación con target</strong></td><td>Selecciona features más correlacionadas con Y</td><td>Regresión/clasificación, rápido y simple</td></tr>
-    <tr><td><strong>SelectKBest (F-test/Chi²)</strong></td><td>Test estadístico de dependencia entre feature y target</td><td>Datos con muchas features, clasificación</td></tr>
-    <tr><td><strong>Feature Importance (RF)</strong></td><td>Random Forest calcula contribución de cada feature</td><td>El más confiable para datos tabulares industriales</td></tr>
-    <tr><td><strong>SHAP values</strong></td><td>Atribuye a cada feature su contribución en cada predicción individual</td><td>Cuando necesitas explicabilidad + selección</td></tr>
-    <tr><td><strong>RFE (Recursive Feature Elimination)</strong></td><td>Elimina iterativamente las features menos importantes</td><td>Cuando calidad > velocidad</td></tr>
+    <tr><th>Transformación</th><th>Cuándo usarla</th><th>Resultado</th><th>Ejemplo</th></tr>
+    <tr><td><strong>Normalización (Min-Max)</strong></td><td>Variables con rango fijo y sin outliers extremos</td><td>Rango [0, 1]</td><td>Edad del empleado: 20-65 años → 0.0 a 1.0</td></tr>
+    <tr><td><strong>Estandarización (Z-score)</strong></td><td>Variables con outliers o distribución normal</td><td>Media=0, σ=1</td><td>Temperatura proceso: (T - media) / desv. estándar</td></tr>
+    <tr><td><strong>Codificación One-Hot</strong></td><td>Variables categóricas sin orden (nominal)</td><td>Columnas binarias 0/1</td><td>Tipo_pieza: [Motor, Freno, Llanta] → 3 columnas</td></tr>
+    <tr><td><strong>Codificación Ordinal</strong></td><td>Variables con orden natural</td><td>Números enteros</td><td>Calidad: [Mala=1, Regular=2, Buena=3, Excelente=4]</td></tr>
+    <tr><td><strong>Log Transform</strong></td><td>Datos muy sesgados a la derecha (ingresos, ventas)</td><td>Distribución más simétrica</td><td>Ventas diarias: de rango 100-1,000,000 a distribución normal</td></tr>
   </table>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Selección de Características: Menos es Más</h2>
+  <div class="cg c2">
+    <div class="card c">
+      <h3>¿Por Qué Eliminar Variables?</h3>
+      <ul>
+        <li><strong>Maldición de la dimensionalidad</strong>: con demasiadas variables, el modelo tiene menos datos por combinación posible y se sobreajusta</li>
+        <li><strong>Variables correlacionadas</strong>: si "velocidad" y "distancia/tiempo" están en el dataset, una es redundante</li>
+        <li><strong>Variables irrelevantes</strong>: el número de ID del empleado no predice productividad</li>
+        <li><strong>Eficiencia</strong>: menos variables = modelo más rápido y fácil de explicar</li>
+      </ul>
+    </div>
+    <div class="card g">
+      <h3>Técnicas de Selección</h3>
+      <ul>
+        <li><strong>Correlación de Pearson</strong>: eliminar variables con r &gt; 0.9 entre sí (redundantes)</li>
+        <li><strong>Importancia de variables</strong>: Random Forest asigna un puntaje de importancia a cada feature</li>
+        <li><strong>Eliminación hacia atrás</strong>: empezar con todas, eliminar la menos importante iterativamente</li>
+        <li><strong>Análisis de varianza</strong>: eliminar variables con varianza casi cero (no aportan información)</li>
+        <li><strong>Criterio del experto de dominio</strong>: consultar al ingeniero qué variables son causalmente relevantes</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box bc"><div class="bt">📰 CASO REAL — Tesla: Sensores de alta calidad</div>
+    <p>Tesla recibe millones de señales de sensores de cada vehículo. Para predecir desgaste de frenos, ingenieros de ML identificaron que de 400+ variables de telemetría, solo <strong>23 variables</strong> son estadísticamente relevantes. Las restantes 377 se eliminan antes del entrenamiento. Resultado: modelo más preciso, 4x más rápido en inferencia y fácil de explicar al equipo de ingeniería mecánica.</p>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Partición de Datos: Train, Validation y Test</h2>
+  <div class="ld">
+    <div class="lr" style="background:rgba(16,185,129,.1);border:1px solid var(--green);color:var(--green);">📚 TRAIN (60-70%) — Con estos datos el modelo APRENDE. Ve las respuestas, ajusta sus parámetros internos.</div>
+    <div class="lr" style="background:rgba(6,182,212,.1);border:1px solid var(--cyan);color:var(--cyan);">🔧 VALIDATION (15-20%) — Para ajustar HIPERPARÁMETROS. Evalúas y ajustas el modelo sin "contaminar" el test.</div>
+    <div class="lr" style="background:rgba(124,58,237,.1);border:1px solid var(--violet);color:var(--violet);">🏆 TEST (15-20%) — Evaluación FINAL. Se usa una sola vez, al final. Simula datos nuevos del mundo real.</div>
+  </div>
+  <div class="box bd"><div class="bt">💡 ANALOGÍA CON EXÁMENES</div>
+    <p><strong>Train</strong> = el libro de texto que estudias · <strong>Validation</strong> = los exámenes de práctica que te auto-aplicas para ajustar tu estrategia de estudio · <strong>Test</strong> = el examen real que solo haces una vez. Si usas el examen real para "practicar" (data leakage), tus métricas serán falsamente optimistas.</p>
+  </div>
+  <div class="box bl"><div class="bt">🔬 ACTIVIDAD PRÁCTICA — Detecta los problemas</div>
+    <p>Se te entrega una tabla con datos de 50 equipos industriales con columnas: ID_Equipo, Temperatura_Promedio, Presión_Max, Horas_Uso, Operador, Ultimo_Mantenimiento, Falla_Próx_30días. Identifica: (1) ¿Cuál columna eliminarías y por qué? (2) ¿Qué columna necesita codificación? (3) ¿Qué columnas necesitan escalado? (4) Si hay 3 registros con temperatura de 9,999°C, ¿qué haces?</p>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Reto de Aplicación — Sesión 11</h2>
+  <div class="box bm"><div class="bt">🎭 RECUERDA LA METÁFORA</div>
+    <p>Antes de poner los ingredientes a la olla, tómate el tiempo de limpiarlos, cortarlos del tamaño correcto y organizarlos. Un buen mise en place (preparación previa) es lo que separa a un cocinero amateur de un chef profesional.</p>
+  </div>
+  <div class="box bl"><div class="bt">🏆 RETO — Diseña tu Pipeline de Preprocesamiento</div>
+    <p>Para el dataset de tu área de carrera (manufactura, logística, transporte, automotriz o administración), diseña en papel el pipeline completo de preprocesamiento:</p>
+    <ol style="margin-top:8px;">
+      <li><strong>Inventario de variables</strong>: lista las 8-12 variables que incluirías en tu dataset ideal</li>
+      <li><strong>Tipo de cada variable</strong>: numérica continua, discreta, categórica nominal u ordinal</li>
+      <li><strong>Problemas esperados</strong>: qué valores faltantes o outliers anticipas y por qué</li>
+      <li><strong>Estrategia de limpieza</strong>: cómo tratarías cada problema identificado</li>
+      <li><strong>Transformaciones</strong>: qué variables escalarías, cuáles codificarías y cómo</li>
+      <li><strong>Partición</strong>: qué porcentaje destinarías a train/validation/test y por qué</li>
+    </ol>
+    <p style="margin-top:8px;color:var(--muted);font-size:.82rem;">Entregable: diagrama de flujo del pipeline con justificación de cada decisión (1 página)</p>
+  </div>
   <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Click para ver respuesta</div>
-    <p>Tienes 150 variables de sensores para predecir fallas. El modelo Random Forest tiene R²=0.97 en train y R²=0.43 en test. ¿Qué está pasando y cómo lo resuelves?</p>
-    <div class="qa"><strong>Overfitting severo</strong>. El modelo memorizó el train en lugar de aprender patrones generalizables. Soluciones: (1) Reducir complejidad del modelo (menos árboles, menor profundidad máxima), (2) Feature selection para eliminar variables irrelevantes o ruidosas, (3) Regularización, (4) Más datos de entrenamiento, (5) Cross-validation para detectar overfitting antes de reportar métricas, (6) Verificar data leakage — quizás alguna feature "filtra" el target.</div>
+    <p>Tienes datos de producción de 3 turnos: Turno A (medias=85, σ=2), Turno B (media=85, σ=12). ¿Cuál turno tiene mayor "problema de calidad" aunque su media sea igual? ¿Qué estadística te dice esto?</p>
+    <div class="qa">El <strong>Turno B</strong> tiene el problema. Aunque ambos tienen la misma media (85), la <strong>desviación estándar de 12 vs 2</strong> indica que el Turno B es extremadamente inconsistente. Algunas piezas son excelentes y otras son defectuosas. En manufactura, la variabilidad (σ) es tan importante como la media porque los clientes quieren piezas consistentes, no solo "buenas en promedio". Un proceso Six Sigma busca σ ≤ (tolerancia/6).</div>
   </div>
 </div>
 
 <!-- ═══ SESIÓN 12 ═══ -->
 <div class="slide" data-s="1">
-  <h2>Sesión 12 <span style="color:var(--cyan)">— Aprendizaje No Supervisado: Clustering Industrial</span></h2>
-  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
-    <p>El clustering es como <strong>organizar un almacén sin etiquetas</strong>. No sabes de antemano cuántas categorías hay ni cuáles son, pero el algoritmo encuentra los grupos "naturales" según la similitud de los objetos. Es el ojo que descubre patrones ocultos que ningún humano habría predefinido: segmentos de clientes, modos de falla, patrones de consumo.</p>
+  <h2>Sesión 12 <span style="color:var(--cyan)">— Aprendizaje No Supervisado: Clustering y Segmentación</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA DE APERTURA</div>
+    <p>K-Means es como <strong>organizar una biblioteca sin que nadie te diga las categorías</strong>. El algoritmo "lee" todos los libros, nota cuáles se parecen entre sí (por palabras, temas, estilo) y los agrupa. Tú, al final, solo pones el letrero: "ciencia ficción", "historia", "técnicos". Las categorías emergen de los datos, no las impone el programador.</p>
   </div>
-  <div class="cg c3" style="margin-top:14px;">
-    <div class="card c"><h3>K-Means</h3><p>Asigna cada punto al centroide más cercano. Rápido, escalable. Requiere especificar K. Sensible a outliers y a la escala. Ideal para segmentación de clientes y clasificación de productos.</p></div>
-    <div class="card v"><h3>DBSCAN</h3><p>Basado en densidad. No requiere K. Detecta outliers como ruido. Encuentra clusters de forma arbitraria. Ideal para detección de anomalías en telemetría de sensores.</p></div>
-    <div class="card g"><h3>Jerárquico</h3><p>Construye un dendrograma de fusiones. Permite visualizar la jerarquía de clusters. Útil para datasets medianos y cuando el número de clusters no es claro.</p></div>
+  <div class="sr" style="margin-top:16px;">
+    <div class="stat"><div class="n" style="color:var(--violet)">Sin</div><div class="l">etiquetas: el algoritmo encuentra patrones ocultos en datos no clasificados</div></div>
+    <div class="stat"><div class="n" style="color:var(--cyan)">K-Means</div><div class="l">el algoritmo de clustering más usado en la industria por su simplicidad</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">+500</div><div class="l">aplicaciones industriales documentadas de clustering en manufactura y logística (McKinsey 2023)</div></div>
   </div>
 </div>
 
 <div class="slide" data-s="1">
-  <h2>K-Means en la Práctica: Segmentación Industrial</h2>
+  <h2>Supervisado vs. No Supervisado: La Diferencia Fundamental</h2>
+  <div class="cg c2">
+    <div class="card g">
+      <h3>Aprendizaje Supervisado</h3>
+      <p>El modelo aprende de ejemplos <strong>etiquetados</strong>: cada dato tiene una respuesta correcta conocida.</p>
+      <ul>
+        <li>Dataset: 10,000 piezas con etiqueta "Buena" o "Defectuosa"</li>
+        <li>Aprende: qué características tienen las piezas defectuosas</li>
+        <li>Predice: si una pieza nueva es buena o defectuosa</li>
+        <li>Requiere: proceso costoso de etiquetado manual</li>
+      </ul>
+      <div class="pill pg">Clasificación</div><div class="pill pc">Regresión</div>
+    </div>
+    <div class="card v">
+      <h3>Aprendizaje No Supervisado</h3>
+      <p>El modelo <strong>no tiene etiquetas</strong>. Encuentra estructura oculta en los datos por sí solo.</p>
+      <ul>
+        <li>Dataset: 10,000 clientes con datos de comportamiento (sin categorías)</li>
+        <li>Descubre: grupos de clientes con patrones similares</li>
+        <li>Resultado: "Existen 4 perfiles de cliente diferenciados"</li>
+        <li>Ventaja: no necesita etiquetado manual costoso</li>
+      </ul>
+      <div class="pill pv">Clustering</div><div class="pill po">Reducción Dimensiones</div>
+    </div>
+  </div>
+  <div class="box bd"><div class="bt">💡 CUÁNDO USAR CADA UNO</div>
+    <p>¿Tienes datos etiquetados históricos? → Supervisado. ¿Quieres descubrir patrones desconocidos? → No supervisado. ¿Quieres visualizar datos complejos? → Reducción de dimensiones (PCA, t-SNE). En la práctica, ambos se combinan: primero clustering para descubrir segmentos, luego clasificación para asignar nuevos registros.</p>
+  </div>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>K-Means: Cómo Funciona el Algoritmo</h2>
+  <ul class="tl">
+    <li><div class="st v">1</div><div class="content"><h4>Elegir K (número de clusters)</h4><p>El usuario decide cuántos grupos quiere. K=3 crea 3 grupos, K=5 crea 5. Elegir K incorrecto = resultados sin sentido.</p></div></li>
+    <li><div class="st c">2</div><div class="content"><h4>Inicializar centroides aleatoriamente</h4><p>El algoritmo coloca K puntos "centroides" al azar en el espacio de datos. Son los "centros" provisionales de cada grupo.</p></div></li>
+    <li><div class="st g">3</div><div class="content"><h4>Asignar cada punto al centroide más cercano</h4><p>Cada dato se asigna al grupo cuyo centroide está más cerca (distancia Euclidiana). Todos los datos quedan asignados.</p></div></li>
+    <li><div class="st o">4</div><div class="content"><h4>Recalcular centroides</h4><p>El nuevo centroide de cada grupo es el promedio de todos sus puntos. Los centroides se mueven hacia el centro real del grupo.</p></div></li>
+    <li><div class="st r">5</div><div class="content"><h4>Repetir hasta convergencia</h4><p>Repetir pasos 3-4 hasta que los centroides no se muevan más. Generalmente converge en 10-50 iteraciones.</p></div></li>
+  </ul>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>¿Cuántos Clusters? El Método del Codo</h2>
   <div class="cg c2">
     <div class="card c">
-      <h3>Implementación Completa</h3>
-      <pre">from sklearn.cluster import KMeans
-from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import silhouette_score
-import matplotlib.pyplot as plt
-
-# SIEMPRE escalar antes de clustering
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
-
-# Método del codo para elegir K
-inercias = []
-for k in range(2, 11):
-    km = KMeans(n_clusters=k, random_state=42, n_init=10)
-    km.fit(X_scaled)
-    inercias.append(km.inertia_)
-
-plt.plot(range(2,11), inercias, 'bo-')
-plt.xlabel('K'); plt.ylabel('Inercia')
-plt.title('Método del Codo')
-
-# Validar con Silhouette Score (0 a 1, mayor = mejor)
-km_final = KMeans(n_clusters=4, random_state=42, n_init=10)
-labels = km_final.fit_predict(X_scaled)
-score = silhouette_score(X_scaled, labels)
-print(f"Silhouette Score: {score:.3f}")</pre>
+      <h3>El Problema de Elegir K</h3>
+      <p>Si K es muy pequeño: grupos muy heterogéneos (mezcla clientes muy distintos). Si K es muy grande: grupos sin sentido empresarial (100 "tipos" de cliente son inmanejables).</p>
+      <div class="box bd" style="margin-top:8px;"><div class="bt">MÉTODO DEL CODO (Elbow Method)</div>
+        <p>Calcula la "suma de distancias internas" para K=1, 2, 3,..., 10. Graficar: en algún punto la curva tiene un "codo" (el beneficio de agregar un cluster más se vuelve marginal). Ese K es el óptimo.</p>
+      </div>
+      <div class="box bd" style="margin-top:8px;"><div class="bt">COEFICIENTE SILHOUETTE</div>
+        <p>Mide qué tan bien cada punto encaja en su cluster vs. el cluster vecino. Rango: -1 a +1. Valores cercanos a 1 = clusters bien definidos.</p>
+      </div>
     </div>
-    <div class="card g">
-      <h3>Casos de Uso en Industria</h3>
+    <div class="card v">
+      <h3>Limitaciones de K-Means</h3>
       <ul>
-        <li><strong>Mantenimiento</strong>: agrupar máquinas por perfil de desgaste para programar mantenimiento diferenciado</li>
-        <li><strong>Logística</strong>: segmentar zonas de entrega por densidad de pedidos y tiempo → rutas optimizadas</li>
-        <li><strong>Clientes B2B</strong>: segmentar distribuidores por volumen, frecuencia y margen → estrategia comercial diferenciada</li>
-        <li><strong>Calidad</strong>: agrupar tipos de defectos por patrón de variables de proceso → causas raíz distintas</li>
+        <li><strong>Clusters esféricos</strong>: solo funciona bien cuando los grupos son aproximadamente esféricos</li>
+        <li><strong>Sensible a outliers</strong>: un punto muy lejano puede "jalar" un centroide</li>
+        <li><strong>Sensible a escala</strong>: necesita normalización previa</li>
+        <li><strong>K fijo</strong>: debes especificar K de antemano</li>
       </ul>
-      <div class="box bc" style="margin-top:8px;"><div class="bt">📰 CASO REAL</div>
-        <p>BIMBO segmentó 50,000 puntos de venta con K-Means (variables: ventas/semana, tipo de negocio, zona, SKUs activos). Resultado: 6 segmentos con estrategia de surtido y visita diferenciada. Reducción de 12% en merma y aumento de 8% en ventas por ruta.</p>
+      <div class="box bd" style="margin-top:8px;"><div class="bt">ALTERNATIVA — DBSCAN</div>
+        <p>Detecta clusters de forma irregular y automáticamente identifica outliers como "ruido". Ideal para datos geoespaciales (rutas, zonas) y detección de anomalías en sensores.</p>
       </div>
     </div>
   </div>
 </div>
 
 <div class="slide" data-s="1">
-  <h2>t-SNE y UMAP: Visualizando Datos de Alta Dimensión</h2>
-  <div class="cg c2">
-    <div class="card v">
-      <h3>¿Por qué necesitamos reducción dimensional?</h3>
-      <p>Con 50+ variables de sensores, no podemos visualizar los datos. t-SNE y UMAP proyectan los datos en 2D/3D preservando las relaciones de proximidad entre puntos. Permite:</p>
-      <ul>
-        <li>Ver si los clusters son naturalmente separables</li>
-        <li>Detectar outliers visualmente antes de modelar</li>
-        <li>Validar la calidad del clustering en 2D</li>
-        <li>Descubrir subestructuras no obvias en los datos</li>
-      </ul>
-    </div>
-    <div class="card c">
-      <h3>Código t-SNE</h3>
-      <pre">from sklearn.manifold import TSNE
-import matplotlib.pyplot as plt
-import numpy as np
-
-# Reducir a 2D para visualización
-tsne = TSNE(n_components=2,
-            perplexity=30,
-            random_state=42,
-            n_iter=1000)
-X_2d = tsne.fit_transform(X_scaled)
-
-# Visualizar con colores de cluster
-plt.figure(figsize=(10,8))
-scatter = plt.scatter(X_2d[:,0], X_2d[:,1],
-    c=labels, cmap='tab10', s=15, alpha=0.7)
-plt.colorbar(scatter, label='Cluster')
-plt.title('Clusters en 2D (t-SNE)')
-plt.tight_layout()</pre>
-    </div>
+  <h2>Aplicaciones Industriales del Clustering</h2>
+  <table>
+    <tr><th>Área</th><th>Qué se Agrupa</th><th>Variables Usadas</th><th>Uso del Resultado</th></tr>
+    <tr><td><strong>Adm. Industrial</strong></td><td>Clientes o proveedores</td><td>Frecuencia de compra, ticket promedio, días de pago, categorías</td><td>Estrategias diferenciadas por segmento de cliente/proveedor</td></tr>
+    <tr><td><strong>Ing. Industrial</strong></td><td>Máquinas o piezas</td><td>Horas de operación, temperatura, vibración, edad, tipo de falla</td><td>Planes de mantenimiento diferenciados por grupo de máquinas</td></tr>
+    <tr><td><strong>Ing. Transporte</strong></td><td>Rutas o vehículos</td><td>Distancia, carga, tiempo, combustible, incidencias</td><td>Optimización diferenciada por tipo de ruta/vehículo</td></tr>
+    <tr><td><strong>Ing. Automotriz</strong></td><td>Componentes o modos de falla</td><td>Frecuencia de falla, costo de reparación, severidad, contexto</td><td>Priorización de mejoras de diseño por grupo de fallas</td></tr>
+    <tr><td><strong>Ing. Informática</strong></td><td>Usuarios o transacciones</td><td>Comportamiento, tiempo de sesión, accesos, patrones de uso</td><td>Detección de fraude (anomalías) o personalización</td></tr>
+  </table>
+  <div class="box bc"><div class="bt">📰 CASO REAL — Telcel: 4 tipos de cliente de entre 90 millones</div>
+    <p>Telcel aplica K-Means a su base de 90+ millones de clientes, usando variables de consumo de datos, minutos, mensajes, frecuencia de recarga, antigüedad y zona geográfica. El algoritmo identificó <strong>4 arquetipos dominantes</strong>: "heavy data user", "usuario básico", "corporativo", "usuario intermitente". Con estos segmentos, Telcel diseña planes específicos reduciendo la tasa de cancelación (churn) en un 23%, porque las ofertas son relevantes para cada perfil.</p>
   </div>
-  <div class="box bl"><div class="bt">🔬 PRÁCTICA — Clustering de Fallas de Producción</div>
-    <p>Dataset: 5,000 registros de fallas con 20 variables de proceso. (1) Escalar datos, (2) Elegir K óptimo con codo + silhouette, (3) Aplicar K-Means y DBSCAN, (4) Visualizar en 2D con t-SNE, (5) Caracterizar cada cluster con estadísticas descriptivas, (6) Proponer nombre y estrategia de acción para cada grupo.</p>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>Reto de Aplicación — Sesión 12</h2>
+  <div class="box bl"><div class="bt">🔬 ACTIVIDAD PRÁCTICA — Lee los Clusters</div>
+    <p>Se te presenta un scatter plot (en papel o proyector) con 40 puntos de datos de equipos industriales (eje X = horas de operación sin mantenimiento, eje Y = número de fallas en los últimos 6 meses).</p>
+    <ol style="margin-top:8px;">
+      <li>Identifica visualmente cuántos grupos "naturales" ves en el gráfico</li>
+      <li>Dibuja los centroides aproximados de cada grupo</li>
+      <li>Asigna un nombre descriptivo a cada cluster (ej: "equipos confiables", "equipos en riesgo")</li>
+      <li>Discute: ¿qué acción gerencial tomarías para cada grupo?</li>
+      <li>Compara tu clasificación con la del algoritmo K-Means (resultados mostrados después)</li>
+    </ol>
+  </div>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Click para ver respuesta</div>
+    <p>Un algoritmo de clustering identifica 3 grupos de proveedores de tu empresa. El Grupo A tiene 5 proveedores con entregas puntuales y precios altos. El Grupo B tiene 20 proveedores mediocres. El Grupo C tiene 3 proveedores con precio bajo pero muchos retrasos. ¿Qué estrategia diferenciada propones para cada grupo?</p>
+    <div class="qa"><strong>Grupo A (Proveedores Premium)</strong>: establecer alianzas estratégicas, darles mayor volumen, pedir mejores condiciones por volumen, desarrollar programas colaborativos. <strong>Grupo B (Masa)</strong>: segmentar internamente, competir por precio entre ellos, monitorear KPIs, desarrollar a los mejores hacia el Grupo A. <strong>Grupo C (Riesgo)</strong>: usar solo para productos no críticos con colchón de inventario, establecer penalizaciones contractuales, considerar desarrollar alternativas. La segmentación permite tratar a cada proveedor según su perfil real, no de forma homogénea.</div>
+  </div>
+  <div class="box bm"><div class="bt">🏆 RETO — Tu Caso de Clustering</div>
+    <p>Define un caso de clustering para tu área: (1) ¿Qué entidades agrupas? (2) ¿Qué 4-6 variables usarías? (3) ¿Cuántos clusters esperas encontrar y por qué? (4) ¿Cómo usarías los segmentos en decisiones gerenciales? Presenta en 5 minutos.</p>
   </div>
 </div>
 
 <!-- ═══ SESIÓN 13 ═══ -->
 <div class="slide" data-s="2">
-  <h2>Sesión 13 <span style="color:var(--orange)">— Clasificación y Predicción: Random Forest, SVM y MLP</span></h2>
-  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
-    <p><strong>Random Forest</strong> es como consultar a 500 expertos independientes que cada uno ve un subconjunto distinto de los datos y vota: la democracia gana al experto individual. <strong>SVM</strong> busca el mejor "pasillo" entre clases — más ancho el pasillo, más segura la clasificación. <strong>MLP</strong> (red neuronal) aprende representaciones jerárquicas: neuronas simples se combinan para capturar patrones complejos.</p>
+  <h2>Sesión 13 <span style="color:var(--green)">— Aprendizaje Supervisado para Clasificación y Predicción</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA DE APERTURA</div>
+    <p>Un árbol de decisión es como el <strong>juego 20 preguntas</strong>: el modelo aprende la secuencia de preguntas de sí/no que mejor separa los casos buenos de los malos. <em>"¿La temperatura supera 85°C?"</em> → Sí → <em>"¿Las vibraciones son mayores a 3mm/s?"</em> → Sí → FALLA PROBABLE. <strong>Random Forest</strong> es el comité de 100 juegos simultáneos votando por mayoría para una respuesta más robusta.</p>
   </div>
   <div class="sr" style="margin-top:16px;">
-    <div class="stat"><div class="n" style="color:var(--green)">RF</div><div class="l">Mejor accuracy promedio en datos tabulares industriales (Kaggle studies)</div></div>
-    <div class="stat"><div class="n" style="color:var(--cyan)">XGB</div><div class="l">Ganador de la mayoría de competencias de ML con datos estructurados</div></div>
-    <div class="stat"><div class="n" style="color:var(--orange)">SVM</div><div class="l">Excelente con datos de alta dimensión y pocos ejemplos de entrenamiento</div></div>
+    <div class="stat"><div class="n" style="color:var(--violet)">+90%</div><div class="l">de las competencias de ML son ganadas por Random Forest o Gradient Boosting (Kaggle 2023)</div></div>
+    <div class="stat"><div class="n" style="color:var(--cyan)">Random</div><div class="l">Forest: el algoritmo favorito de la industria por su balance entre precisión e interpretabilidad</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">$1.2B</div><div class="l">ahorro global estimado en mantenimiento predictivo con clasificación de fallas (Deloitte 2023)</div></div>
   </div>
 </div>
 
 <div class="slide" data-s="2">
-  <h2>Random Forest: El Caballo de Batalla Industrial</h2>
+  <h2>Árboles de Decisión: La Base de Todo</h2>
   <div class="cg c2">
     <div class="card g">
-      <h3>Implementación y Tuning</h3>
-      <pre">from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import GridSearchCV
-from sklearn.metrics import classification_report, confusion_matrix
-import seaborn as sns
-
-# Modelo base
-rf = RandomForestClassifier(
-    n_estimators=200,
-    max_depth=None,
-    min_samples_split=5,
-    class_weight='balanced',  # para clases desbalanceadas
-    random_state=42,
-    n_jobs=-1)  # usar todos los CPUs
-
-rf.fit(X_train, y_train)
-y_pred = rf.predict(X_test)
-
-# Reporte completo
-print(classification_report(y_test, y_pred,
-    target_names=['Normal', 'Falla_A', 'Falla_B']))
-
-# Feature importance
-importancias = pd.Series(rf.feature_importances_,
-    index=feature_names).sort_values(ascending=False)
-importancias[:15].plot(kind='barh')</pre>
+      <h3>Estructura del Árbol</h3>
+      <ul>
+        <li><strong>Nodo Raíz</strong>: la pregunta más importante (variable que mejor separa los datos)</li>
+        <li><strong>Nodos Internos</strong>: preguntas adicionales sobre otras variables</li>
+        <li><strong>Ramas</strong>: respuestas posibles (Sí/No para binarias, rangos para numéricas)</li>
+        <li><strong>Hojas</strong>: decisión final (clasificación: "Falla"/"OK", regresión: valor numérico)</li>
+      </ul>
+      <div class="box bd" style="margin-top:8px;"><div class="bt">VENTAJAS</div>
+        <p>Fácil de interpretar (puedes dibujar el árbol en papel) · No requiere normalización · Maneja variables categóricas y numéricas · El "por qué" de cada decisión es explícito</p>
+      </div>
     </div>
-    <div class="card c">
-      <h3>Métricas para Clasificación</h3>
-      <table>
-        <tr><th>Métrica</th><th>Fórmula</th><th>Cuándo usarla</th></tr>
-        <tr><td>Accuracy</td><td>TP+TN / Total</td><td>Clases balanceadas</td></tr>
-        <tr><td>Precision</td><td>TP / (TP+FP)</td><td>Costo alto de falsos positivos</td></tr>
-        <tr><td>Recall</td><td>TP / (TP+FN)</td><td>Costo alto de falsos negativos (fallas no detectadas)</td></tr>
-        <tr><td>F1-Score</td><td>2×P×R/(P+R)</td><td>Balance precision-recall</td></tr>
-        <tr><td>ROC-AUC</td><td>Área bajo curva ROC</td><td>Comparar modelos, clases desbalanceadas</td></tr>
-      </table>
-      <div class="box bd" style="margin-top:8px;"><div class="bt">💡 DATO CLAVE</div>
-        <p>En detección de fallas industriales, el <strong>recall es crítico</strong>: preferimos alertar de más (FP) que no detectar una falla real (FN) que causa parada de planta.</p>
+    <div class="card v">
+      <h3>Random Forest: Sabiduría de Multitudes</h3>
+      <ul>
+        <li>Crea 100-500 árboles de decisión <strong>diferentes</strong> (con subconjuntos aleatorios de datos y variables)</li>
+        <li>Cada árbol "vota" por una clase</li>
+        <li>La clase con más votos gana</li>
+        <li>¿Por qué es mejor que un árbol solo? Reduce el overfitting al promediar muchos árboles imperfectos</li>
+      </ul>
+      <div class="box bd" style="margin-top:8px;"><div class="bt">BONUS: IMPORTANCIA DE VARIABLES</div>
+        <p>Random Forest automáticamente calcula cuánto contribuye cada variable a las predicciones. Te dice qué variables son más importantes para predecir, sin necesidad de análisis adicionales.</p>
       </div>
     </div>
   </div>
 </div>
 
 <div class="slide" data-s="2">
-  <h2>SVM y MLP: Cuándo y Cómo Usarlos</h2>
+  <h2>La Matriz de Confusión: Entendiendo los Errores</h2>
   <div class="cg c2">
+    <div class="card c">
+      <h3>Las 4 Celdas de la Matriz</h3>
+      <div class="matrix">
+        <div class="mx head"></div>
+        <div class="mx head">Predijo: POSITIVO</div>
+        <div class="mx head">Predijo: NEGATIVO</div>
+        <div class="mx head">Real: POSITIVO</div>
+        <div class="mx tp">VP (Verdadero Positivo)<br><small>Predijo falla → sí hubo falla</small></div>
+        <div class="mx fn">FN (Falso Negativo)<br><small>Predijo OK → pero sí hubo falla</small></div>
+        <div class="mx head">Real: NEGATIVO</div>
+        <div class="mx fp">FP (Falso Positivo)<br><small>Predijo falla → pero NO hubo</small></div>
+        <div class="mx tn">VN (Verdadero Negativo)<br><small>Predijo OK → no hubo falla</small></div>
+      </div>
+    </div>
     <div class="card v">
-      <h3>Support Vector Machine (SVM)</h3>
-      <pre">from sklearn.svm import SVC
-from sklearn.pipeline import Pipeline
-
-# Pipeline con escalado (obligatorio para SVM)
-svm_pipeline = Pipeline([
-    ('scaler', StandardScaler()),
-    ('svm', SVC(
-        kernel='rbf',     # 'linear' para alta dim.
-        C=10,             # regularización
-        gamma='scale',    # 'scale' o 'auto'
-        probability=True, # para predict_proba
-        class_weight='balanced'))
-])
-svm_pipeline.fit(X_train, y_train)
-probs = svm_pipeline.predict_proba(X_test)
-
-# Cuándo usar SVM:
-# - Datos de alta dimensión (texto, espectroscopia)
-# - Pocos ejemplos de entrenamiento
-# - Frontera de decisión no lineal</pre>
+      <h3>Métricas Derivadas</h3>
+      <ul>
+        <li><strong>Exactitud (Accuracy)</strong>: (VP+VN) / Total. ¿Qué % de predicciones fueron correctas?</li>
+        <li><strong>Precisión</strong>: VP / (VP+FP). De todo lo que predije como positivo, ¿cuánto fue real?</li>
+        <li><strong>Recall (Sensibilidad)</strong>: VP / (VP+FN). De todos los positivos reales, ¿cuántos detecté?</li>
+        <li><strong>F1 Score</strong>: promedio armónico de Precisión y Recall</li>
+      </ul>
+      <div class="box bc" style="margin-top:8px;"><div class="bt">¿CUÁL ES MÁS IMPORTANTE?</div>
+        <p><strong>Alta Precisión</strong>: cuando una falsa alarma es costosa (parar producción innecesariamente). <strong>Alto Recall</strong>: cuando no detectar es peligroso (falla en frenos de avión, bacteria en alimento).</p>
+      </div>
     </div>
-    <div class="card o">
-      <h3>Red Neuronal (MLP)</h3>
-      <pre">from sklearn.neural_network import MLPClassifier
+  </div>
+</div>
 
-mlp = MLPClassifier(
-    hidden_layer_sizes=(128, 64, 32),
-    activation='relu',        # 'tanh', 'logistic'
-    solver='adam',
-    alpha=0.001,              # regularización L2
-    learning_rate='adaptive',
-    max_iter=500,
-    early_stopping=True,      # stop si no mejora
-    validation_fraction=0.1,
-    random_state=42)
+<div class="slide" data-s="2">
+  <h2>Comparativa de Algoritmos de Clasificación</h2>
+  <table>
+    <tr><th>Algoritmo</th><th>Metáfora</th><th>Interpretabilidad</th><th>Precisión</th><th>Mejor Para</th></tr>
+    <tr><td><strong>Árbol de Decisión</strong></td><td>Flujograma de preguntas sí/no</td><td>⭐⭐⭐⭐⭐ Muy alta</td><td>⭐⭐⭐ Media</td><td>Reglas de negocio explicables, primeros modelos</td></tr>
+    <tr><td><strong>Random Forest</strong></td><td>Comité de expertos votando</td><td>⭐⭐⭐ Media</td><td>⭐⭐⭐⭐⭐ Muy alta</td><td>Balance precisión-interpretabilidad, industria</td></tr>
+    <tr><td><strong>SVM</strong></td><td>Pizarrón: dibujar la mejor línea separadora</td><td>⭐⭐ Baja</td><td>⭐⭐⭐⭐ Alta</td><td>Datos con pocos atributos, clasificación binaria</td></tr>
+    <tr><td><strong>Naive Bayes</strong></td><td>Probabilidades combinadas: como diagnóstico médico</td><td>⭐⭐⭐⭐ Alta</td><td>⭐⭐⭐ Media</td><td>Clasificación de texto, spam, categorías</td></tr>
+    <tr><td><strong>Red Neuronal</strong></td><td>Cerebro simplificado con capas de neuronas</td><td>⭐ Muy baja</td><td>⭐⭐⭐⭐⭐ Muy alta</td><td>Imágenes, voz, texto, problemas complejos</td></tr>
+  </table>
+  <div class="box bc"><div class="bt">📰 CASO REAL — IMSS: Priorización de Urgencias con IA</div>
+    <p>El IMSS implementó un modelo de clasificación para el sistema de triage en urgencias hospitalarias. Basándose en síntomas reportados, edad, historial de enfermedades crónicas y signos vitales, el modelo predice el nivel de prioridad del paciente. Resultado: <strong>reducción del 34% en tiempo de espera</strong> para casos críticos y mejor distribución de recursos médicos en horas pico.</p>
+  </div>
+</div>
 
-mlp.fit(X_train, y_train)
-
-# Cuándo usar MLP (scikit-learn):
-# - Relaciones no lineales complejas
-# - Datasets medianos (no masivos)
-# - Para masivos: usar PyTorch/TF (Bloque V)</pre>
+<div class="slide" data-s="2">
+  <h2>Reto de Aplicación — Sesión 13</h2>
+  <div class="box bl"><div class="bt">🔬 ACTIVIDAD PRÁCTICA — Calcula e Interpreta</div>
+    <p>Un modelo de clasificación para predicción de fallas en equipos de manufactura produjo estos resultados al evaluarse en 200 equipos:</p>
+    <table style="margin-top:8px;">
+      <tr><th></th><th>Predijo FALLA</th><th>Predijo OK</th></tr>
+      <tr><td><strong>Real: FALLA</strong></td><td style="background:rgba(16,185,129,.15);font-weight:700;">VP = 45</td><td style="background:rgba(245,158,11,.15);font-weight:700;">FN = 15</td></tr>
+      <tr><td><strong>Real: OK</strong></td><td style="background:rgba(239,68,68,.15);font-weight:700;">FP = 20</td><td style="background:rgba(6,182,212,.15);font-weight:700;">VN = 120</td></tr>
+    </table>
+    <p style="margin-top:10px;">Calcula: (1) Exactitud (2) Precisión (3) Recall (4) ¿Aceptarías este modelo para producción? ¿Por qué?</p>
+  </div>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ RESPUESTAS — Click para ver</div>
+    <div class="qa">
+      <strong>Exactitud</strong> = (45+120)/200 = 165/200 = 82.5% ·
+      <strong>Precisión</strong> = 45/(45+20) = 45/65 = 69.2% — De cada 100 alarmas de falla, 69 son reales ·
+      <strong>Recall</strong> = 45/(45+15) = 45/60 = 75% — Detectamos el 75% de las fallas reales (25% se nos escapan) ·
+      <strong>Decisión</strong>: depende del costo. Los 15 FN (fallas no detectadas) pueden ser muy costosos o peligrosos. Los 20 FP (falsas alarmas) generan paros innecesarios. Si el costo de una falla no detectada es alto (seguridad, calidad), mejorar el Recall ajustando el umbral de decisión (aunque baje Precisión).
     </div>
+  </div>
+  <div class="box bm"><div class="bt">🏆 RETO — Diseña tu Caso de Clasificación</div>
+    <p>Define: (1) Variable objetivo (qué quieres predecir: falla, calidad, retraso, riesgo). (2) 6-8 features predictoras. (3) Algoritmo recomendado y por qué. (4) Métricas prioritarias (¿precisión o recall?) y justificación. (5) Umbral de aceptación para producción.</p>
   </div>
 </div>
 
 <!-- ═══ SESIÓN 14 ═══ -->
 <div class="slide" data-s="3">
-  <h2>Sesión 14 <span style="color:var(--pink)">— Flujo ML Completo: Validación, Desbalanceo y Producción</span></h2>
-  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
-    <p>Un modelo ML en producción es como un <strong>empleado nuevo que pasó todas las pruebas de entrevista</strong> pero nunca ha visto un cliente real. La validación rigurosa (cross-validation), el manejo del desbalanceo de clases (SMOTE) y el monitoreo continuo son los que determinan si este empleado tendrá éxito en el mundo real o solo en el simulacro.</p>
+  <h2>Sesión 14 <span style="color:var(--orange)">— Taller de ML: Flujos de Trabajo Completos</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA DE APERTURA</div>
+    <p>El dilema sesgo-varianza es como el <strong>dilema del estudiante perfeccionista</strong>: si memorizas todo el libro exactamente (overfitting), fallas cuando el examen pregunta algo diferente a lo que memorizaste. Si aprendes solo los títulos de los capítulos (underfitting), tampoco puedes resolver nada. El arte está en aprender los <em>conceptos</em>, no memorizar los ejemplos. Los modelos de ML tienen exactamente el mismo dilema.</p>
   </div>
-  <div class="ld" style="margin-top:14px;">
-    <div class="lr" style="background:rgba(6,182,212,.1);border:1px solid var(--cyan);color:var(--cyan);">📊 PASO 1: EDA y formulación del problema — ¿Regresión o clasificación? ¿Cuál es el target real del negocio?</div>
-    <div class="lr" style="background:rgba(16,185,129,.1);border:1px solid var(--green);color:var(--green);">🔧 PASO 2: Preprocesamiento — Limpieza, imputación, encoding, escalado, feature engineering</div>
-    <div class="lr" style="background:rgba(245,158,11,.1);border:1px solid var(--orange);color:var(--orange);">🔀 PASO 3: Split estratificado + Cross-validation — Separar test set antes de cualquier decisión de modelo</div>
-    <div class="lr" style="background:rgba(124,58,237,.1);border:1px solid var(--violet);color:var(--violet);">🤖 PASO 4: Baseline → Modelos → Tuning — Comparar múltiples algoritmos con mismas métricas</div>
-    <div class="lr" style="background:rgba(236,72,153,.1);border:1px solid var(--pink);color:var(--pink);">🚀 PASO 5: Evaluación final + Deploy — Medir en test set, guardar modelo, monitorear en producción</div>
+  <div class="sr" style="margin-top:16px;">
+    <div class="stat"><div class="n" style="color:var(--orange)">Overfitting</div><div class="l">memoriza el ruido del training set, falla en datos nuevos</div></div>
+    <div class="stat"><div class="n" style="color:var(--red)">Underfitting</div><div class="l">modelo demasiado simple, no captura patrones reales</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">Balance</div><div class="l">buena generalización: aprende patrones sin memorizar ruido</div></div>
   </div>
 </div>
 
 <div class="slide" data-s="3">
-  <h2>Datos Desbalanceados: El Problema Real de la Industria</h2>
-  <div class="cg c2">
+  <h2>Sesgo vs. Varianza: El Dilema Fundamental del ML</h2>
+  <div class="cg c3">
     <div class="card r">
-      <h3>¿Por qué el desbalanceo importa?</h3>
-      <p>En manufactura, las fallas son raras: 97% normal, 3% falla. Un modelo que predice siempre "normal" tiene 97% de accuracy pero <strong>0% de utilidad</strong>. Este es el truco más común que "infla" métricas en proyectos industriales.</p>
-      <ul style="margin-top:8px;">
-        <li>Fraude financiero: 0.1% fraudes</li>
-        <li>Defectos de calidad: 1-5% de piezas</li>
-        <li>Fallas de equipos: 2-8% del tiempo</li>
-        <li>Abandono de clientes: 5-20%</li>
+      <h3>Underfitting (Alto Sesgo)</h3>
+      <p><strong>Síntomas:</strong></p>
+      <ul>
+        <li>Error alto en datos de entrenamiento</li>
+        <li>Error alto en datos de prueba</li>
+        <li>Modelo demasiado simple para el problema</li>
+        <li>No captura la complejidad real</li>
       </ul>
+      <p style="margin-top:8px;"><strong>Ejemplo:</strong> usar regresión lineal para predecir una relación claramente no lineal</p>
+      <div class="box bd" style="margin-top:8px;"><div class="bt">SOLUCIÓN</div><p>Aumentar complejidad del modelo, agregar features, reducir regularización</p></div>
     </div>
     <div class="card g">
-      <h3>SMOTE: Solución con Código</h3>
-      <pre">from imblearn.over_sampling import SMOTE
-from imblearn.pipeline import Pipeline as ImbPipeline
-from collections import Counter
-
-print(f"Antes: {Counter(y_train)}")
-# {0: 9700, 1: 300}
-
-# SMOTE crea ejemplos sintéticos de la clase minoritaria
-# interpolando entre vecinos reales
-smote = SMOTE(sampling_strategy=0.5, # 1 minoritaria por 2 mayoritarias
-              k_neighbors=5,
-              random_state=42)
-X_res, y_res = smote.fit_resample(X_train, y_train)
-print(f"Después: {Counter(y_res)}")
-# {0: 9700, 1: 4850}
-
-# Mejor: dentro de un Pipeline
-pipe = ImbPipeline([
-    ('smote', SMOTE(random_state=42)),
-    ('clf', RandomForestClassifier())
-])</pre>
+      <h3>Balance Óptimo</h3>
+      <p><strong>Síntomas:</strong></p>
+      <ul>
+        <li>Error bajo en entrenamiento</li>
+        <li>Error similar (no mucho mayor) en prueba</li>
+        <li>Las métricas de validation y test son similares</li>
+        <li>Modelo generaliza bien a datos nuevos</li>
+      </ul>
+      <p style="margin-top:8px;"><strong>Este es el objetivo del ML:</strong> aprender los patrones reales, no el ruido</p>
+      <div class="box bd" style="margin-top:8px;"><div class="bt">INDICADORES</div><p>Validation accuracy ≈ Test accuracy. Diferencia &lt; 3-5% entre train y test.</p></div>
     </div>
-  </div>
-  <div class="box bd"><div class="bt">💡 DATO CLAVE — SMOTE vs otras técnicas</div>
-    <p>SMOTE solo en train, nunca en test (data leakage). Alternativas: <strong>class_weight='balanced'</strong> en sklearn (más simple), <strong>ADASYN</strong> (adaptive synthetic, foco en difíciles), <strong>undersampling</strong> con RandomUnderSampler (cuando hay muchísimos datos mayoritarios). Evaluar siempre con ROC-AUC, F1 y recall de clase minoritaria.</p>
+    <div class="card o">
+      <h3>Overfitting (Alta Varianza)</h3>
+      <p><strong>Síntomas:</strong></p>
+      <ul>
+        <li>Error muy bajo en entrenamiento (95%+)</li>
+        <li>Error alto en datos de prueba (60-70%)</li>
+        <li>Gran diferencia train vs. test accuracy</li>
+        <li>El modelo "memorizó" en lugar de aprender</li>
+      </ul>
+      <p style="margin-top:8px;"><strong>Ejemplo:</strong> árbol de decisión muy profundo que memoriza cada caso de entrenamiento</p>
+      <div class="box bd" style="margin-top:8px;"><div class="bt">SOLUCIÓN</div><p>Más datos, regularización, poda del árbol, dropout (redes neuronales), reducir complejidad</p></div>
+    </div>
   </div>
 </div>
 
 <div class="slide" data-s="3">
-  <h2>Cross-Validation y Comparación de Modelos</h2>
+  <h2>Flujo de Trabajo ML Completo: Paso a Paso</h2>
+  <div class="steps">
+    <div class="step"><div class="snum">1</div><div class="stit">Definir el Problema</div><div class="sdesc">¿Qué quieres predecir? ¿Clasificación o regresión? ¿Qué métrica importa?</div></div>
+    <div class="step"><div class="snum">2</div><div class="stit">Recopilar Datos</div><div class="sdesc">¿Cuántos datos? ¿De qué fuentes? ¿Con qué calidad?</div></div>
+    <div class="step"><div class="snum">3</div><div class="stit">EDA</div><div class="sdesc">Explorar distribuciones, correlaciones, outliers, valores faltantes</div></div>
+    <div class="step"><div class="snum">4</div><div class="stit">Preprocesar</div><div class="sdesc">Limpiar, transformar, codificar, escalar, particionar</div></div>
+    <div class="step"><div class="snum">5</div><div class="stit">Modelar</div><div class="sdesc">Entrenar múltiples algoritmos, comparar en validation set</div></div>
+    <div class="step"><div class="snum">6</div><div class="stit">Evaluar</div><div class="sdesc">Métricas en test set. ¿Overfitting? ¿Underfitting?</div></div>
+    <div class="step"><div class="snum">7</div><div class="stit">Comunicar</div><div class="sdesc">Presentar a dirección. Traducir al lenguaje del negocio.</div></div>
+    <div class="step"><div class="snum">8</div><div class="stit">Desplegar</div><div class="sdesc">Integrar al proceso operativo. Monitorear deriva del modelo.</div></div>
+  </div>
+  <div class="box bc"><div class="bt">📰 CASO REAL — Soriana: 500,000 SKUs sin desperdiciar</div>
+    <p>Soriana implementó un pipeline ML completo para predicción de demanda de alimentos perecederos en sus 850+ tiendas. El reto: datos altamente estacionales, eventos especiales (Día de Muertos, Navidad, torneos de fútbol) y variación regional extrema. Con gestión cuidadosa de sesgo-varianza (Random Forest con validación cruzada temporal), logró <strong>reducir desperdicio de perecederos en 31%</strong> y reducir desabasto en 19%, generando ahorros de aproximadamente $200M anuales.</p>
+  </div>
+</div>
+
+<div class="slide" data-s="3">
+  <h2>Clases Desbalanceadas: El Problema Oculto</h2>
   <div class="cg c2">
-    <div class="card c">
-      <h3>Estrategias de Validación</h3>
-      <pre">from sklearn.model_selection import (
-    cross_val_score, StratifiedKFold,
-    TimeSeriesSplit)
-from sklearn.metrics import make_scorer, f1_score
-
-# K-Fold estratificado (datos tabulares)
-cv = StratifiedKFold(n_splits=5, shuffle=True,
-                     random_state=42)
-scorer = make_scorer(f1_score, average='macro')
-
-modelos = {
-    'Random Forest': RandomForestClassifier(...),
-    'XGBoost': XGBClassifier(...),
-    'SVM': SVC(...),
-    'MLP': MLPClassifier(...)
-}
-
-for nombre, modelo in modelos.items():
-    scores = cross_val_score(modelo, X, y,
-        cv=cv, scoring=scorer, n_jobs=-1)
-    print(f"{nombre}: {scores.mean():.3f} ± {scores.std():.3f}")
-
-# Para series de tiempo: TimeSeriesSplit
-ts_cv = TimeSeriesSplit(n_splits=5)</pre>
+    <div class="card r">
+      <h3>¿Qué es el Desbalance de Clases?</h3>
+      <p>En muchos problemas industriales, los eventos de interés son raros:</p>
+      <ul>
+        <li>Fallas de equipos: 2% de los registros son fallas</li>
+        <li>Fraude: 0.1% de transacciones son fraudulentas</li>
+        <li>Defectos de calidad: 1% de piezas son defectuosas</li>
+      </ul>
+      <div class="box bd" style="margin-top:8px;"><div class="bt">EL PROBLEMA</div>
+        <p>Un modelo que siempre predice "NO FALLA" tiene exactitud del 98%, pero es completamente inútil. La exactitud (accuracy) no es la métrica correcta con clases desbalanceadas.</p>
+      </div>
     </div>
     <div class="card v">
-      <h3>Guardar y Cargar el Modelo</h3>
-      <pre">import joblib
-import pickle
-
-# Guardar con joblib (mejor para sklearn)
-joblib.dump(modelo_final, 'modelo_fallas_v1.pkl')
-joblib.dump(scaler, 'scaler_v1.pkl')
-
-# Cargar en producción
-modelo = joblib.load('modelo_fallas_v1.pkl')
-scaler_prod = joblib.load('scaler_v1.pkl')
-
-# Predicción en producción
-nuevos_datos = pd.DataFrame([{
-    'temperatura': 91.2, 'vibracion': 3.8,
-    'presion': 105.1, 'turno': 'A'
-}])
-X_nuevo = scaler_prod.transform(nuevos_datos)
-prediccion = modelo.predict(X_nuevo)
-probabilidad = modelo.predict_proba(X_nuevo)
-print(f"Falla: {prediccion[0]} | Confianza: {probabilidad[0].max():.1%}")</pre>
+      <h3>Estrategias de Solución</h3>
+      <ul>
+        <li><strong>Rebalancear datos — Undersampling</strong>: reducir la clase mayoritaria aleatoriamente para equilibrar</li>
+        <li><strong>Rebalancear datos — Oversampling</strong>: duplicar ejemplos de la clase minoritaria</li>
+        <li><strong>SMOTE</strong>: generar ejemplos sintéticos de la clase rara interpolando entre ejemplos existentes (como "inventar" nuevas fallas similares a las reales)</li>
+        <li><strong>Pesos de clase</strong>: decirle al algoritmo que un error en la clase rara "cuesta más"</li>
+        <li><strong>Cambiar umbral</strong>: si el modelo predice "0.3 de probabilidad de falla", ¿lo clasificas como falla? Ajusta el umbral según el costo empresarial</li>
+      </ul>
     </div>
+  </div>
+</div>
+
+<div class="slide" data-s="3">
+  <h2>Reto de Aplicación — Sesión 14</h2>
+  <div class="box bl"><div class="bt">🔬 ACTIVIDAD PRÁCTICA — Diagnostica los Modelos</div>
+    <p>Se te presentan 3 modelos entrenados para predecir la demanda mensual (problema de regresión). Analiza las métricas y diagnostica cada modelo:</p>
+    <table style="margin-top:8px;">
+      <tr><th>Modelo</th><th>R² Train</th><th>R² Test</th><th>RMSE Train</th><th>RMSE Test</th><th>Diagnóstico</th></tr>
+      <tr><td>Modelo A</td><td>0.98</td><td>0.63</td><td>12</td><td>89</td><td style="color:var(--orange)">¿?</td></tr>
+      <tr><td>Modelo B</td><td>0.72</td><td>0.70</td><td>51</td><td>54</td><td style="color:var(--green)">¿?</td></tr>
+      <tr><td>Modelo C</td><td>0.41</td><td>0.39</td><td>124</td><td>127</td><td style="color:var(--red)">¿?</td></tr>
+    </table>
+    <p style="margin-top:8px;">¿Cuál es el mejor? ¿Cuál tiene overfitting? ¿Cuál tiene underfitting? ¿Por qué?</p>
+  </div>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ RESPUESTAS — Click para ver</div>
+    <div class="qa">
+      <strong>Modelo A: OVERFITTING</strong> — R² excelente en train (0.98) pero cae dramáticamente en test (0.63). El RMSE salta de 12 a 89. El modelo memorizó el training set pero no generaliza. ·
+      <strong>Modelo B: BALANCE ÓPTIMO</strong> — R² similar en train y test (0.72 vs 0.70). RMSE muy parecido (51 vs 54). Este es el modelo que debes seleccionar para producción. ·
+      <strong>Modelo C: UNDERFITTING</strong> — R² bajo en ambos (0.41 y 0.39). El modelo es demasiado simple para capturar los patrones reales. Hay que probar un algoritmo más complejo.
+    </div>
+  </div>
+  <div class="box bm"><div class="bt">🏆 RETO — Presentación Ejecutiva sin Tecnicismos</div>
+    <p>Redacta una página que explique el Modelo B a la Dirección General de tu empresa, sin usar términos técnicos (no R², no RMSE, no overfitting). Debes responder: ¿qué predice el modelo? ¿qué tan confiable es? ¿cuánto puede mejorar las decisiones? ¿qué se necesita para mantenerlo?</p>
   </div>
 </div>
 
 <!-- ═══ SESIÓN 15 ═══ -->
 <div class="slide" data-s="4">
-  <h2>Sesión 15 <span style="color:var(--yellow)">— AutoML y Metaheurísticas para Optimización Industrial</span></h2>
-  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
-    <p><strong>AutoML</strong> es como tener un <strong>equipo de científicos de datos automático</strong> que prueba cientos de combinaciones de modelos y parámetros mientras tú duermes, y te presenta el mejor resultado al despertar. Los <strong>algoritmos genéticos</strong> son como la evolución biológica acelerada: las soluciones más aptas "sobreviven" y se "reproducen" hasta encontrar la óptima.</p>
+  <h2>Sesión 15 <span style="color:var(--pink)">— AutoML y Optimización con Metaheurísticas</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA DE APERTURA</div>
+    <p>Los algoritmos genéticos son como la <strong>evolución de Darwin acelerada a millones de años por segundo</strong>: tienes 100 soluciones candidatas, seleccionas las mejores (supervivencia del más apto), las "cruzas" para crear hijos con las mejores características de cada padre, y matas las peores. En 1,000 generaciones (que pueden ocurrir en milisegundos), converges a una solución excelente que ningún humano hubiera diseñado manualmente.</p>
   </div>
-  <div class="cg c3" style="margin-top:14px;">
-    <div class="card g"><h3>H2O AutoML</h3><p>Plataforma AutoML de código abierto. Entrena y stacking de múltiples modelos automáticamente: GBM, XGBoost, Deep Learning, Random Forest, GLM. Escala a datos grandes. Interfaz Python sencilla.</p></div>
-    <div class="card c"><h3>TPOT</h3><p>Tree-based Pipeline Optimization Tool. Usa programación genética para encontrar el mejor pipeline de ML (preprocesamiento + modelo). Exporta el código Python del pipeline ganador. Basado en scikit-learn.</p></div>
-    <div class="card o"><h3>Algoritmos Genéticos (DEAP)</h3><p>Metaheurísticas inspiradas en la evolución. Excelentes para optimización combinatoria: ruteo de vehículos (VRP), programación de producción, diseño de productos, distribución de almacén.</p></div>
+  <div class="sr" style="margin-top:16px;">
+    <div class="stat"><div class="n" style="color:var(--pink)">AutoML</div><div class="l">automatiza la selección del mejor algoritmo y sus parámetros</div></div>
+    <div class="stat"><div class="n" style="color:var(--violet)">$8.5B</div><div class="l">tamaño del mercado de optimización logística con metaheurísticas para 2026</div></div>
+    <div class="stat"><div class="n" style="color:var(--cyan)">NP-Hard</div><div class="l">clase de problemas (ruteo, scheduling) donde las metaheurísticas son la mejor solución práctica</div></div>
   </div>
 </div>
 
 <div class="slide" data-s="4">
-  <h2>H2O AutoML: Implementación Rápida</h2>
+  <h2>AutoML: El Piloto Automático del Machine Learning</h2>
   <div class="cg c2">
-    <div class="card g">
-      <h3>Código H2O AutoML</h3>
-      <pre">import h2o
-from h2o.automl import H2OAutoML
-
-h2o.init()
-
-# Convertir DataFrame a H2OFrame
-train_h2o = h2o.H2OFrame(df_train)
-test_h2o = h2o.H2OFrame(df_test)
-
-# Definir variables
-target = 'falla'
-features = [c for c in df_train.columns if c != target]
-train_h2o[target] = train_h2o[target].asfactor()
-
-# AutoML — prueba y evalúa automáticamente
-aml = H2OAutoML(
-    max_runtime_secs=3600,  # 1 hora
-    max_models=50,
-    seed=42,
-    sort_metric='AUC',
-    exclude_algos=['DeepLearning']  # opcional
-)
-aml.train(x=features, y=target,
-          training_frame=train_h2o)
-
-# Ver tabla de líderes
-lb = aml.leaderboard
-print(lb.head(10))
-
-# Mejor modelo
-mejor = aml.leader
-perf = mejor.model_performance(test_h2o)
-print(f"AUC test: {perf.auc():.4f}")</pre>
-    </div>
     <div class="card c">
-      <h3>Algoritmo Genético con DEAP: VRP Simplificado</h3>
-      <pre">import random
-from deap import base, creator, tools, algorithms
-
-# Problema: secuencia óptima de visitas a clientes
-CLIENTES = 20
-DISTANCIAS = [[random.randint(1,50)
-               for _ in range(CLIENTES)]
-              for _ in range(CLIENTES)]
-
-def evaluar(individuo):
-    """Calcula distancia total de ruta"""
-    distancia = sum(
-        DISTANCIAS[individuo[i]][individuo[i+1]]
-        for i in range(len(individuo)-1))
-    return (distancia,)  # tuple requerido por DEAP
-
-# Configurar AG
-creator.create("FitnessMin", base.Fitness,
-               weights=(-1.0,))
-creator.create("Individual", list,
-               fitness=creator.FitnessMin)
-
-toolbox = base.Toolbox()
-toolbox.register("indices", random.sample,
-    range(CLIENTES), CLIENTES)
-toolbox.register("individual",
-    tools.initIterate, creator.Individual,
-    toolbox.indices)
-toolbox.register("population",
-    tools.initRepeat, list, toolbox.individual)
-toolbox.register("evaluate", evaluar)
-toolbox.register("mate", tools.cxOrdered)
-toolbox.register("mutate", tools.mutShuffleIndexes,
-                 indpb=0.1)
-toolbox.register("select", tools.selTournament,
-                 tournsize=3)</pre>
+      <h3>¿Qué Automatiza el AutoML?</h3>
+      <div class="ld">
+        <div class="lr" style="background:rgba(16,185,129,.1);border:1px solid var(--green);color:var(--green);font-size:.8rem;">✅ Selección del algoritmo (¿Random Forest o Gradient Boosting?)</div>
+        <div class="lr" style="background:rgba(16,185,129,.1);border:1px solid var(--green);color:var(--green);font-size:.8rem;">✅ Ajuste de hiperparámetros (profundidad del árbol, learning rate, etc.)</div>
+        <div class="lr" style="background:rgba(16,185,129,.1);border:1px solid var(--green);color:var(--green);font-size:.8rem;">✅ Feature engineering básico</div>
+        <div class="lr" style="background:rgba(16,185,129,.1);border:1px solid var(--green);color:var(--green);font-size:.8rem;">✅ Validación cruzada y comparación de modelos</div>
+        <div class="lr" style="background:rgba(239,68,68,.1);border:1px solid var(--red);color:var(--red);font-size:.8rem;">❌ Definir el problema de negocio</div>
+        <div class="lr" style="background:rgba(239,68,68,.1);border:1px solid var(--red);color:var(--red);font-size:.8rem;">❌ Recopilar y limpiar los datos</div>
+        <div class="lr" style="background:rgba(239,68,68,.1);border:1px solid var(--red);color:var(--red);font-size:.8rem;">❌ Interpretar resultados en contexto de negocio</div>
+        <div class="lr" style="background:rgba(239,68,68,.1);border:1px solid var(--red);color:var(--red);font-size:.8rem;">❌ Desplegar, monitorear y mantener el modelo</div>
+      </div>
+    </div>
+    <div class="card v">
+      <h3>Plataformas AutoML Populares</h3>
+      <table>
+        <tr><th>Plataforma</th><th>Perfil de Usuario</th><th>Acceso</th></tr>
+        <tr><td><strong>H2O.ai</strong></td><td>Data scientists e ingenieros</td><td>Gratuito (open source)</td></tr>
+        <tr><td><strong>Google AutoML</strong></td><td>Empresas con pocos datos</td><td>Cloud, pago por uso</td></tr>
+        <tr><td><strong>Azure ML AutoML</strong></td><td>Organizaciones en Azure</td><td>Cloud Microsoft</td></tr>
+        <tr><td><strong>DataRobot</strong></td><td>Analistas de negocio</td><td>Empresarial, costoso</td></tr>
+        <tr><td><strong>TPOT</strong></td><td>Investigadores, data scientists</td><td>Gratuito (Python)</td></tr>
+      </table>
+      <div class="box bd" style="margin-top:8px;"><div class="bt">REFLEXIÓN CRÍTICA</div>
+        <p>AutoML acelera el proceso, pero no reemplaza el juicio experto. Un modelo técnicamente bueno puede ser un desastre de negocio si no se interpreta correctamente.</p>
+      </div>
     </div>
   </div>
 </div>
 
 <div class="slide" data-s="4">
-  <h2>Casos de Uso de Metaheurísticas en la Industria</h2>
-  <table>
-    <tr><th>Problema</th><th>Técnica</th><th>Variables</th><th>Resultado Típico</th></tr>
-    <tr><td><strong>Ruteo de Vehículos (VRP)</strong></td><td>Algoritmo Genético / Simulated Annealing</td><td>Distancias, capacidad, ventanas de tiempo</td><td>10-25% reducción en km recorridos</td></tr>
-    <tr><td><strong>Programación de Producción</strong></td><td>Algoritmos Genéticos / Búsqueda Tabú</td><td>Tiempos de setup, prioridades, máquinas</td><td>15-30% reducción en makespan</td></tr>
-    <tr><td><strong>Layout de Almacén</strong></td><td>Simulated Annealing</td><td>Posición de SKUs, frecuencia de acceso</td><td>Reducción 20% en tiempo de picking</td></tr>
-    <tr><td><strong>Mezcla de Materiales</strong></td><td>Programación Lineal + GA</td><td>Proporciones, costos, restricciones</td><td>5-15% reducción en costo de materia prima</td></tr>
-    <tr><td><strong>Hyperparameter Tuning</strong></td><td>Optuna (Bayesian Optimization)</td><td>Parámetros del modelo ML</td><td>2-5% mejora en métricas vs grid search</td></tr>
-  </table>
-  <div class="box bl"><div class="bt">🔬 PROYECTO INTEGRADOR BLOQUE III</div>
-    <p>Proyecto de mantenimiento predictivo completo: (1) EDA de telemetría de 20 máquinas, (2) Feature engineering industrial (lag features, rolling stats, OEE), (3) SMOTE para datos desbalanceados, (4) Comparar RF vs SVM vs MLP con cross-validation, (5) AutoML con H2O para confirmar el mejor pipeline, (6) Interpretar con SHAP, (7) Desplegar predicción en una función reutilizable.</p>
+  <h2>Metaheurísticas: Cuando No Hay Solución Exacta</h2>
+  <div class="cg c2">
+    <div class="card o">
+      <h3>¿Qué es un Problema NP-Hard?</h3>
+      <p>Problemas donde verificar una solución es fácil, pero encontrar la óptima requiere explorar un número exponencial de posibilidades.</p>
+      <ul>
+        <li>VRP (10 ciudades, 5 camiones): 10! × combinaciones de asignación = billones</li>
+        <li>Scheduling (20 trabajos, 8 máquinas): imposible revisar todo</li>
+        <li>Asignación de turnos (50 empleados, 30 turnos): millones de opciones</li>
+      </ul>
+      <div class="box bd" style="margin-top:8px;"><div class="bt">LA SOLUCIÓN</div>
+        <p>Las metaheurísticas son estrategias de búsqueda <em>inteligente</em> que no garantizan la solución óptima perfecta, pero encuentran soluciones muy buenas en tiempo razonable.</p>
+      </div>
+    </div>
+    <div class="card g">
+      <h3>Las 3 Metaheurísticas Más Usadas en Industria</h3>
+      <ul>
+        <li><strong>Algoritmos Genéticos (AG)</strong>: inspirados en la evolución. Selección → Cruce → Mutación. Excelente para scheduling y ruteo.</li>
+        <li><strong>Enjambre de Partículas (PSO)</strong>: inspirados en bandadas de pájaros o bancos de peces. Cada solución "vuela" en el espacio de búsqueda siguiendo las mejores soluciones encontradas. Excelente para optimización continua.</li>
+        <li><strong>Recocido Simulado (SA)</strong>: inspirado en el enfriamiento lento de metales. Acepta soluciones peores con cierta probabilidad (para escapar de óptimos locales) que va disminuyendo. Excelente para problemas con muchos óptimos locales.</li>
+      </ul>
+    </div>
   </div>
 </div>
 
-<!-- CIERRE -->
+<div class="slide" data-s="4">
+  <h2>Aplicaciones Industriales de Metaheurísticas</h2>
+  <table>
+    <tr><th>Problema</th><th>Metaheurística Recomendada</th><th>Variables Optimizadas</th><th>Resultado Típico</th></tr>
+    <tr><td><strong>VRP — Ruteo de vehículos</strong></td><td>Algoritmos Genéticos</td><td>Orden de visitas, asignación de rutas por camión</td><td>10-20% reducción en km y combustible</td></tr>
+    <tr><td><strong>Scheduling de producción</strong></td><td>Algoritmos Genéticos + SA</td><td>Secuencia de trabajos, asignación a máquinas</td><td>15-30% reducción en tiempo de ciclo</td></tr>
+    <tr><td><strong>Asignación de turnos</strong></td><td>Enjambre de Partículas</td><td>Empleado × Turno × Día</td><td>Cumplimiento legal + satisfacción + costo</td></tr>
+    <tr><td><strong>Diseño de red logística</strong></td><td>Algoritmos Genéticos</td><td>Ubicación de almacenes, flujos entre nodos</td><td>5-15% reducción en costo total logístico</td></tr>
+    <tr><td><strong>Optimización de inventarios</strong></td><td>Recocido Simulado</td><td>Punto de reorden, cantidad de pedido por SKU</td><td>Reducción de capital inmovilizado 10-20%</td></tr>
+  </table>
+  <div class="box bc"><div class="bt">📰 CASO REAL — DHL México: 2,000 camiones optimizados diariamente</div>
+    <p>DHL México enfrenta diariamente el VRP de asignar y secuenciar entregas para más de 2,000 camiones de reparto en territorio nacional. Con algoritmos genéticos, el sistema <strong>reoptimiza las rutas en minutos</strong> cada mañana, considerando tráfico histórico, ventanas de tiempo de los clientes, capacidad de cada camión y restricciones regulatorias. Resultado: <strong>15% menos kilómetros recorridos, 18% menos consumo de combustible</strong> y mejor nivel de servicio al cliente.</p>
+  </div>
+</div>
+
+<div class="slide" data-s="4">
+  <h2>Reto de Aplicación — Sesión 15</h2>
+  <div class="box bl"><div class="bt">🔬 ACTIVIDAD PRÁCTICA — VRP Manual</div>
+    <p>Resuelve a mano el siguiente problema de ruteo (simplificado para 5 clientes + bodega central):</p>
+    <table style="margin-top:8px;">
+      <tr><th>Parada</th><th>Distancia a Bodega (km)</th><th>Volumen (m³)</th><th>Ventana Horaria</th></tr>
+      <tr><td>Cliente 1</td><td>12</td><td>3</td><td>8:00–10:00</td></tr>
+      <tr><td>Cliente 2</td><td>8</td><td>5</td><td>9:00–11:00</td></tr>
+      <tr><td>Cliente 3</td><td>25</td><td>2</td><td>14:00–16:00</td></tr>
+      <tr><td>Cliente 4</td><td>18</td><td>4</td><td>10:00–12:00</td></tr>
+      <tr><td>Cliente 5</td><td>30</td><td>3</td><td>11:00–13:00</td></tr>
+    </table>
+    <p style="margin-top:8px;">Capacidad del camión: 10 m³. Diseña 2 rutas y calcula los km totales. ¿Puedes mejorar la solución con una segunda iteración? Compara con la solución del algoritmo genético.</p>
+  </div>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Click para ver respuesta</div>
+    <p>¿Por qué un algoritmo genético puede encontrar mejores soluciones al VRP que un humano, aun cuando el humano conoce el negocio mejor?</p>
+    <div class="qa">El humano está limitado por su <strong>sesgo cognitivo</strong>: tiende a explorar pocas soluciones, generalmente similares a lo que ya conoce (vecindad local). El algoritmo genético explora simultáneamente miles de soluciones diversas, muchas de las cuales serían contra-intuitivas para el humano pero que numéricamente son mejores. Además, el AG evalúa objetivamente con la función de costo, sin "preferencias" subjetivas. El humano aporta: definir correctamente el problema, las restricciones reales del negocio y validar que la solución sea implementable operativamente.</div>
+  </div>
+  <div class="box bm"><div class="bt">🏆 RETO — Problema de Optimización de tu Área</div>
+    <p>Identifica un problema de optimización en tu área de carrera: (1) Define el objetivo a maximizar o minimizar. (2) Lista las restricciones (capacidad, tiempo, costo, regulación). (3) Estima el espacio de búsqueda (¿cuántas combinaciones posibles?). (4) Selecciona la metaheurística más adecuada. (5) Define qué necesitarías para implementarla.</p>
+  </div>
+</div>
+
+<!-- CIERRE BLOQUE III -->
 <div class="slide cover" data-s="4">
   <div class="badge">BLOQUE III — CIERRE</div>
-  <h1>Machine Learning:<br>Del Dato a la Decisión</h1>
-  <p style="max-width:600px;margin:16px auto;color:var(--muted);">Feature engineering, clustering, clasificación, manejo de desbalanceo y AutoML son las competencias que convierten datos industriales en modelos que predicen fallas, optimizan procesos y crean ventaja competitiva real.</p>
+  <h1>Del Dato Crudo<br>al Modelo en Producción</h1>
+  <p style="max-width:600px;margin:16px auto;color:var(--muted);">Preparar datos con rigor, encontrar patrones ocultos con clustering, predecir con clasificación supervisada, construir flujos de trabajo robustos y optimizar con algoritmos inspirados en la naturaleza: estas son las competencias del profesional de Machine Learning aplicado a la industria.</p>
   <div class="sr" style="justify-content:center;max-width:700px;margin:20px auto;">
-    <div class="stat"><div class="n" style="color:var(--green)">🔧</div><div class="l">Preprocesamiento avanzado</div></div>
-    <div class="stat"><div class="n" style="color:var(--cyan)">🔵</div><div class="l">K-Means, DBSCAN, t-SNE</div></div>
-    <div class="stat"><div class="n" style="color:var(--orange)">🌲</div><div class="l">RF, SVM, MLP</div></div>
-    <div class="stat"><div class="n" style="color:var(--pink)">⚖️</div><div class="l">SMOTE y validación</div></div>
-    <div class="stat"><div class="n" style="color:var(--yellow)">🤖</div><div class="l">AutoML + AG</div></div>
+    <div class="stat"><div class="n" style="color:var(--violet)">Pre</div><div class="l">procesamiento y Feature Engineering</div></div>
+    <div class="stat"><div class="n" style="color:var(--cyan)">K-M</div><div class="l">eans Clustering y Segmentación</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">RF</div><div class="l">Random Forest y Clasificación</div></div>
+    <div class="stat"><div class="n" style="color:var(--orange)">Bias-</div><div class="l">Variance y Flujos Completos</div></div>
+    <div class="stat"><div class="n" style="color:var(--pink)">AG</div><div class="l">AutoML y Metaheurísticas</div></div>
+  </div>
+  <div class="box bd" style="max-width:600px;margin:0 auto;"><div class="bt">💡 SIGUIENTE — BLOQUE IV</div>
+    <p><strong>Visualización, Big Data y Comunicación de Resultados</strong>: transformar los modelos en insights visuales, escalar a grandes volúmenes de datos con PySpark y presentar resultados de forma que la dirección tome mejores decisiones.</p>
+  </div>
+  <div style="margin-top:20px;">
+    <span class="tag">Scikit-learn</span><span class="tag">K-Means</span><span class="tag">Random Forest</span>
+    <span class="tag">Matriz de Confusión</span><span class="tag">AutoML</span><span class="tag">Algoritmos Genéticos</span>
   </div>
   <div style="margin-top:16px;font-size:.8rem;color:var(--muted);">
-    <strong style="color:var(--green);">Referencias:</strong> Géron (2022) Hands-On ML with Scikit-Learn · Provost &amp; Fawcett (2013) Data Science for Business · VanderPlas (2022) Python Data Science Handbook
+    <strong style="color:var(--cyan);">Referencias:</strong><br>
+    Géron, A. (2022). <em>Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow</em> (3a ed.). O'Reilly Media. ·
+    Hastie, T., Tibshirani, R., &amp; Friedman, J. (2009). <em>The Elements of Statistical Learning</em> (2a ed.). Springer. ·
+    Mitchell, T. M. (1997). <em>Machine Learning</em>. McGraw-Hill. ·
+    Witten, I. H., Frank, E., &amp; Hall, M. A. (2011). <em>Data Mining: Practical Machine Learning Tools and Techniques</em> (3a ed.). Morgan Kaufmann. ·
+    Holland, J. H. (1992). <em>Adaptation in Natural and Artificial Systems</em>. MIT Press.
   </div>
+  <div style="margin-top:12px;font-size:.75rem;color:var(--muted);">Seminario de Titulación · UPIICSA · Inteligencia Artificial para la Industria</div>
 </div>
 
-</div>
+</div><!-- /sc -->
 <div id="footer">
   <button onclick="prev()">← Anterior</button>
   <span class="hint">← → · Espacio</span>

@@ -3,9 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bloque IV — Visualización, Dashboards y Big Data</title>
+<title>Bloque IV — Visualización, Big Data y Comunicación de Resultados</title>
 <style>
-  :root{--bg:#04080f;--card:#0b1628;--border:#1e3a5f;--violet:#7c3aed;--cyan:#06b6d4;--green:#10b981;--orange:#f59e0b;--red:#ef4444;--pink:#ec4899;--yellow:#fbbf24;--text:#e2e8f0;--muted:#64748b;}
+  :root {
+    --bg:#04080f;--card:#0b1628;--border:#1e3a5f;
+    --violet:#7c3aed;--cyan:#06b6d4;--green:#10b981;
+    --orange:#f59e0b;--red:#ef4444;--pink:#ec4899;
+    --yellow:#fbbf24;--text:#e2e8f0;--muted:#64748b;
+  }
   *{box-sizing:border-box;margin:0;padding:0;}
   body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden;height:100vh;}
   #navbar{position:fixed;top:0;left:0;right:0;height:54px;background:rgba(4,8,15,.96);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:100;backdrop-filter:blur(8px);}
@@ -13,7 +18,7 @@
   #navbar .brand span{color:var(--yellow);}
   .stabs{display:flex;gap:6px;}
   .stabs button{background:transparent;border:1px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:20px;cursor:pointer;font-size:.75rem;transition:all .2s;}
-  .stabs button.active{background:var(--orange);border-color:var(--orange);color:#000;font-weight:700;}
+  .stabs button.active{background:var(--orange);border-color:var(--orange);color:#fff;font-weight:700;}
   .stabs button:hover:not(.active){border-color:var(--orange);color:var(--orange);}
   #ctr{color:var(--muted);font-size:.8rem;min-width:80px;text-align:right;}
   #pb{position:fixed;top:54px;left:0;height:3px;background:linear-gradient(90deg,var(--orange),var(--yellow));transition:width .3s;z-index:100;}
@@ -31,14 +36,17 @@
   p{font-size:.92rem;line-height:1.65;margin-bottom:8px;}
   ul,ol{padding-left:20px;font-size:.9rem;line-height:1.8;}
   li{margin-bottom:4px;}
-  .sub{color:var(--muted);font-size:1rem;}
+  .sub{color:var(--muted);font-size:1rem;margin-bottom:6px;}
+  .tag{display:inline-block;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:2px 10px;font-size:.75rem;color:var(--muted);margin-right:6px;margin-bottom:4px;}
+  /* COVER */
   .cover{align-items:center;justify-content:center;text-align:center;}
   .cover h1{font-size:2.3rem;background:linear-gradient(135deg,var(--orange),var(--yellow));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;}
   .badge{display:inline-block;border:1px solid var(--orange);border-radius:8px;padding:8px 24px;color:var(--orange);font-size:.9rem;font-weight:700;letter-spacing:2px;margin-bottom:20px;background:rgba(245,158,11,.08);}
   .sg{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:20px;}
-  .sc2{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 16px;width:180px;text-align:left;}
+  .sc2{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 16px;width:168px;text-align:left;}
   .sc2 .num{color:var(--orange);font-size:.7rem;font-weight:700;}
   .sc2 .nm{font-size:.8rem;margin-top:4px;}
+  /* CARDS */
   .cg{display:grid;gap:14px;margin-top:8px;}
   .cg.c2{grid-template-columns:1fr 1fr;}
   .cg.c3{grid-template-columns:1fr 1fr 1fr;}
@@ -52,25 +60,28 @@
   .card.p::before{background:var(--pink);}
   .card h3{margin-top:0;font-size:.95rem;}
   .card p,.card ul,.card li{font-size:.85rem;}
+  /* BOXES */
   .box{border-radius:10px;padding:14px 18px;margin:10px 0;}
-  .bm{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.4);}
-  .bc{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.4);}
+  .bm{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.4);}
+  .bc{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.4);}
   .bl{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.4);}
   .bd{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.4);}
   .bq{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.4);cursor:pointer;}
   .bt{font-weight:700;font-size:.8rem;margin-bottom:6px;letter-spacing:.5px;}
-  .bm .bt{color:var(--violet);}
-  .bc .bt{color:var(--orange);}
+  .bm .bt{color:var(--orange);}
+  .bc .bt{color:var(--red);}
   .bl .bt{color:var(--green);}
   .bd .bt{color:var(--cyan);}
   .bq .bt{color:var(--yellow);}
   .box p,.box li,.box ul{font-size:.87rem;}
   .qa{display:none;margin-top:8px;padding-top:8px;border-top:1px solid rgba(251,191,36,.3);color:var(--green);font-size:.85rem;}
   .bq.revealed .qa{display:block;}
+  /* TABLE */
   table{width:100%;border-collapse:collapse;font-size:.83rem;margin-top:8px;}
   th{background:#071020;color:var(--orange);text-align:left;padding:8px 12px;border:1px solid var(--border);}
   td{padding:7px 12px;border:1px solid var(--border);vertical-align:top;}
   tr:nth-child(even) td{background:rgba(11,22,40,.6);}
+  /* TIMELINE */
   .tl{list-style:none;padding:0;margin-top:8px;}
   .tl li{display:flex;gap:14px;margin-bottom:12px;align-items:flex-start;}
   .tl .st{min-width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
@@ -78,24 +89,33 @@
   .tl .st.c{background:rgba(6,182,212,.15);border:2px solid var(--cyan);color:var(--cyan);}
   .tl .st.g{background:rgba(16,185,129,.15);border:2px solid var(--green);color:var(--green);}
   .tl .st.o{background:rgba(245,158,11,.15);border:2px solid var(--orange);color:var(--orange);}
+  .tl .st.r{background:rgba(239,68,68,.15);border:2px solid var(--red);color:var(--red);}
   .tl .content h4{font-size:.9rem;}
   .tl .content p{font-size:.83rem;color:var(--muted);margin:0;}
+  /* STATS */
   .sr{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0;}
   .stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 18px;flex:1;min-width:120px;text-align:center;}
   .stat .n{font-size:1.8rem;font-weight:800;line-height:1;}
   .stat .l{font-size:.72rem;color:var(--muted);margin-top:4px;}
-  pre{background:#071020;border:1px solid var(--border);border-radius:6px;padding:12px;font-size:.78rem;color:var(--green);overflow-x:auto;margin:8px 0;font-family:'Courier New',monospace;line-height:1.5;}
-  code{background:#071020;padding:2px 6px;border-radius:4px;font-size:.82rem;color:var(--cyan);}
+  /* PILL */
+  .pill{display:inline-block;padding:2px 10px;border-radius:20px;font-size:.75rem;font-weight:600;margin:2px;}
+  .pv{background:rgba(124,58,237,.15);border:1px solid var(--violet);color:var(--violet);}
+  .pc{background:rgba(6,182,212,.15);border:1px solid var(--cyan);color:var(--cyan);}
+  .pg{background:rgba(16,185,129,.15);border:1px solid var(--green);color:var(--green);}
+  .po{background:rgba(245,158,11,.15);border:1px solid var(--orange);color:var(--orange);}
+  .pr{background:rgba(239,68,68,.15);border:1px solid var(--red);color:var(--red);}
+  /* LAYER */
   .ld{display:flex;flex-direction:column;gap:6px;margin:10px 0;}
   .lr{border-radius:6px;padding:8px 16px;font-size:.82rem;font-weight:600;text-align:center;}
-  .tag{display:inline-block;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:2px 10px;font-size:.75rem;color:var(--muted);margin-right:6px;margin-bottom:4px;}
+  /* SCROLL */
   .slide::-webkit-scrollbar{width:4px;}
+  .slide::-webkit-scrollbar-track{background:transparent;}
   .slide::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
 </style>
 </head>
 <body>
 <div id="navbar">
-  <div class="brand">📊 VIZ <span>BIGDATA</span> · BLOQUE IV</div>
+  <div class="brand">🤖 IA <span>INDUSTRIA</span> · BLOQUE IV</div>
   <div class="stabs">
     <button onclick="gts(0)" id="t0">S16</button>
     <button onclick="gts(1)" id="t1">S17</button>
@@ -103,481 +123,628 @@
     <button onclick="gts(3)" id="t3">S19</button>
     <button onclick="gts(4)" id="t4">S20</button>
   </div>
-  <div id="ctr">1 / 57</div>
+  <div id="ctr">1 / 1</div>
 </div>
-<div id="pb" style="width:1.75%"></div>
+<div id="pb" style="width:1%"></div>
 <div id="sc">
 
 <!-- PORTADA -->
 <div class="slide active cover" data-s="0">
   <div class="badge">BLOQUE IV · SESIONES 16 – 20</div>
-  <h1>Visualización, Dashboards<br>y Big Data con Spark</h1>
-  <p class="sub">Del gráfico al insight accionable · de Pandas a PySpark · 30 horas</p>
+  <h1>Visualización, Big Data<br>y Comunicación de Resultados</h1>
+  <p class="sub">Inteligencia Artificial para la Industria · Seminario de Titulación · 30 horas</p>
   <div class="sg">
-    <div class="sc2"><div class="num">SESIÓN 16</div><div class="nm">Matplotlib, Seaborn, Plotly</div></div>
-    <div class="sc2"><div class="num">SESIÓN 17</div><div class="nm">Data Storytelling + Power BI</div></div>
-    <div class="sc2"><div class="num">SESIÓN 18</div><div class="nm">UX/UI + Streamlit Apps</div></div>
-    <div class="sc2"><div class="num">SESIÓN 19</div><div class="nm">PySpark — Big Data 5Vs</div></div>
-    <div class="sc2"><div class="num">SESIÓN 20</div><div class="nm">ML a Escala con MLlib</div></div>
+    <div class="sc2"><div class="num">SESIÓN 16</div><div class="nm">Visualización Efectiva de Datos</div></div>
+    <div class="sc2"><div class="num">SESIÓN 17</div><div class="nm">Data Storytelling y Dashboards</div></div>
+    <div class="sc2"><div class="num">SESIÓN 18</div><div class="nm">UX/UI para Analytics</div></div>
+    <div class="sc2"><div class="num">SESIÓN 19</div><div class="nm">Big Data y Arquitectura Spark</div></div>
+    <div class="sc2"><div class="num">SESIÓN 20</div><div class="nm">ML a Escala y Pipeline Productivo</div></div>
   </div>
   <p style="margin-top:24px;color:var(--muted);font-size:.82rem;">← → o barra espaciadora · Click en S16–S20 para saltar sesión</p>
 </div>
 
 <!-- ═══ SESIÓN 16 ═══ -->
 <div class="slide" data-s="0">
-  <h2>Sesión 16 <span style="color:var(--orange)">— Visualización de Datos: Matplotlib, Seaborn, Plotly y GeoPandas</span></h2>
-  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
-    <p>La visualización es el <strong>traductor entre datos y cerebros humanos</strong>. El cerebro procesa imágenes 60,000 veces más rápido que texto. Un gráfico bien diseñado hace en 3 segundos lo que una tabla de 500 filas no logra en 3 minutos. La pregunta no es "¿cómo dibujo esto?", sino "¿qué decisión debería generar esta visualización?"</p>
+  <h2>Sesión 16 <span style="color:var(--orange)">— Visualización Efectiva de Datos y Análisis Geoespacial</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA DE APERTURA</div>
+    <p>Una buena visualización es como una <strong>señal de tránsito bien diseñada</strong>: comunica en 2 segundos información que tomaría 2 páginas explicar con palabras. Una mala visualización es como una señal mal diseñada — distrae, confunde y puede causar <em>accidentes de decisión</em> que cuestan millones a las organizaciones.</p>
   </div>
-  <div class="cg c3" style="margin-top:14px;">
-    <div class="card o"><h3>Matplotlib — Control Total</h3><p>La base de casi toda visualización Python. Máxima personalización pero verbosa. Ideal cuando necesitas control pixel a pixel: publicaciones científicas, gráficos de ingeniería con especificaciones exactas.</p></div>
-    <div class="card c"><h3>Seaborn — Estadística Visual</h3><p>Construido sobre Matplotlib. Gráficos estadísticos de alta calidad con menos código. Integrado con DataFrames. Especialidad: distribuciones, correlaciones, comparaciones entre grupos.</p></div>
-    <div class="card g"><h3>Plotly — Interactividad</h3><p>Gráficos interactivos (hover, zoom, filtros) en HTML. Funciona en Jupyter y web apps. Plotly Express = una línea de código. Plotly Go = control total con interactividad.</p></div>
-  </div>
-</div>
-
-<div class="slide" data-s="0">
-  <h2>Seaborn: Gráficos Estadísticos Industriales</h2>
-  <div class="cg c2">
-    <div class="card c">
-      <h3>Gráficos de Distribución y Relación</h3>
-      <pre">import seaborn as sns
-import matplotlib.pyplot as plt
-
-# Tema profesional
-sns.set_theme(style="darkgrid", palette="husl")
-fig, axes = plt.subplots(2,2, figsize=(14,10))
-
-# 1. Distribución con curva KDE
-sns.histplot(df['tiempo_ciclo'], kde=True,
-    color='#06b6d4', ax=axes[0,0])
-
-# 2. Comparación entre grupos
-sns.boxplot(data=df, x='turno', y='defectos',
-    hue='linea', ax=axes[0,1])
-
-# 3. Correlación — heatmap
-corr_matrix = df.select_dtypes('number').corr()
-sns.heatmap(corr_matrix, annot=True, cmap='RdYlGn',
-    center=0, fmt='.2f', ax=axes[1,0])
-
-# 4. Relación 3 variables (scatter + color + tamaño)
-sns.scatterplot(data=df, x='temperatura',
-    y='defectos', hue='turno', size='produccion',
-    sizes=(20,200), ax=axes[1,1])</pre>
-    </div>
-    <div class="card v">
-      <h3>Plotly Express: Interactividad en Una Línea</h3>
-      <pre">import plotly.express as px
-import plotly.graph_objects as go
-
-# Scatter interactivo con información al hover
-fig = px.scatter(df,
-    x='temperatura', y='defectos',
-    color='turno', size='produccion',
-    hover_data=['operador', 'fecha'],
-    title='Temperatura vs Defectos por Turno',
-    color_discrete_sequence=px.colors.qualitative.Vivid)
-fig.show()
-
-# Serie de tiempo interactiva
-fig2 = px.line(df_diario, x='fecha',
-    y=['produccion','defectos'],
-    title='Tendencia de Producción y Defectos')
-fig2.update_layout(
-    template='plotly_dark',
-    hovermode='x unified')
-fig2.show()
-
-# Guardar como HTML autocontenido
-fig2.write_html("reporte_produccion.html")</pre>
-    </div>
+  <div class="sr" style="margin-top:16px;">
+    <div class="stat"><div class="n" style="color:var(--orange)">65%</div><div class="l">de las personas aprenden mejor con información visual (SHRM, 2020)</div></div>
+    <div class="stat"><div class="n" style="color:var(--yellow)">3x</div><div class="l">más rápido se procesa información visual vs. texto (3M Corp.)</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">28%</div><div class="l">más decisiones correctas con datos bien visualizados vs. tablas</div></div>
   </div>
 </div>
 
 <div class="slide" data-s="0">
-  <h2>GeoPandas: Análisis Geoespacial Industrial</h2>
+  <h2>Los Principios de Tufte: La Gramática de la Visualización</h2>
   <div class="cg c2">
     <div class="card o">
-      <h3>¿Para qué GeoPandas en Industria?</h3>
-      <ul>
-        <li><strong>Logística</strong>: mapas de calor de demanda por zona geográfica</li>
-        <li><strong>Retail</strong>: cobertura de tiendas, zonas sin servicio, análisis de competencia</li>
-        <li><strong>Manufactura</strong>: ubicación de proveedores, riesgo de supply chain geográfico</li>
-        <li><strong>Servicios</strong>: tiempos de respuesta por colonia/municipio</li>
-        <li><strong>Agro-industria</strong>: análisis de rendimiento por parcela/región</li>
+      <h3>Principio 1 — Maximizar la Razón Dato/Tinta</h3>
+      <p>Cada elemento visual debe justificar su existencia mostrando datos. Elimina: fondos con degradados, bordes decorativos, gridlines gruesas, leyendas redundantes, efectos 3D.</p>
+      <p style="margin-top:8px;color:var(--muted);font-size:.82rem;"><strong style="color:var(--orange);">Pregunta clave:</strong> "¿Si elimino este elemento, se pierde información? No → elimínalo."</p>
+    </div>
+    <div class="card c">
+      <h3>Principio 2 — Integridad Gráfica</h3>
+      <p>La representación visual debe ser proporcional a los números que muestra. Violarla es manipulación visual.</p>
+      <ul style="margin-top:8px;">
+        <li>Ejes que no comienzan en cero (exageran diferencias)</li>
+        <li>Áreas en 2D representando valores 1D (engañan al ojo)</li>
+        <li>Escalas inconsistentes entre gráficos comparados</li>
       </ul>
     </div>
     <div class="card g">
-      <h3>Mapa de Demanda con GeoPandas + Plotly</h3>
-      <pre">import geopandas as gpd
-import pandas as pd
-import plotly.express as px
-
-# Cargar shapefile de estados de México
-mexico = gpd.read_file("mx_estados.shp")
-
-# Unir con datos de ventas
-ventas = pd.read_csv("ventas_por_estado.csv")
-mapa = mexico.merge(ventas, on='estado')
-
-# Mapa choropleth interactivo
-fig = px.choropleth(mapa,
-    geojson=mapa.geometry,
-    locations=mapa.index,
-    color='ventas_total',
-    hover_name='estado',
-    color_continuous_scale='Viridis',
-    title='Ventas por Estado (2024)')
-fig.update_geos(fitbounds="locations")
-fig.show()</pre>
+      <h3>Principio 3 — Contexto es Todo</h3>
+      <p>Un dato sin contexto puede llevar a conclusiones opuestas. Siempre incluir: referencia temporal, unidades claramente etiquetadas, comparación con benchmark o meta.</p>
+      <p style="margin-top:8px;font-size:.82rem;color:var(--muted);">Ejemplo: "Defectos = 42 unidades" sin contexto. Con contexto: "42 defectos vs. meta de 30 — 40% sobre objetivo en semana 12."</p>
+    </div>
+    <div class="card v">
+      <h3>Principio 4 — Small Multiples</h3>
+      <p>Repetir el mismo tipo de gráfico para múltiples categorías, con la misma escala. Permite comparación inmediata que un gráfico combinado no permite.</p>
+      <p style="margin-top:8px;font-size:.82rem;color:var(--muted);">Ejemplo: 6 histogramas de tiempo de ciclo por turno, misma escala → el ojo detecta diferencias instantáneamente.</p>
     </div>
   </div>
-  <div class="box bl"><div class="bt">🔬 LABORATORIO — Dashboard Multi-gráfico</div>
-    <p>Construir un dashboard completo en Plotly con subplots: (1) serie de tiempo de OEE, (2) boxplot de defectos por turno, (3) heatmap de correlaciones, (4) mapa geográfico de distribuidores. Exportar como HTML interactivo para compartir con directivos sin necesidad de Python.</p>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Qué Gráfico Usar: La Pregunta Determina la Visualización</h2>
+  <table>
+    <tr><th>Pregunta de negocio</th><th>Tipo de gráfico</th><th>Cuándo NO usarlo</th></tr>
+    <tr><td><strong>¿Cuánto es cada categoría?</strong> (comparación)</td><td>Barras verticales u horizontales</td><td>Nunca usar 3D ni pie charts para comparar magnitudes</td></tr>
+    <tr><td><strong>¿Cómo cambia en el tiempo?</strong> (evolución)</td><td>Línea temporal con marcadores de eventos clave</td><td>No usar barras para series continuas largas</td></tr>
+    <tr><td><strong>¿Cómo se distribuye?</strong> (distribución)</td><td>Histograma o boxplot</td><td>No usar pie chart para mostrar distribución continua</td></tr>
+    <tr><td><strong>¿Existe relación entre dos variables?</strong></td><td>Scatter plot (dispersión)</td><td>No usar línea si los puntos no tienen orden temporal</td></tr>
+    <tr><td><strong>¿Cuál es la correlación entre muchas variables?</strong></td><td>Heatmap de correlación</td><td>No usar tabla de números — el ojo no detecta patrones numéricos</td></tr>
+    <tr><td><strong>¿Cómo se distribuye geográficamente?</strong></td><td>Mapa de calor o coroplético</td><td>No usar mapa de burbujas cuando el área geográfica distorsiona la percepción</td></tr>
+    <tr><td><strong>¿Qué proporción representa cada parte?</strong></td><td>Stacked bar o treemap (máx. 5 categorías)</td><td>Pie chart con más de 5 categorías es ilegible</td></tr>
+  </table>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Visualización Geoespacial: Los Datos Tienen Dirección</h2>
+  <div class="cg c2">
+    <div class="card o">
+      <h3>Tipos de Mapas y Sus Usos</h3>
+      <ul>
+        <li><strong>Mapa coroplético:</strong> regiones coloreadas por intensidad (ej. ventas por estado)</li>
+        <li><strong>Mapa de calor (heatmap):</strong> densidad de puntos en área geográfica (ej. accidentes viales)</li>
+        <li><strong>Mapa de flujos:</strong> rutas y volúmenes de movimiento (ej. cadenas de suministro)</li>
+        <li><strong>Mapa de burbujas:</strong> localización + magnitud combinadas (ej. plantas productivas por capacidad)</li>
+        <li><strong>Mapa de red:</strong> conexiones entre nodos geográficos (ej. rutas de distribución)</li>
+      </ul>
+    </div>
+    <div class="card c">
+      <h3>GeoPandas: El Pandas de los Mapas</h3>
+      <p>Extiende Pandas para trabajar con datos que tienen dimensión geográfica (latitud, longitud, polígonos de estados, municipios).</p>
+      <p style="margin-top:8px;"><strong style="color:var(--cyan);">Flujo conceptual:</strong></p>
+      <div class="ld" style="margin-top:8px;">
+        <div class="lr" style="background:rgba(245,158,11,.1);border:1px solid var(--orange);color:var(--orange);font-size:.78rem;">📍 Datos + Coordenadas (lat/lon o polígonos)</div>
+        <div class="lr" style="background:rgba(6,182,212,.1);border:1px solid var(--cyan);color:var(--cyan);font-size:.78rem;">🗺️ Cargar mapa base (shapefile de México/estados)</div>
+        <div class="lr" style="background:rgba(16,185,129,.1);border:1px solid var(--green);color:var(--green);font-size:.78rem;">🔗 Unir datos con geometría geográfica</div>
+        <div class="lr" style="background:rgba(124,58,237,.1);border:1px solid var(--violet);color:var(--violet);font-size:.78rem;">🎨 Mapear variable a escala de color → visualizar</div>
+      </div>
+    </div>
+  </div>
+  <div class="box bc"><div class="bt">📰 CASO REAL — CONAGUA: Decisiones que Salvan Vidas</div>
+    <p>CONAGUA utiliza mapas de calor geoespaciales actualizados cada 15 minutos para visualizar la distribución de lluvias, niveles de presas y zonas de riesgo de inundación en los 32 estados. Cuando el Mapa Nacional de Riesgos detecta umbral de riesgo alto, se activa automáticamente el protocolo de alerta temprana para protección civil. <strong>El dato sin visualización geoespacial no comunica urgencia; el mapa rojo encendido sí lo hace.</strong></p>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Errores Comunes: Las 7 Visualizaciones que Mienten</h2>
+  <div class="cg c3">
+    <div class="card r">
+      <h3>Error 1 — Eje Y Truncado</h3>
+      <p>Iniciar el eje Y en un valor distinto de cero exagera visualmente las diferencias. Una variación del 3% puede parecer 300%.</p>
+      <p style="margin-top:6px;font-size:.8rem;color:var(--muted);"><strong style="color:var(--red);">Excepción válida:</strong> cuando los valores son naturalmente altos y la variación relevante es pequeña (ej. temperatura industrial entre 850°C y 870°C).</p>
+    </div>
+    <div class="card r">
+      <h3>Error 2 — Pie Chart con Muchas Categorías</h3>
+      <p>El ojo humano no puede distinguir ángulos similares. Con más de 5 categorías, el pie chart se vuelve ilegible. Solución: barras horizontales ordenadas.</p>
+    </div>
+    <div class="card r">
+      <h3>Error 3 — Efectos 3D</h3>
+      <p>Las barras y pasteles en 3D distorsionan las proporciones por perspectiva. El elemento del frente siempre parece más grande de lo que es. Nunca usar 3D para datos.</p>
+    </div>
+    <div class="card o">
+      <h3>Error 4 — Colores Sin Significado</h3>
+      <p>Usar 15 colores distintos sin que cada uno signifique algo específico. El ojo busca patrones en el color — si no los hay, genera confusión cognitiva.</p>
+    </div>
+    <div class="card o">
+      <h3>Error 5 — Doble Eje Y Sin Justificación</h3>
+      <p>Combinar dos variables en el mismo gráfico con ejes distintos puede manipular la aparente correlación. Las escalas se pueden ajustar para que cualquier par de variables parezca correlacionado.</p>
+    </div>
+    <div class="card o">
+      <h3>Error 6 — Escala Logarítmica Sin Avisar</h3>
+      <p>Las escalas log son válidas para datos con varios órdenes de magnitud, pero SIEMPRE deben etiquetarse explícitamente. Sin aviso, el lector asume escala lineal y saca conclusiones incorrectas.</p>
+    </div>
+  </div>
+  <div class="box bl"><div class="bt">🔬 ACTIVIDAD PRÁCTICA — Detectar y Corregir Errores</div>
+    <p>Reciben 5 visualizaciones impresas con errores deliberados (eje truncado, pie chart con 15 categorías, barras 3D, colores sin sentido, escala log sin etiqueta). En equipos: (1) identificar el error específico, (2) explicar qué conclusión errónea podría sacar un lector desprevenido, (3) proponer el tipo de gráfico correcto. Presentar al grupo.</p>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Reto de Sesión 16: Mi Estrategia de Visualización</h2>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ EVALUACIÓN — Click para ver criterios</div>
+    <p>¿Cuál de los siguientes gráficos es el más apropiado para responder "¿En qué turno se producen más defectos y cuál es la variabilidad de cada turno?"</p>
+    <p style="margin-top:6px;font-size:.85rem;">A) Pie chart con % de defectos por turno &nbsp; B) Línea temporal diaria &nbsp; C) Boxplot por turno &nbsp; D) Mapa de calor por hora/turno</p>
+    <div class="qa"><strong>C) Boxplot por turno</strong> — Muestra simultáneamente la mediana (nivel central de defectos), el IQR (variabilidad del 50% central), los valores atípicos, y permite comparar distribuciones entre turnos de un vistazo. El pie chart solo mostraría totales sin variabilidad. La línea temporal no agrupa por turno. El mapa hora/turno es válido como complemento para ver el patrón temporal dentro de cada turno.</div>
+  </div>
+  <div class="box bl" style="margin-top:16px;"><div class="bt">🏆 RETO DE APLICACIÓN — Estrategia Visual para mi Dataset</div>
+    <p>Para el dataset de tu área (producción, logística, transporte, automotriz o administración):</p>
+    <ol style="margin-top:8px;">
+      <li>Identificar 5 preguntas de negocio clave que el dataset puede responder</li>
+      <li>Para cada pregunta: seleccionar el tipo de gráfico más apropiado y justificar</li>
+      <li>Describir en 1 párrafo qué historia contaría cada visualización a la dirección</li>
+      <li>Identificar si alguna variable tiene dimensión geográfica y proponer el tipo de mapa correspondiente</li>
+    </ol>
+    <p style="margin-top:8px;color:var(--muted);font-size:.82rem;"><strong style="color:var(--green);">Entregable:</strong> Documento de 1-2 páginas con tabla de preguntas → gráficos justificados.</p>
+  </div>
+  <div class="box bd" style="margin-top:12px;"><div class="bt">💡 HERRAMIENTAS RECOMENDADAS</div>
+    <p><span class="pill po">GeoPandas</span><span class="pill po">Matplotlib</span><span class="pill po">Seaborn</span><span class="pill po">Plotly</span><span class="pill po">Folium (mapas)</span><span class="pill po">Tableau Public (gratuito)</span> — Todas accesibles sin costo institucional.</p>
   </div>
 </div>
 
 <!-- ═══ SESIÓN 17 ═══ -->
 <div class="slide" data-s="1">
-  <h2>Sesión 17 <span style="color:var(--yellow)">— Data Storytelling y Dashboards Power BI</span></h2>
-  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
-    <p>Los datos sin historia son como <strong>ingredientes sin receta</strong>. El data storytelling es la receta que convierte insights crudos en narrativas que mueven a la acción. La diferencia entre un dashboard que nadie usa y uno que cambia decisiones de negocio es el <em>contexto</em>, la <em>narrativa</em> y el <em>llamado a la acción</em>. Los datos convencen a la mente; la historia mueve a la acción.</p>
+  <h2>Sesión 17 <span style="color:var(--yellow)">— Data Storytelling y Dashboards Ejecutivos</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA DE APERTURA</div>
+    <p>Un buen dashboard ejecutivo es como el <strong>tablero de un avión de combate</strong>: muestra solo los instrumentos críticos que el piloto necesita para tomar decisiones en ese momento, no todos los 2,000 sensores del motor. Si el piloto tuviera que leer todo simultáneamente, no podría pilotar. Los directivos son igual: si ven todo, no deciden nada.</p>
   </div>
-  <div class="cg c3" style="margin-top:14px;">
-    <div class="card o"><h3>Los 3 Elementos del Storytelling</h3><ol><li><strong>Datos</strong>: la evidencia objetiva que sustenta el mensaje</li><li><strong>Narrativa</strong>: el hilo conductor que da contexto y significado</li><li><strong>Visualización</strong>: la representación visual que hace el mensaje memorable</li></ol></div>
-    <div class="card c"><h3>Estructura de una Historia de Datos</h3><ol><li><strong>Contexto</strong>: ¿cuál es la situación actual? (benchmark)</li><li><strong>Complicación</strong>: ¿qué problema o oportunidad revelan los datos?</li><li><strong>Resolución</strong>: ¿qué acción concreta se recomienda?</li></ol></div>
-    <div class="card g"><h3>Principios del Diseño Visual</h3><ul><li>Eliminar "chartjunk" — todo lo que no agrega información</li><li>Un gráfico, un mensaje</li><li>Jerarquía visual: lo más importante, más grande y con mayor contraste</li><li>Color con propósito, no decorativo</li></ul></div>
+  <div class="sr" style="margin-top:16px;">
+    <div class="stat"><div class="n" style="color:var(--yellow)">72%</div><div class="l">de ejecutivos toman decisiones sin analizar datos suficientes (Accenture)</div></div>
+    <div class="stat"><div class="n" style="color:var(--orange)">5x</div><div class="l">más impacto tiene una narrativa de datos vs. solo números (Stanford)</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">$13.01B</div><div class="l">mercado global de BI y dashboards para 2026 (MarketsandMarkets)</div></div>
   </div>
 </div>
 
 <div class="slide" data-s="1">
-  <h2>Power BI: Dashboards Empresariales Profesionales</h2>
-  <div class="cg c2">
+  <h2>La Pirámide de Comunicación de Datos</h2>
+  <div class="ld" style="margin-top:8px;">
+    <div class="lr" style="background:rgba(245,158,11,.12);border:1px solid var(--orange);color:var(--orange);">🎯 DECISIÓN — ¿Qué acción concreta tomar? La dirección actúa. (Nivel ejecutivo)</div>
+    <div class="lr" style="background:rgba(16,185,129,.12);border:1px solid var(--green);color:var(--green);">💡 INSIGHT — ¿Por qué importa este patrón para el negocio? La analítica interpreta.</div>
+    <div class="lr" style="background:rgba(6,182,212,.12);border:1px solid var(--cyan);color:var(--cyan);">📊 INFORMACIÓN — ¿Qué patrón existe en los datos? Los gráficos revelan.</div>
+    <div class="lr" style="background:rgba(100,116,139,.12);border:1px solid var(--muted);color:var(--muted);">🗄️ DATO — Número crudo almacenado. Sin contexto, sin valor. (Nivel operativo)</div>
+  </div>
+  <div class="box bc" style="margin-top:14px;"><div class="bt">📰 EJEMPLO — La misma información en cada nivel</div>
+    <p><strong>Dato:</strong> "Defectos = 847"<br>
+    <strong>Información:</strong> "Los defectos aumentaron 23% respecto al mes anterior en la línea B"<br>
+    <strong>Insight:</strong> "El incremento correlaciona con el cambio de proveedor de materia prima hace 6 semanas"<br>
+    <strong>Decisión:</strong> "Regresar al proveedor anterior para 60% del volumen mientras se audita el nuevo" — estimado ahorro $1.2M en devoluciones del trimestre.</p>
+  </div>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>Principios de Narrativa con Datos: La Estructura que Convence</h2>
+  <div class="cg c3">
     <div class="card o">
-      <h3>Flujo de Trabajo en Power BI</h3>
-      <ul class="tl" style="margin-top:6px;">
-        <li><div class="st o">1</div><div class="content"><h4>Power Query (ETL)</h4><p>Conectar fuentes de datos, transformar y limpiar. Interfaz visual, genera código M automáticamente.</p></div></li>
-        <li><div class="st c">2</div><div class="content"><h4>Modelo de Datos</h4><p>Definir relaciones entre tablas (dimensiones y hechos). Modelo estrella para mejor performance.</p></div></li>
-        <li><div class="st g">3</div><div class="content"><h4>DAX — Data Analysis Expressions</h4><p>Lenguaje de cálculo para medidas y columnas calculadas. Más potente que Excel pero similar en concepto.</p></div></li>
-        <li><div class="st v">4</div><div class="content"><h4>Visualizaciones y Dashboard</h4><p>Crear reportes interactivos con filtros cruzados. Publicar en Power BI Service para acceso web.</p></div></li>
-      </ul>
+      <h3>1 — Contexto</h3>
+      <p>¿Cuál es la situación de partida? Establece el estado actual con datos. Sin contexto, el oyente no puede evaluar si el hallazgo es relevante.</p>
+      <p style="margin-top:8px;font-size:.82rem;color:var(--muted);">"La eficiencia de nuestra planta es 78%. La meta del sector es 85%. Estamos 7 puntos abajo desde hace 3 trimestres."</p>
     </div>
     <div class="card c">
-      <h3>DAX Esencial para KPIs Industriales</h3>
-      <pre">-- Medidas básicas
-Total Producción = SUM(Produccion[unidades])
-Defectos Promedio = AVERAGE(Produccion[defectos])
-Tasa Defectos % =
-    DIVIDE([Total Defectos], [Total Produccion], 0) * 100
-
--- OEE calculado dinámicamente
-OEE =
-    [Disponibilidad %] *
-    [Rendimiento %] *
-    [Calidad %]
-
--- Comparación con período anterior
-Variación vs Mes Anterior =
-    VAR mes_actual = [Total Producción]
-    VAR mes_anterior =
-        CALCULATE([Total Producción],
-            DATEADD(Calendario[Fecha], -1, MONTH))
-    RETURN
-    DIVIDE(mes_actual - mes_anterior,
-           mes_anterior, 0) * 100
-
--- Top N de máquinas con más defectos
-Top 5 Defectos = RANKX(ALL(Maquinas),
-    [Total Defectos], , DESC, DENSE)</pre>
+      <h3>2 — Complicación</h3>
+      <p>¿Qué problema o tensión existe? El elemento que crea urgencia o interés. Sin tensión, no hay historia — solo reporte.</p>
+      <p style="margin-top:8px;font-size:.82rem;color:var(--muted);">"Esta brecha nos cuesta $2.3M en costos adicionales por año. Si no cerramos la brecha este trimestre, perderemos la certificación ISO-9001."</p>
     </div>
+    <div class="card g">
+      <h3>3 — Resolución</h3>
+      <p>¿Qué acción concreta propones? La narrativa de datos debe terminar en una recomendación accionable, no en "podría ser que quizás..."</p>
+      <p style="margin-top:8px;font-size:.82rem;color:var(--muted);">"El análisis identifica 3 causas raíz. Con estas 2 acciones específicas (en 60 días, con $180K de inversión), proyectamos alcanzar 84% de eficiencia."</p>
+    </div>
+  </div>
+  <div class="box bd"><div class="bt">💡 LAS 3 PREGUNTAS DEL OYENTE EJECUTIVO</div>
+    <p>Antes de presentar cualquier análisis, respóndete estas 3 preguntas que el ejecutivo se hará silenciosamente:<br>
+    <strong style="color:var(--cyan);">1. "¿Y qué?"</strong> — ¿Por qué debería importarme este número?<br>
+    <strong style="color:var(--orange);">2. "¿Qué quieres que haga?"</strong> — ¿Cuál es la acción que me estás pidiendo?<br>
+    <strong style="color:var(--green);">3. "¿Qué me puede salir mal?"</strong> — ¿Cuáles son los riesgos de actuar o no actuar?</p>
   </div>
 </div>
 
 <div class="slide" data-s="1">
-  <h2>Buenas Prácticas de Dashboard Design</h2>
+  <h2>Power BI vs. Tableau: Elegir la Herramienta Correcta</h2>
   <table>
-    <tr><th>Principio</th><th>Qué hacer</th><th>Qué evitar</th></tr>
-    <tr><td><strong>Audiencia primero</strong></td><td>¿Quién lo usa? ¿Qué decisiones toma? Diseñar para ese usuario.</td><td>Dashboard "para todos" que no sirve a nadie específico.</td></tr>
-    <tr><td><strong>Jerarquía KPI</strong></td><td>KPIs de nivel C arriba (grandes, simples). Detalle abajo para drill-down.</td><td>Todos los números del mismo tamaño e importancia.</td></tr>
-    <tr><td><strong>Colores con significado</strong></td><td>Verde = bien, Rojo = mal. Consistente en todo el dashboard.</td><td>5+ colores sin significado. Paleta de arco iris.</td></tr>
-    <tr><td><strong>Contexto siempre</strong></td><td>Mostrar meta/benchmark junto al KPI. +15% vs... ¿vs qué?</td><td>Número solo sin referencia. "1,542 unidades" ¿es bueno o malo?</td></tr>
-    <tr><td><strong>Narrativa incorporada</strong></td><td>Títulos descriptivos: "OEE cayó 8pts por parada en L3 el martes"</td><td>Títulos genéricos: "Gráfico de barras 1"</td></tr>
+    <tr><th>Criterio</th><th>Power BI</th><th>Tableau</th></tr>
+    <tr><td><strong>Integración con ecosistema</strong></td><td>Nativo con Excel, Azure, Teams, SharePoint (ideal si la empresa ya usa Microsoft)</td><td>Agnóstico — conecta con todo, mejor en entornos mixtos</td></tr>
+    <tr><td><strong>Curva de aprendizaje</strong></td><td>Media — DAX puede ser complejo; interfaz familiar para usuarios de Excel</td><td>Alta para features avanzados; drag-and-drop inicial muy intuitivo</td></tr>
+    <tr><td><strong>Capacidad visual</strong></td><td>Sólida, con marketplace de visualizaciones personalizadas</td><td>Superior para visualizaciones complejas e interactividad avanzada</td></tr>
+    <tr><td><strong>Costo</strong></td><td>Incluido en Microsoft 365 Business. Power BI Pro: ~$10 USD/usuario/mes</td><td>Tableau Creator: ~$75 USD/usuario/mes. Tableau Public: gratuito</td></tr>
+    <tr><td><strong>Gobernanza y seguridad</strong></td><td>Excelente integración con Azure Active Directory y políticas corporativas</td><td>Buena, pero requiere configuración adicional en entornos Microsoft</td></tr>
+    <tr><td><strong>Mejor para...</strong></td><td>Organizaciones ya en ecosistema Microsoft, reportes operativos diarios</td><td>Visualizaciones analíticas complejas, exploración libre de datos</td></tr>
   </table>
-  <div class="box bc"><div class="bt">📰 CASO REAL — Dashboard de Operaciones en Cemex</div>
-    <p>Cemex implementó Power BI para consolidar datos de 50 plantas en un dashboard unificado de gerencia. Antes: reportes manuales en Excel tomaban 3 días. Ahora: datos en tiempo real de producción, costos y calidad actualizados cada 15 min. El CEO puede ver el rendimiento de cualquier planta en 10 segundos. Ahorro estimado: 2,000 horas/año en reportes.</p>
+  <div class="box bm" style="margin-top:12px;"><div class="bt">🎭 DAX — La "Fórmula de Excel Turbinada"</div>
+    <p>DAX (Data Analysis Expressions) es el lenguaje de fórmulas de Power BI. Piénsalo como Excel, pero que opera sobre tablas completas en lugar de celdas individuales. Permite crear medidas calculadas que se actualizan dinámicamente al filtrar el dashboard. Ejemplo conceptual: una medida de "Margen Neto Ajustado por Región" que responde automáticamente a cualquier filtro aplicado por el usuario.</p>
+  </div>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>Diseño de Dashboard Ejecutivo: Las Reglas de Oro</h2>
+  <div class="cg c2">
+    <div class="card o">
+      <h3>Regla 1 — Máximo 7 KPIs por Vista</h3>
+      <p>La memoria de trabajo humana procesa 7 ± 2 elementos simultáneamente (Miller, 1956). Un dashboard con 20 KPIs en una pantalla no es informativo — es ruido. Define qué 5-7 métricas son realmente críticas para la decisión de ese usuario específico.</p>
+    </div>
+    <div class="card c">
+      <h3>Regla 2 — Jerarquía Visual Clara</h3>
+      <p>Los ojos siguen el contraste, el tamaño y el movimiento. El KPI más importante debe ser visualmente dominante (más grande, más brillante o en el cuadrante superior izquierdo — donde el ojo llega primero).</p>
+    </div>
+    <div class="card g">
+      <h3>Regla 3 — Colores con Semántica</h3>
+      <p>Rojo = peligro/abajo de meta. Verde = bien/sobre meta. Amarillo = atención/en riesgo. Nunca usar estos colores para propósitos estéticos — solo para estados de alerta. El directivo debe interpretar el semáforo instantáneamente.</p>
+    </div>
+    <div class="card v">
+      <h3>Regla 4 — Drill-Down Intuitivo</h3>
+      <p>El dashboard ejecutivo muestra el resumen. El clic lleva al detalle. Diseña la jerarquía: País → Región → Planta → Línea → Turno. El usuario debe poder ir del resumen al detalle sin entrenamiento.</p>
+    </div>
+  </div>
+  <div class="box bc"><div class="bt">📰 CASO REAL — Grupo México: 15 Minas en un Tablero</div>
+    <p>Grupo México implementó dashboards ejecutivos en Power BI para monitorear KPIs de seguridad, producción y eficiencia en sus 15 operaciones mineras simultáneamente. El sistema alerta automáticamente a los gerentes regionales cuando un indicador sale del rango normal, con drill-down hasta el nivel de turno y equipo específico. Resultado: tiempo de respuesta ante incidentes de seguridad reducido de 4 horas a 23 minutos en promedio.</p>
+  </div>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>Reto de Sesión 17: Dashboard Ejecutivo para mi Sector</h2>
+  <div class="box bl"><div class="bt">🔬 ACTIVIDAD PRÁCTICA — Rediseño de Dashboard</div>
+    <p>Reciben un dashboard real (impreso) con problemas comunes: demasiada información, 15+ colores distintos, sin jerarquía visual, KPIs sin contexto de meta, tooltips ilegibles.</p>
+    <ol style="margin-top:8px;">
+      <li>Identificar los 5 problemas principales usando los principios de la sesión</li>
+      <li>Seleccionar los 7 KPIs más críticos del dashboard original</li>
+      <li>Rediseñar en papel: jerarquía visual, semáforos, drill-down propuesto</li>
+      <li>Presentar el nuevo diseño y defender las decisiones tomadas</li>
+    </ol>
+  </div>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Click para ver respuesta</div>
+    <p>Un director general quiere ver en su dashboard: ingresos del mes, margen por producto, eficiencia de planta, ausentismo, costo de calidad, NPS de clientes, nivel de inventario, accidentes laborales, cumplimiento de entregas, pipeline de ventas y liquidez. ¿Qué le recomiendas?</p>
+    <div class="qa"><strong>El problema no es de dashboard, es de gobernanza de KPIs.</strong> 11 métricas en un solo dashboard ejecutivo significa que la organización no ha priorizado qué es crítico. Recomendar: (1) definir el "top 5" absoluto para ese rol específico (DG ≠ Gerente de Planta ≠ Director Comercial), (2) crear vistas separadas por área con sus propios 5-7 KPIs, (3) usar la vista de DG solo para alertas de excepción cuando algo sale de rango. El dashboard de excepción es más poderoso que el dashboard de todo.</div>
+  </div>
+  <div class="box bl" style="margin-top:12px;"><div class="bt">🏆 RETO DE APLICACIÓN</div>
+    <p>Diseñar el wireframe completo (en papel o PowerPoint) de un dashboard ejecutivo para la dirección de una empresa real de tu sector. Incluir: selección y justificación de los 7 KPIs elegidos, jerarquía visual propuesta, lógica de drill-down, semáforos y umbrales de alerta. Entregar como PDF de máximo 3 páginas.</p>
   </div>
 </div>
 
 <!-- ═══ SESIÓN 18 ═══ -->
 <div class="slide" data-s="2">
-  <h2>Sesión 18 <span style="color:var(--pink)">— UX/UI y Despliegue de Apps Web con Streamlit</span></h2>
-  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
-    <p>Streamlit es como tener un <strong>equipo de front-end incluido en tu librería de Python</strong>. Escribes lógica de datos en Python puro y Streamlit se encarga de convertirlo en una aplicación web interactiva. Sin HTML, sin JavaScript, sin CSS. Un científico de datos puede desplegar una app funcional en 30 minutos que antes requería semanas de desarrollo.</p>
+  <h2>Sesión 18 <span style="color:var(--cyan)">— UX/UI para Aplicaciones Analíticas y Dashboards Web</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA DE APERTURA</div>
+    <p><strong>UX es asegurarte de que el semáforo está en el lugar correcto para ser visto.</strong> UI es asegurarte de que el verde es verde y no azul. Puedes tener el semáforo más hermoso del mundo en el lugar equivocado y de todos modos causará accidentes. Un dashboard que nadie usa porque es confuso tiene exactamente el mismo valor que uno que no existe.</p>
   </div>
   <div class="cg c3" style="margin-top:14px;">
-    <div class="card p"><h3>Principios UX para Apps de Datos</h3><p><strong>Affordance</strong>: que sea obvio cómo se usa. <strong>Feedback</strong>: el usuario siempre sabe qué está pasando (spinners, mensajes). <strong>Error prevention</strong>: validar inputs antes de procesar. <strong>Consistency</strong>: mismo lenguaje visual en toda la app.</p></div>
-    <div class="card o"><h3>Cuándo usar Streamlit</h3><p>Prototipado rápido de herramientas analíticas internas. Demo de modelos ML para stakeholders. Dashboards dinámicos con predicciones en tiempo real. Herramientas de exploración de datos para equipos no técnicos.</p></div>
-    <div class="card c"><h3>Cuándo usar otras herramientas</h3><p><strong>Power BI/Tableau</strong>: dashboards BI para directivos con actualizaciones automáticas. <strong>FastAPI + React</strong>: apps de producción con alta carga y personalización. <strong>Dash (Plotly)</strong>: más control que Streamlit, layouts complejos.</p></div>
+    <div class="card o"><h3>UX — Experiencia de Usuario</h3><p>El "qué" y el "cómo" del uso del sistema. ¿Puede el usuario lograr su objetivo? ¿Cuántos clics necesita? ¿Se frustra? La UX es investigación, arquitectura y flujo — no colores.</p></div>
+    <div class="card c"><h3>UI — Interfaz de Usuario</h3><p>El aspecto visual: colores, tipografía, íconos, espaciado, animaciones. La UI hace que lo funcional se vea profesional y confiable. Una buena UI sin UX es una casa bonita con las habitaciones en el lugar equivocado.</p></div>
+    <div class="card g"><h3>Usabilidad</h3><p>La intersección: ¿funciona bien Y se ve bien? Jakob Nielsen la define como eficacia (logra el objetivo), eficiencia (en poco tiempo y esfuerzo) y satisfacción (sin frustración). Los tres deben coexistir.</p></div>
   </div>
 </div>
 
 <div class="slide" data-s="2">
-  <h2>Streamlit: App de Predicción de Fallas en 50 Líneas</h2>
+  <h2>Personas y Flujos: Diseñar para Humanos Reales</h2>
   <div class="cg c2">
-    <div class="card p">
-      <h3>app.py — Estructura Completa</h3>
-      <pre">import streamlit as st
-import pandas as pd
-import joblib
-import plotly.express as px
+    <div class="card o">
+      <h3>¿Qué es una "Persona" UX?</h3>
+      <p>Una representación ficticia pero realista del usuario típico de tu aplicación. No es "el usuario promedio" (que no existe) — es un arquetipo específico con nombre, rol, objetivos, frustraciones y nivel técnico.</p>
+      <div class="box bd" style="margin-top:8px;"><div class="bt">EJEMPLO — Persona: "Gerente Lupita"</div>
+        <p style="font-size:.82rem;">Lupita, 42 años, Gerente de Operaciones de planta. Revisa KPIs cada mañana en tablet antes de la junta de las 8am. No programa. Necesita ver en 30 segundos si algo requiere su atención urgente. Frustración: dashboards con demasiado texto y gráficos que tarda en entender.</p>
+      </div>
+    </div>
+    <div class="card c">
+      <h3>Flujos de Usuario (User Flows)</h3>
+      <p>El mapa de los pasos que el usuario sigue para lograr su objetivo en la aplicación. Cada paso es una oportunidad de éxito... o de abandono.</p>
+      <ul style="margin-top:8px;">
+        <li><strong>Flujo feliz:</strong> el camino óptimo cuando todo funciona</li>
+        <li><strong>Flujo de error:</strong> ¿qué pasa si el usuario se equivoca?</li>
+        <li><strong>Flujo de excepción:</strong> datos vacíos, sin conexión, permisos</li>
+      </ul>
+      <p style="margin-top:8px;font-size:.82rem;color:var(--muted);">Regla de oro: si necesitas más de 3 clics para llegar a la información más usada, el flujo necesita rediseño.</p>
+    </div>
+  </div>
+  <div class="box bc"><div class="bt">📰 CASO REAL — Rappi: Menos Pasos, Más Ventas</div>
+    <p>Rappi rediseñó su flujo de pedido basándose en principios UX: redujo los pasos de completar un pedido de 7 a 4, mejoró el contraste de los botones de CTA y agregó indicadores de progreso claros. Resultado: <strong>aumento del 34% en tasa de conversión de pedidos completados</strong>. El producto no cambió — solo mejoró la experiencia de usarlo. Mismo principio aplica a tus dashboards analíticos.</p>
+  </div>
+</div>
 
-st.set_page_config(page_title="Predictor de Fallas",
-    layout="wide", page_icon="⚙️")
-
-# Sidebar — inputs del usuario
-st.sidebar.header("🔧 Parámetros de la Máquina")
-temperatura = st.sidebar.slider("Temperatura (°C)",
-    min_value=50.0, max_value=120.0, value=75.0, step=0.5)
-vibracion = st.sidebar.slider("Vibración (mm/s)",
-    min_value=0.0, max_value=10.0, value=2.0)
-presion = st.sidebar.number_input("Presión (bar)",
-    min_value=80.0, max_value=150.0, value=100.0)
-turno = st.sidebar.selectbox("Turno", ['A','B','C'])
-
-# Cargar modelo
-@st.cache_resource
-def cargar_modelo():
-    return joblib.load('modelo_fallas.pkl')
-
-modelo = cargar_modelo()
-
-# Predicción
-if st.sidebar.button("🔮 Predecir Riesgo de Falla"):
-    X_nuevo = pd.DataFrame([{
-        'temperatura': temperatura,
-        'vibracion': vibracion,
-        'presion': presion,
-        'turno_B': 1 if turno=='B' else 0,
-        'turno_C': 1 if turno=='C' else 0
-    }])
-    prob = modelo.predict_proba(X_nuevo)[0][1]
-    pred = modelo.predict(X_nuevo)[0]
-
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Riesgo de Falla", f"{prob:.1%}",
-        delta="CRÍTICO" if prob > 0.7 else "Normal")
-    col2.metric("Temperatura", f"{temperatura}°C")
-    col3.metric("Vibración", f"{vibracion} mm/s")</pre>
+<div class="slide" data-s="2">
+  <h2>Principios de Gestalt Aplicados a Dashboards</h2>
+  <div class="cg c3">
+    <div class="card v">
+      <h3>Proximidad</h3>
+      <p>Elementos cercanos se perciben como relacionados. Agrupa los KPIs de producción juntos, los financieros juntos. El espacio vacío entre grupos comunica separación temática sin necesidad de líneas divisoras.</p>
+    </div>
+    <div class="card c">
+      <h3>Semejanza</h3>
+      <p>Elementos visualmente similares (mismo color, mismo tamaño) se perciben como parte del mismo grupo. Usa el mismo estilo de tarjeta para todos los KPIs operativos — el ojo los agrupa automáticamente.</p>
     </div>
     <div class="card g">
-      <h3>Elementos UI Esenciales de Streamlit</h3>
-      <pre">## LAYOUT
-col1, col2 = st.columns(2)
-with col1:
-    st.plotly_chart(fig1, use_container_width=True)
-with col2:
-    st.dataframe(df_resumen)
-
-## INPUTS
-archivo = st.file_uploader("Subir CSV", type=['csv'])
-texto = st.text_area("Descripción de la falla:")
-fecha = st.date_input("Fecha de análisis:")
-opciones = st.multiselect("Líneas a analizar:",
-    ['L1','L2','L3','L4'], default=['L1','L2'])
-
-## FEEDBACK
-with st.spinner("Entrenando modelo..."):
-    modelo = entrenar_modelo(X_train, y_train)
-st.success("✅ Modelo entrenado correctamente")
-st.warning("⚠️ Solo 45 ejemplos de clase minoritaria")
-st.error("❌ Archivo no tiene la columna 'fecha'")
-
-## CACHE — evitar re-calcular en cada interacción
-@st.cache_data
-def cargar_datos(ruta):
-    return pd.read_csv(ruta)</pre>
+      <h3>Continuidad</h3>
+      <p>El ojo sigue líneas y patrones alineados. Alinear elementos en una cuadrícula crea orden implícito. Un dashboard bien alineado parece más profesional y confiable — aunque los datos sean idénticos.</p>
     </div>
+    <div class="card o">
+      <h3>Cierre</h3>
+      <p>El cerebro completa formas incompletas. Las tarjetas con borde redondeado y sombra sutil "cierran" visualmente el contenido, creando sensación de contenedor sin bordes duros que saturen.</p>
+    </div>
+    <div class="card r">
+      <h3>Figura-Fondo</h3>
+      <p>El contraste entre fondo oscuro/claro y el elemento principal crea jerarquía automática. El número del KPI en blanco sobre fondo oscuro "flota" como figura sobre fondo — el ojo lo encuentra primero.</p>
+    </div>
+    <div class="card p">
+      <h3>Accesibilidad</h3>
+      <p>8% de los hombres tienen daltonismo rojo-verde. Nunca comunicar estado solo con color rojo/verde — siempre acompañar con ícono (▲▼), texto ("Por encima de meta") o patrón. Contraste mínimo WCAG: 4.5:1.</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="2">
+  <h2>Streamlit: Tu Modelo de ML Convertido en Aplicación Web</h2>
+  <div class="cg c2">
+    <div class="card o">
+      <h3>¿Qué es Streamlit?</h3>
+      <p>Framework de Python que convierte scripts de análisis y modelos de ML en aplicaciones web interactivas con mínimo código adicional. Sin necesidad de conocer HTML, CSS o JavaScript.</p>
+      <ul style="margin-top:8px;">
+        <li>Componentes predefinidos: sliders, selectores, carga de archivos, gráficos</li>
+        <li>Actualización en tiempo real cuando el usuario cambia parámetros</li>
+        <li>Deploy gratuito en Streamlit Cloud (con cuenta GitHub)</li>
+        <li>Ideal para: demos de modelos ML, herramientas internas de análisis, prototipos rápidos</li>
+      </ul>
+    </div>
+    <div class="card c">
+      <h3>Flujo Conceptual: De Notebook a App</h3>
+      <div class="ld" style="margin-top:8px;">
+        <div class="lr" style="background:rgba(245,158,11,.1);border:1px solid var(--orange);color:var(--orange);font-size:.78rem;">📓 Jupyter Notebook: análisis exploratorio y desarrollo del modelo</div>
+        <div class="lr" style="background:rgba(6,182,212,.1);border:1px solid var(--cyan);color:var(--cyan);font-size:.78rem;">🔧 Refactorizar a funciones limpias: lógica separada de presentación</div>
+        <div class="lr" style="background:rgba(16,185,129,.1);border:1px solid var(--green);color:var(--green);font-size:.78rem;">🎨 Agregar componentes Streamlit: título, inputs del usuario, gráficos</div>
+        <div class="lr" style="background:rgba(124,58,237,.1);border:1px solid var(--violet);color:var(--violet);font-size:.78rem;">📦 Subir a GitHub + deploy en Streamlit Cloud: URL pública en minutos</div>
+        <div class="lr" style="background:rgba(236,72,153,.1);border:1px solid var(--pink);color:var(--pink);font-size:.78rem;">👥 El usuario final interactúa sin saber que hay Python detrás</div>
+      </div>
+    </div>
+  </div>
+  <div class="box bd"><div class="bt">💡 CUÁNDO USAR STREAMLIT vs. POWER BI</div>
+    <p><strong style="color:var(--cyan);">Streamlit:</strong> cuando el modelo ML es el producto, cuando necesitas personalización total, cuando el equipo sabe Python, para herramientas internas de análisis ad-hoc.<br>
+    <strong style="color:var(--orange);">Power BI/Tableau:</strong> cuando los usuarios son no-técnicos, cuando necesitas gobernanza corporativa, reportes programados, integración con ERP/CRM. No son excluyentes — pueden coexistir.</p>
+  </div>
+</div>
+
+<div class="slide" data-s="2">
+  <h2>Reto de Sesión 18: Wireframe de mi Aplicación Analítica</h2>
+  <div class="box bl"><div class="bt">🔬 ACTIVIDAD PRÁCTICA — Auditoría UX</div>
+    <p>Reciben 3 wireframes impresos de aplicaciones analíticas distintas. Evaluar cada uno con la siguiente checklist:</p>
+    <table style="margin-top:8px;">
+      <tr><th>Criterio UX</th><th>✓/✗</th><th>Propuesta de mejora</th></tr>
+      <tr><td>¿La acción principal es visualmente dominante?</td><td>—</td><td>—</td></tr>
+      <tr><td>¿Se necesitan menos de 3 clics para la tarea más común?</td><td>—</td><td>—</td></tr>
+      <tr><td>¿Los colores tienen semántica consistente?</td><td>—</td><td>—</td></tr>
+      <tr><td>¿El estado de error/vacío está considerado?</td><td>—</td><td>—</td></tr>
+      <tr><td>¿Funciona para usuario daltónico?</td><td>—</td><td>—</td></tr>
+    </table>
+  </div>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Click para ver respuesta</div>
+    <p>Un analista desarrolló una aplicación Streamlit para predecir fallas en equipos. La dirección la rechazó diciendo "es muy técnica y no la entendemos". ¿Cuál es el problema de raíz?</p>
+    <div class="qa">El problema es de <strong>UX y audiencia</strong>, no de tecnología. La aplicación fue diseñada desde la perspectiva del desarrollador (inputs técnicos del modelo, métricas de precisión, gráficos de distribución) en lugar de la perspectiva del usuario final (un gerente de mantenimiento que necesita saber: "¿qué equipo fallará en los próximos 7 días y qué debo hacer?"). Solución: rediseñar la interfaz con el flujo de trabajo del gerente como punto de partida. El modelo es el mismo — la presentación cambia completamente.</div>
+  </div>
+  <div class="box bl" style="margin-top:12px;"><div class="bt">🏆 RETO DE APLICACIÓN</div>
+    <p>Crear el wireframe completo (en papel o herramienta digital gratuita como Figma Free) de una aplicación de análisis para tu área. Incluir: (1) definición de la Persona usuario, (2) flujo de usuario principal (pasos), (3) wireframe de las 3 vistas principales con elementos etiquetados, (4) lógica de los estados vacío/error. Entregar como PDF con justificación de decisiones de diseño.</p>
   </div>
 </div>
 
 <!-- ═══ SESIÓN 19 ═══ -->
 <div class="slide" data-s="3">
-  <h2>Sesión 19 <span style="color:var(--cyan)">— PySpark y Big Data: Las 5 Vs de los Datos Masivos</span></h2>
-  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
-    <p>Pandas es como una <strong>mesa de trabajo en tu oficina</strong>: rápida, conveniente, pero con capacidad limitada. PySpark es como una <strong>fábrica con 1,000 trabajadores en paralelo</strong>: cada uno procesa una parte del problema simultáneamente. Cuando tus datos no caben en la RAM de tu computadora (>16GB), necesitas la fábrica.</p>
+  <h2>Sesión 19 <span style="color:var(--green)">— Big Data con Spark: Procesamiento a Escala Industrial</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA DE APERTURA</div>
+    <p>Procesar Big Data con una sola computadora es como intentar <strong>vaciar el Lago de Texcoco con un cubo</strong>. Físicamente posible en teoría, pero tomaría más tiempo del que existe. Apache Spark es como coordinar 1,000 personas, cada una con su cubo, vaciando secciones distintas del lago simultáneamente. El problema no cambió — cambió la arquitectura de la solución.</p>
   </div>
-  <div class="cg c3" style="margin-top:14px;">
-    <div class="card c"><h3>Volumen</h3><p>Datos que no caben en RAM. Terabytes o petabytes. Historial de transacciones, logs de IoT (millones de lecturas/día), imágenes médicas de hospitales, secuencias genómicas.</p></div>
-    <div class="card g"><h3>Velocidad</h3><p>Datos que se generan o procesan en tiempo real. Telemetría de sensores cada milisegundo, transacciones financieras, feeds de redes sociales. Spark Streaming procesa en micro-batches.</p></div>
-    <div class="card o"><h3>Variedad + Veracidad + Valor</h3><p><strong>Variedad</strong>: structured, semi-structured, unstructured. <strong>Veracidad</strong>: calidad y confiabilidad de los datos (sensores que fallan, duplicados). <strong>Valor</strong>: el resultado final: decisiones e inteligencia de negocio.</p></div>
+  <div class="sr" style="margin-top:16px;">
+    <div class="stat"><div class="n" style="color:var(--green)">2.5</div><div class="l">quintillones de bytes generados cada día a nivel global (IBM)</div></div>
+    <div class="stat"><div class="n" style="color:var(--cyan)">90%</div><div class="l">de los datos del mundo fueron creados en los últimos 2 años (Forbes)</div></div>
+    <div class="stat"><div class="n" style="color:var(--orange)">1M+</div><div class="l">sensores IoT industriales activos solo en la industria automotriz mexicana</div></div>
   </div>
 </div>
 
 <div class="slide" data-s="3">
-  <h2>PySpark: Procesamiento Distribuido con Sintaxis Familiar</h2>
+  <h2>¿Cuándo Realmente Necesitas Big Data?</h2>
   <div class="cg c2">
-    <div class="card c">
-      <h3>Inicialización y DataFrames</h3>
-      <pre">from pyspark.sql import SparkSession
-from pyspark.sql import functions as F
-from pyspark.sql.window import Window
-
-# Crear sesión Spark
-spark = SparkSession.builder \
-    .appName("AnalisisProduccion") \
-    .config("spark.driver.memory", "4g") \
-    .getOrCreate()
-
-# Leer datos masivos (CSV/Parquet/JSON)
-df = spark.read.csv("produccion_historico.csv",
-    header=True, inferSchema=True)
-df_parquet = spark.read.parquet("telemetria/")
-
-# Operaciones similares a Pandas
-df.printSchema()
-df.show(5)
-df.describe().show()
-print(f"Registros: {df.count():,}")</pre>
-    </div>
     <div class="card g">
-      <h3>Transformaciones y Agregaciones</h3>
-      <pre">from pyspark.sql import functions as F
-
-# Filtrado y selección
-df_fallas = df.filter(F.col("defectos") > 5) \
-              .select("fecha","linea","defectos","operador")
-
-# GroupBy y agregaciones
-resumen = df.groupBy("turno","linea") \
-    .agg(
-        F.sum("produccion").alias("total_prod"),
-        F.avg("defectos").alias("prom_defectos"),
-        F.max("temperatura").alias("temp_max"),
-        F.countDistinct("operador").alias("operadores")
-    ) \
-    .orderBy("prom_defectos", ascending=False)
-
-# Window function — promedio móvil distribuido
-ventana = Window.partitionBy("linea") \
-                .orderBy("fecha") \
-                .rowsBetween(-6, 0)
-df = df.withColumn("media_7d",
-    F.avg("produccion").over(ventana))</pre>
+      <h3>Las 5 Vs del Big Data</h3>
+      <ul>
+        <li><strong>Volumen:</strong> datos que superan la memoria RAM de una sola máquina (generalmente &gt;1 TB activos)</li>
+        <li><strong>Velocidad:</strong> datos generados tan rápido que no pueden procesarse en batch sin perder valor (ej. telemetría en tiempo real)</li>
+        <li><strong>Variedad:</strong> múltiples formatos simultáneos: tablas, texto, imágenes, audio, coordenadas GPS</li>
+        <li><strong>Veracidad:</strong> datos con ruido, inconsistencias y errores que deben validarse</li>
+        <li><strong>Valor:</strong> la única V que importa al negocio — si no genera valor, el volumen no justifica la infraestructura</li>
+      </ul>
+    </div>
+    <div class="card o">
+      <h3>¿Pandas o Spark? El Árbol de Decisión</h3>
+      <div class="ld" style="margin-top:8px;">
+        <div class="lr" style="background:rgba(16,185,129,.1);border:1px solid var(--green);color:var(--green);font-size:.78rem;">¿Tus datos caben en la RAM del servidor? (&lt;64 GB) → Pandas es suficiente y más simple</div>
+        <div class="lr" style="background:rgba(245,158,11,.1);border:1px solid var(--orange);color:var(--orange);font-size:.78rem;">¿Los datos llegan en tiempo real de múltiples fuentes? → Spark Streaming</div>
+        <div class="lr" style="background:rgba(6,182,212,.1);border:1px solid var(--cyan);color:var(--cyan);font-size:.78rem;">¿El procesamiento tarda horas y bloquea otras operaciones? → Spark en cluster</div>
+        <div class="lr" style="background:rgba(239,68,68,.1);border:1px solid var(--red);color:var(--red);font-size:.78rem;">¿Solo hay "muchos datos" pero procesan en minutos? → NO es Big Data, optimiza Pandas</div>
+      </div>
+      <p style="margin-top:8px;font-size:.82rem;color:var(--muted);">Regla de oro: Spark tiene overhead de coordinación. Para datasets pequeños, es más lento que Pandas. Úsalo cuando el volumen justifica la complejidad.</p>
     </div>
   </div>
-  <div class="box bc"><div class="bt">📰 CASO REAL — Uber y el Procesamiento en Tiempo Real</div>
-    <p>Uber procesa +15 millones de viajes diarios con Spark Streaming. Detección de precios dinámicos (surge pricing) basada en demanda en tiempo real por zona geográfica, cálculo de tiempos estimados de llegada y detección de fraudes en pagos. Todo distribuido en cientos de nodos procesando datos en segundos.</p>
+</div>
+
+<div class="slide" data-s="3">
+  <h2>Arquitectura Spark: Cómo Funciona la Orquesta</h2>
+  <div class="box bm"><div class="bt">🎭 LA METÁFORA DE LA ORQUESTA</div>
+    <p>En Spark, el <strong>Driver</strong> es el director de orquesta: recibe la partitura (el programa), la divide en compases (tareas) y los distribuye a los músicos (Workers). Cada Worker ejecuta su sección de forma independiente. El Director coordina el tempo y recoge el resultado final.</p>
+  </div>
+  <div class="cg c3" style="margin-top:12px;">
+    <div class="card o">
+      <h3>Driver (Director)</h3>
+      <p>El proceso principal que ejecuta tu programa. Convierte las operaciones en un Plan de Ejecución (DAG), coordina los Workers y recoge los resultados finales.</p>
+    </div>
+    <div class="card c">
+      <h3>Cluster Manager (Teatro)</h3>
+      <p>Administra los recursos físicos del cluster (servidores, memoria, CPU). Puede ser YARN (Hadoop), Kubernetes, Mesos, o Spark Standalone. Es la "infraestructura" donde opera la orquesta.</p>
+    </div>
+    <div class="card g">
+      <h3>Workers / Executors (Músicos)</h3>
+      <p>Los procesos que realmente ejecutan el cómputo. Cada Worker tiene particiones de los datos y ejecuta las transformaciones en paralelo. Más Workers = más velocidad (hasta cierto límite).</p>
+    </div>
+  </div>
+  <div class="box bd"><div class="bt">💡 DAG — El Plan de Vuelo de Spark</div>
+    <p>Spark traduce tu programa en un <strong>DAG (Directed Acyclic Graph)</strong> — un grafo que muestra todas las transformaciones necesarias y sus dependencias. Spark optimiza este grafo antes de ejecutar (lazy evaluation): no ejecuta nada hasta que necesitas el resultado final, combinando operaciones para minimizar movimientos de datos entre máquinas.</p>
+  </div>
+</div>
+
+<div class="slide" data-s="3">
+  <h2>RDDs, DataFrames y Datasets: La Evolución de la Abstracción en Spark</h2>
+  <table>
+    <tr><th>Concepto</th><th>Qué es</th><th>Analogía</th><th>Cuándo usar</th></tr>
+    <tr><td><strong>RDD</strong><br>(Resilient Distributed Dataset)</td><td>Colección de objetos distribuida y tolerante a fallos. API de bajo nivel.</td><td>Las notas musicales individuales — máximo control, máximo esfuerzo</td><td>Rara vez hoy. Solo para operaciones muy personalizadas no soportadas por DataFrame</td></tr>
+    <tr><td><strong>DataFrame</strong><br>(Spark DataFrame)</td><td>Tabla distribuida con esquema definido (columnas tipadas). Interfaz similar a Pandas.</td><td>Una hoja de Excel de 500 TB distribuida en 100 servidores</td><td>El 90% de los casos. API de alto nivel, optimización automática (Catalyst)</td></tr>
+    <tr><td><strong>Dataset</strong></td><td>DataFrame tipado en tiempo de compilación (solo Java/Scala).</td><td>Un DataFrame con validación de tipos garantizada antes de ejecutar</td><td>Aplicaciones críticas en Scala/Java donde los errores de tipo son inaceptables</td></tr>
+    <tr><td><strong>Spark SQL</strong></td><td>Consultas SQL estándar sobre DataFrames de Spark.</td><td>El mismo SQL que conoces, pero ejecutado en un cluster de 1,000 servidores</td><td>Cuando el equipo sabe SQL y los datos están en un Data Lake o Delta Lake</td></tr>
+  </table>
+  <div class="box bc"><div class="bt">📰 CASO REAL — PEMEX: 15,000 Sensores en Tiempo Real</div>
+    <p>PEMEX procesa datos de telemetría de más de 15,000 sensores distribuidos en sus instalaciones de extracción, refinación y distribución usando arquitectura Spark Streaming. El sistema detecta en tiempo real anomalías en presión, temperatura y flujo que podrían indicar fallas de equipo o fugas. <strong>El tiempo de detección bajó de horas a segundos</strong>, reduciendo el riesgo operativo y los costos de mantenimiento correctivo en refinerías críticas.</p>
+  </div>
+</div>
+
+<div class="slide" data-s="3">
+  <h2>Reto de Sesión 19: Arquitectura Big Data para mi Sector</h2>
+  <div class="box bl"><div class="bt">🔬 ACTIVIDAD PRÁCTICA — ¿Big Data o No?</div>
+    <p>Analizar el siguiente escenario: <em>"Una empresa automotriz genera 500 GB de registros de sensores IoT por día desde 3,200 sensores en su línea de producción. Los datos incluyen temperatura, vibración, presión y coordenadas de robots. Quieren detectar fallas 2 horas antes de que ocurran."</em></p>
+    <ol style="margin-top:8px;">
+      <li>Evaluar las 5 Vs — ¿clasifica como Big Data? ¿Por qué?</li>
+      <li>¿Pandas es suficiente o se necesita Spark? Justificar con criterios técnicos</li>
+      <li>Diseñar la arquitectura conceptual (en papel): fuentes → ingesta → procesamiento → modelo → alerta</li>
+      <li>Identificar 3 riesgos de la arquitectura propuesta y sus mitigaciones</li>
+    </ol>
+  </div>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Click para ver respuesta</div>
+    <p>¿Cuál de los siguientes NO es un criterio válido para justificar implementar Spark en lugar de Pandas?</p>
+    <p style="font-size:.85rem;margin-top:4px;">A) Los datos no caben en la RAM disponible &nbsp; B) El equipo de TI ya tiene servidores Hadoop instalados &nbsp; C) El procesamiento tarda 8 horas y necesita resultados en 30 min &nbsp; D) Los datos llegan de 500 fuentes en tiempo real</p>
+    <div class="qa"><strong>B) Tener servidores Hadoop instalados</strong> no es un criterio técnico válido para elegir Spark. Es un criterio de conveniencia/costo, pero no justifica la complejidad adicional si los datos procesan bien con Pandas. La existencia de infraestructura es un factor de costo, no una razón técnica. Las opciones A, C y D son criterios técnicos legítimos basados en las limitaciones reales de Pandas.</div>
+  </div>
+  <div class="box bl" style="margin-top:12px;"><div class="bt">🏆 RETO DE APLICACIÓN</div>
+    <p>Para tu sector específico: (1) identificar una fuente de Big Data real (sensores IoT, registros transaccionales, telemetría vehicular, datos de producción masiva), (2) estimar el volumen diario y justificar la clasificación Big Data, (3) proponer qué insights estratégicos se podrían extraer, (4) diseñar la arquitectura de procesamiento en un diagrama de bloques con herramientas justificadas.</p>
   </div>
 </div>
 
 <!-- ═══ SESIÓN 20 ═══ -->
 <div class="slide" data-s="4">
-  <h2>Sesión 20 <span style="color:var(--violet)">— Machine Learning a Escala con PySpark MLlib</span></h2>
-  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
-    <p>MLlib es como tener el poder de scikit-learn pero <strong>distribuido en una flota de computadoras</strong>. Cuando tienes 50 millones de registros de clientes y quieres segmentarlos con K-Means, un solo computador tardaría días; MLlib lo hace en minutos repartiendo el trabajo en paralelo. La misma idea, escala infinita.</p>
+  <h2>Sesión 20 <span style="color:var(--violet)">— Machine Learning a Escala y Pipeline de Producción</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA DE APERTURA</div>
+    <p>Llevar un modelo de ML a producción a escala es como <strong>pasar de cocinar para 4 personas en casa a cocinar para 10,000 en un restaurante industrial</strong>. Las recetas (algoritmos) son exactamente las mismas. Pero toda la infraestructura, procesos, control de calidad, suministro de ingredientes y organización del equipo cambia radicalmente. El 80% del esfuerzo real está en el restaurante, no en la receta.</p>
   </div>
-  <div class="cg c3" style="margin-top:14px;">
-    <div class="card v"><h3>MLlib Pipeline</h3><p>Igual que sklearn: Pipeline de etapas (Transformer + Estimator). StringIndexer → OneHotEncoder → VectorAssembler → modelo. Fit en train, transform en test. Portabilidad garantizada.</p></div>
-    <div class="card c"><h3>Algoritmos Incluidos</h3><p>Regresión lineal/logística, Random Forest, Gradient Boosted Trees, K-Means, Bisecting K-Means, PCA, TF-IDF + Word2Vec (NLP), Naive Bayes, SVM lineal, ALS (recomendación).</p></div>
-    <div class="card g"><h3>Cuándo usar MLlib vs scikit-learn</h3><p>MLlib: datos &gt; 10GB, necesitas procesamiento distribuido, cluster disponible. scikit-learn: datos en RAM, prototipado rápido, más algoritmos avanzados. Para producción masiva: MLlib.</p></div>
+  <div class="sr" style="margin-top:16px;">
+    <div class="stat"><div class="n" style="color:var(--violet)">87%</div><div class="l">de los proyectos ML nunca llegan a producción (Gartner)</div></div>
+    <div class="stat"><div class="n" style="color:var(--cyan)">6-12</div><div class="l">meses promedio para llevar un modelo de prototipo a producción</div></div>
+    <div class="stat"><div class="n" style="color:var(--orange)">MLOps</div><div class="l">es la disciplina que cierra esa brecha (ML + DevOps)</div></div>
   </div>
 </div>
 
 <div class="slide" data-s="4">
-  <h2>Pipeline MLlib: Clasificación Distribuida</h2>
+  <h2>Del Prototipo a Producción: La Brecha Real</h2>
   <div class="cg c2">
-    <div class="card v">
-      <h3>Clasificación con Random Forest en Spark</h3>
-      <pre">from pyspark.ml import Pipeline
-from pyspark.ml.feature import (VectorAssembler,
-    StringIndexer, StandardScaler)
-from pyspark.ml.classification import RandomForestClassifier
-from pyspark.ml.evaluation import BinaryClassificationEvaluator
-
-# 1. Preparar features
-indexer = StringIndexer(inputCol="turno",
-    outputCol="turno_idx")
-assembler = VectorAssembler(
-    inputCols=["temperatura","vibracion",
-               "presion","turno_idx"],
-    outputCol="features_raw")
-scaler = StandardScaler(inputCol="features_raw",
-    outputCol="features")
-
-# 2. Modelo
-rf = RandomForestClassifier(
-    featuresCol="features",
-    labelCol="falla",
-    numTrees=200,
-    maxDepth=10)
-
-# 3. Pipeline completo
-pipeline = Pipeline(stages=[indexer, assembler, scaler, rf])
-
-# 4. Train/test split
-train, test = df.randomSplit([0.8, 0.2], seed=42)
-model = pipeline.fit(train)
-preds = model.transform(test)
-
-# 5. Evaluación
-evaluator = BinaryClassificationEvaluator(
-    labelCol="falla", metricName="areaUnderROC")
-auc = evaluator.evaluate(preds)
-print(f"AUC: {auc:.4f}")</pre>
+    <div class="card r">
+      <h3>El Mundo del Data Scientist</h3>
+      <ul>
+        <li>Dataset limpio y estático en un archivo CSV</li>
+        <li>Jupyter Notebook que ejecuta en su laptop</li>
+        <li>Modelo entrena en 10 minutos con datos del año pasado</li>
+        <li>Precisión del 94% en el conjunto de test</li>
+        <li>Resultado: "El modelo está listo" ✓</li>
+      </ul>
     </div>
-    <div class="card o">
-      <h3>PCA y NLP con MLlib</h3>
-      <pre">## PCA — Reducción dimensional distribuida
-from pyspark.ml.feature import PCA
-
-pca = PCA(k=10, inputCol="features",
-          outputCol="pca_features")
-model_pca = pca.fit(df_scaled)
-df_reducido = model_pca.transform(df_scaled)
-# Varianza explicada por componente
-print(model_pca.explainedVariance)
-
-## NLP — TF-IDF distribuido
-from pyspark.ml.feature import (Tokenizer,
-    HashingTF, IDF)
-
-tokenizer = Tokenizer(inputCol="descripcion_falla",
-                      outputCol="words")
-hashingTF = HashingTF(inputCol="words",
-    outputCol="rawFeatures", numFeatures=10000)
-idf = IDF(inputCol="rawFeatures",
-          outputCol="tfidf_features")
-
-nlp_pipe = Pipeline(stages=[tokenizer,
-                             hashingTF, idf])
-modelo_tfidf = nlp_pipe.fit(df_textos)
-df_vectorizado = modelo_tfidf.transform(df_textos)</pre>
+    <div class="card g">
+      <h3>El Mundo de Producción</h3>
+      <ul>
+        <li>Datos llegan de 12 fuentes distintas, sucios, con delays y formatos inconsistentes</li>
+        <li>El modelo debe responder en menos de 200ms a 50,000 requests por hora</li>
+        <li>Los datos de producción "se mueven" con el tiempo (data drift)</li>
+        <li>¿Quién re-entrena el modelo cuando la precisión cae? ¿Cada cuándo?</li>
+        <li>¿Qué pasa cuando el modelo falla? ¿Cómo se recupera?</li>
+      </ul>
     </div>
   </div>
-  <div class="box bl"><div class="bt">🔬 PRÁCTICA FINAL BLOQUE IV</div>
-    <p>Proyecto integrador: (1) Cargar 5 años de telemetría (>500MB) con PySpark, (2) ETL distribuido con filtros y agregaciones, (3) Pipeline MLlib de clasificación de fallas, (4) Exportar resultados a Pandas para visualización, (5) Dashboard Streamlit con predicciones en tiempo real + mapa GeoPandas de ubicación de plantas.</p>
+  <div class="box bd"><div class="bt">💡 DATA DRIFT — El Enemigo Silencioso</div>
+    <p>Un modelo entrenado con datos de enero puede ser inútil en diciembre si el mundo cambió. <strong>Data drift</strong> ocurre cuando la distribución de los datos de producción se aleja de los datos de entrenamiento. Ejemplo: un modelo de predicción de demanda entrenado antes de la pandemia de 2020 falló completamente en 2020. Solución: monitoreo continuo de la distribución de los datos de entrada y re-entrenamiento automático cuando se detecta drift.</p>
   </div>
 </div>
 
-<!-- CIERRE -->
+<div class="slide" data-s="4">
+  <h2>El Pipeline de Producción: Las 6 Etapas Críticas</h2>
+  <ul class="tl">
+    <li><div class="st o">1</div><div class="content"><h4>Ingesta de Datos</h4><p>Capturar datos de fuentes en tiempo real o batch. Validar esquema, calidad y completitud. Sin datos confiables, el mejor modelo falla.</p></div></li>
+    <li><div class="st c">2</div><div class="content"><h4>Preprocesamiento Automatizado</h4><p>Limpieza, transformación, feature engineering ejecutados automáticamente en el pipeline. Las mismas transformaciones del entrenamiento deben aplicarse exactamente en producción.</p></div></li>
+    <li><div class="st g">3</div><div class="content"><h4>Servicio del Modelo (Model Serving)</h4><p>El modelo empaquetado como API REST que responde predicciones en tiempo real. Herramientas: MLflow, FastAPI, TensorFlow Serving, Triton. El modelo "vive" en un servidor, no en un notebook.</p></div></li>
+    <li><div class="st v">4</div><div class="content"><h4>Monitoreo de Desempeño</h4><p>Medir continuamente precisión, latencia, throughput. Alertar cuando el desempeño cae por debajo de umbrales definidos. Sin monitoreo, el modelo se degrada silenciosamente.</p></div></li>
+    <li><div class="st o">5</div><div class="content"><h4>Re-Entrenamiento (Retraining Pipeline)</h4><p>Proceso automático que re-entrena el modelo con datos recientes cuando se detecta degradación. Incluye validación del nuevo modelo antes de reemplazar el anterior.</p></div></li>
+    <li><div class="st r">6</div><div class="content"><h4>Gobernanza y Auditoría</h4><p>Registro de cada versión del modelo, qué datos usó, quién lo aprobó y cuándo. Para sectores regulados (automotriz, financiero, salud) esto es un requisito legal.</p></div></li>
+  </ul>
+</div>
+
+<div class="slide" data-s="4">
+  <h2>ML a Escala con Spark: Las Diferencias Clave</h2>
+  <table>
+    <tr><th>Aspecto</th><th>ML con Pandas (escala pequeña)</th><th>ML con PySpark (Big Data)</th></tr>
+    <tr><td><strong>Datos</strong></td><td>Caben en RAM (&lt;64 GB), DataFrame de Pandas</td><td>Terabytes distribuidos en cluster, Spark DataFrame</td></tr>
+    <tr><td><strong>Entrenamiento</strong></td><td>Un proceso en una máquina, minutos u horas</td><td>Paralelo en múltiples nodos, horas o días para datasets masivos</td></tr>
+    <tr><td><strong>Librería</strong></td><td>Scikit-learn, XGBoost, LightGBM</td><td>Spark MLlib, con algoritmos reimplementados para distribución</td></tr>
+    <tr><td><strong>Transformaciones</strong></td><td>Pandas transforms: ejecutan en un proceso</td><td>Spark transforms: se distribuyen automáticamente en el cluster</td></tr>
+    <tr><td><strong>Evaluación</strong></td><td>Métricas sobre dataset en memoria</td><td>Métricas calculadas distribuidamente, sin mover todos los datos</td></tr>
+    <tr><td><strong>PCA</strong></td><td>Scikit-learn PCA: en memoria</td><td>Spark PCA: sobre matrices masivas distribuidas, misma semántica</td></tr>
+    <tr><td><strong>NLP</strong></td><td>Hugging Face, spaCy: miles de documentos</td><td>Spark NLP: millones de documentos en paralelo</td></tr>
+  </table>
+  <div class="box bc"><div class="bt">📰 CASO REAL — Mercado Libre: 2 Millones de Transacciones Diarias</div>
+    <p>Mercado Libre analiza más de 2 millones de transacciones diarias con modelos de detección de fraude implementados en Spark, corriendo en un cluster de AWS EMR. El modelo evalúa más de 300 variables por transacción (historial del vendedor, comportamiento del comprador, patrones geográficos, velocity) en menos de 100 milisegundos por transacción. <strong>El ahorro estimado en fraude prevenido supera los $200 millones USD anuales</strong> solo en la operación latinoamericana.</p>
+  </div>
+</div>
+
+<div class="slide" data-s="4">
+  <h2>Reto de Sesión 20: Mi Pipeline de Producción</h2>
+  <div class="box bl"><div class="bt">🔬 ACTIVIDAD PRÁCTICA — Autopsia de Pipeline</div>
+    <p>Reciben el diagrama de un pipeline de producción de ML (impreso) con 6 etapas. El pipeline tiene 5 puntos débiles deliberados.</p>
+    <ol style="margin-top:8px;">
+      <li>Identificar cada punto crítico donde el pipeline puede fallar en producción</li>
+      <li>Para cada punto: describir el escenario de falla específico (ej. "si el proveedor de datos cambia el esquema, el preprocesamiento fallará silenciosamente")</li>
+      <li>Proponer una estrategia de monitoreo y recuperación para cada punto</li>
+      <li>Diseñar el mecanismo de alerta: ¿quién es notificado y cómo?</li>
+    </ol>
+  </div>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ FINAL — Click para ver respuesta</div>
+    <p>Un modelo de clasificación de calidad en planta tiene 95% de precisión en el dataset de prueba pero solo 71% en producción después de 3 meses. ¿Cuál es la causa más probable?</p>
+    <div class="qa"><strong>Data drift</strong> — La distribución de los datos de producción cambió respecto a los datos de entrenamiento. Causas probables: (1) cambio de proveedor de materia prima que alteró las propiedades físicas de las piezas, (2) cambio de estación (temperatura/humedad afectan el proceso), (3) mantenimiento de equipo que alteró los parámetros de producción, (4) cambio en el proceso por nuevos operarios. Diagnóstico: comparar distribución estadística de las variables de entrada en entrenamiento vs. producción actual. Solución: re-entrenamiento con datos recientes + monitoreo automático del drift.</div>
+  </div>
+  <div class="box bl" style="margin-top:12px;"><div class="bt">🏆 RETO DE APLICACIÓN</div>
+    <p>Diseñar el pipeline de producción completo para un modelo de ML de tu área: desde la fuente de datos hasta la decisión automatizada. El diagrama debe incluir: fuentes de datos y formatos, proceso de ingesta y validación, transformaciones, servicio del modelo, integración con sistema operativo, monitoreo y alertas, proceso de re-entrenamiento. Justificar cada componente en máximo 2 páginas.</p>
+  </div>
+</div>
+
+<!-- CIERRE BLOQUE IV -->
 <div class="slide cover" data-s="4">
   <div class="badge">BLOQUE IV — CIERRE</div>
-  <h1>Del Gráfico al<br>Big Data Industrial</h1>
-  <p style="max-width:600px;margin:16px auto;color:var(--muted);">Visualización efectiva, dashboards que generan acción, apps web de datos y procesamiento masivo con Spark: las herramientas que llevan el valor de los modelos ML a los tomadores de decisiones y escalan para datos de cualquier tamaño.</p>
+  <h1>Del Dato a la Decisión:<br>El Poder de Comunicar</h1>
+  <p style="max-width:600px;margin:16px auto;color:var(--muted);">Visualizar con integridad, narrar con estructura, diseñar con empatía, escalar con arquitectura. Estas son las competencias que convierten al analista técnico en un agente de cambio organizacional.</p>
   <div class="sr" style="justify-content:center;max-width:700px;margin:20px auto;">
-    <div class="stat"><div class="n" style="color:var(--orange)">📈</div><div class="l">Matplotlib, Seaborn, Plotly</div></div>
-    <div class="stat"><div class="n" style="color:var(--yellow)">📊</div><div class="l">Power BI + DAX</div></div>
-    <div class="stat"><div class="n" style="color:var(--pink)">🚀</div><div class="l">Streamlit Web Apps</div></div>
-    <div class="stat"><div class="n" style="color:var(--cyan)">⚡</div><div class="l">PySpark Big Data</div></div>
-    <div class="stat"><div class="n" style="color:var(--violet)">🤖</div><div class="l">MLlib a escala</div></div>
+    <div class="stat"><div class="n" style="color:var(--orange)">👁️</div><div class="l">Visualización efectiva</div></div>
+    <div class="stat"><div class="n" style="color:var(--yellow)">📖</div><div class="l">Data storytelling</div></div>
+    <div class="stat"><div class="n" style="color:var(--cyan)">🎨</div><div class="l">UX/UI analítico</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">⚡</div><div class="l">Big Data y Spark</div></div>
+    <div class="stat"><div class="n" style="color:var(--violet)">🚀</div><div class="l">ML en producción</div></div>
+  </div>
+  <div class="box bd" style="max-width:600px;margin:0 auto;"><div class="bt">💡 SIGUIENTE — BLOQUE V</div>
+    <p><strong>Deep Learning, NLP y Proyecto Integrador</strong>: redes neuronales profundas para imágenes industriales, procesamiento de lenguaje natural para documentos empresariales, y la defensa del proyecto integrador ante el panel evaluador.</p>
+  </div>
+  <div style="margin-top:20px;">
+    <span class="tag">Matplotlib</span><span class="tag">Seaborn</span><span class="tag">GeoPandas</span>
+    <span class="tag">Power BI</span><span class="tag">Tableau</span><span class="tag">Streamlit</span><span class="tag">Spark</span><span class="tag">MLlib</span>
   </div>
   <div style="margin-top:16px;font-size:.8rem;color:var(--muted);">
-    <strong style="color:var(--orange);">Referencias:</strong> Few (2012) Show Me the Numbers · McKinney (2022) Python for Data Analysis · VanderPlas (2022) Python Data Science Handbook
+    <strong style="color:var(--orange);">Referencias bibliográficas (APA):</strong><br>
+    Few, S. (2012). <em>Show Me the Numbers: Designing Tables and Graphs to Enlighten</em>. Analytics Press.<br>
+    Knaflic, C. N. (2015). <em>Storytelling with Data: A Data Visualization Guide for Business Professionals</em>. Wiley.<br>
+    Norman, D. A. (2013). <em>The Design of Everyday Things</em> (Revised ed.). Basic Books.<br>
+    Marz, N., &amp; Warren, J. (2015). <em>Big Data: Principles and Best Practices of Scalable Real-Time Data Systems</em>. Manning Publications.<br>
+    Zaharia, M., Chowdhury, M., Franklin, M. J., Shenker, S., &amp; Stoica, I. (2010). Spark: Cluster computing with working sets. <em>HotCloud '10</em>. USENIX.<br>
+    Kleppmann, M. (2017). <em>Designing Data-Intensive Applications</em>. O'Reilly Media.
   </div>
+  <p style="margin-top:16px;color:var(--muted);font-size:.78rem;">Seminario de Titulación · UPIICSA · Inteligencia Artificial para la Industria</p>
 </div>
 
-</div>
+</div><!-- /sc -->
 <div id="footer">
   <button onclick="prev()">← Anterior</button>
   <span class="hint">← → · Espacio</span>

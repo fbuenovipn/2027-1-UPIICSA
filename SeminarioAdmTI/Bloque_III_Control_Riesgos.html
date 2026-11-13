@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloque III — Control, Riesgos y Calidad</title>
+<style>
+  :root{--bg:#04080f;--card:#0b1628;--border:#1e3a5f;--violet:#7c3aed;--cyan:#06b6d4;--green:#10b981;--orange:#f59e0b;--red:#ef4444;--pink:#ec4899;--yellow:#fbbf24;--text:#e2e8f0;--muted:#64748b;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden;height:100vh;}
+  #navbar{position:fixed;top:0;left:0;right:0;height:54px;background:rgba(4,8,15,.96);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:100;backdrop-filter:blur(8px);}
+  #navbar .brand{color:var(--orange);font-weight:700;font-size:.85rem;letter-spacing:1px;}
+  #navbar .brand span{color:var(--muted);}
+  .stabs{display:flex;gap:6px;}
+  .stabs button{background:transparent;border:1px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:20px;cursor:pointer;font-size:.75rem;transition:all .2s;}
+  .stabs button.active{background:var(--orange);border-color:var(--orange);color:#000;font-weight:700;}
+  .stabs button:hover:not(.active){border-color:var(--orange);color:var(--orange);}
+  #ctr{color:var(--muted);font-size:.8rem;min-width:80px;text-align:right;}
+  #pb{position:fixed;top:54px;left:0;height:3px;background:linear-gradient(90deg,#78350f,var(--orange));transition:width .3s;z-index:100;}
+  #sc{position:fixed;top:57px;left:0;right:0;bottom:40px;overflow:hidden;}
+  .slide{position:absolute;top:0;left:0;right:0;bottom:0;padding:28px 48px;display:none;overflow-y:auto;animation:fi .35s ease;}
+  .slide.active{display:flex;flex-direction:column;}
+  @keyframes fi{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+  #footer{position:fixed;bottom:0;left:0;right:0;height:40px;background:rgba(4,8,15,.96);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:16px;z-index:100;}
+  #footer button{background:var(--card);border:1px solid var(--border);color:var(--text);padding:5px 20px;border-radius:6px;cursor:pointer;font-size:.8rem;transition:all .2s;}
+  #footer button:hover{border-color:var(--orange);color:var(--orange);}
+  #footer .hint{color:var(--muted);font-size:.72rem;}
+  h1{font-size:2rem;font-weight:800;line-height:1.2;margin-bottom:10px;}
+  h2{font-size:1.5rem;font-weight:700;margin-bottom:14px;}
+  h3{font-size:1.05rem;font-weight:600;color:var(--orange);margin-bottom:8px;margin-top:12px;}
+  p{font-size:.92rem;line-height:1.65;margin-bottom:8px;}
+  ul,ol{padding-left:20px;font-size:.9rem;line-height:1.8;}
+  li{margin-bottom:4px;}
+  .sub{color:var(--muted);font-size:1rem;margin-bottom:6px;}
+  .tag{display:inline-block;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:2px 10px;font-size:.75rem;color:var(--muted);margin-right:6px;margin-bottom:4px;}
+  .cover{align-items:center;justify-content:center;text-align:center;}
+  .cover h1{font-size:2.3rem;background:linear-gradient(135deg,var(--orange),#fcd34d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;}
+  .badge{display:inline-block;border:1px solid var(--orange);border-radius:8px;padding:8px 24px;color:var(--orange);font-size:.9rem;font-weight:700;letter-spacing:2px;margin-bottom:20px;background:rgba(245,158,11,.08);}
+  .sg{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:20px;}
+  .sc2{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 16px;width:168px;text-align:left;}
+  .sc2 .num{color:var(--orange);font-size:.7rem;font-weight:700;}
+  .sc2 .nm{font-size:.8rem;margin-top:4px;}
+  .cg{display:grid;gap:14px;margin-top:8px;}
+  .cg.c2{grid-template-columns:1fr 1fr;}
+  .cg.c3{grid-template-columns:1fr 1fr 1fr;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;position:relative;overflow:hidden;}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+  .card.v::before{background:var(--violet);}
+  .card.c::before{background:var(--cyan);}
+  .card.g::before{background:var(--green);}
+  .card.o::before{background:var(--orange);}
+  .card.r::before{background:var(--red);}
+  .card h3{margin-top:0;font-size:.95rem;}
+  .card p,.card ul,.card li{font-size:.85rem;}
+  .box{border-radius:10px;padding:14px 18px;margin:10px 0;}
+  .bm{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.4);}
+  .bc{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.4);}
+  .bl{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.4);}
+  .bd{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.4);}
+  .bq{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.4);cursor:pointer;}
+  .bt{font-weight:700;font-size:.8rem;margin-bottom:6px;letter-spacing:.5px;}
+  .bm .bt{color:var(--violet);}
+  .bc .bt{color:var(--orange);}
+  .bl .bt{color:var(--green);}
+  .bd .bt{color:var(--cyan);}
+  .bq .bt{color:var(--yellow);}
+  .box p,.box li,.box ul{font-size:.87rem;}
+  .qa{display:none;margin-top:8px;padding-top:8px;border-top:1px solid rgba(251,191,36,.3);color:var(--green);font-size:.85rem;}
+  .bq.revealed .qa{display:block;}
+  table{width:100%;border-collapse:collapse;font-size:.83rem;margin-top:8px;}
+  th{background:#071020;color:var(--orange);text-align:left;padding:8px 12px;border:1px solid var(--border);}
+  td{padding:7px 12px;border:1px solid var(--border);vertical-align:top;}
+  tr:nth-child(even) td{background:rgba(11,22,40,.6);}
+  .sr{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0;}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 18px;flex:1;min-width:120px;text-align:center;}
+  .stat .n{font-size:1.8rem;font-weight:800;line-height:1;}
+  .stat .l{font-size:.72rem;color:var(--muted);margin-top:4px;}
+  .tl{list-style:none;padding:0;margin-top:8px;}
+  .tl li{display:flex;gap:14px;margin-bottom:12px;align-items:flex-start;}
+  .tl .st{min-width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+  .tl .st.c{background:rgba(6,182,212,.15);border:2px solid var(--cyan);color:var(--cyan);}
+  .tl .st.g{background:rgba(16,185,129,.15);border:2px solid var(--green);color:var(--green);}
+  .tl .st.o{background:rgba(245,158,11,.15);border:2px solid var(--orange);color:var(--orange);}
+  .tl .st.v{background:rgba(124,58,237,.15);border:2px solid var(--violet);color:var(--violet);}
+  .tl .st.r{background:rgba(239,68,68,.15);border:2px solid var(--red);color:var(--red);}
+  .tl .content h4{font-size:.9rem;}
+  .tl .content p{font-size:.83rem;color:var(--muted);margin:0;}
+  .slide::-webkit-scrollbar{width:4px;}
+  .slide::-webkit-scrollbar-track{background:transparent;}
+  .slide::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+  .rm{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin:10px 0;}
+  .rc{text-align:center;padding:8px 4px;border-radius:6px;font-size:.75rem;font-weight:700;}
+</style>
+</head>
+<body>
+<div id="navbar">
+  <div class="brand">📋 PROYECTOS <span>· BLOQUE III</span></div>
+  <div class="stabs">
+    <button onclick="gts(0)" id="t0">S11</button>
+    <button onclick="gts(1)" id="t1">S12</button>
+    <button onclick="gts(2)" id="t2">S13</button>
+    <button onclick="gts(3)" id="t3">S14</button>
+    <button onclick="gts(4)" id="t4">S15</button>
+  </div>
+  <div id="ctr">1 / 1</div>
+</div>
+<div id="pb" style="width:3%"></div>
+<div id="sc">
+
+<!-- PORTADA -->
+<div class="slide active cover" data-s="0">
+  <div class="badge">BLOQUE III · SESIONES 11 – 15</div>
+  <h1>Control, Riesgos<br>y Calidad</h1>
+  <p class="sub">Dirección y Gestión de Proyectos · Seminario de Titulación · UPIICSA · 30 horas</p>
+  <div class="sg">
+    <div class="sc2"><div class="num">SESIÓN 11</div><div class="nm">Gestión Cuantitativa de Riesgos</div></div>
+    <div class="sc2"><div class="num">SESIÓN 12</div><div class="nm">Monitoreo Avanzado y EVM</div></div>
+    <div class="sc2"><div class="num">SESIÓN 13</div><div class="nm">Calidad en Proyectos</div></div>
+    <div class="sc2"><div class="num">SESIÓN 14</div><div class="nm">Gestión Avanzada de Stakeholders</div></div>
+    <div class="sc2"><div class="num">SESIÓN 15</div><div class="nm">Dashboards Ejecutivos</div></div>
+  </div>
+  <p style="margin-top:24px;color:var(--muted);font-size:.82rem;">← → o barra espaciadora · Click en S11–S15 para saltar sesión</p>
+</div>
+
+<!-- ═══ SESIÓN 11: RIESGOS ═══ -->
+<div class="slide" data-s="0">
+  <h2>Sesión 11 <span style="color:var(--orange)">— Gestión Cuantitativa de Riesgos</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>La gestión de riesgos es como el <strong>servicio meteorológico</strong>: no puede evitar la tormenta, pero puede predecirla con suficiente anticipación para que decidas si llevas paraguas, cancelas el vuelo o refuerzas las estructuras. El PM que no gestiona riesgos es el piloto que despega sin revisar el pronóstico del tiempo.</p>
+  </div>
+  <div class="sr" style="margin-top:14px;">
+    <div class="stat"><div class="n" style="color:var(--orange)">75%</div><div class="l">Proyectos fallidos tenían<br>riesgos no identificados (PMI)</div></div>
+    <div class="stat"><div class="n" style="color:var(--cyan)">$1</div><div class="l">En mitigación preventiva<br>evita $10 en corrección reactiva</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">37%</div><div class="l">Reducción de impactos negativos<br>con gestión formal de riesgos</div></div>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>El Proceso de Gestión de Riesgos en 6 Pasos</h2>
+  <ul class="tl">
+    <li><div class="st o">1</div><div class="content"><h4>Planificar la gestión de riesgos</h4><p>Definir la metodología, umbrales de tolerancia al riesgo de la organización, roles y responsabilidades, y el formato del registro de riesgos.</p></div></li>
+    <li><div class="st c">2</div><div class="content"><h4>Identificar los riesgos</h4><p>Técnicas: brainstorming, entrevistas a expertos, listas de verificación (risk checklists), análisis de supuestos, análisis de causa raíz (Ishikawa). Resultado: lista larga de riesgos potenciales.</p></div></li>
+    <li><div class="st g">3</div><div class="content"><h4>Análisis cualitativo</h4><p>Priorizar usando la Matriz de Probabilidad × Impacto. Clasifica riesgos en Rojo/Amarillo/Verde. Rápido, basado en criterio experto, no requiere datos estadísticos.</p></div></li>
+    <li><div class="st v">4</div><div class="content"><h4>Análisis cuantitativo</h4><p>Para los riesgos de alta prioridad: Valor Monetario Esperado (EMV), Árboles de Decisión, Análisis de Sensibilidad. Resultado: impacto en dinero y tiempo del portafolio de riesgos.</p></div></li>
+    <li><div class="st o">5</div><div class="content"><h4>Planificar respuestas</h4><p>Para amenazas: Evitar, Transferir, Mitigar, Aceptar. Para oportunidades: Explotar, Compartir, Mejorar, Aceptar. Cada riesgo de alta prioridad necesita un plan de respuesta y un responsable.</p></div></li>
+    <li><div class="st r">6</div><div class="content"><h4>Monitorear y controlar riesgos</h4><p>Revisión semanal del registro de riesgos: ¿algún riesgo se materializó? ¿han aparecido nuevos riesgos? ¿los planes de respuesta siguen siendo adecuados?</p></div></li>
+  </ul>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>Valor Monetario Esperado (EMV) y Árbol de Decisión</h2>
+  <div class="cg c2">
+    <div class="card o">
+      <h3>Fórmula EMV</h3>
+      <p><strong>EMV = Probabilidad × Impacto ($)</strong></p>
+      <table>
+        <tr><th>Riesgo</th><th>P</th><th>Impacto</th><th>EMV</th><th>Prioridad</th></tr>
+        <tr><td>Proveedor clave retrasa entrega</td><td>35%</td><td>-$180K</td><td>-$63K</td><td>🔴 Alta</td></tr>
+        <tr><td>Cambio regulatorio en fase 2</td><td>20%</td><td>-$320K</td><td>-$64K</td><td>🔴 Alta</td></tr>
+        <tr><td>Rotación del equipo técnico</td><td>45%</td><td>-$95K</td><td>-$43K</td><td>🟡 Media</td></tr>
+        <tr><td>Reducción de alcance por decisión</td><td>25%</td><td>+$75K</td><td>+$18.75K</td><td>🟢 Oportunidad</td></tr>
+      </table>
+      <p style="margin-top:8px;font-size:.82rem;"><strong>Reserva de contingencia recomendada:</strong> suma de EMV negativos de riesgos priorizados = $107K</p>
+    </div>
+    <div class="card r">
+      <h3>Matriz de Probabilidad × Impacto</h3>
+      <div class="rm">
+        <div class="rc" style="background:transparent;color:var(--muted);"></div>
+        <div class="rc" style="background:rgba(16,185,129,.15);color:var(--green);">Muy Bajo</div>
+        <div class="rc" style="background:rgba(16,185,129,.15);color:var(--green);">Bajo</div>
+        <div class="rc" style="background:rgba(245,158,11,.15);color:var(--orange);">Medio</div>
+        <div class="rc" style="background:rgba(239,68,68,.15);color:var(--red);">Alto</div>
+
+        <div class="rc" style="background:rgba(239,68,68,.15);color:var(--red);">Alta</div>
+        <div class="rc" style="background:rgba(245,158,11,.2);color:var(--orange);">M</div>
+        <div class="rc" style="background:rgba(239,68,68,.2);color:var(--red);">A</div>
+        <div class="rc" style="background:rgba(239,68,68,.3);color:var(--red);">MA</div>
+        <div class="rc" style="background:rgba(239,68,68,.4);color:var(--red);">CR</div>
+
+        <div class="rc" style="background:rgba(245,158,11,.15);color:var(--orange);">Media</div>
+        <div class="rc" style="background:rgba(16,185,129,.2);color:var(--green);">B</div>
+        <div class="rc" style="background:rgba(245,158,11,.2);color:var(--orange);">M</div>
+        <div class="rc" style="background:rgba(239,68,68,.2);color:var(--red);">A</div>
+        <div class="rc" style="background:rgba(239,68,68,.3);color:var(--red);">MA</div>
+
+        <div class="rc" style="background:rgba(16,185,129,.15);color:var(--green);">Baja</div>
+        <div class="rc" style="background:rgba(16,185,129,.2);color:var(--green);">MB</div>
+        <div class="rc" style="background:rgba(16,185,129,.2);color:var(--green);">B</div>
+        <div class="rc" style="background:rgba(245,158,11,.2);color:var(--orange);">M</div>
+        <div class="rc" style="background:rgba(239,68,68,.2);color:var(--red);">A</div>
+      </div>
+      <ul style="margin-top:10px;">
+        <li><span style="color:var(--red)">■</span> <strong>Crítico/Muy Alto:</strong> acción inmediata, escalar al Sponsor</li>
+        <li><span style="color:var(--orange)">■</span> <strong>Medio:</strong> plan de respuesta activo, monitorear semanalmente</li>
+        <li><span style="color:var(--green)">■</span> <strong>Bajo:</strong> aceptar con monitoreo mensual</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box bc"><div class="bt">📰 CASO REAL — Tren Maya Tramo 5</div>
+    <p>El tramo 5 del Tren Maya identificó el riesgo de hallazgos arqueológicos con probabilidad del 60% (zona maya conocida) e impacto estimado de $45M-$120M. El plan de respuesta incluía arqueólogos del INAH en cada frente de excavación. <strong>Cuando se hallaron 3 sitios arqueológicos mayores, el protocolo activado redujo el retraso de los 8 meses estimados sin plan a solo 11 semanas.</strong></p>
+  </div>
+  <div class="box bl"><div class="bt">🔬 ACTIVIDAD PRÁCTICA</div>
+    <p>Construir el Registro de Riesgos del Proyecto Integrador: identificar mínimo 10 riesgos (amenazas y oportunidades), calificar probabilidad e impacto en la matriz, calcular EMV para los 5 de mayor puntuación, diseñar el plan de respuesta para los 3 riesgos críticos con responsable y fecha límite.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 12: MONITOREO AVANZADO ═══ -->
+<div class="slide" data-s="1">
+  <h2>Sesión 12 <span style="color:var(--orange)">— Monitoreo Avanzado y Control Integrado de Cambios</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>El monitoreo del proyecto es como el <strong>radar de un aeropuerto</strong>: detecta desviaciones en tiempo real. Pero el control de cambios es el <strong>controlador aéreo</strong>: sin él, cada piloto (stakeholder) podría cambiar su ruta (alcance) unilateralmente, generando colisiones (conflictos de recursos, inconsistencias, sobrecostos). El radar sin controlador es información sin decisión.</p>
+  </div>
+  <div class="cg c2" style="margin-top:14px;">
+    <div class="card o">
+      <h3>Proceso de Control Integrado de Cambios</h3>
+      <ul class="tl">
+        <li><div class="st o">1</div><div class="content"><h4>Solicitud de cambio recibida</h4><p>Cualquier cambio al alcance, cronograma, costo o calidad debe formalizarse por escrito — ningún cambio verbal.</p></div></li>
+        <li><div class="st c">2</div><div class="content"><h4>Análisis de impacto</h4><p>¿Cuánto tiempo agrega? ¿Cuánto cuesta? ¿Qué riesgos genera? ¿Qué otros entregables afecta?</p></div></li>
+        <li><div class="st g">3</div><div class="content"><h4>Decisión del CCB</h4><p>Change Control Board: PM + Sponsor + representante del cliente. Aprueban, rechazan o piden más información.</p></div></li>
+        <li><div class="st v">4</div><div class="content"><h4>Actualización de líneas base</h4><p>Si se aprueba, actualizar el plan de proyecto. La nueva línea base es la referencia de control futura.</p></div></li>
+      </ul>
+    </div>
+    <div class="card c">
+      <h3>Indicadores de Monitoreo del Proyecto</h3>
+      <table>
+        <tr><th>Indicador</th><th>Meta</th><th>Acción si se desvía</th></tr>
+        <tr><td>CPI (costo)</td><td>&gt; 0.95</td><td>Revisar estimaciones, buscar eficiencias</td></tr>
+        <tr><td>SPI (cronograma)</td><td>&gt; 0.90</td><td>Fast tracking o crashing de actividades críticas</td></tr>
+        <tr><td>Riesgos activos</td><td>&lt; 20% críticos</td><td>Activar planes de respuesta inmediatamente</td></tr>
+        <tr><td>Cambios aprobados</td><td>&lt; 10% del alcance inicial</td><td>Revisar definición de alcance original</td></tr>
+        <tr><td>Satisfacción del equipo</td><td>&gt; 7/10</td><td>Retrospectiva inmediata, 1-on-1 con PM</td></tr>
+        <tr><td>Defectos abiertos</td><td>&lt; 5 críticos</td><td>Sprint de corrección, no avanzar nuevas features</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="box bc"><div class="bt">📰 CASO REAL — IMSS Sistema de Nómina</div>
+    <p>El IMSS implementó un proceso de control de cambios formal después de que un proyecto anterior tuvo 847 cambios de alcance no controlados en 18 meses (+$340M de sobrecosto). Con el CCB activo, el siguiente proyecto del mismo tamaño tuvo solo <strong>62 cambios formalizados, de los cuales 48 fueron aprobados con impacto documentado</strong>. El sobrecosto se redujo al 8% del presupuesto original vs el 67% previo.</p>
+  </div>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Click para ver respuesta</div>
+    <p>El cliente llama al PM y dice "solo necesito este pequeño cambio, que no vale nada". ¿Qué debe hacer el PM?</p>
+    <div class="qa"><strong>Pedir que se formalice por escrito antes de hacer cualquier cambio.</strong> Los "pequeños cambios" son la causa número uno del scope creep — acumulación de cambios aparentemente menores que juntos destruyen el cronograma y el presupuesto. El PM puede ser flexible en el proceso, pero no en el principio: todo cambio se evalúa, se aprueba y se documenta. Una frase útil: "Con gusto lo analizo — solo necesito que me lo pongas por escrito para poder darte el impacto exacto en tiempo y costo."</div>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 13: CALIDAD ═══ -->
+<div class="slide" data-s="2">
+  <h2>Sesión 13 <span style="color:var(--orange)">— Calidad en Proyectos: Más Allá de las Pruebas</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>La calidad en proyectos es como el <strong>control de calidad de una fábrica de automóviles</strong>: Toyota no inspecciona la calidad al final de la línea — la construye en cada estación. Si en la estación 3 se instala mal una pieza, la estación 4 no pasa el auto hasta que esté correcto. La calidad se diseña desde el inicio, no se verifica al final.</p>
+  </div>
+  <div class="cg c3" style="margin-top:14px;">
+    <div class="card o">
+      <h3>Gestión de Calidad vs Control de Calidad</h3>
+      <ul>
+        <li><strong>Planificación de calidad:</strong> definir qué significa "bueno" para este proyecto — criterios de aceptación, estándares aplicables, métricas</li>
+        <li><strong>Aseguramiento de calidad:</strong> auditar que los procesos son seguidos correctamente durante la ejecución</li>
+        <li><strong>Control de calidad:</strong> inspeccionar los entregables para verificar que cumplen los criterios definidos</li>
+        <li><strong>Mejora de calidad:</strong> usar los hallazgos para mejorar los procesos futuros</li>
+      </ul>
+    </div>
+    <div class="card c">
+      <h3>Costo de la Calidad (COQ)</h3>
+      <ul>
+        <li><strong>Costos de conformidad (invertir en calidad):</strong>
+          <ul>
+            <li>Prevención: capacitación, revisiones, planificación de calidad</li>
+            <li>Evaluación: pruebas, inspecciones, auditorías</li>
+          </ul>
+        </li>
+        <li><strong>Costos de no conformidad (pagar por defectos):</strong>
+          <ul>
+            <li>Fallo interno: retrabajo, desperdicio, re-pruebas</li>
+            <li>Fallo externo: garantías, reclamaciones, pérdida de clientes</li>
+          </ul>
+        </li>
+      </ul>
+      <p style="margin-top:8px;font-size:.82rem;"><strong>Regla general:</strong> $1 en prevención evita $10 en fallo interno y $100 en fallo externo.</p>
+    </div>
+    <div class="card g">
+      <h3>Herramientas de Calidad</h3>
+      <ul>
+        <li><strong>Diagrama de causa-efecto (Ishikawa):</strong> identificar causas raíz de un defecto. Las 6M: Mano de obra, Máquina, Método, Material, Medición, Medio ambiente.</li>
+        <li><strong>Diagrama de Pareto:</strong> el 80% de los defectos proviene del 20% de las causas — priorizar las pocas causas vitales</li>
+        <li><strong>Gráfica de control:</strong> detectar variaciones fuera de los límites de control estadístico antes de que se conviertan en defectos</li>
+        <li><strong>Checklist:</strong> verificación sistemática de criterios de aceptación — simple pero muy efectivo</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box bc"><div class="bt">📰 CASO REAL — Pemex Refinería Dos Bocas</div>
+    <p>En la construcción, la calidad de las soldaduras de los tanques de almacenamiento fue gestionada con un plan de inspección de puntos de hold — ninguna soldadura pasaba a la siguiente etapa sin inspección radiográfica certificada. Cuando en la semana 32 se detectó una tasa de rechazo del 23% (límite de control: 8%), el análisis Pareto reveló que el 78% de los defectos venían de un solo equipo de soldadores. La acción: capacitación de emergencia ese fin de semana. <strong>Semana siguiente: tasa de rechazo = 6%.</strong></p>
+  </div>
+  <div class="box bl"><div class="bt">🔬 ACTIVIDAD PRÁCTICA</div>
+    <p>Para el Proyecto Integrador: (1) definir 5 métricas de calidad con su valor umbral (ej: "0 defectos críticos en UAT", "tiempo de respuesta &lt;2s"), (2) construir el diagrama Ishikawa para el defecto más probable del proyecto, (3) diseñar el plan de pruebas UAT con 10 casos de prueba y criterios de aprobación/rechazo.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 14: STAKEHOLDERS ═══ -->
+<div class="slide" data-s="3">
+  <h2>Sesión 14 <span style="color:var(--orange)">— Gestión Avanzada de Stakeholders</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Los stakeholders son como los <strong>planetas en un sistema solar</strong>: el proyecto es el sol, y cada stakeholder orbita a distinta distancia con distinta masa (influencia). Algunos son Júpiter — su gravedad afecta todo el sistema. Ignorar a Júpiter porque está "lejos" puede desestabilizar toda la misión.</p>
+  </div>
+  <div class="cg c2" style="margin-top:14px;">
+    <div class="card o">
+      <h3>Matriz Poder/Interés: Los 4 Cuadrantes</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:8px;font-size:.8rem;">
+        <div style="background:rgba(239,68,68,.1);border:1px solid var(--red);border-radius:6px;padding:10px;">
+          <div style="color:var(--red);font-weight:700;margin-bottom:4px;">ALTO PODER / BAJO INTERÉS</div>
+          <div>Mantener satisfecho. No saturar con información. Comunicación de alto nivel. Ej: Director General, Consejo.</div>
+        </div>
+        <div style="background:rgba(16,185,129,.1);border:1px solid var(--green);border-radius:6px;padding:10px;">
+          <div style="color:var(--green);font-weight:700;margin-bottom:4px;">ALTO PODER / ALTO INTERÉS</div>
+          <div>Gestionar de cerca. Involucrar en decisiones clave. Comunicación frecuente y detallada. Ej: Sponsor, cliente principal.</div>
+        </div>
+        <div style="background:rgba(100,116,139,.1);border:1px solid var(--muted);border-radius:6px;padding:10px;">
+          <div style="color:var(--muted);font-weight:700;margin-bottom:4px;">BAJO PODER / BAJO INTERÉS</div>
+          <div>Monitorear. Comunicación mínima pero regular. No ignorar — pueden escalar. Ej: usuarios finales pasivos.</div>
+        </div>
+        <div style="background:rgba(6,182,212,.1);border:1px solid var(--cyan);border-radius:6px;padding:10px;">
+          <div style="color:var(--cyan);font-weight:700;margin-bottom:4px;">BAJO PODER / ALTO INTERÉS</div>
+          <div>Mantener informado. Son aliados potenciales — su conocimiento es valioso. Ej: usuarios clave, expertos técnicos.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card c">
+      <h3>Los 5 Niveles de Compromiso</h3>
+      <ul>
+        <li><strong>Desconocedor:</strong> no sabe del proyecto ni su impacto</li>
+        <li><strong>Resistente:</strong> sabe del proyecto y se opone activamente</li>
+        <li><strong>Neutral:</strong> sabe pero no apoya ni se opone</li>
+        <li><strong>Apoyador:</strong> sabe y apoya, pero no actúa proactivamente</li>
+        <li><strong>Líder:</strong> conoce, apoya y trabaja activamente para el éxito del proyecto</li>
+      </ul>
+      <p style="margin-top:8px;font-size:.82rem;color:var(--muted);">El PM debe mapear el nivel actual y el deseado de cada stakeholder clave, luego planificar acciones específicas para cerrar la brecha.</p>
+      <h3>El stakeholder resistente: estrategia</h3>
+      <ul>
+        <li>Entender el origen de la resistencia (miedo, pérdida de poder, falta de información, experiencias previas negativas)</li>
+        <li>Involucrar temprano: quien participa en el diseño, defiende el resultado</li>
+        <li>Victorias tempranas visibles para el resistente: si ve beneficios concretos para él/ella, cambia de postura</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box bc"><div class="bt">📰 CASO REAL — SAP en empresa de manufactura tapatía</div>
+    <p>En una empresa de Jalisco, el Director de Manufactura era un stakeholder resistente al proyecto ERP: temía perder control operacional. El PM lo involucró como "co-dueño del módulo de producción" y le mostró que el sistema le daría más visibilidad real que la que tenía con Excel. <strong>8 semanas después, el Director de Manufactura se convirtió en el mayor promotor del proyecto</strong> ante el resto de los directores regionales.</p>
+  </div>
+  <div class="box bl"><div class="bt">🔬 ACTIVIDAD PRÁCTICA</div>
+    <p>Mapear los 10 stakeholders más importantes del Proyecto Integrador: (1) posición en la matriz Poder/Interés, (2) nivel de compromiso actual vs deseado, (3) estrategia de gestión para los 3 de mayor impacto potencial, (4) plan de comunicación: canal, frecuencia, contenido y responsable.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 15: DASHBOARDS ═══ -->
+<div class="slide" data-s="4">
+  <h2>Sesión 15 <span style="color:var(--orange)">— Dashboards Ejecutivos y Comunicación de Estatus</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>Un dashboard de proyecto es como el <strong>cuadro de instrumentos de un avión</strong>: el piloto (PM) no puede mirar por la ventana para ver si va bien — necesita indicadores precisos y legibles en tiempo real. Un mal dashboard (datos incorrectos o información irrelevante) es más peligroso que no tener dashboard — da falsa confianza.</p>
+  </div>
+  <div class="cg c2" style="margin-top:14px;">
+    <div class="card o">
+      <h3>Los 7 Componentes del Informe de Estatus</h3>
+      <ul>
+        <li><strong>Resumen ejecutivo:</strong> 3-4 oraciones. Verde/Amarillo/Rojo general. ¿Qué necesita atención del Sponsor?</li>
+        <li><strong>Estado de los KPIs:</strong> CPI, SPI, % completado vs % planificado, presupuesto restante</li>
+        <li><strong>Hitos del período:</strong> los que se completaron y los próximos 2 períodos</li>
+        <li><strong>Acciones tomadas:</strong> qué se hizo para resolver los problemas reportados en el período anterior</li>
+        <li><strong>Problemas actuales:</strong> issues abiertos, escalaciones necesarias, decisiones que requieren al Sponsor</li>
+        <li><strong>Riesgos activos:</strong> los 3-5 de mayor prioridad, con estado del plan de respuesta</li>
+        <li><strong>Pronóstico:</strong> fecha de finalización estimada actualizada, costo final estimado (EAC)</li>
+      </ul>
+    </div>
+    <div class="card c">
+      <h3>Semáforo de Estatus: Verde/Amarillo/Rojo</h3>
+      <table>
+        <tr><th>Indicador</th><th>🟢 Verde</th><th>🟡 Amarillo</th><th>🔴 Rojo</th></tr>
+        <tr><td>Cronograma</td><td>SPI ≥ 0.95</td><td>SPI 0.85-0.94</td><td>SPI &lt; 0.85</td></tr>
+        <tr><td>Costo</td><td>CPI ≥ 0.95</td><td>CPI 0.85-0.94</td><td>CPI &lt; 0.85</td></tr>
+        <tr><td>Alcance</td><td>0-5% cambios</td><td>5-15% cambios</td><td>&gt;15% cambios</td></tr>
+        <tr><td>Riesgos</td><td>0 riesgos críticos</td><td>1-2 riesgos críticos</td><td>&gt;2 riesgos críticos</td></tr>
+        <tr><td>Calidad</td><td>Defectos &lt; umbral</td><td>Defectos en límite</td><td>Defectos &gt; umbral</td></tr>
+      </table>
+      <p style="margin-top:8px;font-size:.82rem;color:var(--muted);">Regla de comunicación: nunca esconder un semáforo rojo. Un rojo temprano comunicado con plan es manejable. Un rojo tardío oculto es un proyecto fallido.</p>
+    </div>
+  </div>
+  <div class="box bl"><div class="bt">🔬 ACTIVIDAD PRÁCTICA — Dashboard del Proyecto Integrador</div>
+    <p>Construir el primer informe de estatus semanal del Proyecto Integrador: (1) definir los 5 KPIs con sus umbrales Verde/Amarillo/Rojo, (2) simular un estado a la semana 8 con datos ficticios (incluir al menos un indicador amarillo y una decisión pendiente para el Sponsor), (3) presentarlo en formato de 1 página al panel de evaluadores como si fueran el Comité Directivo.</p>
+  </div>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Click para ver respuesta</div>
+    <p>El PM sabe que el proyecto va a llegar tarde. ¿Cuándo debe comunicarlo al Sponsor: cuando ya es un hecho inevitable, o cuando hay indicadores tempranos pero aún incertidumbre?</p>
+    <div class="qa"><strong>Siempre con indicadores tempranos, nunca cuando ya es inevitable.</strong> El Sponsor pierde más confianza en el PM que esperó demasiado que en el PM que comunicó un problema con tiempo para resolverlo. La fórmula: "Estamos viendo indicadores de que podríamos tener un retraso de X semanas. Aquí está mi análisis y mis 3 opciones de respuesta. Necesito tu decisión sobre cuál camino tomar." Esto convierte al Sponsor en co-dueño de la solución, no en receptor de malas noticias tardías.</div>
+  </div>
+</div>
+
+<!-- CIERRE BLOQUE III -->
+<div class="slide cover" data-s="4">
+  <div class="badge">BLOQUE III — CIERRE</div>
+  <h1>Control, Riesgos<br>y Calidad</h1>
+  <p style="max-width:600px;margin:16px auto;color:var(--muted);">Gestionar riesgos cuantitativamente, controlar cambios con rigor, asegurar la calidad desde el diseño, gestionar estratégicamente a los stakeholders y comunicar el estatus con transparencia son las competencias que separan al PM reactivo del PM estratégico.</p>
+  <div class="sr" style="justify-content:center;max-width:800px;margin:20px auto;">
+    <div class="stat"><div class="n" style="color:var(--orange)">EMV</div><div class="l">Riesgos cuantificados</div></div>
+    <div class="stat"><div class="n" style="color:var(--cyan)">CCB</div><div class="l">Control de cambios</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">COQ</div><div class="l">Calidad diseñada</div></div>
+    <div class="stat"><div class="n" style="color:var(--violet)">P/I</div><div class="l">Stakeholder mapping</div></div>
+    <div class="stat"><div class="n" style="color:var(--red)">🚦</div><div class="l">Dashboard ejecutivo</div></div>
+  </div>
+  <div class="box bd" style="max-width:600px;margin:0 auto;"><div class="bt">💡 SIGUIENTE — BLOQUE IV</div>
+    <p><strong>Estrategia, PMO y Transformación Digital</strong>: gobierno de proyectos con PMO, gestión de portafolios estratégicos, agilidad escalada (SAFe), ITIL y evaluación económica con gestión del cambio organizacional.</p>
+  </div>
+  <div style="margin-top:20px;">
+    <span class="tag">Gestión de Riesgos</span><span class="tag">EMV</span><span class="tag">Control de Cambios</span>
+    <span class="tag">Calidad</span><span class="tag">Stakeholders</span><span class="tag">Dashboards</span>
+  </div>
+  <div style="margin-top:16px;font-size:.8rem;color:var(--muted);">
+    <strong style="color:var(--orange);">Referencias:</strong> PMI (2021). <em>PMBOK® Guide, 7th ed.</em> — Principios de riesgo y calidad · Hillson, D. (2017). <em>The Risk Doctor's Cures for Common Risk Ailments</em> · Juran, J. M. &amp; De Feo, J. (2010). <em>Juran's Quality Handbook</em> (6th ed.). McGraw-Hill.
+  </div>
+</div>
+
+</div><!-- /sc -->
+<div id="footer">
+  <button onclick="prev()">← Anterior</button>
+  <span class="hint">← → · Espacio · Seminario de Titulación · UPIICSA · Dirección y Gestión de Proyectos</span>
+  <button onclick="next()">Siguiente →</button>
+</div>
+<script>
+const slides=document.querySelectorAll('.slide'),total=slides.length;let cur=0;
+const ss=[];slides.forEach((s,i)=>{const v=parseInt(s.dataset.s);if(ss[v]===undefined)ss[v]=i;});
+function go(n){if(n<0||n>=total)return;slides[cur].classList.remove('active');cur=n;slides[cur].classList.add('active');document.getElementById('ctr').textContent=(cur+1)+' / '+total;document.getElementById('pb').style.width=((cur+1)/total*100)+'%';ut();slides[cur].scrollTop=0;}
+function next(){go(cur+1);}function prev(){go(cur-1);}function gts(i){go(ss[i]);}
+function ut(){const v=parseInt(slides[cur].dataset.s);for(let i=0;i<5;i++){const b=document.getElementById('t'+i);if(b)b.classList.toggle('active',i===v);}}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();}if(e.key==='ArrowLeft'){e.preventDefault();prev();}});
+ut();
+</script>
+</body>
+</html>

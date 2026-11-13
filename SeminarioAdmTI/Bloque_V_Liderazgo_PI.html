@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloque V — Liderazgo Avanzado y Proyecto Integrador</title>
+<style>
+  :root{--bg:#04080f;--card:#0b1628;--border:#1e3a5f;--violet:#7c3aed;--cyan:#06b6d4;--green:#10b981;--orange:#f59e0b;--red:#ef4444;--pink:#ec4899;--yellow:#fbbf24;--text:#e2e8f0;--muted:#64748b;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden;height:100vh;}
+  #navbar{position:fixed;top:0;left:0;right:0;height:54px;background:rgba(4,8,15,.96);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:100;backdrop-filter:blur(8px);}
+  #navbar .brand{color:var(--pink);font-weight:700;font-size:.85rem;letter-spacing:1px;}
+  #navbar .brand span{color:var(--muted);}
+  .stabs{display:flex;gap:6px;}
+  .stabs button{background:transparent;border:1px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:20px;cursor:pointer;font-size:.75rem;transition:all .2s;}
+  .stabs button.active{background:var(--pink);border-color:var(--pink);color:#fff;font-weight:700;}
+  .stabs button:hover:not(.active){border-color:var(--pink);color:var(--pink);}
+  #ctr{color:var(--muted);font-size:.8rem;min-width:80px;text-align:right;}
+  #pb{position:fixed;top:54px;left:0;height:3px;background:linear-gradient(90deg,#831843,var(--pink));transition:width .3s;z-index:100;}
+  #sc{position:fixed;top:57px;left:0;right:0;bottom:40px;overflow:hidden;}
+  .slide{position:absolute;top:0;left:0;right:0;bottom:0;padding:28px 48px;display:none;overflow-y:auto;animation:fi .35s ease;}
+  .slide.active{display:flex;flex-direction:column;}
+  @keyframes fi{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+  #footer{position:fixed;bottom:0;left:0;right:0;height:40px;background:rgba(4,8,15,.96);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:16px;z-index:100;}
+  #footer button{background:var(--card);border:1px solid var(--border);color:var(--text);padding:5px 20px;border-radius:6px;cursor:pointer;font-size:.8rem;transition:all .2s;}
+  #footer button:hover{border-color:var(--pink);color:var(--pink);}
+  #footer .hint{color:var(--muted);font-size:.72rem;}
+  h1{font-size:2rem;font-weight:800;line-height:1.2;margin-bottom:10px;}
+  h2{font-size:1.5rem;font-weight:700;margin-bottom:14px;}
+  h3{font-size:1.05rem;font-weight:600;color:var(--pink);margin-bottom:8px;margin-top:12px;}
+  p{font-size:.92rem;line-height:1.65;margin-bottom:8px;}
+  ul,ol{padding-left:20px;font-size:.9rem;line-height:1.8;}
+  li{margin-bottom:4px;}
+  .sub{color:var(--muted);font-size:1rem;margin-bottom:6px;}
+  .tag{display:inline-block;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:2px 10px;font-size:.75rem;color:var(--muted);margin-right:6px;margin-bottom:4px;}
+  .cover{align-items:center;justify-content:center;text-align:center;}
+  .cover h1{font-size:2.3rem;background:linear-gradient(135deg,var(--pink),#f9a8d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;}
+  .badge{display:inline-block;border:1px solid var(--pink);border-radius:8px;padding:8px 24px;color:var(--pink);font-size:.9rem;font-weight:700;letter-spacing:2px;margin-bottom:20px;background:rgba(236,72,153,.08);}
+  .sg{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:20px;}
+  .sc2{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 16px;width:168px;text-align:left;}
+  .sc2 .num{color:var(--pink);font-size:.7rem;font-weight:700;}
+  .sc2 .nm{font-size:.8rem;margin-top:4px;}
+  .cg{display:grid;gap:14px;margin-top:8px;}
+  .cg.c2{grid-template-columns:1fr 1fr;}
+  .cg.c3{grid-template-columns:1fr 1fr 1fr;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;position:relative;overflow:hidden;}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+  .card.v::before{background:var(--violet);}
+  .card.c::before{background:var(--cyan);}
+  .card.g::before{background:var(--green);}
+  .card.o::before{background:var(--orange);}
+  .card.r::before{background:var(--red);}
+  .card.p::before{background:var(--pink);}
+  .card h3{margin-top:0;font-size:.95rem;}
+  .card p,.card ul,.card li{font-size:.85rem;}
+  .box{border-radius:10px;padding:14px 18px;margin:10px 0;}
+  .bm{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.4);}
+  .bc{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.4);}
+  .bl{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.4);}
+  .bd{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.4);}
+  .bq{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.4);cursor:pointer;}
+  .bt{font-weight:700;font-size:.8rem;margin-bottom:6px;letter-spacing:.5px;}
+  .bm .bt{color:var(--violet);}
+  .bc .bt{color:var(--orange);}
+  .bl .bt{color:var(--green);}
+  .bd .bt{color:var(--cyan);}
+  .bq .bt{color:var(--yellow);}
+  .box p,.box li,.box ul{font-size:.87rem;}
+  .qa{display:none;margin-top:8px;padding-top:8px;border-top:1px solid rgba(251,191,36,.3);color:var(--green);font-size:.85rem;}
+  .bq.revealed .qa{display:block;}
+  table{width:100%;border-collapse:collapse;font-size:.83rem;margin-top:8px;}
+  th{background:#071020;color:var(--pink);text-align:left;padding:8px 12px;border:1px solid var(--border);}
+  td{padding:7px 12px;border:1px solid var(--border);vertical-align:top;}
+  tr:nth-child(even) td{background:rgba(11,22,40,.6);}
+  .sr{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0;}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 18px;flex:1;min-width:120px;text-align:center;}
+  .stat .n{font-size:1.8rem;font-weight:800;line-height:1;}
+  .stat .l{font-size:.72rem;color:var(--muted);margin-top:4px;}
+  .tl{list-style:none;padding:0;margin-top:8px;}
+  .tl li{display:flex;gap:14px;margin-bottom:12px;align-items:flex-start;}
+  .tl .st{min-width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+  .tl .st.c{background:rgba(6,182,212,.15);border:2px solid var(--cyan);color:var(--cyan);}
+  .tl .st.g{background:rgba(16,185,129,.15);border:2px solid var(--green);color:var(--green);}
+  .tl .st.o{background:rgba(245,158,11,.15);border:2px solid var(--orange);color:var(--orange);}
+  .tl .st.v{background:rgba(124,58,237,.15);border:2px solid var(--violet);color:var(--violet);}
+  .tl .st.p{background:rgba(236,72,153,.15);border:2px solid var(--pink);color:var(--pink);}
+  .tl .content h4{font-size:.9rem;}
+  .tl .content p{font-size:.83rem;color:var(--muted);margin:0;}
+  .slide::-webkit-scrollbar{width:4px;}
+  .slide::-webkit-scrollbar-track{background:transparent;}
+  .slide::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+  .ld{display:flex;flex-direction:column;gap:6px;margin:10px 0;}
+  .lr{border-radius:6px;padding:8px 16px;font-size:.82rem;font-weight:600;text-align:center;}
+  .checklist{list-style:none;padding:0;}
+  .checklist li{padding:6px 10px;border-bottom:1px solid var(--border);font-size:.87rem;display:flex;align-items:center;gap:8px;}
+  .checklist li::before{content:'☐';color:var(--pink);font-size:1rem;}
+</style>
+</head>
+<body>
+<div id="navbar">
+  <div class="brand">📋 PROYECTOS <span>· BLOQUE V</span></div>
+  <div class="stabs">
+    <button onclick="gts(0)" id="t0">S21</button>
+    <button onclick="gts(1)" id="t1">S22</button>
+    <button onclick="gts(2)" id="t2">S23</button>
+    <button onclick="gts(3)" id="t3">S24</button>
+    <button onclick="gts(4)" id="t4">S25</button>
+  </div>
+  <div id="ctr">1 / 1</div>
+</div>
+<div id="pb" style="width:3%"></div>
+<div id="sc">
+
+<!-- PORTADA -->
+<div class="slide active cover" data-s="0">
+  <div class="badge">BLOQUE V · SESIONES 21 – 25</div>
+  <h1>Liderazgo Avanzado<br>y Proyecto Integrador</h1>
+  <p class="sub">Dirección y Gestión de Proyectos · Seminario de Titulación · UPIICSA · 30 horas</p>
+  <div class="sg">
+    <div class="sc2"><div class="num">SESIÓN 21</div><div class="nm">Contratos y Adquisiciones</div></div>
+    <div class="sc2"><div class="num">SESIÓN 22</div><div class="nm">Cierre Formal del Proyecto</div></div>
+    <div class="sc2"><div class="num">SESIÓN 23</div><div class="nm">Transformación Digital</div></div>
+    <div class="sc2"><div class="num">SESIÓN 24</div><div class="nm">Taller del PI — Integración</div></div>
+    <div class="sc2"><div class="num">SESIÓN 25</div><div class="nm">Defensa ante el Panel</div></div>
+  </div>
+  <p style="margin-top:24px;color:var(--muted);font-size:.82rem;">← → o barra espaciadora · Click en S21–S25 para saltar sesión</p>
+</div>
+
+<!-- ═══ SESIÓN 21: CONTRATOS ═══ -->
+<div class="slide" data-s="0">
+  <h2>Sesión 21 <span style="color:var(--pink)">— Contratos y Gestión de Adquisiciones</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>El contrato es como las <strong>reglas del juego escritas antes de empezar</strong>: si no se escriben, cada equipo juega con sus propias reglas. Un contrato bien redactado no evita los problemas — evita los problemas que nadie quiere resolver equitativamente cuando ya están enojados. El contrato es el adulto en la sala cuando los participantes se comportan como niños.</p>
+  </div>
+  <div class="cg c3" style="margin-top:14px;">
+    <div class="card p">
+      <h3>Contrato de Precio Fijo</h3>
+      <p><strong>El proveedor asume el riesgo de costo.</strong></p>
+      <ul>
+        <li><strong>FFP:</strong> precio completamente fijo sin importar el costo real del proveedor. El cliente tiene certeza total de costo. El proveedor asume todo el riesgo.</li>
+        <li><strong>FP-EPA:</strong> precio fijo con ajuste económico por inflación. Para contratos largos (&gt;2 años).</li>
+        <li><strong>FPIF:</strong> precio fijo con incentivo al desempeño — bonos si el proveedor supera metas de costo o calendario.</li>
+      </ul>
+      <p style="margin-top:8px;font-size:.82rem;color:var(--muted);">Mejor para: alcance claramente definido, proveedor con experiencia en el tipo de trabajo.</p>
+    </div>
+    <div class="card c">
+      <h3>Contrato de Costo Reembolsable</h3>
+      <p><strong>El cliente asume el riesgo de costo.</strong></p>
+      <ul>
+        <li><strong>CPFF:</strong> costo + tarifa fija. El proveedor no tiene incentivo de eficiencia — cobra su tarifa sin importar el costo final.</li>
+        <li><strong>CPIF:</strong> costo + tarifa de incentivo — la tarifa sube si el costo final es menor al estimado. Alianza de intereses.</li>
+        <li><strong>CPAF:</strong> costo + tarifa por desempeño evaluada subjetivamente por el cliente. Máxima flexibilidad.</li>
+      </ul>
+      <p style="margin-top:8px;font-size:.82rem;color:var(--muted);">Mejor para: investigación y desarrollo, proyectos con alta incertidumbre técnica.</p>
+    </div>
+    <div class="card g">
+      <h3>Contrato de Tiempo y Materiales</h3>
+      <p><strong>Riesgo compartido.</strong></p>
+      <ul>
+        <li>El proveedor cobra por hora de trabajo + materiales a precio de lista</li>
+        <li>Usado cuando el alcance no puede definirse completamente al inicio</li>
+        <li>El cliente puede terminar el contrato en cualquier momento</li>
+        <li>Riesgo para el cliente: sin límite de costo sin cláusula NTE (Not To Exceed)</li>
+        <li><strong>Siempre incluir cláusula NTE</strong> para T&amp;M</li>
+      </ul>
+      <p style="margin-top:8px;font-size:.82rem;color:var(--muted);">Mejor para: consultoría, servicios profesionales, proyectos ágiles.</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="0">
+  <h2>El Proceso de Adquisiciones y la Negociación de Contratos</h2>
+  <div class="cg c2">
+    <div class="card p">
+      <h3>Proceso de Adquisición en 6 Pasos</h3>
+      <ul class="tl">
+        <li><div class="st p">1</div><div class="content"><h4>Planificar adquisiciones</h4><p>Decidir qué comprar vs hacer internamente, seleccionar tipo de contrato, preparar documentos de solicitud.</p></div></li>
+        <li><div class="st c">2</div><div class="content"><h4>Preparar el RFP/RFQ</h4><p>Request for Proposal (soluciones completas) o Request for Quotation (precio por item específico). SOW (Statement of Work) detallado.</p></div></li>
+        <li><div class="st g">3</div><div class="content"><h4>Evaluar propuestas</h4><p>Criterios ponderados: precio (40%), capacidad técnica (35%), experiencia (15%), plazo (10%). Nunca solo precio.</p></div></li>
+        <li><div class="st o">4</div><div class="content"><h4>Negociar y adjudicar</h4><p>Negociar términos, condiciones, penalizaciones y incentivos. Formalizar el contrato con representantes legales.</p></div></li>
+        <li><div class="st v">5</div><div class="content"><h4>Administrar el contrato</h4><p>Monitorear el cumplimiento del proveedor, gestionar cambios al alcance del contrato, pago según hitos completados.</p></div></li>
+        <li><div class="st p">6</div><div class="content"><h4>Cerrar las adquisiciones</h4><p>Verificar que todos los entregables fueron aceptados formalmente, liquidar pagos finales, documentar lecciones aprendidas del proveedor.</p></div></li>
+      </ul>
+    </div>
+    <div class="card o">
+      <h3>Cláusulas Críticas en Contratos de TI</h3>
+      <ul>
+        <li><strong>Definición de entregables:</strong> qué se entrega exactamente — funcionalidades, documentación, código fuente</li>
+        <li><strong>Criterios de aceptación:</strong> cómo se mide si el entregable es aceptable — pruebas UAT específicas</li>
+        <li><strong>Penalizaciones por retraso:</strong> % del valor del contrato por semana/mes de retraso</li>
+        <li><strong>Garantía post-entrega:</strong> período de soporte gratuito (90-365 días)</li>
+        <li><strong>Propiedad intelectual:</strong> quién es dueño del código y la documentación</li>
+        <li><strong>Cláusula de confidencialidad:</strong> protección de datos del cliente</li>
+        <li><strong>Cambios al alcance:</strong> proceso formal de solicitud de cambio con impacto documentado</li>
+        <li><strong>Resolución de disputas:</strong> mediación, arbitraje o tribunal — especificar jurisdicción</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box bc"><div class="bt">📰 CASO REAL — IMSS Proyecto Informático (Contrato FP sin alcance claro)</div>
+    <p>El IMSS firmó un contrato de Precio Fijo para un sistema de gestión de pacientes sin un SOW detallado. El proveedor entregó el sistema mínimo viable argumentando que cumplía el contrato. El IMSS argumentó que faltaban funcionalidades críticas. <strong>18 meses de litigio y $89M en gastos legales</strong> después, el sistema nunca fue implementado. Lección: precio fijo sin alcance claramente definido es el peor contrato posible.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 22: CIERRE ═══ -->
+<div class="slide" data-s="1">
+  <h2>Sesión 22 <span style="color:var(--pink)">— Cierre Formal del Proyecto</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>El cierre del proyecto es como el <strong>acto de graduación</strong>: el trabajo ya está hecho, pero sin la ceremonia formal, el título no existe oficialmente. Sin cierre formal, el proyecto "zombi" nunca muere — el equipo sigue siendo llamado para "pequeñas correcciones" indefinidamente, los recursos no se liberan, y las lecciones aprendidas se pierden para siempre.</p>
+  </div>
+  <div class="cg c2" style="margin-top:14px;">
+    <div class="card p">
+      <h3>Checklist de Cierre del Proyecto</h3>
+      <ul class="checklist">
+        <li>Todos los entregables formalmente aceptados por el cliente (acta firmada)</li>
+        <li>Todos los contratos de proveedores cerrados y liquidados</li>
+        <li>Recursos del equipo liberados y regresados a sus áreas funcionales</li>
+        <li>Sistema entregado a Operaciones con handoff documentado (ITIL)</li>
+        <li>Documento de lecciones aprendidas completado y archivado</li>
+        <li>Archivo del proyecto actualizado y almacenado</li>
+        <li>Informe final de desempeño: CPI/SPI finales vs metas iniciales</li>
+        <li>Carta de cierre firmada por el Sponsor</li>
+        <li>Benefit tracking iniciado (plan para medir los beneficios en los próximos 6-12 meses)</li>
+      </ul>
+    </div>
+    <div class="card c">
+      <h3>Lecciones Aprendidas: El Tesoro Organizacional</h3>
+      <ul>
+        <li><strong>No son post-mortem:</strong> un proyecto exitoso también genera lecciones. Las lecciones se recogen durante todo el proyecto, no solo al final.</li>
+        <li><strong>Formato estándar:</strong> situación observada → impacto → lección aprendida → recomendación para proyectos futuros</li>
+        <li><strong>Categorías:</strong> planificación, estimación, gestión de riesgos, comunicación, gestión de cambios, tecnología, equipo</li>
+        <li><strong>El problema real:</strong> el 80% de las organizaciones documentan lecciones aprendidas; solo el 15% las consultan en proyectos futuros (PMI 2023)</li>
+        <li><strong>Cómo hacerlas útiles:</strong> base de datos consultable, resúmenes ejecutivos por tipo de proyecto, sesión de kick-off que incluye revisión de lecciones de proyectos similares</li>
+      </ul>
+    </div>
+  </div>
+  <div class="sr" style="margin-top:14px;">
+    <div class="stat"><div class="n" style="color:var(--pink)">43%</div><div class="l">Proyectos nunca cierran<br>formalmente (PMI 2023)</div></div>
+    <div class="stat"><div class="n" style="color:var(--cyan)">15%</div><div class="l">Organizaciones consultan<br>lecciones aprendidas</div></div>
+    <div class="stat"><div class="n" style="color:var(--orange)">8 sem</div><div class="l">Tiempo promedio del "zombi"<br>sin cierre formal</div></div>
+  </div>
+</div>
+
+<div class="slide" data-s="1">
+  <h2>El Acta de Cierre y la Medición de Beneficios Post-Proyecto</h2>
+  <div class="cg c2">
+    <div class="card g">
+      <h3>Estructura del Acta de Cierre</h3>
+      <ul>
+        <li><strong>Resumen del proyecto:</strong> objetivos originales vs logros reales</li>
+        <li><strong>Desempeño final:</strong> CPI, SPI, varianza de alcance — cómo terminó vs cómo se planificó</li>
+        <li><strong>Entregables aceptados:</strong> lista de cada entregable y su acta de aceptación del cliente</li>
+        <li><strong>Contratos cerrados:</strong> confirmación de que todos los proveedores han sido liquidados</li>
+        <li><strong>Recursos liberados:</strong> confirmación de que el equipo ha sido desasignado</li>
+        <li><strong>Problemas pendientes:</strong> si hay items abiertos, transferencia formal a operaciones con responsable y fecha</li>
+        <li><strong>Firmas:</strong> PM + Sponsor + representante del cliente</li>
+      </ul>
+    </div>
+    <div class="card v">
+      <h3>Benefit Tracking: Midiendo el ROI Real</h3>
+      <ul>
+        <li>Los beneficios prometidos en el business case deben medirse después de que el proyecto termina</li>
+        <li><strong>Benefit Owner:</strong> persona del negocio (no el PM) responsable de que los beneficios se realicen</li>
+        <li><strong>Beneficios típicos de TI:</strong> reducción de tiempo de proceso, reducción de errores, aumento de ventas, reducción de costos operativos, satisfacción del cliente</li>
+        <li><strong>Plan de benefit tracking:</strong> qué beneficio, cómo medirlo, cuándo medirlo (mes 3, 6, 12 post-implementación)</li>
+        <li><strong>El círculo virtuoso:</strong> los datos reales de benefits tracking informan los próximos business cases — estimaciones más precisas, mayor confianza de la dirección</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box bl"><div class="bt">🔬 ACTIVIDAD PRÁCTICA</div>
+    <p>Redactar el Acta de Cierre del Proyecto Integrador simulado: (1) completar el checklist de cierre con el estado de cada ítem, (2) escribir el informe de desempeño final comparando plan vs real en 5 indicadores clave, (3) documentar 5 lecciones aprendidas en el formato estándar, (4) definir el plan de benefit tracking para 6 y 12 meses post-entrega.</p>
+  </div>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Click para ver respuesta</div>
+    <p>El proyecto terminó 15% sobre presupuesto pero el cliente está muy satisfecho. ¿Fue exitoso?</p>
+    <div class="qa"><strong>Depende de la perspectiva — y esto es exactamente lo que el PMBOK7 intentó resolver.</strong> Bajo PMBOK6 (triple restricción): parcialmente fallido (costo excedido). Bajo PMBOK7 (entrega de valor): posiblemente exitoso si los beneficios entregados superan el sobrecosto. La pregunta correcta no es "¿llegamos dentro del presupuesto?" sino "¿el valor entregado justificó la inversión total?" Si el 15% extra generó 3x ese costo en beneficios, el proyecto fue rentable. Esta es la diferencia entre el PM operativo y el PM estratégico.</div>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 23: TRANSFORMACIÓN DIGITAL ═══ -->
+<div class="slide" data-s="2">
+  <h2>Sesión 23 <span style="color:var(--pink)">— El PM en la Era de la Transformación Digital</span></h2>
+  <div class="box bm"><div class="bt">🎭 METÁFORA</div>
+    <p>La transformación digital es como <strong>cambiar los motores de un avión en pleno vuelo</strong>: no puedes aterrizar para hacer la transición con calma — el negocio sigue operando mientras se transforma. El PM de transformación digital gestiona la tensión entre mantener el avión volando (operaciones) y modernizar sus motores (transformación). Un error en el balance y el avión cae.</p>
+  </div>
+  <div class="cg c3" style="margin-top:14px;">
+    <div class="card p"><h3>¿Qué es la Transformación Digital?</h3><p>No es digitalizar procesos analógicos — es <strong>reimaginar el modelo de negocio</strong> usando las capacidades de la tecnología digital. Uber no digitalizó los taxis — redefinió la movilidad. Netflix no digitalizó los videoclubs — redefinió el entretenimiento.</p><p>La transformación digital incluye: datos como activo estratégico, experiencia del cliente digital-first, automatización inteligente, cultura de experimentación e innovación continua.</p></div>
+    <div class="card c"><h3>Los 4 Pilares de la Transformación Digital</h3><ul><li><strong>Estrategia digital:</strong> qué rol jugará la tecnología en el modelo de negocio futuro</li><li><strong>Cultura y talento:</strong> mentalidad digital, aceptación del riesgo, aprendizaje continuo</li><li><strong>Tecnología habilitadora:</strong> cloud, IA/ML, IoT, datos en tiempo real, APIs abiertas</li><li><strong>Datos como activo:</strong> gobierno de datos, analítica avanzada, decisiones basadas en evidencia</li></ul></div>
+    <div class="card g"><h3>El Rol del PM en la TD</h3><ul><li>Gestionar la ambigüedad: los requisitos de TD evolucionan constantemente</li><li>Orquestar ecosistemas complejos: múltiples proveedores, plataformas y equipos internos</li><li>Gestionar el cambio cultural: la resistencia humana es el mayor obstáculo, no la tecnología</li><li>Medir el impacto en negocio, no solo la entrega de features técnicas</li><li>Escalar los aprendizajes: cada proyecto de TD debe dejar capacidades instaladas</li></ul></div>
+  </div>
+</div>
+
+<div class="slide" data-s="2">
+  <h2>Gestión de Proyectos de IA, IoT y Cloud</h2>
+  <div class="cg c2">
+    <div class="card p">
+      <h3>Particularidades del PM en Proyectos de IA</h3>
+      <ul>
+        <li><strong>El riesgo de "no sé si funciona hasta probarlo":</strong> los proyectos de IA tienen alta incertidumbre técnica — usar ciclos adaptativos con pruebas de concepto rápidas antes de comprometer recursos</li>
+        <li><strong>Calidad de datos como prerequisito:</strong> el 60-80% del esfuerzo en IA es preparación de datos, no modelado. Planificar esto en el cronograma.</li>
+        <li><strong>Gestión de expectativas:</strong> los stakeholders suelen esperar "inteligencia humana" — el PM debe comunicar con precisión qué puede y qué no puede hacer el sistema</li>
+        <li><strong>Mantenimiento y drift:</strong> los modelos de IA degradan con el tiempo — incluir en el alcance el plan de monitoreo y re-entrenamiento post-producción</li>
+        <li><strong>Consideraciones éticas:</strong> sesgos en los datos, privacidad, explicabilidad de las decisiones del modelo</li>
+      </ul>
+    </div>
+    <div class="card o">
+      <h3>Proyectos Cloud: Migración y Modernización</h3>
+      <ul>
+        <li><strong>Las 7 R de la migración cloud:</strong> Rehost, Replatform, Repurchase, Refactor, Rearchitect, Retain, Retire — cada aplicación necesita su estrategia</li>
+        <li><strong>El costo oculto del cloud:</strong> planificar el egress cost, el costo de licencias en cloud vs on-premise, la curva de aprendizaje del equipo</li>
+        <li><strong>Gobernanza cloud:</strong> sin políticas de governance, el gasto cloud crece sin control (cloud sprawl)</li>
+        <li><strong>Gestión del cambio operacional:</strong> los equipos de Ops cambian de administrar hardware a administrar plataformas — capacitación crítica</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box bc"><div class="bt">📰 CASO REAL — BBVA México Transformación Digital 2018-2023</div>
+    <p>BBVA México transformó su arquitectura completa a cloud-first en 5 años: 160+ proyectos de migración gestionados bajo un portafolio de transformación digital. El PM de portafolio usó un híbrido de predictiovo para la infraestructura y ágil para las aplicaciones. <strong>Resultado: tiempo de lanzamiento de nuevas features bancarias de 18 meses a 3 semanas, 99.97% de disponibilidad de la app móvil.</strong></p>
+  </div>
+  <div class="box bq" onclick="this.classList.toggle('revealed')"><div class="bt">❓ QUIZ — Click para ver respuesta</div>
+    <p>Un director dice "queremos ser líderes en IA en 2 años". ¿Cómo construiría el PM el roadmap de esa transformación?</p>
+    <div class="qa"><strong>En 4 pasos:</strong> (1) Diagnóstico actual: madurez de datos, talento disponible, casos de uso con mayor ROI. (2) Quick wins (meses 1-6): 2-3 proyectos de IA de alto impacto y bajo riesgo técnico para construir credibilidad interna. (3) Capacidades habilitadoras (meses 6-18): plataforma de datos, gobierno de datos, capacitación del equipo, contratación de perfiles IA. (4) Proyectos transformacionales (meses 18-24): casos de uso que redefinan procesos core del negocio. La trampa a evitar: empezar directamente con los proyectos transformacionales sin los quick wins y las capacidades — el fracaso de los primeros proyectos grandes destruye el mandato político para toda la iniciativa.</div>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 24: TALLER PI ═══ -->
+<div class="slide" data-s="3">
+  <h2>Sesión 24 <span style="color:var(--pink)">— Taller de Proyecto Integrador: Integración Final</span></h2>
+  <div class="box bd"><div class="bt">💡 OBJETIVO DE LA SESIÓN</div>
+    <p>Esta sesión es el <strong>taller de integración</strong> del Proyecto Integrador: cada equipo trabaja en su proyecto con acompañamiento del facilitador. El objetivo es que al final de la sesión, cada equipo tenga su PI completamente integrado y listo para la defensa de la Sesión 25.</p>
+  </div>
+  <div class="cg c2" style="margin-top:14px;">
+    <div class="card p">
+      <h3>Estructura del Proyecto Integrador</h3>
+      <ul>
+        <li><strong>1. Diagnóstico organizacional</strong> — descripción del problema de negocio, contexto de la empresa/institución, stakeholders clave identificados</li>
+        <li><strong>2. Project Charter</strong> — objetivo SMART, alcance con exclusiones explícitas, restricciones, supuestos, PM designado</li>
+        <li><strong>3. WBS de 3 niveles</strong> — 100% del trabajo descompuesto en paquetes manejables</li>
+        <li><strong>4. Cronograma con CPM</strong> — red de actividades, ruta crítica identificada, hitos clave</li>
+        <li><strong>5. Presupuesto base</strong> — estimación por paquete de trabajo, reservas de contingencia</li>
+        <li><strong>6. Registro de riesgos</strong> — top 10 riesgos con probabilidad, impacto, EMV y plan de respuesta</li>
+        <li><strong>7. Plan de stakeholders</strong> — matriz Poder/Interés, niveles de compromiso, estrategia de comunicación</li>
+        <li><strong>8. Metodología seleccionada</strong> — justificación del ciclo de vida elegido</li>
+        <li><strong>9. Plan de calidad</strong> — métricas, criterios de aceptación, plan de pruebas</li>
+        <li><strong>10. Business Case</strong> — VPN/TIR/Payback, plan de gestión del cambio</li>
+      </ul>
+    </div>
+    <div class="card c">
+      <h3>Rúbrica de Evaluación del PI</h3>
+      <table>
+        <tr><th>Componente</th><th>Peso</th><th>Criterio de excelencia</th></tr>
+        <tr><td>Project Charter</td><td>10%</td><td>Objetivo SMART claro, alcance con exclusiones, stakeholders</td></tr>
+        <tr><td>WBS + Cronograma</td><td>15%</td><td>100% del trabajo, CPM con ruta crítica calculada</td></tr>
+        <tr><td>Presupuesto + EVM</td><td>15%</td><td>Estimación por paquete, reservas, indicadores EVM</td></tr>
+        <tr><td>Gestión de riesgos</td><td>15%</td><td>10+ riesgos, EMV calculado, planes de respuesta</td></tr>
+        <tr><td>Stakeholders</td><td>10%</td><td>Matriz completa, estrategia diferenciada por cuadrante</td></tr>
+        <tr><td>Calidad</td><td>10%</td><td>Métricas con umbral, plan de pruebas UAT</td></tr>
+        <tr><td>Business Case</td><td>15%</td><td>VPN/TIR/Payback + plan de gestión del cambio</td></tr>
+        <tr><td>Presentación oral</td><td>10%</td><td>Claridad, profundidad en preguntas, dominio del tema</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-s="3">
+  <h2>Preparación para la Defensa: Dominar las Preguntas Difíciles</h2>
+  <div class="cg c2">
+    <div class="card p">
+      <h3>Las 10 Preguntas más Comunes del Panel</h3>
+      <ol>
+        <li>¿Por qué eligiste este ciclo de vida y no el alternativo?</li>
+        <li>¿Cómo cambia tu cronograma si el riesgo #1 se materializa?</li>
+        <li>Tu CPI al final del proyecto es 0.85. ¿Cómo explicarías esto al Sponsor?</li>
+        <li>¿Cuál es la diferencia entre tu Sponsor y tu cliente en este proyecto?</li>
+        <li>Tienes un stakeholder resistente con alto poder. ¿Qué harías?</li>
+        <li>¿Cómo sabrías que el proyecto fue exitoso 1 año después de terminado?</li>
+        <li>¿Cuál es la actividad de tu ruta crítica con mayor incertidumbre? ¿Cómo la gestionarías?</li>
+        <li>¿Qué herramienta de control de calidad aplicarías para el defecto más probable?</li>
+        <li>Tienes que reducir el presupuesto 20% sin cambiar el alcance. ¿Qué harías?</li>
+        <li>¿Qué tipo de contrato firmarías con el proveedor principal y por qué?</li>
+      </ol>
+    </div>
+    <div class="card g">
+      <h3>Estrategia de Respuesta Efectiva</h3>
+      <ul>
+        <li><strong>Framework STAR:</strong> Situación, Tarea, Acción, Resultado — estructura cualquier respuesta</li>
+        <li><strong>Siempre contextualizar:</strong> "En el contexto de mi proyecto específico, la decisión fue X porque Y"</li>
+        <li><strong>Mostrar el razonamiento:</strong> el panel evalúa cómo piensas, no solo si memorizaste la respuesta correcta</li>
+        <li><strong>Reconocer limitaciones:</strong> "No tengo todos los datos para responder con certeza, pero con la información disponible haría X" — honestidad profesional</li>
+        <li><strong>Conectar teoría con práctica:</strong> citar el principio PMBOK o la herramienta y luego aplicarla al caso concreto</li>
+        <li><strong>Preparar las trampas:</strong> el panel puede preguntar por decisiones que parecen obvias para ver si las cuestionas críticamente</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box bl"><div class="bt">🔬 TALLER — Simulacro de Defensa</div>
+    <p>Ronda de preguntas cruzadas: cada equipo le hace al equipo siguiente 3 preguntas de las 10 de la lista. El equipo que responde tiene 3 minutos por pregunta. El facilitador evalúa estructura de la respuesta, dominio del tema y conexión con el PI propio. Debrief final: las 3 preguntas que más costaron y cómo se mejorarían las respuestas.</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 25: DEFENSA ═══ -->
+<div class="slide" data-s="4">
+  <h2>Sesión 25 <span style="color:var(--pink)">— Defensa Final ante el Panel Evaluador</span></h2>
+  <div class="box bd"><div class="bt">💡 ESTRUCTURA DE LA DEFENSA</div>
+    <p>Cada equipo tiene <strong>20 minutos de presentación + 15 minutos de preguntas</strong> del panel evaluador. Formato: presentación de 10-15 slides + documento escrito del PI entregado previamente.</p>
+  </div>
+  <div class="cg c2" style="margin-top:14px;">
+    <div class="card p">
+      <h3>Estructura de la Presentación de Defensa (15 slides)</h3>
+      <ul>
+        <li><strong>Slide 1:</strong> Portada — nombre del proyecto, integrantes del equipo, fecha</li>
+        <li><strong>Slide 2:</strong> Problema de negocio — el dolor que resuelve, en términos de negocio con datos</li>
+        <li><strong>Slide 3:</strong> Project Charter resumido — objetivo SMART, alcance, stakeholders clave</li>
+        <li><strong>Slide 4:</strong> WBS de primer nivel — estructura de los entregables principales</li>
+        <li><strong>Slide 5:</strong> Cronograma de hitos — fechas clave y ruta crítica (diagrama simplificado)</li>
+        <li><strong>Slide 6:</strong> Presupuesto resumen — inversión total, distribución por fase, ROI esperado</li>
+        <li><strong>Slide 7:</strong> Top 5 riesgos — matriz de probabilidad/impacto y plan de respuesta</li>
+        <li><strong>Slide 8:</strong> Metodología — justificación del ciclo de vida elegido</li>
+        <li><strong>Slide 9:</strong> Plan de stakeholders — matriz y estrategia para los 3 de mayor impacto</li>
+        <li><strong>Slide 10:</strong> Business Case — VPN/TIR/Payback en tabla y gráfica simple</li>
+        <li><strong>Slide 11:</strong> Gestión del cambio — modelo Kotter aplicado al proyecto</li>
+        <li><strong>Slide 12:</strong> Plan de calidad — métricas clave y plan de pruebas</li>
+        <li><strong>Slide 13:</strong> Lecciones aprendidas — 5 lecciones del proceso de elaboración del PI</li>
+        <li><strong>Slide 14:</strong> Conclusiones — beneficios esperados, próximos pasos si se aprobara</li>
+        <li><strong>Slide 15:</strong> Preguntas — disponible durante la sesión de Q&amp;A</li>
+      </ul>
+    </div>
+    <div class="card c">
+      <h3>Criterios de Evaluación del Panel</h3>
+      <table>
+        <tr><th>Criterio</th><th>Peso</th></tr>
+        <tr><td>Coherencia interna del proyecto (el PI no se contradice)</td><td>20%</td></tr>
+        <tr><td>Dominio de los conceptos y herramientas del seminario</td><td>25%</td></tr>
+        <tr><td>Calidad del análisis (riesgos, stakeholders, business case)</td><td>25%</td></tr>
+        <tr><td>Capacidad de respuesta a preguntas del panel</td><td>20%</td></tr>
+        <tr><td>Presentación oral: claridad, fluidez, manejo del tiempo</td><td>10%</td></tr>
+      </table>
+      <h3 style="margin-top:14px;">Los 5 errores más frecuentes en la defensa</h3>
+      <ul>
+        <li>Leer las diapositivas en lugar de presentarlas</li>
+        <li>No conectar el problema de negocio con las herramientas aplicadas</li>
+        <li>Dar respuestas genéricas a preguntas específicas del PI</li>
+        <li>No admitir incertidumbres o limitaciones del análisis</li>
+        <li>No dominar los números clave: presupuesto total, duración, CPI/SPI finales, VPN</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- CIERRE DEL SEMINARIO -->
+<div class="slide cover" data-s="4">
+  <div class="badge">BLOQUE V — CIERRE DEL SEMINARIO</div>
+  <h1>Liderazgo Avanzado<br>y Proyecto Integrador</h1>
+  <p style="max-width:600px;margin:16px auto;color:var(--muted);">Has completado las 25 sesiones del Seminario de Titulación en Dirección y Gestión de Proyectos. Las competencias desarrolladas — desde los fundamentos del PMBOK7 hasta la gestión estratégica de portafolios, pasando por la agilidad, el control y la transformación digital — son las que distinguen a los directores de proyectos de alto impacto.</p>
+  <div class="sr" style="justify-content:center;max-width:900px;margin:20px auto;">
+    <div class="stat"><div class="n" style="color:var(--cyan)">25</div><div class="l">Sesiones</div></div>
+    <div class="stat"><div class="n" style="color:var(--green)">150</div><div class="l">Horas</div></div>
+    <div class="stat"><div class="n" style="color:var(--orange)">5</div><div class="l">Bloques</div></div>
+    <div class="stat"><div class="n" style="color:var(--violet)">1</div><div class="l">Proyecto<br>Integrador</div></div>
+    <div class="stat"><div class="n" style="color:var(--pink)">∞</div><div class="l">Valor para<br>tu carrera</div></div>
+  </div>
+  <div class="cg c3" style="max-width:900px;margin:16px auto;">
+    <div class="card c" style="text-align:center;"><h3>Bloque I</h3><p>PMBOK7 · Charter · WBS · CPM · EVM</p></div>
+    <div class="card g" style="text-align:center;"><h3>Bloque II</h3><p>Scrum · Lean · DevOps · Híbrido · Power Skills</p></div>
+    <div class="card o" style="text-align:center;"><h3>Bloque III</h3><p>Riesgos · Control · Calidad · Stakeholders · Dashboards</p></div>
+    <div class="card v" style="text-align:center;"><h3>Bloque IV</h3><p>PMO · Portafolio · SAFe · ITIL · Cambio</p></div>
+    <div class="card p" style="text-align:center;grid-column:span 2;"><h3>Bloque V</h3><p>Contratos · Cierre · Transformación Digital · Proyecto Integrador · Defensa</p></div>
+  </div>
+  <div style="margin-top:16px;font-size:.8rem;color:var(--muted);">
+    <strong style="color:var(--pink);">Referencias:</strong> PMI (2021). <em>PMBOK® Guide, 7th ed.</em> · PMI (2017). <em>The Standard for Program Management</em> · Axelos (2017). <em>Managing Successful Projects with PRINCE2</em> · Schwalbe, K. (2022). <em>Information Technology Project Management</em> (10th ed.) · PMI (2023). <em>Pulse of the Profession 2023: Power Skills — Redefining Project Success</em>.
+  </div>
+</div>
+
+</div><!-- /sc -->
+<div id="footer">
+  <button onclick="prev()">← Anterior</button>
+  <span class="hint">← → · Espacio · Seminario de Titulación · UPIICSA · Dirección y Gestión de Proyectos</span>
+  <button onclick="next()">Siguiente →</button>
+</div>
+<script>
+const slides=document.querySelectorAll('.slide'),total=slides.length;let cur=0;
+const ss=[];slides.forEach((s,i)=>{const v=parseInt(s.dataset.s);if(ss[v]===undefined)ss[v]=i;});
+function go(n){if(n<0||n>=total)return;slides[cur].classList.remove('active');cur=n;slides[cur].classList.add('active');document.getElementById('ctr').textContent=(cur+1)+' / '+total;document.getElementById('pb').style.width=((cur+1)/total*100)+'%';ut();slides[cur].scrollTop=0;}
+function next(){go(cur+1);}function prev(){go(cur-1);}function gts(i){go(ss[i]);}
+function ut(){const v=parseInt(slides[cur].dataset.s);for(let i=0;i<5;i++){const b=document.getElementById('t'+i);if(b)b.classList.toggle('active',i===v);}}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();}if(e.key==='ArrowLeft'){e.preventDefault();prev();}});
+ut();
+</script>
+</body>
+</html>
