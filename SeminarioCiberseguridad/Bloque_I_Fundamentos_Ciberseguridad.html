@@ -5,545 +5,791 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bloque I — Fundamentos de Ciberseguridad y Gestión de Riesgos</title>
 <style>
-  :root {
-    --bg: #050a14; --card: #0d1a2e; --border: #1a3050;
-    --cyan: #00d4ff; --green: #00ff88; --orange: #ff8c42; --red: #ff3366;
-    --purple: #bb86fc; --yellow: #ffd60a; --text: #e0eaf8; --muted: #7a9bbf;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; overflow: hidden; height: 100vh; }
-  #navbar { position: fixed; top: 0; left: 0; right: 0; height: 54px; background: rgba(5,10,20,0.95); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 100; backdrop-filter: blur(8px); }
-  #navbar .brand { color: var(--cyan); font-weight: 700; font-size: 0.85rem; letter-spacing: 1px; }
-  #navbar .brand span { color: var(--green); }
-  .session-tabs { display: flex; gap: 6px; }
-  .session-tabs button { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 4px 12px; border-radius: 20px; cursor: pointer; font-size: 0.75rem; transition: all 0.2s; }
-  .session-tabs button.active { background: var(--cyan); border-color: var(--cyan); color: #000; font-weight: 700; }
-  .session-tabs button:hover:not(.active) { border-color: var(--cyan); color: var(--cyan); }
-  #slide-counter { color: var(--muted); font-size: 0.8rem; min-width: 80px; text-align: right; }
-  #progress-bar { position: fixed; top: 54px; left: 0; height: 3px; background: linear-gradient(90deg, var(--cyan), var(--green)); transition: width 0.3s ease; z-index: 100; }
-  #slides-container { position: fixed; top: 57px; left: 0; right: 0; bottom: 40px; overflow: hidden; }
-  .slide { position: absolute; top: 0; left: 0; right: 0; bottom: 0; padding: 28px 48px; display: none; overflow-y: auto; animation: fadeIn 0.35s ease; }
-  .slide.active { display: flex; flex-direction: column; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
-  #footer { position: fixed; bottom: 0; left: 0; right: 0; height: 40px; background: rgba(5,10,20,0.95); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 16px; z-index: 100; }
-  #footer button { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 5px 20px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; transition: all 0.2s; }
-  #footer button:hover { border-color: var(--cyan); color: var(--cyan); }
-  #footer .hint { color: var(--muted); font-size: 0.72rem; }
-  h1 { font-size: 2rem; font-weight: 800; line-height: 1.2; margin-bottom: 10px; }
-  h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 14px; }
-  h3 { font-size: 1.1rem; font-weight: 600; color: var(--cyan); margin-bottom: 8px; margin-top: 14px; }
-  p { font-size: 0.92rem; line-height: 1.65; color: var(--text); margin-bottom: 8px; }
-  ul, ol { padding-left: 20px; font-size: 0.9rem; line-height: 1.8; }
-  li { margin-bottom: 4px; }
-  .subtitle { color: var(--muted); font-size: 1rem; margin-bottom: 6px; }
-  .tag { display: inline-block; background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 2px 10px; font-size: 0.75rem; color: var(--muted); margin-right: 6px; }
-  .cover { align-items: center; justify-content: center; text-align: center; }
-  .cover h1 { font-size: 2.4rem; background: linear-gradient(135deg, var(--cyan), var(--green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 16px; }
-  .cover .block-badge { display: inline-block; background: linear-gradient(135deg, #001a30, #0d1a2e); border: 1px solid var(--cyan); border-radius: 8px; padding: 8px 24px; color: var(--cyan); font-size: 0.9rem; font-weight: 700; letter-spacing: 2px; margin-bottom: 20px; }
-  .cover .sessions-grid { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
-  .cover .sess-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; width: 160px; text-align: left; }
-  .cover .sess-card .num { color: var(--cyan); font-size: 0.7rem; font-weight: 700; }
-  .cover .sess-card .name { font-size: 0.8rem; margin-top: 4px; }
-  .card-grid { display: grid; gap: 14px; margin-top: 8px; }
-  .card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
-  .card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
-  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; position: relative; overflow: hidden; }
-  .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
-  .card.cyan::before { background: var(--cyan); }
-  .card.green::before { background: var(--green); }
-  .card.orange::before { background: var(--orange); }
-  .card.red::before { background: var(--red); }
-  .card.purple::before { background: var(--purple); }
-  .card h3 { margin-top: 0; font-size: 0.95rem; }
-  .card p, .card ul, .card li { font-size: 0.85rem; }
-  .box { border-radius: 10px; padding: 14px 18px; margin: 10px 0; }
-  .box-meta { background: rgba(187,134,252,0.08); border: 1px solid rgba(187,134,252,0.4); }
-  .box-caso { background: rgba(255,140,66,0.08); border: 1px solid rgba(255,140,66,0.4); }
-  .box-lab  { background: rgba(0,255,136,0.08);  border: 1px solid rgba(0,255,136,0.4); }
-  .box-dato { background: rgba(0,212,255,0.08);  border: 1px solid rgba(0,212,255,0.4); }
-  .box-quiz { background: rgba(255,214,10,0.08); border: 1px solid rgba(255,214,10,0.4); cursor: pointer; }
-  .box-title { font-weight: 700; font-size: 0.8rem; margin-bottom: 6px; letter-spacing: 0.5px; }
-  .box-meta .box-title { color: var(--purple); }
-  .box-caso .box-title { color: var(--orange); }
-  .box-lab  .box-title { color: var(--green); }
-  .box-dato .box-title { color: var(--cyan); }
-  .box-quiz .box-title { color: var(--yellow); }
-  .box p, .box li, .box ul { font-size: 0.87rem; }
-  .quiz-answer { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,214,10,0.3); color: var(--green); font-size: 0.85rem; }
-  .box-quiz.revealed .quiz-answer { display: block; }
-  table { width: 100%; border-collapse: collapse; font-size: 0.83rem; margin-top: 8px; }
-  th { background: #0a1a30; color: var(--cyan); text-align: left; padding: 8px 12px; border: 1px solid var(--border); }
-  td { padding: 7px 12px; border: 1px solid var(--border); vertical-align: top; }
-  tr:nth-child(even) td { background: rgba(13,26,46,0.6); }
-  .timeline { list-style: none; padding: 0; margin-top: 8px; }
-  .timeline li { display: flex; gap: 14px; margin-bottom: 12px; align-items: flex-start; }
-  .timeline .step { min-width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; flex-shrink: 0; }
-  .timeline .step.cyan   { background: rgba(0,212,255,0.15); border: 2px solid var(--cyan); color: var(--cyan); }
-  .timeline .step.green  { background: rgba(0,255,136,0.15); border: 2px solid var(--green); color: var(--green); }
-  .timeline .step.orange { background: rgba(255,140,66,0.15); border: 2px solid var(--orange); color: var(--orange); }
-  .timeline .step.red    { background: rgba(255,51,102,0.15); border: 2px solid var(--red); color: var(--red); }
-  .timeline .step.purple { background: rgba(187,134,252,0.15); border: 2px solid var(--purple); color: var(--purple); }
-  .timeline .content h4  { font-size: 0.9rem; color: var(--text); }
-  .timeline .content p   { font-size: 0.83rem; color: var(--muted); margin: 0; }
-  .stat-row { display: flex; gap: 16px; flex-wrap: wrap; margin: 10px 0; }
-  .stat { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; flex: 1; min-width: 120px; text-align: center; }
-  .stat .num { font-size: 1.8rem; font-weight: 800; line-height: 1; }
-  .stat .lbl { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
-  .pill { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; margin: 2px; }
-  .pill-cyan   { background: rgba(0,212,255,0.15); border: 1px solid var(--cyan); color: var(--cyan); }
-  .pill-green  { background: rgba(0,255,136,0.15); border: 1px solid var(--green); color: var(--green); }
-  .pill-orange { background: rgba(255,140,66,0.15); border: 1px solid var(--orange); color: var(--orange); }
-  .pill-red    { background: rgba(255,51,102,0.15); border: 1px solid var(--red); color: var(--red); }
-  .pill-purple { background: rgba(187,134,252,0.15); border: 1px solid var(--purple); color: var(--purple); }
-  .cia-row { display: flex; gap: 14px; margin: 12px 0; }
-  .cia-box { flex: 1; border-radius: 10px; padding: 18px; text-align: center; }
-  .cia-box h3 { font-size: 1.3rem; margin-bottom: 6px; }
-  .slide::-webkit-scrollbar { width: 4px; }
-  .slide::-webkit-scrollbar-track { background: transparent; }
-  .slide::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+:root {
+  --bg: #050a14; --card: #0d1a2e; --border: #1a3050;
+  --cyan: #00d4ff; --green: #00ff88; --orange: #ff8c42; --red: #ff3366;
+  --purple: #bb86fc; --yellow: #ffd60a; --text: #e0eaf8; --muted: #7a9bbf;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; overflow: hidden; height: 100vh; }
+#navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(5,10,20,0.95); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; padding: 0 1.5rem; height: 52px; gap: 1rem;
+}
+.brand { font-weight: 700; font-size: 1rem; color: var(--cyan); white-space: nowrap; }
+.brand span { color: var(--text); }
+.session-tabs { display: flex; gap: .4rem; flex: 1; justify-content: center; }
+.session-tabs button {
+  background: transparent; border: 1px solid var(--border); color: var(--muted);
+  padding: .3rem .8rem; border-radius: 20px; cursor: pointer; font-size: .8rem; transition: all .2s;
+}
+.session-tabs button:hover, .session-tabs button.active { background: var(--cyan); color: #000; border-color: var(--cyan); font-weight: 600; }
+#slide-counter { font-size: .8rem; color: var(--muted); white-space: nowrap; }
+#progress-bar { position: fixed; top: 52px; left: 0; height: 3px; background: var(--cyan); transition: width .3s; z-index: 99; }
+#slides-container { margin-top: 52px; height: calc(100vh - 52px); overflow: hidden; position: relative; }
+.slide {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  display: none; overflow-y: auto; padding: 2.5rem 3rem;
+  animation: fadeIn .4s ease;
+}
+.slide.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: .5rem; }
+h2 { font-size: 1.6rem; font-weight: 700; margin-bottom: 1rem; color: var(--cyan); }
+h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: .6rem; color: var(--green); }
+p { line-height: 1.7; margin-bottom: .8rem; }
+.subtitle { color: var(--muted); font-size: 1.1rem; margin-bottom: 1.5rem; }
+.tag { display: inline-block; padding: .2rem .7rem; border-radius: 20px; font-size: .75rem; font-weight: 600; margin: .2rem; }
+.tag-cyan { background: rgba(0,212,255,.15); color: var(--cyan); border: 1px solid var(--cyan); }
+.tag-green { background: rgba(0,255,136,.15); color: var(--green); border: 1px solid var(--green); }
+.tag-orange { background: rgba(255,140,66,.15); color: var(--orange); border: 1px solid var(--orange); }
+.tag-purple { background: rgba(187,134,252,.15); color: var(--purple); border: 1px solid var(--purple); }
+.tag-red { background: rgba(255,51,102,.15); color: var(--red); border: 1px solid var(--red); }
+.grid { display: grid; gap: 1rem; margin: 1rem 0; }
+.grid-2 { grid-template-columns: 1fr 1fr; }
+.grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+.card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 1.2rem; transition: transform .2s;
+}
+.card:hover { transform: translateY(-2px); }
+.card.cyan { border-color: var(--cyan); }
+.card.green { border-color: var(--green); }
+.card.orange { border-color: var(--orange); }
+.card.red { border-color: var(--red); }
+.card.purple { border-color: var(--purple); }
+.card.yellow { border-color: var(--yellow); }
+.card h3 { font-size: 1rem; }
+.box-meta { background: rgba(187,134,252,.08); border: 1px solid var(--purple); border-radius: 10px; padding: 1.2rem; margin: 1rem 0; }
+.box-meta::before { content: "🧭 METÁFORA"; display: block; font-size: .7rem; font-weight: 700; color: var(--purple); margin-bottom: .5rem; letter-spacing: 1px; }
+.box-caso { background: rgba(255,140,66,.08); border: 1px solid var(--orange); border-radius: 10px; padding: 1.2rem; margin: 1rem 0; }
+.box-caso::before { content: "📰 CASO REAL"; display: block; font-size: .7rem; font-weight: 700; color: var(--orange); margin-bottom: .5rem; letter-spacing: 1px; }
+.box-lab { background: rgba(0,255,136,.08); border: 1px solid var(--green); border-radius: 10px; padding: 1.2rem; margin: 1rem 0; }
+.box-lab::before { content: "🛠 ACTIVIDAD PRÁCTICA"; display: block; font-size: .7rem; font-weight: 700; color: var(--green); margin-bottom: .5rem; letter-spacing: 1px; }
+.box-dato { background: rgba(0,212,255,.08); border: 1px solid var(--cyan); border-radius: 10px; padding: 1.2rem; margin: 1rem 0; }
+.box-dato::before { content: "💡 DATO CLAVE"; display: block; font-size: .7rem; font-weight: 700; color: var(--cyan); margin-bottom: .5rem; letter-spacing: 1px; }
+.box-quiz { background: rgba(255,214,10,.08); border: 1px solid var(--yellow); border-radius: 10px; padding: 1.2rem; margin: 1rem 0; cursor: pointer; user-select: none; }
+.box-quiz::before { content: "❓ QUIZ — haz clic para revelar"; display: block; font-size: .7rem; font-weight: 700; color: var(--yellow); margin-bottom: .5rem; letter-spacing: 1px; }
+.box-quiz .answer { display: none; margin-top: .8rem; padding-top: .8rem; border-top: 1px solid rgba(255,214,10,.3); color: var(--green); }
+.box-quiz.revealed .answer { display: block; }
+.box-reto { background: rgba(255,51,102,.08); border: 1px solid var(--red); border-radius: 10px; padding: 1.2rem; margin: 1rem 0; }
+.box-reto::before { content: "🚀 RETO DE APLICACIÓN"; display: block; font-size: .7rem; font-weight: 700; color: var(--red); margin-bottom: .5rem; letter-spacing: 1px; }
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .88rem; }
+th { background: var(--card); color: var(--cyan); padding: .6rem .8rem; text-align: left; border: 1px solid var(--border); }
+td { padding: .55rem .8rem; border: 1px solid var(--border); vertical-align: top; }
+tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+.stat-row { display: flex; gap: 1rem; margin: 1rem 0; flex-wrap: wrap; }
+.stat { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.5rem; text-align: center; flex: 1; min-width: 120px; }
+.stat .num { font-size: 2rem; font-weight: 800; color: var(--cyan); display: block; }
+.stat .lbl { font-size: .75rem; color: var(--muted); margin-top: .2rem; }
+ul, ol { padding-left: 1.5rem; margin-bottom: .8rem; }
+li { line-height: 1.7; margin-bottom: .2rem; }
+.slide-cover { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 80vh; }
+.session-header { background: linear-gradient(135deg, rgba(0,212,255,.08), rgba(0,255,136,.04)); border-radius: 16px; padding: 1.5rem 2rem; margin-bottom: 1.5rem; border: 1px solid var(--border); }
+.nav-hint { position: fixed; bottom: 1rem; right: 1rem; color: var(--muted); font-size: .75rem; }
 </style>
 </head>
 <body>
-
 <div id="navbar">
   <div class="brand">🔐 CIBER<span>SEG</span> · BLOQUE I</div>
   <div class="session-tabs">
-    <button onclick="goToSession(0)" id="tab-0">S1</button>
-    <button onclick="goToSession(1)" id="tab-1">S2</button>
-    <button onclick="goToSession(2)" id="tab-2">S3</button>
-    <button onclick="goToSession(3)" id="tab-3">S4</button>
-    <button onclick="goToSession(4)" id="tab-4">S5</button>
+    <button onclick="goToSession('s1')" id="tab-s1">S1</button>
+    <button onclick="goToSession('s2')" id="tab-s2">S2</button>
+    <button onclick="goToSession('s3')" id="tab-s3">S3</button>
+    <button onclick="goToSession('s4')" id="tab-s4">S4</button>
+    <button onclick="goToSession('s5')" id="tab-s5">S5</button>
   </div>
-  <div id="slide-counter">1 / 60</div>
+  <div id="slide-counter">1 / 1</div>
 </div>
-<div id="progress-bar" style="width:1.67%"></div>
-
+<div id="progress-bar"></div>
 <div id="slides-container">
 
 <!-- PORTADA -->
-<div class="slide active cover" data-session="0">
-  <div class="block-badge">BLOQUE I · SESIONES 1 – 5</div>
-  <h1>Fundamentos de Ciberseguridad<br>y Gestión de Riesgos Empresariales</h1>
-  <p class="subtitle">Ciberseguridad Empresarial · Seminario de Titulación · 30 horas</p>
-  <div class="sessions-grid">
-    <div class="sess-card"><div class="num">SESIÓN 1</div><div class="name">Panorama y Activos</div></div>
-    <div class="sess-card"><div class="num">SESIÓN 2</div><div class="name">Marco Normativo</div></div>
-    <div class="sess-card"><div class="num">SESIÓN 3</div><div class="name">Análisis de Riesgos</div></div>
-    <div class="sess-card"><div class="num">SESIÓN 4</div><div class="name">Gestión Estratégica</div></div>
-    <div class="sess-card"><div class="num">SESIÓN 5</div><div class="name">Pentesting</div></div>
-  </div>
-  <p style="margin-top:24px; color:var(--muted); font-size:0.82rem;">← → o barra espaciadora para navegar · Click en S1–S5 para ir a cada sesión</p>
-</div>
-
-<!-- ═══ SESIÓN 1 — PANORAMA Y ACTIVOS ═══ -->
-<div class="slide" data-session="0">
-  <h2>Sesión 1 <span style="color:var(--cyan)">— Ciberseguridad Empresarial: Panorama, Activos y Amenazas</span></h2>
-  <div class="box box-meta"><div class="box-title">🎭 METÁFORA DE APERTURA</div>
-    <p>Imagina que tu organización es una ciudad. Tiene calles (redes), edificios (servidores), ciudadanos (usuarios), tiendas (aplicaciones) y documentos valiosos en bóvedas (datos). La <strong>ciberseguridad es todo el sistema de seguridad de esa ciudad</strong>: policía, cámaras, cerraduras, leyes y cultura ciudadana. Sin entender el mapa completo, no puedes proteger nada.</p>
-  </div>
-  <div class="stat-row" style="margin-top:16px;">
-    <div class="stat"><div class="num" style="color:var(--red)">$10.5T</div><div class="lbl">Costo global del cibercrimen en 2025 (Cybersecurity Ventures)</div></div>
-    <div class="stat"><div class="num" style="color:var(--orange)">72%</div><div class="lbl">Aumento de ataques de ransomware en 2023 vs 2022</div></div>
-    <div class="stat"><div class="num" style="color:var(--cyan)">4.45M</div><div class="lbl">USD costo promedio de una brecha de datos (IBM 2023)</div></div>
-  </div>
-</div>
-
-<div class="slide" data-session="0">
-  <h2>La Tríada CIA: El Corazón de la Seguridad</h2>
-  <div class="cia-row">
-    <div class="cia-box" style="background:rgba(0,212,255,0.1);border:1px solid var(--cyan);">
-      <h3 style="color:var(--cyan)">C</h3>
-      <p style="font-size:1rem;font-weight:700;color:var(--cyan)">Confidencialidad</p>
-      <p>Solo quienes están autorizados pueden acceder a la información.</p>
-      <p style="color:var(--muted);font-size:0.8rem;margin-top:8px;">Amenaza: robo de datos, espionaje<br>Control: cifrado, IAM, clasificación</p>
+<div class="slide active" data-session="cover">
+  <div class="slide-cover">
+    <div style="font-size:4rem;margin-bottom:1rem;">🔐</div>
+    <h1 style="font-size:2.8rem;">Fundamentos de<br><span style="color:var(--cyan)">Ciberseguridad Empresarial</span></h1>
+    <p class="subtitle" style="font-size:1.2rem;margin-top:1rem;">BLOQUE I · Gestión de Riesgos Digitales · Sesiones 1–5</p>
+    <div style="margin-top:1.5rem;display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center;">
+      <span class="tag tag-cyan">30 Horas</span>
+      <span class="tag tag-green">5 Carreras</span>
+      <span class="tag tag-orange">Seminario de Titulación</span>
+      <span class="tag tag-purple">UPIICSA</span>
     </div>
-    <div class="cia-box" style="background:rgba(0,255,136,0.1);border:1px solid var(--green);">
-      <h3 style="color:var(--green)">I</h3>
-      <p style="font-size:1rem;font-weight:700;color:var(--green)">Integridad</p>
-      <p>La información no puede ser modificada sin autorización.</p>
-      <p style="color:var(--muted);font-size:0.8rem;margin-top:8px;">Amenaza: manipulación, alteración<br>Control: hashing, firma digital, logs</p>
-    </div>
-    <div class="cia-box" style="background:rgba(255,140,66,0.1);border:1px solid var(--orange);">
-      <h3 style="color:var(--orange)">A</h3>
-      <p style="font-size:1rem;font-weight:700;color:var(--orange)">Disponibilidad</p>
-      <p>Los sistemas y datos deben estar accesibles cuando se necesitan.</p>
-      <p style="color:var(--muted);font-size:0.8rem;margin-top:8px;">Amenaza: DDoS, ransomware, fallos<br>Control: redundancia, backups, BCP</p>
-    </div>
-  </div>
-  <div class="box box-quiz" onclick="this.classList.toggle('revealed')" style="margin-top:12px;"><div class="box-title">❓ QUIZ — Click para ver respuesta</div>
-    <p>Un ransomware cifra todos los archivos de una empresa y pide rescate. ¿Cuál(es) de los pilares CIA se ve(n) afectado(s)?</p>
-    <div class="quiz-answer"><strong>Disponibilidad</strong> (los archivos están cifrados, no se puede acceder) y potencialmente <strong>Confidencialidad</strong> (en el modelo double extortion, el atacante también exfiltra los datos antes de cifrarlos). La <strong>Integridad</strong> también se ve afectada si los archivos son modificados/cifrados sin autorización.</div>
-  </div>
-</div>
-
-<div class="slide" data-session="0">
-  <h2>Activos de Información: ¿Qué Hay que Proteger?</h2>
-  <div class="card-grid cols-3">
-    <div class="card cyan"><h3>Activos de Datos</h3><ul><li>Datos de clientes y empleados</li><li>Propiedad intelectual (diseños, fórmulas)</li><li>Información financiera</li><li>Correos y comunicaciones</li><li>Bases de datos operacionales</li></ul></div>
-    <div class="card orange"><h3>Activos de Software</h3><ul><li>ERP, CRM, sistemas de producción</li><li>Aplicaciones web y móviles</li><li>Sistema operativo y firmware</li><li>Código fuente propietario</li><li>Licencias y configuraciones</li></ul></div>
-    <div class="card green"><h3>Activos de Hardware</h3><ul><li>Servidores y storage</li><li>Equipos de red (switches, routers)</li><li>PLCs, HMIs, sensores</li><li>Laptops, móviles, impresoras</li><li>Infraestructura de telecomunicaciones</li></ul></div>
-  </div>
-  <div class="box box-dato" style="margin-top:12px;"><div class="box-title">💡 DATO CLAVE — Clasificación de Activos</div>
-    <p>ISO 27001 requiere un <strong>inventario completo de activos con propietario definido</strong>. Sin saber qué tienes, no puedes protegerlo. El inventario debe incluir: valor del activo, propietario, ubicación, clasificación (público/interno/confidencial/secreto) y dependencias con otros activos.</p>
-  </div>
-  <div class="box box-lab"><div class="box-title">🔬 ACTIVIDAD — Inventario de Activos</div>
-    <p>Tomar un departamento de la empresa (manufactura, administración, logística) y completar la plantilla ISO 27001 de inventario de activos: identificar los 10 activos más críticos, asignar propietario, clasificar y valorar cada uno (Alto/Medio/Bajo) por C, I y A.</p>
-  </div>
-</div>
-
-<div class="slide" data-session="0">
-  <h2>Panorama de Amenazas 2024: ¿Quién Nos Ataca?</h2>
-  <div class="card-grid cols-2">
-    <div>
-      <div class="card red" style="margin-bottom:12px;"><h3>Cibercriminales (Motivación: $$$)</h3><p>Organizaciones delictivas que lucran con ransomware, BEC, fraude. Operan como empresas con roles definidos, SLAs y soporte técnico para sus víctimas.</p></div>
-      <div class="card orange"><h3>Actores de Estado (Motivación: espionaje)</h3><p>Grupos APT patrocinados por gobiernos: Lazarus (NK), Cozy Bear (Rusia), APT41 (China). Recursos ilimitados, persistencia de meses/años, objetivos estratégicos.</p></div>
-    </div>
-    <div>
-      <div class="card purple" style="margin-bottom:12px;"><h3>Insider Threats (Motivación: variada)</h3><p>Empleados descontentos, saboteadores o accidentales. El vector más difícil de detectar. Tienen acceso legítimo y conocen los sistemas. Representan 19% de las brechas (Verizon DBIR 2023).</p></div>
-      <div class="card cyan"><h3>Hacktivistas (Motivación: ideológica)</h3><p>Anonymous, grupos de activismo digital. Objetivos: defacement, DDoS, filtración de datos para avergonzar a organizaciones. Más ruidosos que técnicamente sofisticados.</p></div>
+    <div class="stat-row" style="margin-top:2rem;max-width:800px;">
+      <div class="stat"><span class="num">$4.5M</span><span class="lbl">USD costo promedio<br>de una brecha 2023</span></div>
+      <div class="stat"><span class="num">207</span><span class="lbl">días promedio para<br>detectar un ataque</span></div>
+      <div class="stat"><span class="num">82%</span><span class="lbl">de brechas involucran<br>el factor humano</span></div>
+      <div class="stat"><span class="num">60%</span><span class="lbl">de PYMEs cierran tras<br>un ciberataque severo</span></div>
     </div>
   </div>
 </div>
 
-<div class="slide" data-session="0">
-  <h2>Top Amenazas por Sector Industrial</h2>
-  <table>
-    <tr><th>Sector</th><th>Principal Amenaza</th><th>Caso Real Reciente</th></tr>
-    <tr><td>Manufactura</td><td>Ransomware en sistemas OT/IT</td><td>Toyota (2022): planta detenida 24h por ataque a proveedor</td></tr>
-    <tr><td>Transporte/Logística</td><td>BEC + robo de datos de flota</td><td>Maersk (NotPetya 2017): $300M pérdida en 10 días</td></tr>
-    <tr><td>Automotriz</td><td>Robo de propiedad intelectual (diseños ECU)</td><td>DENSO (proveedor Toyota, 2022): datos robados por Pandora</td></tr>
-    <tr><td>Gobierno/Instituciones</td><td>Ransomware + Hacktivismo</td><td>CONTI ataca a PEMEX y múltiples organismos MX 2021-22</td></tr>
-    <tr><td>Energía</td><td>Ataques a SCADA/OT</td><td>Colonial Pipeline (2021): $4.4M rescate, escasez combustible EE.UU.</td></tr>
-    <tr><td>Financiero</td><td>Fraude API + BEC</td><td>Bancos mexicanos vía SPEI (2018): ~$15M MXN robados</td></tr>
-  </table>
-  <div class="box box-caso" style="margin-top:12px;"><div class="box-title">📰 CASO MÁS COSTOSO DE LA HISTORIA — NotPetya (2017)</div>
-    <p>Inicialmente disfrazado como ransomware, NotPetya era un wiper (destructor) de origen ruso. Destruyó datos en múltiples empresas globales. Maersk: $300M. FedEx/TNT: $400M. Merck: $870M. Total estimado: <strong>$10,000 millones USD</strong>. Vector inicial: actualización del software contable ucraniano MeDoc.</p>
+<!-- S1: SLIDE 1 — Encabezado -->
+<div class="slide" data-session="s1">
+  <div class="session-header">
+    <span class="tag tag-cyan">SESIÓN 1 · 6 HORAS</span>
+    <h2 style="margin-top:.5rem;margin-bottom:.3rem;">Ciberseguridad Empresarial: Panorama, Activos y Amenazas</h2>
+    <p class="subtitle">La triada CIA · Activos de información · Amenazas 2024 · El rol del CISO</p>
+  </div>
+  <div class="box-meta">
+    Tu organización es una <strong>ciudad</strong>. Tiene calles (redes), edificios (servidores), ciudadanos (usuarios) y bóvedas con documentos valiosos (datos). La ciberseguridad es todo el sistema de seguridad: policía, cámaras, cerraduras, leyes y cultura ciudadana. Si cualquiera falla, la ciudad entera está en riesgo.
+  </div>
+  <div class="box-dato">
+    <strong>¿Por qué te importa como profesionista?</strong> En 2024, el 73% de las empresas medianas en México reportaron al menos un incidente de ciberseguridad significativo. No es un problema solo de TI — paraliza operaciones, afecta contratos, genera multas y destruye reputación.
   </div>
 </div>
 
-<!-- ═══ SESIÓN 2 — MARCO NORMATIVO ═══ -->
-<div class="slide" data-session="1">
-  <h2>Sesión 2 <span style="color:var(--green)">— Marco Normativo y Regulatorio de la Ciberseguridad</span></h2>
-  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
-    <p>Los marcos de seguridad son como los <strong>códigos de construcción de un edificio</strong>. No te dicen exactamente qué cemento usar, sino qué estándares de resistencia debe cumplir cada elemento. Puedes construir el edificio como quieras, mientras cumpla con los requisitos del código. La auditora verifica que los cumpliste, no cómo lo hiciste.</p>
-  </div>
-  <div class="card-grid cols-3" style="margin-top:14px;">
-    <div class="card cyan"><h3>ISO/IEC 27001</h3><p>Sistema de Gestión de Seguridad de la Información (SGSI). Certificable. 93 controles en 4 categorías. Adoptado globalmente por >70,000 empresas. El estándar de referencia para ciberseguridad empresarial.</p></div>
-    <div class="card orange"><h3>NIST CSF 2.0</h3><p>Framework voluntario del gobierno de EE.UU. 6 funciones: Govern · Identify · Protect · Detect · Respond · Recover. Adoptado por sector industrial a nivel mundial. Excelente punto de partida.</p></div>
-    <div class="card green"><h3>COBIT 2019</h3><p>Framework de gobierno de TI de ISACA. Alinea TI con objetivos del negocio. Complementa ISO 27001 en la dimensión de gobierno corporativo y auditoría.</p></div>
-  </div>
-</div>
-
-<div class="slide" data-session="1">
-  <h2>ISO/IEC 27001: Anatomía del Estándar</h2>
-  <div class="card-grid cols-2">
+<!-- S1: SLIDE 2 -->
+<div class="slide" data-session="s1">
+  <h2>¿Por qué Importa a Todas las Carreras?</h2>
+  <div class="grid grid-2">
     <div class="card cyan">
-      <h3>Cláusulas del SGSI (4-10)</h3>
-      <ul>
-        <li>4: Contexto de la organización</li>
-        <li>5: Liderazgo y compromiso directivo</li>
-        <li>6: Planificación (riesgos y objetivos)</li>
-        <li>7: Soporte (recursos, competencias)</li>
-        <li>8: Operación (implementar controles)</li>
-        <li>9: Evaluación del desempeño</li>
-        <li>10: Mejora continua (no conformidades)</li>
-      </ul>
+      <h3>🏭 Ing. Industrial & Automotriz</h3>
+      <p>Líneas de producción conectadas a internet. Un ransomware paraliza toda la planta. Toyota detuvo 14 fábricas en Japón (2022) cuando un proveedor fue hackeado. Pérdida: ~$182M USD.</p>
     </div>
-    <div class="card orange">
-      <h3>Anexo A: Los 93 Controles (ISO 27002:2022)</h3>
-      <ul>
-        <li><strong>Organizacionales (37)</strong>: políticas, roles, gestión de activos</li>
-        <li><strong>Personal (8)</strong>: contratación, formación, disciplina</li>
-        <li><strong>Físicos (14)</strong>: acceso físico, equipos, escritorio limpio</li>
-        <li><strong>Tecnológicos (34)</strong>: control de acceso, criptografía, red, desarrollo seguro</li>
-      </ul>
-    </div>
-  </div>
-  <div class="box box-lab" style="margin-top:12px;"><div class="box-title">🔬 ACTIVIDAD — Diagnóstico ISO 27001</div>
-    <p>Usar el checklist de controles ISO 27001 para evaluar una organización industrial tipo: para cada control, calificar implementación (No iniciado / Parcial / Implementado / Optimizado). Identificar los 10 controles con mayor brecha y proponer acciones de cierre.</p>
-  </div>
-</div>
-
-<div class="slide" data-session="1">
-  <h2>NIST CSF 2.0: El Marco que Todos Entienden</h2>
-  <table>
-    <tr><th>Función</th><th>¿Qué significa?</th><th>Ejemplos de prácticas</th></tr>
-    <tr><td><span class="pill pill-purple">GOVERN</span></td><td>Establecer la estrategia, política y supervisión de la ciberseguridad (nueva en v2.0)</td><td>Política de seguridad, roles CISO, tolerancia al riesgo</td></tr>
-    <tr><td><span class="pill pill-cyan">IDENTIFY</span></td><td>Entender activos, riesgos y exposición del negocio</td><td>Inventario de activos, análisis de riesgos, mapa de dependencias</td></tr>
-    <tr><td><span class="pill pill-green">PROTECT</span></td><td>Implementar controles para limitar el impacto de un incidente</td><td>IAM, cifrado, hardening, formación, gestión de cambios</td></tr>
-    <tr><td><span class="pill pill-orange">DETECT</span></td><td>Identificar la ocurrencia de un evento de ciberseguridad</td><td>SIEM, IDS/IPS, monitoreo continuo, anomalías de comportamiento</td></tr>
-    <tr><td><span class="pill pill-red">RESPOND</span></td><td>Tomar acciones respecto a un incidente detectado</td><td>Plan de respuesta, comunicación de crisis, análisis forense</td></tr>
-    <tr><td><span class="pill pill-green">RECOVER</span></td><td>Restaurar capacidades afectadas por el incidente</td><td>BCP, DRP, mejoras post-incidente, resiliencia</td></tr>
-  </table>
-</div>
-
-<div class="slide" data-session="1">
-  <h2>PCI-DSS, GDPR y LFPDPPP</h2>
-  <div class="card-grid cols-3">
-    <div class="card red">
-      <h3>PCI-DSS v4.0</h3>
-      <p>Payment Card Industry Data Security Standard. Obligatorio para cualquier empresa que procese tarjetas de crédito/débito. 12 requisitos de seguridad.</p>
-      <p style="margin-top:8px;color:var(--muted);font-size:0.8rem;">Incumplimiento: multas de $5,000-$100,000/mes + pérdida del derecho a procesar tarjetas.</p>
-    </div>
-    <div class="card orange">
-      <h3>GDPR (Europa)</h3>
-      <p>General Data Protection Regulation. Aplica si tu empresa trata datos de ciudadanos europeos, aunque operes en México. 72h para notificar brechas.</p>
-      <p style="margin-top:8px;color:var(--muted);font-size:0.8rem;">Multas: hasta €20M o 4% de ingresos globales anuales.</p>
-    </div>
-    <div class="card cyan">
-      <h3>LFPDPPP (México)</h3>
-      <p>Ley Federal de Protección de Datos Personales en Posesión de los Particulares. Derechos ARCO: Acceso, Rectificación, Cancelación, Oposición.</p>
-      <p style="margin-top:8px;color:var(--muted);font-size:0.8rem;">Autoridad: INAI. Multas hasta 320,000 días de salario mínimo.</p>
-    </div>
-  </div>
-  <div class="box box-dato" style="margin-top:12px;"><div class="box-title">💡 DATO CLAVE — Compliance ≠ Seguridad</div>
-    <p>Cumplir un estándar no significa estar seguro. Puedes tener el 100% de controles ISO 27001 implementados en papel pero con una cultura de seguridad pobre que los hace inefectivos. El cumplimiento es el <em>mínimo</em>, no el objetivo.</p>
-  </div>
-</div>
-
-<!-- ═══ SESIÓN 3 — ANÁLISIS DE RIESGOS ═══ -->
-<div class="slide" data-session="2">
-  <h2>Sesión 3 <span style="color:var(--orange)">— Análisis de Riesgos de Ciberseguridad</span></h2>
-  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
-    <p>Gestionar el riesgo es como manejar en carretera de noche. No puedes ver cada obstáculo con anticipación, pero puedes: <strong>conocer el camino</strong> (inventario de activos), <strong>ajustar la velocidad</strong> (controles proporcionales al riesgo) y tener el <strong>seguro del coche</strong> (transferencia del riesgo). Quien maneja a ciegas sin entender el camino, tarde o temprano tiene un accidente.</p>
-  </div>
-  <div class="card-grid cols-3" style="margin-top:14px;">
-    <div class="card red"><h3>Amenaza</h3><p>Evento potencial con capacidad de causar daño. No puedes controlarla directamente. Ejemplos: grupo de ransomware activo, empleado descontento, terremoto.</p></div>
-    <div class="card orange"><h3>Vulnerabilidad</h3><p>Debilidad que puede ser explotada por una amenaza. Sí puedes reducirla con controles. Ejemplos: servidor sin parches, contraseña débil, puerto abierto.</p></div>
-    <div class="card green"><h3>Riesgo</h3><p>Probabilidad × Impacto de que una amenaza explote una vulnerabilidad. El objetivo es <em>gestionar el riesgo</em>, no eliminarlo (imposible).</p></div>
-  </div>
-</div>
-
-<div class="slide" data-session="2">
-  <h2>Análisis Cuantitativo: ALE, ARO y SLE</h2>
-  <div class="box box-dato"><div class="box-title">💡 FÓRMULAS CLAVE</div>
-    <p style="font-size:1rem;"><strong style="color:var(--cyan);">SLE</strong> (Single Loss Expectancy) = Valor del Activo × Factor de Exposición (EF)</p>
-    <p style="font-size:1rem;margin-top:8px;"><strong style="color:var(--orange);">ARO</strong> (Annualized Rate of Occurrence) = Frecuencia esperada del evento por año</p>
-    <p style="font-size:1rem;margin-top:8px;"><strong style="color:var(--green);">ALE</strong> (Annual Loss Expectancy) = SLE × ARO</p>
-  </div>
-  <div class="card-grid cols-1" style="margin-top:14px;">
-    <div class="card cyan">
-      <h3>Ejemplo Práctico — Empresa Manufacturera</h3>
-      <p>Activo: Base de datos de diseños de producto. Valor: $2,000,000 MXN</p>
-      <p>Amenaza: Ransomware. Factor de Exposición: 40% (esperamos perder el 40% del valor)</p>
-      <p><strong>SLE</strong> = $2,000,000 × 0.40 = <span style="color:var(--orange)">$800,000 MXN</span></p>
-      <p>ARO: basado en estadísticas del sector = 0.25 (un ataque exitoso cada 4 años)</p>
-      <p><strong>ALE</strong> = $800,000 × 0.25 = <span style="color:var(--red)">$200,000 MXN/año</span></p>
-      <p style="margin-top:8px;color:var(--muted);font-size:0.85rem;">Si un control cuesta $80,000/año y reduce el ARO a 0.05, el nuevo ALE = $40,000. Ahorro = $160,000/año. ROI positivo del control.</p>
-    </div>
-  </div>
-</div>
-
-<div class="slide" data-session="2">
-  <h2>Metodología FRAP: Análisis de Riesgos Facilitado</h2>
-  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
-    <p>FRAP (Facilitated Risk Analysis Process, Peltier) es como una <strong>lluvia de ideas estructurada con expertos del negocio</strong>. No necesitas ser un matemático: reúnes a las personas que conocen el proceso, les haces las preguntas correctas y construyes la matriz de riesgos juntos. El resultado es más rico que cualquier análisis hecho por un solo experto externo.</p>
-  </div>
-  <ul class="timeline" style="margin-top:14px;">
-    <li><div class="step cyan">1</div><div class="content"><h4>Pre-FRAP</h4><p>Definir alcance, seleccionar participantes (dueños de proceso + IT + seguridad), preparar materiales y entorno</p></div></li>
-    <li><div class="step orange">2</div><div class="content"><h4>Sesión FRAP</h4><p>Workshop facilitado (½ día a 1 día): identificar activos → amenazas → vulnerabilidades → impacto → probabilidad</p></div></li>
-    <li><div class="step green">3</div><div class="content"><h4>Análisis</h4><p>Construir la matriz de riesgos: calcular nivel de riesgo (Alto/Medio/Bajo), priorizar top riesgos</p></div></li>
-    <li><div class="step purple">4</div><div class="content"><h4>Controles</h4><p>Para cada riesgo alto: proponer controles, responsable, fecha. Construir el plan de tratamiento</p></div></li>
-    <li><div class="step red">5</div><div class="content"><h4>Reporte Final</h4><p>Documento ejecutivo con hallazgos, riesgos priorizados, plan de acción y costos estimados</p></div></li>
-  </ul>
-</div>
-
-<div class="slide" data-session="2">
-  <h2>Matriz de Riesgos: Del Caos al Control</h2>
-  <table>
-    <tr><th>Amenaza</th><th>Activo</th><th>Probabilidad</th><th>Impacto</th><th>Riesgo</th><th>Control Propuesto</th></tr>
-    <tr><td>Ransomware vía phishing</td><td>Servidores de producción</td><td>Alta</td><td>Crítico</td><td><span class="pill pill-red">CRÍTICO</span></td><td>EDR + backup offline + segmentación + training</td></tr>
-    <tr><td>Acceso no autorizado remoto</td><td>SCADA/PLCs</td><td>Media</td><td>Crítico</td><td><span class="pill pill-red">ALTO</span></td><td>VPN + MFA + monitoreo OT + segmentación</td></tr>
-    <tr><td>Robo de credenciales</td><td>ERP (datos financieros)</td><td>Alta</td><td>Alto</td><td><span class="pill pill-orange">ALTO</span></td><td>MFA + PAM + detección de comportamiento anómalo</td></tr>
-    <tr><td>Insider malicioso</td><td>IP/diseños de producto</td><td>Baja</td><td>Crítico</td><td><span class="pill pill-orange">MEDIO-ALTO</span></td><td>DLP + mínimo privilegio + monitoreo de actividad</td></tr>
-    <tr><td>Servidor sin parches</td><td>Servidor web público</td><td>Alta</td><td>Medio</td><td><span class="pill pill-orange">MEDIO</span></td><td>Gestión de vulnerabilidades + WAF</td></tr>
-  </table>
-</div>
-
-<!-- ═══ SESIÓN 4 — GESTIÓN ESTRATÉGICA ═══ -->
-<div class="slide" data-session="3">
-  <h2>Sesión 4 <span style="color:var(--purple)">— Gestión Estratégica del Riesgo Cibernético</span></h2>
-  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
-    <p>La gestión estratégica del riesgo es como el <strong>tablero de control de un capitán de barco</strong>. No puedes controlar las tormentas (amenazas), pero puedes elegir la ruta (estrategia), monitorear el clima (KRIs), mantener el barco en buen estado (controles) y tener salvavidas a bordo (seguros). Un capitán sin tablero de control navega a ciegas.</p>
-  </div>
-  <div class="card-grid cols-2" style="margin-top:14px;">
-    <div class="card purple">
-      <h3>Ciclo PDCA del Riesgo</h3>
-      <ul>
-        <li><strong>Plan (Planear)</strong>: identificar riesgos, definir controles</li>
-        <li><strong>Do (Hacer)</strong>: implementar controles, capacitar</li>
-        <li><strong>Check (Verificar)</strong>: monitorear, auditar, medir KPIs</li>
-        <li><strong>Act (Actuar)</strong>: mejorar, actualizar el análisis, ajustar</li>
-      </ul>
-    </div>
-    <div class="card orange">
-      <h3>4 Respuestas al Riesgo</h3>
-      <ul>
-        <li><strong>Mitigar</strong>: implementar controles para reducir probabilidad/impacto</li>
-        <li><strong>Transferir</strong>: seguros, contratos, tercerizar responsabilidad</li>
-        <li><strong>Aceptar</strong>: riesgo residual consciente, documentado y aprobado por dirección</li>
-        <li><strong>Evitar</strong>: eliminar la actividad que genera el riesgo</li>
-      </ul>
-    </div>
-  </div>
-</div>
-
-<div class="slide" data-session="3">
-  <h2>KPIs y KRIs de Ciberseguridad</h2>
-  <div class="card-grid cols-2">
-    <div class="card cyan">
-      <h3>KPIs — Indicadores de Desempeño</h3>
-      <p>Miden si el programa de seguridad está funcionando bien:</p>
-      <ul>
-        <li>% activos críticos con parches aplicados en &lt;72h</li>
-        <li>% empleados capacitados en seguridad</li>
-        <li>Tiempo promedio de respuesta a incidentes (MTTR)</li>
-        <li>% controles ISO 27001 implementados</li>
-        <li>% usuarios con MFA activo</li>
-      </ul>
-    </div>
-    <div class="card red">
-      <h3>KRIs — Indicadores de Riesgo (Alarmas)</h3>
-      <p>Señalan que el riesgo está aumentando antes de que ocurra el incidente:</p>
-      <ul>
-        <li># de vulnerabilidades críticas sin parchear</li>
-        <li># de intentos de acceso fallidos fuera de horario</li>
-        <li># empleados sin capacitación en los últimos 6 meses</li>
-        <li>Incremento en volumen de tráfico saliente inusual</li>
-        <li># de dispositivos no autorizados conectados a la red</li>
-      </ul>
-    </div>
-  </div>
-  <div class="box box-dato" style="margin-top:12px;"><div class="box-title">💡 DATO CLAVE — Dashboard Ejecutivo</div>
-    <p>El CISO presenta mensualmente al Comité de Seguridad un <strong>dashboard de máximo 7 métricas</strong>: 3-4 KPIs de desempeño + 2-3 KRIs de alerta. Más de 7 métricas y la dirección deja de prestar atención. Menos de 3 y no hay suficiente información para tomar decisiones.</p>
-  </div>
-</div>
-
-<div class="slide" data-session="3">
-  <h2>El Presupuesto de Seguridad: Cómo Justificarlo</h2>
-  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
-    <p>Pedir presupuesto de seguridad sin argumentos financieros es como pedir a tu seguro de gastos médicos que pague el gimnasio sin evidencia de que te mantiene sano. El CFO quiere ver: <strong>¿cuánto arriesgamos sin este gasto? ¿Cuánto reduce ese gasto nuestra pérdida esperada?</strong></p>
-  </div>
-  <div class="card-grid cols-3" style="margin-top:14px;">
     <div class="card green">
-      <h3>Benchmark de Gasto</h3>
-      <p>Industria: <strong>5-15% del presupuesto de TI</strong> en seguridad (Gartner). Sector financiero: hasta 20%. Manufactura: 7-10%. Como % de ingresos: 0.2-0.9%.</p>
-    </div>
-    <div class="card cyan">
-      <h3>ROSI: ROI de Seguridad</h3>
-      <p>ROSI = (ALE sin control – ALE con control – Costo del control) / Costo del control × 100</p>
-      <p style="margin-top:8px;font-size:0.82rem;color:var(--muted);">Si ROSI &gt; 0% el control es financieramente justificado. ROSI del 200% = por cada $1 gastado, se evitan $3 de pérdida.</p>
+      <h3>🚛 Ing. Transporte</h3>
+      <p>Plataformas GPS, manifiestos digitales, sistemas de rastreo. Si los datos de rutas o carga son comprometidos: impacto operativo, legal y reputacional. Maersk perdió $300M con NotPetya en 2017.</p>
     </div>
     <div class="card orange">
-      <h3>Ciberseguros</h3>
-      <ul>
-        <li>Coberturas: rescates ransomware, costos forenses, notificación, litigios</li>
-        <li>Exclusiones: estado de guerra, mala práctica deliberada</li>
-        <li>Requisito: nivel mínimo de controles para obtener cobertura</li>
-        <li>Tendencia: primas +50% anual desde 2020</li>
+      <h3>💻 Ing. Informática</h3>
+      <p>Los sistemas que diseñas y administras son el objetivo directo. Sin arquitectura segura, todas las demás áreas quedan expuestas. Eres el guardián de la infraestructura digital.</p>
+    </div>
+    <div class="card purple">
+      <h3>📊 Adm. Industrial</h3>
+      <p>Los datos de clientes, contratos, salarios y procesos son activos críticos. Los fraudes BEC (Business Email Compromise) atacan especialmente a finanzas y administración. Promedio perdido 2023: $125,000 USD por incidente.</p>
+    </div>
+  </div>
+</div>
+
+<!-- S1: SLIDE 3 -->
+<div class="slide" data-session="s1">
+  <h2>La Tríada CIA — El Corazón de la Ciberseguridad</h2>
+  <div class="grid grid-3">
+    <div class="card cyan" style="text-align:center;">
+      <div style="font-size:2.5rem;">🔒</div>
+      <h3 style="color:var(--cyan);font-size:1.1rem;margin-top:.5rem;">CONFIDENCIALIDAD</h3>
+      <p style="font-size:.88rem;">Solo quien debe ver la información, puede verla.</p>
+      <p style="font-size:.82rem;color:var(--muted);">Metáfora: el sobre sellado. Solo el destinatario lo abre.</p>
+      <p style="font-size:.85rem;">Riesgo: espionaje industrial, robo de datos, fuga de secretos comerciales.</p>
+    </div>
+    <div class="card green" style="text-align:center;">
+      <div style="font-size:2.5rem;">✅</div>
+      <h3 style="color:var(--green);font-size:1.1rem;margin-top:.5rem;">INTEGRIDAD</h3>
+      <p style="font-size:.88rem;">La información no ha sido modificada sin autorización.</p>
+      <p style="font-size:.82rem;color:var(--muted);">Metáfora: el sello de seguridad en medicamentos. Si está roto, algo lo tocó.</p>
+      <p style="font-size:.85rem;">Riesgo: facturas alteradas, contratos modificados, datos de producción manipulados.</p>
+    </div>
+    <div class="card orange" style="text-align:center;">
+      <div style="font-size:2.5rem;">⚡</div>
+      <h3 style="color:var(--orange);font-size:1.1rem;margin-top:.5rem;">DISPONIBILIDAD</h3>
+      <p style="font-size:.88rem;">Los sistemas están accesibles cuando se necesitan.</p>
+      <p style="font-size:.82rem;color:var(--muted);">Metáfora: el cajero 24/7. Si falla, nadie puede retirar dinero.</p>
+      <p style="font-size:.85rem;">Riesgo: ransomware que paraliza operaciones, ataques DDoS a plataformas críticas.</p>
+    </div>
+  </div>
+  <div class="box-dato">
+    El ransomware afecta <strong>los tres pilares</strong>: cifra (confidencialidad rota), modifica (integridad comprometida) y bloquea acceso (disponibilidad destruida). Es el ataque más devastador porque destruye todo a la vez.
+  </div>
+</div>
+
+<!-- S1: SLIDE 4 -->
+<div class="slide" data-session="s1">
+  <h2>Activos de Información — ¿Qué Protegemos?</h2>
+  <table>
+    <tr><th>Tipo</th><th>Manufactura/Industrial</th><th>Transporte</th><th>Automotriz</th><th>Administración</th></tr>
+    <tr><td><strong>Datos</strong></td><td>Fórmulas, contratos, nómina</td><td>Rutas, manifiestos, contratos</td><td>Planos ECU, especificaciones, pruebas</td><td>Clientes, finanzas, estrategia</td></tr>
+    <tr><td><strong>Sistemas</strong></td><td>ERP, MES, SCADA</td><td>TMS, GPS, plataforma clientes</td><td>PLM, sistemas de prueba, VIN DB</td><td>CRM, ERP, herramientas de BI</td></tr>
+    <tr><td><strong>Infraestructura</strong></td><td>Servidores, PLCs, red industrial</td><td>Servidores, comunicación cabina</td><td>Red ingeniería, equipos CAD</td><td>Servidores, PCs, nube</td></tr>
+    <tr><td><strong>Personas</strong></td><td>Operadores SCADA, admins ERP</td><td>Despachadores, admins sistema</td><td>Ingenieros con acceso a planos</td><td>Finanzas, RH, dirección</td></tr>
+  </table>
+  <div class="box-dato">
+    <strong>Clasificación:</strong> Pública → Interna (solo empleados) → Confidencial (necesidad de saber) → Restringida (acceso muy limitado). La clasificación define qué controles aplicas. Sin clasificar, todo recibe el mismo nivel de protección (insuficiente para lo crítico, excesivo para lo público).
+  </div>
+</div>
+
+<!-- S1: SLIDE 5 -->
+<div class="slide" data-session="s1">
+  <h2>Panorama de Amenazas 2024 — Para el Gerente, No el Técnico</h2>
+  <div class="grid grid-2">
+    <div class="card red">
+      <h3>🔒 Ransomware — El Secuestro Digital</h3>
+      <p>Cifra todos tus archivos y pide rescate. Grupos activos en México 2024: LockBit, Black Basta, Akira. Rescate promedio global 2023: $1.5M USD. Muchas empresas pagan y aun así no recuperan sus datos.</p>
+    </div>
+    <div class="card orange">
+      <h3>🎣 Phishing — El Anzuelo Digital</h3>
+      <p>Correo falso que parece legítimo (el SAT, tu banco, un proveedor conocido). El empleado hace clic y entrega su contraseña o instala malware. 1 de cada 3 empleados cae en un phishing simulado (Verizon DBIR 2024).</p>
+    </div>
+    <div class="card yellow">
+      <h3>💼 BEC — El Fraude del CEO</h3>
+      <p>Correo que suplanta al CEO ordenando una transferencia urgente y confidencial. Las empresas pierden $50B anuales globalmente. En México, manufactura y distribución son los más afectados. Promedio: $125,000 USD por caso.</p>
+    </div>
+    <div class="card purple">
+      <h3>🔗 Supply Chain — El Eslabón Débil</h3>
+      <p>En lugar de atacar a tu empresa directamente, comprometen a tu proveedor de software o servicios. SolarWinds (2020) afectó a 18,000 organizaciones así, incluyendo agencias del gobierno de EEUU.</p>
+    </div>
+  </div>
+</div>
+
+<!-- S1: SLIDE 6 -->
+<div class="slide" data-session="s1">
+  <h2>Casos Reales — La Ciberseguridad Tiene Nombre y Apellido</h2>
+  <div class="box-caso">
+    <strong>Toyota — Febrero 2022.</strong> Kojima Industries (proveedor de plásticos y componentes) fue atacado con ransomware. Toyota no fue atacada directamente, pero su sistema "just-in-time" era tan dependiente de ese proveedor que detuvo las 14 plantas de Japón por 24 horas. ~13,000 vehículos no producidos. Lección: la seguridad de tu empresa depende de la seguridad de toda tu cadena de suministro.
+  </div>
+  <div class="box-caso">
+    <strong>PEMEX — Noviembre 2019.</strong> El ransomware Ryuk cifró miles de equipos y pidió $4.9M USD de rescate. PEMEX decidió no pagar, pero las operaciones administrativas quedaron paralizadas días. Pérdida estimada: $70M USD en costos de recuperación. Lección: incluso las empresas más grandes del país pueden ser paralizadas.
+  </div>
+  <div class="box-caso">
+    <strong>DENSO (proveedor automotriz) — Marzo 2022.</strong> El grupo Pandora robó 1.4TB de datos de la subsidiaria alemana. Planos de piezas, especificaciones y contratos de OEMs globales quedaron expuestos. Lección: los proveedores Tier 1 de automotriz son un objetivo de alto valor para el espionaje industrial.
+  </div>
+</div>
+
+<!-- S1: SLIDE 7 — Actividad + Quiz + Reto -->
+<div class="slide" data-session="s1">
+  <h2>Actividad · Quiz · Reto — Sesión 1</h2>
+  <div class="box-lab">
+    <strong>Actividad: Inventario de Activos (45 min).</strong> En equipos por sector: completar una tabla con 15 activos de información de una empresa tipo de su carrera. Para cada activo: nombre, tipo (datos/sistema/infraestructura/persona), propietario del área, impacto en CIA (alto/medio/bajo por pilar), clasificación. Al terminar, identificar los 3 activos más críticos y justificar por qué merecen más protección. Presentar en 3 minutos.
+  </div>
+  <div class="box-quiz" onclick="this.classList.toggle('revealed')">
+    <strong>Pregunta:</strong> Un ransomware cifra todos los archivos de la empresa y pide rescate. ¿Cuál(es) de los 3 pilares CIA afecta? ¿Y si adicionalmente el atacante amenaza con publicar los archivos si no pagan?
+    <div class="answer">
+      ✅ <strong>El ransomware afecta los 3 pilares:</strong> DISPONIBILIDAD (no puedes acceder a los archivos), INTEGRIDAD (los archivos fueron modificados por el cifrado) y si amenaza con publicarlos: también CONFIDENCIALIDAD. Es el ataque más devastador porque destruye los 3 pilares simultáneamente.
+    </div>
+  </div>
+  <div class="box-reto">
+    <strong>Reto:</strong> La empresa manufacturera fue atacada con ransomware a las 2am del lunes. El CEO llega a las 7am y te llama. Tienes 2 minutos para explicarle: qué pasó (en términos de negocio, no técnicos), cuál es el impacto en operaciones, y los 3 pasos inmediatos que ya están en curso. No uses jerga técnica — el CEO no es ingeniero.
+  </div>
+</div>
+
+<!-- S2: SLIDE 1 — Encabezado -->
+<div class="slide" data-session="s2">
+  <div class="session-header">
+    <span class="tag tag-green">SESIÓN 2 · 6 HORAS</span>
+    <h2 style="margin-top:.5rem;margin-bottom:.3rem;">Marco Normativo y Regulatorio de la Ciberseguridad</h2>
+    <p class="subtitle">ISO 27001 · NIST CSF 2.0 · LFPDPPP · GDPR · Compliance vs Seguridad Real</p>
+  </div>
+  <div class="box-meta">
+    Los marcos de seguridad son como los <strong>códigos de construcción de un edificio</strong>. No te dicen qué cemento usar, sino qué resistencia debe cumplir cada elemento. Puedes construir como quieras, siempre que cumplas el código. La auditora verifica que los cumpliste, no cómo lo hiciste. <em>Compliance ≠ Seguridad real</em>.
+  </div>
+</div>
+
+<!-- S2: SLIDE 2 -->
+<div class="slide" data-session="s2">
+  <h2>ISO/IEC 27001:2022 — La Certificación de Oro</h2>
+  <div class="grid grid-2">
+    <div>
+      <h3>¿Qué es un SGSI?</h3>
+      <p>Un <strong>Sistema de Gestión de Seguridad de la Información</strong> es el conjunto de políticas, procesos, personas y controles que trabajan juntos para proteger la información. Como el ISO 9001 de calidad, pero aplicado a la seguridad de la información.</p>
+      <h3 style="margin-top:.8rem;">Las 10 Cláusulas en Simple</h3>
+      <ol style="font-size:.88rem;">
+        <li>Alcance — qué protegemos</li>
+        <li>Contexto — quiénes somos y qué nos rodea</li>
+        <li>Liderazgo — el CEO debe comprometerse explícitamente</li>
+        <li>Planificación — identificar riesgos y objetivos de seguridad</li>
+        <li>Apoyo — recursos, competencias, comunicación</li>
+        <li>Operación — implementar los controles del Anexo A</li>
+        <li>Evaluación — medir si los controles funcionan</li>
+        <li>Mejora — corregir lo que falla, ciclo continuo</li>
+        <li>+ 93 Controles en 4 grupos (Anexo A de la norma)</li>
+      </ol>
+    </div>
+    <div class="card cyan">
+      <h3>¿Qué significa obtener ISO 27001?</h3>
+      <ul style="font-size:.88rem;">
+        <li>Proceso: 12-18 meses para primera certificación</li>
+        <li>Costo empresa mediana: $200,000-$600,000 MXN</li>
+        <li>Auditores externos certificados verifican tu SGSI</li>
+        <li>Renovación cada 3 años + auditorías anuales</li>
+      </ul>
+      <h3 style="margin-top:.8rem;">Beneficios Tangibles</h3>
+      <ul style="font-size:.88rem;">
+        <li>✅ Requisito para contratar con gobierno y grandes corporativos</li>
+        <li>✅ Reduce primas de ciberseguro hasta 30%</li>
+        <li>✅ Diferenciador competitivo con clientes internacionales</li>
+        <li>✅ Marco estructurado para gestionar riesgos de forma continua</li>
+      </ul>
+      <div class="box-dato" style="margin:.8rem 0 0;">
+        Empresas con ISO 27001 en México: Telcel, BBVA, Telmex, SAP México, múltiples hospitales privados y empresas de manufactura que exportan a Europa.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S2: SLIDE 3 -->
+<div class="slide" data-session="s2">
+  <h2>NIST Cybersecurity Framework 2.0 — El Framework para Todos</h2>
+  <table>
+    <tr><th>Función</th><th>Pregunta Clave</th><th>Ejemplo en Empresa</th></tr>
+    <tr><td><strong style="color:var(--purple)">GOVERN</strong></td><td>¿Quién decide y cómo se gobierna la seguridad?</td><td>Comité de Seguridad trimestral; CISO reporta al CEO</td></tr>
+    <tr><td><strong style="color:var(--cyan)">IDENTIFY</strong></td><td>¿Qué activos tenemos y qué riesgos enfrentamos?</td><td>Inventario de sistemas, análisis de riesgos anual, mapeo de cadena de suministro</td></tr>
+    <tr><td><strong style="color:var(--green)">PROTECT</strong></td><td>¿Cómo evitamos que los ataques ocurran?</td><td>MFA habilitado, empleados capacitados, sistemas actualizados, accesos controlados</td></tr>
+    <tr><td><strong style="color:var(--yellow)">DETECT</strong></td><td>¿Cómo sabemos si algo malo está pasando?</td><td>SIEM monitoreando 24/7, alertas de comportamiento anormal</td></tr>
+    <tr><td><strong style="color:var(--orange)">RESPOND</strong></td><td>¿Qué hacemos cuando ocurre un incidente?</td><td>Plan de respuesta documentado, equipo CSIRT entrenado</td></tr>
+    <tr><td><strong style="color:var(--red)">RECOVER</strong></td><td>¿Cómo volvemos a operar normalmente?</td><td>Backups probados, plan de recuperación de desastres, lecciones aprendidas</td></tr>
+  </table>
+  <div class="box-dato">
+    <strong>Framework vs Estándar:</strong> El NIST CSF es una <em>guía</em> — te dice qué hacer pero no certifica. ISO 27001 es un <em>estándar certificable</em>. Muchas empresas usan el NIST CSF para organizarse primero y luego buscan la certificación ISO 27001.
+  </div>
+</div>
+
+<!-- S2: SLIDE 4 -->
+<div class="slide" data-session="s2">
+  <h2>LFPDPPP — La Ley de Privacidad que Aplica a Tu Empresa Hoy</h2>
+  <div class="grid grid-2">
+    <div>
+      <h3>¿A quién aplica?</h3>
+      <p>A <strong>TODAS las empresas privadas en México</strong> que traten datos personales — lo que significa casi todas.</p>
+      <h3 style="margin-top:.8rem;">Derechos ARCO de tus Clientes y Empleados</h3>
+      <div class="card purple">
+        <ul style="font-size:.88rem;">
+          <li><strong>A</strong>cceso: derecho a saber qué datos tienes de ellos</li>
+          <li><strong>R</strong>ectificación: derecho a corregir datos incorrectos</li>
+          <li><strong>C</strong>ancelación: derecho a que borres sus datos</li>
+          <li><strong>O</strong>posición: derecho a que no los uses para ciertos fines</li>
+        </ul>
+      </div>
+      <div class="box-dato" style="margin-top:.8rem;">
+        <strong>Multas del INAI:</strong> Hasta 320,000 veces el UMA ≈ $280M MXN máximo (2024). Casos reales en México: hospitales, aerolíneas, empresas de telecomunicaciones y financieras han sido sancionadas.
+      </div>
+    </div>
+    <div>
+      <h3>Obligaciones Mínimas</h3>
+      <ul style="font-size:.88rem;">
+        <li>Aviso de privacidad disponible y actualizado</li>
+        <li>Consentimiento del titular para usar sus datos</li>
+        <li>Medidas de seguridad proporcionales al riesgo</li>
+        <li>Notificar brechas "sin dilación" al INAI</li>
+        <li>Responder solicitudes ARCO en 20 días hábiles</li>
+      </ul>
+      <h3 style="margin-top:.8rem;">GDPR — Cuando También Aplica a Ti</h3>
+      <ul style="font-size:.88rem;">
+        <li>Si tienes clientes, empleados o proveedores europeos</li>
+        <li>Multas: hasta €20M o 4% de facturación global anual</li>
+        <li>72 horas para notificar una brecha (más estricto)</li>
+        <li>Aplica a exportadoras y empresas con operaciones internacionales</li>
       </ul>
     </div>
   </div>
 </div>
 
-<!-- ═══ SESIÓN 5 — PENTESTING ═══ -->
-<div class="slide" data-session="4">
-  <h2>Sesión 5 <span style="color:var(--red)">— Evaluación de Vulnerabilidades y Pruebas de Penetración</span></h2>
-  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
-    <p>Un pentest es contratar a un <strong>ladrón profesional para que intente robar tu propio banco antes de que llegue el ladrón real</strong>. Si el ladrón profesional entra, te dice cómo y lo cierras. Mejor descubrirlo en un ejercicio controlado que durante el asalto de verdad. La diferencia: este ladrón tiene contrato, límites y te da el reporte.</p>
+<!-- S2: SLIDE 5 — Actividad + Quiz + Reto -->
+<div class="slide" data-session="s2">
+  <h2>Actividad · Quiz · Reto — Sesión 2</h2>
+  <div class="box-lab">
+    <strong>Actividad: Diagnóstico ISO 27001 Simplificado (60 min).</strong> En equipos por sector: aplicar un checklist de 20 preguntas clave de ISO 27001 simplificado a una empresa tipo de su carrera. Identificar las 5 brechas más graves. Para cada brecha: control faltante → acción concreta → área responsable → tiempo estimado → costo aproximado. Presentar en 3 minutos al grupo.
   </div>
-  <div class="card-grid cols-3" style="margin-top:14px;">
-    <div class="card cyan"><h3>Vulnerability Assessment</h3><p>Escaneo automatizado de vulnerabilidades conocidas. Identifica qué CVEs existen en el sistema. NO las explota. Rápido, frecuente, automatizable.</p></div>
-    <div class="card orange"><h3>Penetration Testing</h3><p>Simulación de ataque real: el analista EXPLOTA vulnerabilidades para demostrar el impacto real. Manual + automatizado. Más profundo y costoso.</p></div>
-    <div class="card red"><h3>Red Team Exercise</h3><p>Simulación completa de ataque avanzado (APT): reconocimiento OSINT + phishing + explotación + persistencia + exfiltración. Meses de duración, máxima profundidad.</p></div>
+  <div class="box-quiz" onclick="this.classList.toggle('revealed')">
+    <strong>Pregunta:</strong> Una empresa mexicana vende productos a clientes en Alemania y España. ¿Le aplica la LFPDPPP, el GDPR, o ambos? ¿Cuál es más estricto en caso de brecha de datos?
+    <div class="answer">
+      ✅ <strong>Ambos aplican.</strong> LFPDPPP porque opera en México. GDPR porque trata datos de residentes europeos. El GDPR es más estricto: 72h para notificar brechas vs "sin dilación" indefinida de LFPDPPP, derechos adicionales como portabilidad de datos, multas potencialmente más altas (4% de facturación global).
+    </div>
   </div>
-</div>
-
-<div class="slide" data-session="4">
-  <h2>Las 5 Fases del Pentest</h2>
-  <ul class="timeline">
-    <li><div class="step cyan">1</div><div class="content"><h4>Reconocimiento (Recon)</h4><p>Recopilación de información sin interactuar con el objetivo: OSINT (Shodan, LinkedIn, WHOIS), análisis de DNS, búsqueda de credenciales filtradas en dark web.</p></div></li>
-    <li><div class="step orange">2</div><div class="content"><h4>Escaneo y Enumeración</h4><p>Identificar hosts activos (Nmap), puertos abiertos, servicios, versiones de SO y aplicaciones. Mapear la superficie de ataque.</p></div></li>
-    <li><div class="step red">3</div><div class="content"><h4>Explotación</h4><p>Intentar comprometer el sistema usando vulnerabilidades identificadas. Herramientas: Metasploit, exploits manuales, ataques de credenciales. Requiere autorización escrita.</p></div></li>
-    <li><div class="step purple">4</div><div class="content"><h4>Post-Explotación</h4><p>Una vez dentro: movimiento lateral, escalada de privilegios, acceso a datos sensibles. Demostrar el impacto real del compromiso.</p></div></li>
-    <li><div class="step green">5</div><div class="content"><h4>Reporte</h4><p>Documento con hallazgos, severidad (CVSS), evidencias, impacto y recomendaciones. Versión técnica + versión ejecutiva.</p></div></li>
-  </ul>
-</div>
-
-<div class="slide" data-session="4">
-  <h2>Tipos de Pentest y Herramientas</h2>
-  <div class="card-grid cols-3">
-    <div class="card cyan"><h3>Caja Negra (Black Box)</h3><p>El auditor no tiene información previa. Simula un atacante externo real. Más realista, más costoso, puede perderse cosas sin acceso interno.</p></div>
-    <div class="card orange"><h3>Caja Blanca (White Box)</h3><p>Acceso completo: código fuente, diagramas, credenciales. Más eficiente, encuentra más vulnerabilidades. Simula un insider o auditoría completa.</p></div>
-    <div class="card green"><h3>Caja Gris (Grey Box)</h3><p>Acceso parcial (credenciales básicas, diagramas de red). Simula un empleado comprometido o un atacante con información de reconocimiento previo.</p></div>
-  </div>
-  <table style="margin-top:14px;">
-    <tr><th>Herramienta</th><th>Función</th><th>Tipo</th></tr>
-    <tr><td><strong>Kali Linux</strong></td><td>Distribución Linux con 600+ herramientas de seguridad preinstaladas</td><td>OS de pentesting</td></tr>
-    <tr><td><strong>Nmap</strong></td><td>Escaneo de puertos, detección de OS y servicios, scripting NSE</td><td>Escaneo</td></tr>
-    <tr><td><strong>OpenVAS / Nessus</strong></td><td>Escáner de vulnerabilidades: detecta CVEs en hosts de la red</td><td>Vulnerability Scanner</td></tr>
-    <tr><td><strong>Metasploit</strong></td><td>Framework de explotación: base de datos de exploits y payloads</td><td>Exploitation</td></tr>
-  </table>
-</div>
-
-<div class="slide" data-session="4">
-  <h2>CVSS: ¿Cómo Priorizar las Vulnerabilidades?</h2>
-  <div class="box box-dato"><div class="box-title">💡 DATO CLAVE — Common Vulnerability Scoring System</div>
-    <p>CVSS v3.1 asigna una puntuación de 0 a 10 a cada vulnerabilidad basándose en: Vector de acceso (red/local/físico) + Complejidad + Privilegios requeridos + Interacción de usuario + Confidencialidad/Integridad/Disponibilidad afectada.</p>
-  </div>
-  <table style="margin-top:12px;">
-    <tr><th>Score CVSS</th><th>Severidad</th><th>Tiempo de remediación</th><th>Ejemplo</th></tr>
-    <tr><td>9.0 – 10.0</td><td><span class="pill pill-red">CRÍTICA</span></td><td>&lt; 24-48 horas</td><td>Log4Shell (CVE-2021-44228): 10.0</td></tr>
-    <tr><td>7.0 – 8.9</td><td><span class="pill pill-orange">ALTA</span></td><td>&lt; 7 días</td><td>EternalBlue (MS17-010): 9.3 (v2)</td></tr>
-    <tr><td>4.0 – 6.9</td><td><span class="pill pill-cyan">MEDIA</span></td><td>&lt; 30 días</td><td>XSS reflejado sin autenticación</td></tr>
-    <tr><td>0.1 – 3.9</td><td><span class="pill pill-green">BAJA</span></td><td>&lt; 90 días</td><td>Divulgación de versión de servidor</td></tr>
-  </table>
-  <div class="box box-lab" style="margin-top:12px;"><div class="box-title">🔬 LABORATORIO — OpenVAS + Metasploitable</div>
-    <p>Iniciar Kali Linux → Abrir OpenVAS → Crear tarea de escaneo contra Metasploitable (IP de la VM) → Ejecutar escaneo → Analizar reporte: identificar top 3 vulnerabilidades críticas → Proponer remediación → Documentar hallazgos en formato de reporte ejecutivo.</p>
+  <div class="box-reto">
+    <strong>Reto:</strong> La empresa sufrió una brecha que expuso datos de 50,000 clientes (nombre, correo, teléfono, dirección). El Director Legal pregunta: ¿qué obligaciones tiene la empresa según LFPDPPP en las próximas 72 horas? ¿qué multas enfrenta si no actúa? ¿qué debió haber tenido en lugar antes del incidente? Preparar respuesta ejecutiva de 1 página.
   </div>
 </div>
 
-<!-- CIERRE BLOQUE I -->
-<div class="slide cover" data-session="4">
-  <div class="block-badge">BLOQUE I — CIERRE</div>
-  <h1>Del Reactivo al Proactivo</h1>
-  <p style="max-width:600px;margin:16px auto;color:var(--muted);">El profesional que entiende el panorama de amenazas, clasifica activos, cuantifica riesgos y puede encontrar sus propias vulnerabilidades antes que el atacante, ya no es víctima. Es el guardián.</p>
-  <div class="stat-row" style="justify-content:center;max-width:700px;margin:20px auto;">
-    <div class="stat"><div class="num" style="color:var(--cyan)">CIA</div><div class="lbl">Tríada fundacional</div></div>
-    <div class="stat"><div class="num" style="color:var(--green)">ISO</div><div class="lbl">Gestión sistemática</div></div>
-    <div class="stat"><div class="num" style="color:var(--orange)">ALE</div><div class="lbl">Riesgo cuantificado</div></div>
-    <div class="stat"><div class="num" style="color:var(--red)">Pentest</div><div class="lbl">Ver como el atacante</div></div>
+<!-- S3: SLIDE 1 — Encabezado -->
+<div class="slide" data-session="s3">
+  <div class="session-header">
+    <span class="tag tag-orange">SESIÓN 3 · 6 HORAS</span>
+    <h2 style="margin-top:.5rem;margin-bottom:.3rem;">Análisis y Cuantificación del Riesgo de Ciberseguridad</h2>
+    <p class="subtitle">Matriz de Riesgos 5×5 · SLE/ARO/ALE · FRAP · Estrategias de Tratamiento</p>
   </div>
-  <div class="box box-dato" style="max-width:600px;margin:0 auto;"><div class="box-title">💡 SIGUIENTE</div>
-    <p>Bloque II: <strong>Arquitectura de Seguridad y Protección de Infraestructura</strong> — diseñar la defensa en profundidad, proteger la red, las aplicaciones, las identidades y los sistemas operativos con herramientas reales.</p>
-  </div>
-  <div style="margin-top:20px;">
-    <span class="tag">CIA Triad</span><span class="tag">ISO 27001</span><span class="tag">NIST CSF</span>
-    <span class="tag">FRAP</span><span class="tag">ALE/ARO/SLE</span><span class="tag">Kali Linux</span><span class="tag">OpenVAS</span>
+  <div class="box-meta">
+    Gestionar el riesgo cibernético es como gestionar el riesgo en una <strong>planta industrial</strong>. Tienes peligros (amenazas), posibilidad de que ocurran (probabilidad), consecuencias (impacto) y medidas de protección (controles). La diferencia: en ciberseguridad los peligros son invisibles y los atacantes son <em>inteligentes, adaptativos y no se agotan</em>.
   </div>
 </div>
 
+<!-- S3: SLIDE 2 -->
+<div class="slide" data-session="s3">
+  <h2>Los 4 Componentes del Riesgo — En Lenguaje de Negocio</h2>
+  <div class="grid grid-2">
+    <div class="card red">
+      <h3>⚡ Amenaza — ¿Quién puede causarte daño?</h3>
+      <ul style="font-size:.88rem;">
+        <li>Ransomware que cifra tus sistemas</li>
+        <li>Empleado deshonesto que roba datos al renunciar</li>
+        <li>Error humano que borra información crítica</li>
+        <li>Proveedor comprometido que te infecta por la cadena de suministro</li>
+      </ul>
+    </div>
+    <div class="card orange">
+      <h3>🔓 Vulnerabilidad — ¿Cuál es tu punto débil?</h3>
+      <ul style="font-size:.88rem;">
+        <li>Empleados sin capacitación en phishing</li>
+        <li>Sistemas sin parche de seguridad disponible</li>
+        <li>Contraseñas débiles sin MFA activo</li>
+        <li>Sin respaldos verificados</li>
+        <li>Sin plan de respuesta a incidentes</li>
+      </ul>
+    </div>
+    <div class="card yellow">
+      <h3>📊 Probabilidad — ¿Qué tan probable es?</h3>
+      <ul style="font-size:.88rem;">
+        <li>1 — Raro: menos de 1 vez en 10 años</li>
+        <li>2 — Improbable: una vez cada 5-10 años</li>
+        <li>3 — Posible: una vez cada 2-5 años</li>
+        <li>4 — Probable: una vez al año o más</li>
+        <li>5 — Casi Seguro: varias veces al año</li>
+      </ul>
+    </div>
+    <div class="card cyan">
+      <h3>💰 Impacto — ¿Cuánto daño causa?</h3>
+      <ul style="font-size:.88rem;">
+        <li>1 — Insignificante: menos de $10K MXN</li>
+        <li>2 — Menor: $10K–$100K MXN</li>
+        <li>3 — Moderado: $100K–$1M MXN</li>
+        <li>4 — Mayor: $1M–$10M MXN</li>
+        <li>5 — Catastrófico: más de $10M MXN</li>
+      </ul>
+    </div>
+  </div>
+  <p style="text-align:center;color:var(--cyan);font-weight:700;font-size:1.1rem;margin-top:.5rem;">RIESGO = PROBABILIDAD × IMPACTO → Prioridad de acción</p>
 </div>
 
-<div id="footer">
-  <button onclick="prevSlide()">← Anterior</button>
-  <span class="hint">← → · Espacio</span>
-  <button onclick="nextSlide()">Siguiente →</button>
+<!-- S3: SLIDE 3 -->
+<div class="slide" data-session="s3">
+  <h2>ALE, ARO y SLE — El Riesgo en Dinero</h2>
+  <div class="grid grid-3">
+    <div class="card cyan" style="text-align:center;">
+      <h3 style="color:var(--cyan);">SLE</h3>
+      <p style="font-size:.82rem;color:var(--muted);">Single Loss Expectancy</p>
+      <p style="font-size:.88rem;">¿Cuánto pierdes si el incidente ocurre <strong>una sola vez</strong>?</p>
+      <p style="font-size:.82rem;">Incluye: recuperación de TI, operación parada, multas, daño reputacional, legal.</p>
+    </div>
+    <div class="card green" style="text-align:center;">
+      <h3 style="color:var(--green);">ARO</h3>
+      <p style="font-size:.82rem;color:var(--muted);">Annual Rate of Occurrence</p>
+      <p style="font-size:.88rem;">¿Cuántas veces al año es <strong>probable</strong> que ocurra?</p>
+      <p style="font-size:.82rem;">ARO = 1: ocurre 1 vez/año. ARO = 0.3: ocurre 1 vez cada 3 años.</p>
+    </div>
+    <div class="card orange" style="text-align:center;">
+      <h3 style="color:var(--orange);">ALE = SLE × ARO</h3>
+      <p style="font-size:.82rem;color:var(--muted);">Annual Loss Expectancy</p>
+      <p style="font-size:.88rem;"><strong>Pérdida anual esperada</strong></p>
+      <p style="font-size:.82rem;">Si el ALE es $150K MXN, puedo gastar hasta $150K MXN/año en controles y romper el punto de equilibrio.</p>
+    </div>
+  </div>
+  <div class="card yellow" style="margin-top:.8rem;">
+    <h3>Ejemplo — Ransomware en Empresa Manufacturera de 500 Empleados</h3>
+    <ul style="font-size:.88rem;">
+      <li>SLE: $500,000 USD (recuperación IT + operación parada 5 días + rescate + relaciones públicas + legal)</li>
+      <li>ARO: 0.3 (probabilidad: una vez cada 3 años)</li>
+      <li><strong>ALE = $500,000 × 0.3 = $150,000 USD anuales de pérdida esperada</strong></li>
+      <li>Decisión: si un seguro cibernético cuesta $20,000 USD + un EDR cuesta $15,000 USD → inversión de $35,000 USD que protege contra $150,000 USD de pérdida esperada → ROI claro para el CFO.</li>
+    </ul>
+  </div>
 </div>
+
+<!-- S3: SLIDE 4 — Estrategias + Actividad -->
+<div class="slide" data-session="s3">
+  <h2>Estrategias de Tratamiento del Riesgo</h2>
+  <div class="grid grid-2">
+    <div class="card green">
+      <h3>✅ Mitigar</h3>
+      <p>Implementar controles para <strong>reducir probabilidad o impacto</strong>. La más común.</p>
+      <p style="font-size:.85rem;">Ejemplo: MFA reduce la probabilidad de que credenciales robadas sirvan para entrar.</p>
+    </div>
+    <div class="card cyan">
+      <h3>🔄 Transferir</h3>
+      <p>Pasar el riesgo a un tercero mediante <strong>seguro cibernético o outsourcing</strong>.</p>
+      <p style="font-size:.85rem;">Ejemplo: seguro cibernético cubre el costo del rescate de ransomware y la recuperación.</p>
+    </div>
+    <div class="card yellow">
+      <h3>📋 Aceptar</h3>
+      <p>Documentar que se acepta el riesgo porque el costo del control supera el beneficio.</p>
+      <p style="font-size:.85rem;">Ejemplo: sistema legacy sin parche disponible. Se acepta y se monitorea de cerca.</p>
+    </div>
+    <div class="card red">
+      <h3>🚫 Evitar</h3>
+      <p>No hacer la actividad que genera el riesgo. <strong>Decisión de negocio</strong>.</p>
+      <p style="font-size:.85rem;">Ejemplo: no conectar los PLCs de producción a internet para evitar el riesgo de ataque remoto.</p>
+    </div>
+  </div>
+  <div class="box-lab">
+    <strong>Actividad: Matriz de Riesgos Cuantificada (75 min).</strong> Identificar 10 riesgos de ciberseguridad para la empresa del proyecto. Calcular probabilidad (1-5), impacto (1-5), score y zona de la matriz. Para los 3 riesgos más críticos: calcular SLE (estimado en MXN), ARO y ALE. Proponer estrategia de tratamiento con justificación.
+  </div>
+  <div class="box-quiz" onclick="this.classList.toggle('revealed')">
+    <strong>Pregunta:</strong> Un robo de laptop con datos de clientes tiene SLE = $80,000 MXN y ARO = 0.2. ¿Cuál es el ALE? Si cifrar todos los laptops cuesta $12,000 MXN anuales, ¿vale la pena?
+    <div class="answer">
+      ✅ <strong>ALE = $80,000 × 0.2 = $16,000 MXN anuales.</strong> El costo del cifrado es $12,000 MXN/año → <strong>SÍ vale la pena</strong> (ahorra $4,000 MXN de pérdida esperada Y da cumplimiento LFPDPPP: si el laptop se pierde cifrado, no hay brecha de datos que reportar al INAI).
+    </div>
+  </div>
+  <div class="box-reto">
+    <strong>Reto:</strong> El Consejo pregunta "¿cuánto dinero podríamos perder si nos hackean este año?" Preparar respuesta de 1 página con los 5 riesgos más críticos cuantificados en MXN y la recomendación de inversión con mejor ROI de seguridad.
+  </div>
+</div>
+
+<!-- S4: SLIDE 1 — Encabezado -->
+<div class="slide" data-session="s4">
+  <div class="session-header">
+    <span class="tag tag-purple">SESIÓN 4 · 6 HORAS</span>
+    <h2 style="margin-top:.5rem;margin-bottom:.3rem;">Gestión Estratégica del Riesgo Cibernético</h2>
+    <p class="subtitle">KPIs · KRIs · Dashboard Ejecutivo · Presupuesto de Seguridad · Ciberseguros</p>
+  </div>
+  <div class="box-meta">
+    Los KPIs de seguridad son como los indicadores del <strong>tablero del coche</strong>: si el testigo de aceite se enciende, algo está mal antes de que el motor truene. Los KRIs son la luz de batería baja — te avisan que el problema viene antes de que ocurra. Sin instrumentación, manejas a ciegas.
+  </div>
+</div>
+
+<!-- S4: SLIDE 2 -->
+<div class="slide" data-session="s4">
+  <h2>KPIs vs KRIs — La Diferencia que Salva Empresas</h2>
+  <div class="grid grid-2">
+    <div class="card cyan">
+      <h3>📊 KPI — Mide el Desempeño Actual</h3>
+      <p style="font-size:.82rem;color:var(--muted);">Key Performance Indicator — ¿Cómo están funcionando los controles?</p>
+      <ul style="font-size:.88rem;">
+        <li>% empleados capacitados en phishing (meta: 100%)</li>
+        <li>Tiempo para parchear vulnerabilidades críticas (meta: &lt;24h)</li>
+        <li>% de sistemas con MFA activo (meta: 100% en críticos)</li>
+        <li>Número de incidentes detectados vs reportados</li>
+        <li>% de respaldos probados exitosamente (meta: 100%/mes)</li>
+        <li>MTTD (tiempo para detectar incidente, meta: &lt;7 días)</li>
+      </ul>
+    </div>
+    <div class="card orange">
+      <h3>⚠️ KRI — Señales Tempranas de Riesgo</h3>
+      <p style="font-size:.82rem;color:var(--muted);">Key Risk Indicator — Señales de que el riesgo crece ANTES del incidente</p>
+      <ul style="font-size:.88rem;">
+        <li>Intentos de login fallidos en aumento → ataque de fuerza bruta en curso</li>
+        <li>Alta rotación en áreas con acceso crítico → riesgo insider creciente</li>
+        <li>Parches pendientes &gt;30 días en sistemas críticos → ventana de explotación creciente</li>
+        <li>Acceso a datos fuera de horario laboral habitual → insider o cuenta comprometida</li>
+        <li>Empleados que "workaround" el sistema de acceso → política eludida</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box-dato">
+    Los KPIs te dicen <strong>cómo estás hoy</strong>. Los KRIs te dicen <strong>a dónde vas mañana</strong>. Un programa maduro monitorea ambos. Un programa reactivo solo conoce sus KPIs después del incidente.
+  </div>
+</div>
+
+<!-- S4: SLIDE 3 -->
+<div class="slide" data-session="s4">
+  <h2>Presupuesto de Seguridad — Cómo Justificarlo</h2>
+  <div class="grid grid-2">
+    <div>
+      <h3>Benchmarks de Mercado 2024</h3>
+      <ul>
+        <li>Las empresas invierten <strong>5-15%</strong> del presupuesto de IT en seguridad</li>
+        <li>Sector financiero y salud: 12-18%</li>
+        <li>Manufactura e industrial: 5-9%</li>
+        <li>México vs Latam: en promedio 30% menos que el benchmark regional</li>
+      </ul>
+      <h3 style="margin-top:1rem;">Los 3 Argumentos para el CFO</h3>
+      <div class="card orange">
+        <ol style="font-size:.88rem;">
+          <li><strong>ROI de Seguridad:</strong> Compare el ALE de los riesgos principales contra el costo de los controles. Si el ALE es $1M MXN y los controles cuestan $200K MXN, el ROI es 5x.</li>
+          <li><strong>Costo del incidente:</strong> El IBM Cost of a Data Breach 2023 dice que las empresas con controles maduros gastan $2.66M USD menos por incidente.</li>
+          <li><strong>Requisito regulatorio:</strong> Sin los controles mínimos de LFPDPPP, la empresa está expuesta a multas del INAI y demandas de clientes.</li>
+        </ol>
+      </div>
+    </div>
+    <div>
+      <h3>Ciberseguros — El Seguro para las Empresas Digitales</h3>
+      <div class="card cyan">
+        <h3>¿Qué cubre?</h3>
+        <ul style="font-size:.85rem;">
+          <li>✅ Costos de respuesta al incidente</li>
+          <li>✅ Notificación a personas afectadas</li>
+          <li>✅ Pago de rescate ransomware (si la empresa decide)</li>
+          <li>✅ Pérdida de ingresos durante interrupción</li>
+          <li>✅ Responsabilidad ante terceros</li>
+          <li>❌ Hardware dañado</li>
+          <li>❌ Mejoras de seguridad post-incidente</li>
+        </ul>
+      </div>
+      <div class="box-dato" style="margin-top:.5rem;">
+        <strong>Primas en México 2024:</strong> 100-500 empleados: $80K-$300K MXN/año. 500-2,000 empleados: $200K-$800K MXN/año. Las aseguradoras exigen: MFA, respaldos verificados, plan de respuesta documentado.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S4: SLIDE 4 — Actividad + Quiz + Reto -->
+<div class="slide" data-session="s4">
+  <h2>Actividad · Quiz · Reto — Sesión 4</h2>
+  <div class="box-lab">
+    <strong>Actividad: Plan de Tratamiento + Presupuesto (75 min).</strong> Continuando la matriz de la sesión anterior: elaborar el plan de tratamiento para los 5 riesgos más críticos. Tabla: riesgo → estrategia → control específico → área responsable → fecha límite → costo estimado → KPI de seguimiento → KRI de alerta temprana. Preparar presentación ejecutiva de 3 minutos del plan de inversión justificando el ROI de seguridad para el CFO.
+  </div>
+  <div class="box-quiz" onclick="this.classList.toggle('revealed')">
+    <strong>Pregunta:</strong> El CFO recortó el presupuesto de seguridad en 40%. ¿Cuáles son los 3 controles que NO debes sacrificar? A) Capacitación anti-phishing. B) Software nuevo de diseño. C) MFA en sistemas críticos. D) Nuevas laptops para marketing. E) Respaldos verificados.
+    <div class="answer">
+      ✅ <strong>A, C y E son los 3 no negociables:</strong> Capacitación anti-phishing (el 82% de brechas empieza aquí), MFA (bloquea el 99.9% de ataques de credenciales robadas según Microsoft 2023) y respaldos verificados (sin ellos, un ransomware puede ser letal para la empresa). Mayor impacto por menor costo relativo.
+    </div>
+  </div>
+  <div class="box-reto">
+    <strong>Reto:</strong> El CFO recortó el presupuesto de seguridad en 40%. Rediseñar el plan priorizando máximo impacto/mínimo costo. Presentar al Comité de Riesgos: qué retiras, qué mantienes, qué riesgo adicional aceptas y por qué, y cuándo propones restablecer el presupuesto completo.
+  </div>
+</div>
+
+<!-- S5: SLIDE 1 — Encabezado -->
+<div class="slide" data-session="s5">
+  <div class="session-header">
+    <span class="tag tag-red">SESIÓN 5 · 6 HORAS</span>
+    <h2 style="margin-top:.5rem;margin-bottom:.3rem;">Evaluación de Vulnerabilidades — La Perspectiva del Negocio</h2>
+    <p class="subtitle">Pentest sin Código · Gestión de Vulnerabilidades · OWASP para Gerentes · Contratación</p>
+  </div>
+  <div class="box-meta">
+    Contratar un pentest es como contratar a un <strong>"ladrón profesional"</strong> para que intente entrar a tu casa antes de que llegue un ladrón real. Tiene permiso escrito, usa los mismos métodos que un atacante, y al final entrega un reporte de cómo entró y cómo puedes cerrarlo. <em>La diferencia entre descubrirlo tú o que lo descubra el atacante puede costar millones de pesos.</em>
+  </div>
+</div>
+
+<!-- S5: SLIDE 2 -->
+<div class="slide" data-session="s5">
+  <h2>¿Qué es un Pentest? — La Vista del Cliente</h2>
+  <div class="grid grid-2">
+    <div>
+      <h3>Tipos de Pentest para No-Técnicos</h3>
+      <div class="card cyan">
+        <ul style="font-size:.88rem;">
+          <li><strong>Caja Negra:</strong> Sin información previa. Simula atacante externo desconocido. Más realista.</li>
+          <li><strong>Caja Blanca:</strong> Con toda la información. Más completo, encuentra más vulnerabilidades.</li>
+          <li><strong>Caja Gris:</strong> Información parcial. Balance entre realismo y completitud.</li>
+          <li><strong>Ingeniería Social:</strong> Phishing simulado, llamadas falsas, visitas físicas a instalaciones.</li>
+          <li><strong>Red Team:</strong> Simulacro completo de ataque-defensa. El más realista y más costoso.</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <h3>El Proceso desde la Perspectiva del Cliente</h3>
+      <ol style="font-size:.88rem;">
+        <li><strong>Alcance y contrato:</strong> ¿Qué sistemas entran? ¿Qué está prohibido tocar? Autorización escrita es obligatoria — sin ella es un delito.</li>
+        <li><strong>Reconocimiento:</strong> El pentester investiga tu empresa en internet antes de hacer nada técnico.</li>
+        <li><strong>Identificación:</strong> ¿Qué vulnerabilidades tiene tu empresa que podrían explotarse?</li>
+        <li><strong>Explotación:</strong> ¿Son las vulnerabilidades explotables en la práctica? Prueba controlada.</li>
+        <li><strong>Reporte:</strong> Hallazgos con severidad (Crítico/Alto/Medio/Bajo) y recomendaciones claras.</li>
+        <li><strong>Re-test:</strong> Verificar que los hallazgos críticos fueron corregidos. El ciclo se cierra aquí.</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- S5: SLIDE 3 -->
+<div class="slide" data-session="s5">
+  <h2>SLAs de Remediación + Casos Reales</h2>
+  <div class="grid grid-2">
+    <div>
+      <h3>Los SLAs de Remediación — Tu Contrato con la Seguridad</h3>
+      <table style="font-size:.88rem;">
+        <tr><th>Severidad</th><th>Plazo</th><th>¿Qué significa?</th></tr>
+        <tr><td style="color:var(--red)">Crítico</td><td>24–48 h</td><td>Explotable remotamente, sin credenciales</td></tr>
+        <tr><td style="color:var(--orange)">Alto</td><td>7 días</td><td>Explotable con acceso o credenciales básicas</td></tr>
+        <tr><td style="color:var(--yellow)">Medio</td><td>30 días</td><td>Explotable combinado con otras fallas</td></tr>
+        <tr><td style="color:var(--green)">Bajo</td><td>90 días</td><td>Mala práctica, impacto limitado</td></tr>
+      </table>
+      <div class="box-dato" style="margin-top:.8rem;">
+        <strong>Presupuesto de Pentest en México 2024:</strong><br>
+        App web: $20,000–$150,000 MXN<br>
+        Red interna: $80,000–$400,000 MXN<br>
+        Red Team completo: $300,000–$1,200,000 MXN
+      </div>
+    </div>
+    <div>
+      <div class="box-caso">
+        <strong>Equifax — 2017.</strong> Vulnerabilidad en Apache Struts parcheada en marzo 2017. Equifax no la parcheó 2 meses. Un atacante la explotó y pasó 76 días dentro robando datos de 147M personas. Resultado: $575M USD de multa + $1.4B USD en compensaciones. CEO, CSO y CIO renunciaron. Lección: las vulnerabilidades conocidas con parche disponible son las más peligrosas.
+      </div>
+      <div class="box-caso">
+        <strong>Log4Shell — Diciembre 2021.</strong> Librería de Java usada por millones de aplicaciones. Vulnerabilidad crítica (10/10). Las empresas con inventario de software actualizado la parchearon en horas. Las que no tenían inventario tardaron semanas buscando dónde estaba la librería. Lección: saber exactamente qué software corre en tu empresa no es opcional.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S5: SLIDE 4 — Actividad + Quiz + Reto -->
+<div class="slide" data-session="s5">
+  <h2>Actividad · Quiz · Reto — Sesión 5 (Cierre Bloque I)</h2>
+  <div class="box-lab">
+    <strong>Actividad: Plan de Remediación de Pentest (60 min).</strong> Dados 5 hallazgos de un reporte de pentest (descripción en lenguaje simple, sin código): 1) Contraseña de admin predeterminada en sistema de gestión de flota. 2) Sistema operativo sin actualizar desde 2021 en servidor de producción. 3) Empleados de finanzas sin MFA en su correo corporativo. 4) Base de datos de clientes accesible desde internet sin autenticación adicional. 5) Proveedor de GPS con acceso remoto permanente sin registro de actividad. Para cada hallazgo: severidad, control propuesto, responsable, fecha y costo estimado.
+  </div>
+  <div class="box-quiz" onclick="this.classList.toggle('revealed')">
+    <strong>Pregunta:</strong> El proveedor de tu ERP reporta que tu sistema tiene una vulnerabilidad crítica, pero el parche no estará disponible por 3 meses. ¿Qué haces?
+    <div class="answer">
+      ✅ <strong>Implementar controles compensatorios:</strong> 1) Monitoreo intensificado del sistema (cualquier actividad anormal se detecta rápido). 2) Restricción de acceso solo a usuarios absolutamente necesarios. 3) Segmentación de red para limitar el alcance si se explota. 4) Plan de respuesta específico si se detecta explotación. 5) Presionar al proveedor por una solución temporal o workaround. 6) Documentar formalmente la aceptación del riesgo residual mientras llega el parche.
+    </div>
+  </div>
+  <div class="box-reto">
+    <strong>Reto Integrador — Cierre del Bloque I:</strong> Eres el CISO recién contratado de una empresa de tu sector. Descubres: 3 vulnerabilidades críticas del pentest reciente sin corregir, el 60% de empleados nunca ha recibido capacitación, no hay plan de respuesta a incidentes, y el presupuesto de seguridad es el 2% del presupuesto de TI. Presentar al CEO y al Consejo: 1) diagnóstico ejecutivo del estado de seguridad, 2) los 3 riesgos más urgentes con ALE estimado, 3) las 5 acciones de los primeros 90 días, 4) el presupuesto mínimo para los primeros 12 meses.
+  </div>
+</div>
+
+<!-- BIBLIOGRAFÍA -->
+<div class="slide" data-session="s5">
+  <h2>Bibliografía — Bloque I</h2>
+  <div class="grid grid-2">
+    <div class="card cyan">
+      <h3>Libros de Referencia</h3>
+      <ul style="font-size:.83rem;line-height:1.9;">
+        <li>Anderson, R. (2020). <em>Security Engineering</em> (3rd ed.). Wiley.</li>
+        <li>Peltier, T. R. (2016). <em>Information Security Risk Analysis</em> (3rd ed.). CRC Press.</li>
+        <li>Whitman, M. E., & Mattord, H. J. (2022). <em>Management of Information Security</em> (6th ed.). Cengage.</li>
+        <li>Shostack, A. (2014). <em>Threat Modeling: Designing for Security</em>. Wiley.</li>
+        <li>Harris, S. (2022). <em>CISSP All-in-One Exam Guide</em> (9th ed.). McGraw-Hill.</li>
+      </ul>
+    </div>
+    <div class="card orange">
+      <h3>Estándares, Reportes y Leyes</h3>
+      <ul style="font-size:.83rem;line-height:1.9;">
+        <li>ISO/IEC 27001:2022. <em>Information Security Management Systems</em>. ISO.</li>
+        <li>NIST. (2024). <em>Cybersecurity Framework Version 2.0</em>. NIST.</li>
+        <li>Verizon. (2024). <em>Data Breach Investigations Report 2024</em>. Verizon.</li>
+        <li>IBM Security. (2023). <em>Cost of a Data Breach Report 2023</em>. IBM.</li>
+        <li>ISACA. (2023). <em>State of Cybersecurity 2023</em>. ISACA.</li>
+        <li>INAI. (2023). <em>Reporte Anual de Protección de Datos Personales</em>. INAI México.</li>
+        <li><em>Ley Federal de Protección de Datos Personales en Posesión de los Particulares</em> (LFPDPPP). DOF 2010.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box-dato" style="margin-top:1rem;">
+    <strong>Recursos en Línea:</strong> NIST CSF 2.0: csrc.nist.gov · INAI: inai.org.mx · OWASP Top 10: owasp.org · Have I Been Pwned (verificar si tu correo fue comprometido): haveibeenpwned.com · Reportes gratuitos: ibm.com/security/data-breach
+  </div>
+</div>
+
+</div><!-- /slides-container -->
+<div class="nav-hint">← → Space para navegar</div>
 
 <script>
 const slides = document.querySelectorAll('.slide');
-const total = slides.length;
+const counter = document.getElementById('slide-counter');
+const progressBar = document.getElementById('progress-bar');
 let current = 0;
-const sessionStarts = [];
-slides.forEach((s, i) => { const sess = parseInt(s.dataset.session); if (sessionStarts[sess] === undefined) sessionStarts[sess] = i; });
-function goTo(n) { if (n < 0 || n >= total) return; slides[current].classList.remove('active'); current = n; slides[current].classList.add('active'); document.getElementById('slide-counter').textContent = (current+1)+' / '+total; document.getElementById('progress-bar').style.width=((current+1)/total*100)+'%'; updateTabs(); slides[current].scrollTop=0; }
-function nextSlide() { goTo(current+1); }
-function prevSlide() { goTo(current-1); }
-function goToSession(idx) { goTo(sessionStarts[idx]); }
-function updateTabs() { const sess = parseInt(slides[current].dataset.session); for(let i=0;i<5;i++){const btn=document.getElementById('tab-'+i);if(btn)btn.classList.toggle('active',i===sess);} }
-document.addEventListener('keydown',e=>{ if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();nextSlide();} if(e.key==='ArrowLeft'){e.preventDefault();prevSlide();} });
-updateTabs();
+
+function updateTabs() {
+  const currentSession = slides[current].dataset.session;
+  ['s1','s2','s3','s4','s5'].forEach(s => {
+    const btn = document.getElementById('tab-' + s);
+    if (btn) btn.classList.toggle('active', s === currentSession);
+  });
+}
+
+function updateUI() {
+  slides.forEach((s, i) => s.classList.toggle('active', i === current));
+  counter.textContent = `${current + 1} / ${slides.length}`;
+  progressBar.style.width = `${((current + 1) / slides.length) * 100}%`;
+  updateTabs();
+}
+
+function nextSlide() { if (current < slides.length - 1) { current++; updateUI(); } }
+function prevSlide() { if (current > 0) { current--; updateUI(); } }
+
+function goToSession(session) {
+  for (let i = 0; i < slides.length; i++) {
+    if (slides[i].dataset.session === session) { current = i; break; }
+  }
+  updateUI();
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+});
+
+updateUI();
 </script>
 </body>
 </html>

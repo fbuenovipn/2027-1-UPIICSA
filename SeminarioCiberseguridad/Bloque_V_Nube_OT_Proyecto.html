@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bloque V — Seguridad en la Nube, OT Industrial y Proyecto Integrador</title>
+<title>Bloque V — Nube, OT Industrial y Proyecto Integrador</title>
 <style>
   :root {
     --bg: #050a14; --card: #0d1a2e; --border: #1a3050;
@@ -13,36 +13,36 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; overflow: hidden; height: 100vh; }
   #navbar { position: fixed; top: 0; left: 0; right: 0; height: 54px; background: rgba(5,10,20,0.95); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 100; backdrop-filter: blur(8px); }
-  #navbar .brand { color: var(--green); font-weight: 700; font-size: 0.85rem; letter-spacing: 1px; }
-  #navbar .brand span { color: var(--cyan); }
+  #navbar .brand { color: var(--cyan); font-weight: 700; font-size: 0.85rem; letter-spacing: 1px; }
+  #navbar .brand span { color: var(--green); }
   .session-tabs { display: flex; gap: 6px; }
   .session-tabs button { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 4px 12px; border-radius: 20px; cursor: pointer; font-size: 0.75rem; transition: all 0.2s; }
-  .session-tabs button.active { background: var(--green); border-color: var(--green); color: #000; font-weight: 700; }
-  .session-tabs button:hover:not(.active) { border-color: var(--green); color: var(--green); }
+  .session-tabs button.active { background: var(--cyan); border-color: var(--cyan); color: #000; font-weight: 700; }
+  .session-tabs button:hover:not(.active) { border-color: var(--cyan); color: var(--cyan); }
   #slide-counter { color: var(--muted); font-size: 0.8rem; min-width: 80px; text-align: right; }
-  #progress-bar { position: fixed; top: 54px; left: 0; height: 3px; background: linear-gradient(90deg, var(--green), var(--cyan)); transition: width 0.3s ease; z-index: 100; }
+  #progress-bar { position: fixed; top: 54px; left: 0; height: 3px; background: linear-gradient(90deg, var(--cyan), var(--green)); transition: width 0.3s ease; z-index: 100; }
   #slides-container { position: fixed; top: 57px; left: 0; right: 0; bottom: 40px; overflow: hidden; }
   .slide { position: absolute; top: 0; left: 0; right: 0; bottom: 0; padding: 28px 48px; display: none; overflow-y: auto; animation: fadeIn 0.35s ease; }
   .slide.active { display: flex; flex-direction: column; }
   @keyframes fadeIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
   #footer { position: fixed; bottom: 0; left: 0; right: 0; height: 40px; background: rgba(5,10,20,0.95); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 16px; z-index: 100; }
   #footer button { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 5px 20px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; transition: all 0.2s; }
-  #footer button:hover { border-color: var(--green); color: var(--green); }
+  #footer button:hover { border-color: var(--cyan); color: var(--cyan); }
   #footer .hint { color: var(--muted); font-size: 0.72rem; }
   h1 { font-size: 2rem; font-weight: 800; line-height: 1.2; margin-bottom: 10px; }
   h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 14px; }
-  h3 { font-size: 1.1rem; font-weight: 600; color: var(--green); margin-bottom: 8px; margin-top: 14px; }
+  h3 { font-size: 1.1rem; font-weight: 600; color: var(--cyan); margin-bottom: 8px; margin-top: 14px; }
   p { font-size: 0.92rem; line-height: 1.65; color: var(--text); margin-bottom: 8px; }
   ul, ol { padding-left: 20px; font-size: 0.9rem; line-height: 1.8; }
   li { margin-bottom: 4px; }
   .subtitle { color: var(--muted); font-size: 1rem; margin-bottom: 6px; }
   .tag { display: inline-block; background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 2px 10px; font-size: 0.75rem; color: var(--muted); margin-right: 6px; }
   .cover { align-items: center; justify-content: center; text-align: center; }
-  .cover h1 { font-size: 2.3rem; background: linear-gradient(135deg, var(--green), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 16px; }
-  .cover .block-badge { display: inline-block; background: linear-gradient(135deg, #0a2010, #0d1a2e); border: 1px solid var(--green); border-radius: 8px; padding: 8px 24px; color: var(--green); font-size: 0.9rem; font-weight: 700; letter-spacing: 2px; margin-bottom: 20px; }
+  .cover h1 { font-size: 2.4rem; background: linear-gradient(135deg, var(--cyan), var(--green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 16px; }
+  .cover .block-badge { display: inline-block; background: linear-gradient(135deg, #001a30, #0d1a2e); border: 1px solid var(--cyan); border-radius: 8px; padding: 8px 24px; color: var(--cyan); font-size: 0.9rem; font-weight: 700; letter-spacing: 2px; margin-bottom: 20px; }
   .cover .sessions-grid { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
   .cover .sess-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; width: 160px; text-align: left; }
-  .cover .sess-card .num { color: var(--green); font-size: 0.7rem; font-weight: 700; }
+  .cover .sess-card .num { color: var(--cyan); font-size: 0.7rem; font-weight: 700; }
   .cover .sess-card .name { font-size: 0.8rem; margin-top: 4px; }
   .card-grid { display: grid; gap: 14px; margin-top: 8px; }
   .card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
@@ -54,6 +54,7 @@
   .card.orange::before { background: var(--orange); }
   .card.red::before { background: var(--red); }
   .card.purple::before { background: var(--purple); }
+  .card.yellow::before { background: var(--yellow); }
   .card h3 { margin-top: 0; font-size: 0.95rem; }
   .card p, .card ul, .card li { font-size: 0.85rem; }
   .box { border-radius: 10px; padding: 14px 18px; margin: 10px 0; }
@@ -62,17 +63,19 @@
   .box-lab  { background: rgba(0,255,136,0.08);  border: 1px solid rgba(0,255,136,0.4); }
   .box-dato { background: rgba(0,212,255,0.08);  border: 1px solid rgba(0,212,255,0.4); }
   .box-quiz { background: rgba(255,214,10,0.08); border: 1px solid rgba(255,214,10,0.4); cursor: pointer; }
+  .box-reto { background: rgba(255,51,102,0.08); border: 1px solid rgba(255,51,102,0.4); }
   .box-title { font-weight: 700; font-size: 0.8rem; margin-bottom: 6px; letter-spacing: 0.5px; }
   .box-meta .box-title { color: var(--purple); }
   .box-caso .box-title { color: var(--orange); }
   .box-lab  .box-title { color: var(--green); }
   .box-dato .box-title { color: var(--cyan); }
   .box-quiz .box-title { color: var(--yellow); }
+  .box-reto .box-title { color: var(--red); }
   .box p, .box li, .box ul { font-size: 0.87rem; }
   .quiz-answer { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,214,10,0.3); color: var(--green); font-size: 0.85rem; }
   .box-quiz.revealed .quiz-answer { display: block; }
   table { width: 100%; border-collapse: collapse; font-size: 0.83rem; margin-top: 8px; }
-  th { background: #0a1a30; color: var(--green); text-align: left; padding: 8px 12px; border: 1px solid var(--border); }
+  th { background: #0a1a30; color: var(--cyan); text-align: left; padding: 8px 12px; border: 1px solid var(--border); }
   td { padding: 7px 12px; border: 1px solid var(--border); vertical-align: top; }
   tr:nth-child(even) td { background: rgba(13,26,46,0.6); }
   .timeline { list-style: none; padding: 0; margin-top: 8px; }
@@ -95,21 +98,27 @@
   .pill-orange { background: rgba(255,140,66,0.15); border: 1px solid var(--orange); color: var(--orange); }
   .pill-red    { background: rgba(255,51,102,0.15); border: 1px solid var(--red); color: var(--red); }
   .pill-purple { background: rgba(187,134,252,0.15); border: 1px solid var(--purple); color: var(--purple); }
-  .layer-diagram { display: flex; flex-direction: column; gap: 6px; margin: 10px 0; }
-  .layer { border-radius: 6px; padding: 8px 16px; font-size: 0.82rem; font-weight: 600; text-align: center; }
-  .deliverable { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; margin: 6px 0; display: flex; align-items: center; gap: 12px; }
-  .deliverable .icon { font-size: 1.2rem; }
-  .deliverable .text h4 { font-size: 0.88rem; color: var(--text); }
-  .deliverable .text p { font-size: 0.78rem; color: var(--muted); margin: 0; }
+  .pill-yellow { background: rgba(255,214,10,0.15); border: 1px solid var(--yellow); color: var(--yellow); }
+  .checklist { list-style: none; padding: 0; }
+  .checklist li { padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 0.88rem; cursor: pointer; border-radius: 6px; transition: background 0.2s; }
+  .checklist li:hover { background: rgba(0,212,255,0.05); }
+  .checklist li.done { color: var(--green); text-decoration: line-through; opacity: 0.7; }
+  .checklist li::before { content: '☐ '; color: var(--muted); }
+  .checklist li.done::before { content: '☑ '; color: var(--green); }
   .slide::-webkit-scrollbar { width: 4px; }
   .slide::-webkit-scrollbar-track { background: transparent; }
   .slide::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .celebration { text-align: center; padding: 40px 20px; }
+  .celebration h1 { font-size: 3rem; background: linear-gradient(135deg, var(--yellow), var(--orange), var(--red)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .carrera-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 12px; }
+  .carrera-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+  .carrera-card .carrera-title { font-size: 0.8rem; font-weight: 700; margin-bottom: 8px; }
 </style>
 </head>
 <body>
 
 <div id="navbar">
-  <div class="brand">☁️ CIBER<span>SEG</span> · BLOQUE V</div>
+  <div class="brand">🔐 CIBER<span>SEG</span> · BLOQUE V</div>
   <div class="session-tabs">
     <button onclick="goToSession(0)" id="tab-0">S21</button>
     <button onclick="goToSession(1)" id="tab-1">S22</button>
@@ -117,563 +126,1116 @@
     <button onclick="goToSession(3)" id="tab-3">S24</button>
     <button onclick="goToSession(4)" id="tab-4">S25</button>
   </div>
-  <div id="slide-counter">1 / 62</div>
+  <div id="slide-counter">1 / 70</div>
 </div>
-<div id="progress-bar" style="width:1.61%"></div>
+<div id="progress-bar" style="width:1.43%"></div>
 
 <div id="slides-container">
 
-<!-- PORTADA -->
+<!-- ═══ PORTADA ═══ -->
 <div class="slide active cover" data-session="0">
   <div class="block-badge">BLOQUE V · SESIONES 21 – 25</div>
-  <h1>Seguridad en la Nube,<br>OT Industrial y Proyecto Integrador</h1>
+  <h1>Nube, OT Industrial<br>y Proyecto Integrador</h1>
   <p class="subtitle">Ciberseguridad Empresarial · Seminario de Titulación · 30 horas</p>
   <div class="sessions-grid">
-    <div class="sess-card"><div class="num">SESIÓN 21</div><div class="name">Cloud Security (AWS)</div></div>
+    <div class="sess-card"><div class="num">SESIÓN 21</div><div class="name">Seguridad en la Nube</div></div>
     <div class="sess-card"><div class="num">SESIÓN 22</div><div class="name">OT, ICS y SCADA</div></div>
     <div class="sess-card"><div class="num">SESIÓN 23</div><div class="name">IoT, IA y Vehículos</div></div>
-    <div class="sess-card"><div class="num">SESIÓN 24</div><div class="name">Taller Proyecto</div></div>
+    <div class="sess-card"><div class="num">SESIÓN 24</div><div class="name">Taller del Proyecto</div></div>
     <div class="sess-card"><div class="num">SESIÓN 25</div><div class="name">Defensa Final</div></div>
   </div>
   <p style="margin-top:24px; color:var(--muted); font-size:0.82rem;">← → o barra espaciadora para navegar · Click en S21–S25 para ir a cada sesión</p>
 </div>
 
-<!-- ═══ SESIÓN 21 — CLOUD SECURITY ═══ -->
+<!-- ═══ SESIÓN 21 — SEGURIDAD EN LA NUBE ═══ -->
 <div class="slide" data-session="0">
   <h2>Sesión 21 <span style="color:var(--cyan)">— Seguridad en la Nube (Cloud Security)</span></h2>
-  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
-    <p>Subir a la nube sin entender el modelo de responsabilidad compartida es como <strong>mudarte a un edificio de departamentos y asumir que el seguro del edificio cubre tus muebles</strong>. El proveedor de nube asegura el edificio; tú aseguras todo lo que metes adentro. Muchas brechas en la nube ocurren porque el cliente no entendió su parte del contrato.</p>
-  </div>
-  <div class="card-grid cols-3" style="margin-top:14px;">
-    <div class="card cyan"><h3>IaaS (Infrastructure as a Service)</h3><p>El cliente gestiona: OS, aplicaciones, datos, red virtual. El proveedor: hardware físico, datacenter, hipervisor.</p><p style="color:var(--muted);font-size:0.78rem;">Ej: EC2, Azure VM</p></div>
-    <div class="card orange"><h3>PaaS (Platform as a Service)</h3><p>El cliente gestiona: aplicaciones y datos. El proveedor: OS, runtime, middleware, infraestructura.</p><p style="color:var(--muted);font-size:0.78rem;">Ej: AWS Elastic Beanstalk, Google App Engine</p></div>
-    <div class="card green"><h3>SaaS (Software as a Service)</h3><p>El cliente gestiona: solo sus datos y accesos. El proveedor gestiona todo lo demás.</p><p style="color:var(--muted);font-size:0.78rem;">Ej: Office 365, Salesforce, Gmail</p></div>
-  </div>
-</div>
-
-<div class="slide" data-session="0">
-  <h2>Modelo de Responsabilidad Compartida AWS</h2>
-  <div class="layer-diagram">
-    <div class="layer" style="background:rgba(255,140,66,0.15);border:1px solid var(--orange);color:var(--orange);">⚠️ RESPONSABILIDAD DEL CLIENTE ("security IN the cloud")</div>
-    <div class="layer" style="background:rgba(255,140,66,0.08);border:1px solid rgba(255,140,66,0.3);color:var(--text);font-size:0.8rem;">Datos de clientes · Cifrado datos en reposo y tránsito · IAM (identidades, contraseñas, MFA) · Configuración de OS · Firewall de red (Security Groups) · Aplicaciones web</div>
-    <div class="layer" style="background:rgba(0,212,255,0.15);border:1px solid var(--cyan);color:var(--cyan);">🛡️ RESPONSABILIDAD DE AWS ("security OF the cloud")</div>
-    <div class="layer" style="background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.3);color:var(--text);font-size:0.8rem;">Hardware físico · Datacenters · Hypervisor · Región/AZ · Servicios gestionados (S3, RDS, Lambda) · Red física global</div>
-  </div>
-  <div class="box box-caso" style="margin-top:12px;"><div class="box-title">📰 CASO REAL — Capital One Breach (2019)</div>
-    <p>Una ex-empleada de AWS explotó un <strong>misconfigured Web Application Firewall (WAF)</strong> y una función Lambda con exceso de privilegios para acceder a 100M de registros de clientes almacenados en S3. Costo: $80M en multas + daño reputacional masivo. El error fue del cliente (Capital One), no de AWS. El modelo de responsabilidad compartida fue clave en el litigio.</p>
-  </div>
-</div>
-
-<div class="slide" data-session="0">
-  <h2>AWS Security: Servicios Esenciales</h2>
-  <table>
-    <tr><th>Servicio AWS</th><th>Función de Seguridad</th><th>Analogía</th></tr>
-    <tr><td><strong>IAM</strong></td><td>Gestión de identidades, roles, políticas de acceso granular</td><td>El control de acceso de toda la organización cloud</td></tr>
-    <tr><td><strong>Security Groups</strong></td><td>Firewall a nivel de instancia EC2: reglas de entrada/salida</td><td>Puertas individuales de cada servidor</td></tr>
-    <tr><td><strong>VPC</strong></td><td>Red virtual privada aislada: subredes públicas y privadas</td><td>Los muros del edificio cloud</td></tr>
-    <tr><td><strong>CloudTrail</strong></td><td>Registro de toda la actividad API: quién hizo qué y cuándo</td><td>El libro de visitas inviolable</td></tr>
-    <tr><td><strong>GuardDuty</strong></td><td>Detección de amenazas con ML: IP sospechosas, comportamiento anómalo</td><td>El SIEM nativo de AWS</td></tr>
-    <tr><td><strong>Security Hub</strong></td><td>Centraliza hallazgos de GuardDuty, Inspector, Macie</td><td>Dashboard único de seguridad</td></tr>
-    <tr><td><strong>Macie</strong></td><td>Detecta datos sensibles (PII, tarjetas) en S3 con ML</td><td>El escáner de datos confidenciales</td></tr>
-    <tr><td><strong>AWS Config</strong></td><td>Inventario y compliance de recursos: detecta configuraciones incorrectas</td><td>El auditor automático 24×7</td></tr>
-  </table>
-</div>
-
-<div class="slide" data-session="0">
-  <h2>Vulnerabilidades Comunes en Entornos Cloud</h2>
-  <div class="card-grid cols-2">
-    <div class="card red">
-      <h3>Configuraciones Incorrectas (Misconfigurations)</h3>
-      <ul>
-        <li><strong>S3 Bucket público</strong>: millones de registros expuestos sin intención</li>
-        <li><strong>Security Groups abiertos</strong>: 0.0.0.0/0 en el puerto 22 (SSH)</li>
-        <li><strong>IAM roles con permisos de administrador</strong> innecesarios (exceso privilegio)</li>
-        <li><strong>CloudTrail deshabilitado</strong>: cero auditoría de actividad</li>
-        <li><strong>MFA no habilitado</strong> en cuenta root de AWS</li>
-      </ul>
-    </div>
-    <div class="card orange">
-      <h3>Ataques Específicos a Cloud</h3>
-      <ul>
-        <li><strong>Cryptojacking</strong>: comprometer una instancia EC2 para minar criptomonedas a tu costo</li>
-        <li><strong>Inyecciones en Lambda</strong>: funciones serverless sin validación de entrada</li>
-        <li><strong>CI/CD pipeline attacks</strong>: comprometer el pipeline para inyectar código malicioso</li>
-        <li><strong>Container escape</strong>: salir del contenedor al host Docker</li>
-        <li><strong>Metadata API abuse</strong>: robar credenciales temporales desde la instancia</li>
-      </ul>
-    </div>
-  </div>
-  <div class="box box-lab" style="margin-top:12px;"><div class="box-title">🔬 LABORATORIO AWS</div>
-    <p>Configurar: (1) IAM con grupos, roles y política de mínimo privilegio; (2) Bucket S3 con cifrado y bloqueo de acceso público; (3) Activar CloudTrail multi-región; (4) Revisar Trusted Advisor para recomendaciones de seguridad. Documentar hallazgos y correcciones.</p>
-  </div>
-</div>
-
-<div class="slide" data-session="0">
-  <h2>Zero Trust en la Nube: "Never Trust, Always Verify"</h2>
-  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
-    <p>En el modelo tradicional, la red corporativa era el castillo y el perímetro era la muralla. Una vez adentro, confiabas en todos. En la nube no hay muralla. Zero Trust dice: <strong>tratar a TODOS los usuarios y sistemas como si vinieran de internet no confiable</strong>, sin importar si están "adentro" de la red.</p>
-  </div>
-  <div class="card-grid cols-3" style="margin-top:14px;">
-    <div class="card cyan">
-      <h3>Principios ZTA</h3>
-      <ul><li>Verificar siempre la identidad</li><li>Mínimo privilegio necesario</li><li>Asumir compromiso (assume breach)</li><li>Microsegmentación de la red</li><li>Monitoreo continuo</li></ul>
-    </div>
-    <div class="card purple">
-      <h3>Implementación Práctica</h3>
-      <ul><li>MFA para TODOS los accesos</li><li>SSO + Identity Provider centralizado</li><li>Acceso condicional (device health check)</li><li>ZTNA reemplaza VPN tradicional</li><li>PAM para cuentas privilegiadas</li></ul>
-    </div>
-    <div class="card green">
-      <h3>Beneficios en la Nube</h3>
-      <ul><li>Elimina el problema del "insider confiable"</li><li>Reduce el blast radius de una cuenta comprometida</li><li>Compatible con trabajo remoto e híbrido</li><li>Auditoría granular de cada acceso</li></ul>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ SESIÓN 22 — OT/ICS/SCADA ═══ -->
-<div class="slide" data-session="1">
-  <h2>Sesión 22 <span style="color:var(--orange)">— Ciberseguridad Industrial: OT, ICS y SCADA</span></h2>
-  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
-    <p>En IT, cuando un servidor falla, se reinicia. En OT, cuando un PLC falla, <strong>la línea de producción se para, el producto se echa a perder o hay riesgo de vida</strong>. La ciberseguridad industrial no puede ser igual a la de oficinas: aquí un parche mal aplicado puede causar un accidente físico.</p>
-  </div>
-  <div class="card-grid cols-3" style="margin-top:14px;">
-    <div class="card orange"><h3>OT (Operational Technology)</h3><p>Sistemas que controlan o monitorean procesos físicos: manufactura, energía, agua, transporte. Prioridad: <strong>disponibilidad y seguridad física</strong> antes que confidencialidad.</p></div>
-    <div class="card red"><h3>ICS (Industrial Control Systems)</h3><p>Categoría general de sistemas de control: SCADA, DCS, PLC, HMI. Diseñados para décadas de operación, no para actualizaciones frecuentes de seguridad.</p></div>
-    <div class="card purple"><h3>SCADA</h3><p>Supervisory Control and Data Acquisition: recopila datos de sensores remotos y permite control centralizado de infraestructura crítica (gasoductos, redes eléctricas, plantas).</p></div>
-  </div>
-</div>
-
-<div class="slide" data-session="1">
-  <h2>Diferencias Críticas entre IT y OT</h2>
-  <table>
-    <tr><th>Dimensión</th><th>IT (Tecnología de Información)</th><th>OT (Tecnología Operativa)</th></tr>
-    <tr><td>Prioridad CIA</td><td>Confidencialidad → Integridad → Disponibilidad</td><td><strong>Disponibilidad → Integridad → Confidencialidad</strong></td></tr>
-    <tr><td>Ciclo de vida</td><td>3-5 años (hardware), parcheable rápido</td><td>15-30 años, parches limitados o imposibles</td></tr>
-    <tr><td>Downtime</td><td>Aceptable para mantenimiento</td><td>Inaceptable: puede costar millones/hora o vidas</td></tr>
-    <tr><td>Protocolos</td><td>TCP/IP, HTTPS, TLS estándar</td><td>Modbus, DNP3, OPC-UA, Profibus (sin cifrado nativo)</td></tr>
-    <tr><td>Testing</td><td>Pentest convencional OK</td><td>Pentest puede dañar equipos físicos — requiere entorno de prueba</td></tr>
-    <tr><td>Actualizaciones</td><td>Frecuentes, automatizables</td><td>Requieren ventana de mantenimiento programada, aprobación del fabricante</td></tr>
-    <tr><td>Consecuencias</td><td>Pérdida de datos, dinero</td><td>Daño físico, contaminación ambiental, riesgo de vida</td></tr>
-  </table>
-</div>
-
-<div class="slide" data-session="1">
-  <h2>Ataques Históricos a Infraestructura Crítica</h2>
-  <div class="box box-caso"><div class="box-title">📰 STUXNET (2010) — El primer arma cibernética</div>
-    <p>Diseñado por EE.UU. e Israel para sabotear el programa nuclear iraní. Infectó PLCs Siemens que controlaban centrifugadoras de uranio, causando que giraran fuera de control mientras mostraban lecturas normales a los operadores. Destruyó ~20% de las centrifugadoras sin dejar rastro aparente. Demostró que los sistemas OT eran vulnerables a ataques cibernéticos con consecuencias físicas.</p>
-  </div>
-  <div class="card-grid cols-3" style="margin-top:12px;">
-    <div class="card red">
-      <h3>Industroyer / CrashOverride (2016)</h3>
-      <p>Malware que apagó la red eléctrica de Ucrania en diciembre. Afectó a 230,000 personas durante 6 horas. Primer malware diseñado específicamente para atacar sistemas de control de red eléctrica.</p>
-    </div>
-    <div class="card orange">
-      <h3>Colonial Pipeline (2021)</h3>
-      <p>Ransomware DarkSide en la red IT (no OT) obligó a Colonial a apagar preventivamente el oleoducto. 5,700 km de oleoducto paralizado 6 días. Pagaron $4.4M de rescate. Escasez de combustible en EE.UU.</p>
-    </div>
-    <div class="card purple">
-      <h3>Tratamiento de Agua (Florida, 2021)</h3>
-      <p>Atacante accedió remotamente al sistema de control de planta de agua potable y aumentó el nivel de soda cáustica 111 veces. Un operador lo detectó a tiempo. Vector: TeamViewer con contraseña compartida.</p>
-    </div>
-  </div>
-</div>
-
-<div class="slide" data-session="1">
-  <h2>Modelo Purdue y Segmentación de Redes OT/IT</h2>
-  <div class="layer-diagram">
-    <div class="layer" style="background:rgba(0,212,255,0.12);border:1px solid var(--cyan);color:var(--cyan);">Nivel 5 — Red Corporativa (IT): ERP, email, internet, usuarios de negocio</div>
-    <div class="layer" style="background:rgba(187,134,252,0.12);border:1px solid var(--purple);color:var(--purple);">Nivel 4 — Red de Planta (IT/OT Bridge): servidores de historia, bases de datos de producción, DMZ industrial</div>
-    <div class="layer" style="background:rgba(255,140,66,0.15);border:2px solid var(--orange);color:var(--orange);">🔒 ZONA DESMILITARIZADA (DMZ) INDUSTRIAL — Firewall industrial + jump server + data diode</div>
-    <div class="layer" style="background:rgba(255,51,102,0.12);border:1px solid var(--red);color:var(--red);">Nivel 3 — Red de Control: servidor SCADA, historians, servidores OPC</div>
-    <div class="layer" style="background:rgba(255,51,102,0.15);border:1px solid var(--red);color:var(--red);">Nivel 2 — Red de Supervisión: HMI, estaciones de ingeniería</div>
-    <div class="layer" style="background:rgba(0,255,136,0.12);border:1px solid var(--green);color:var(--green);">Nivel 1 — Red de Control de Campo: PLCs, RTUs, controladores de proceso</div>
-    <div class="layer" style="background:rgba(0,255,136,0.08);border:1px solid rgba(0,255,136,0.3);color:var(--muted);">Nivel 0 — Proceso Físico: sensores, actuadores, motores, válvulas</div>
-  </div>
-  <p style="margin-top:8px;font-size:0.8rem;color:var(--muted);">La DMZ industrial impide comunicación directa entre IT y OT. El tráfico pasa por puntos de control auditados.</p>
-</div>
-
-<div class="slide" data-session="1">
-  <h2>Estándares y Controles de Ciberseguridad Industrial</h2>
-  <div class="card-grid cols-2">
-    <div class="card cyan">
-      <h3>IEC 62443 — El Estándar Principal</h3>
-      <ul>
-        <li>Serie completa de normas para ciberseguridad de IACS (Industrial Automation and Control Systems)</li>
-        <li>Define niveles de seguridad (SL0-SL4) para zonas y conductos</li>
-        <li>Aplica a: fabricantes de equipos, integradores de sistemas, operadores de planta</li>
-        <li>IEC 62443-3-3: requisitos de sistema más implementado</li>
-      </ul>
-    </div>
-    <div class="card orange">
-      <h3>NIST SP 800-82 Rev. 3</h3>
-      <ul>
-        <li>Guía para seguridad de sistemas de control industrial (ICS)</li>
-        <li>Cubre: riesgos, arquitecturas, controles de seguridad</li>
-        <li>Aplicado por: sector energético, manufactura, agua, transporte en EE.UU.</li>
-        <li>Compatible con NIST CSF</li>
-      </ul>
-    </div>
-  </div>
-  <div class="box box-quiz" onclick="this.classList.toggle('revealed')" style="margin-top:14px;"><div class="box-title">❓ QUIZ — Click para ver respuesta</div>
-    <p>Un PLC de 15 años en tu planta tiene una vulnerabilidad conocida (CVE publicado), pero el fabricante no ha lanzado un parche y la planta no puede parar. ¿Qué controles compensatorios implementas?</p>
-    <div class="quiz-answer"><strong>Controles compensatorios:</strong> (1) Segmentar el PLC en su propia VLAN con firewall que solo permite el tráfico estrictamente necesario; (2) Monitorear el tráfico hacia/desde el PLC (IDS industrial como Claroty, Dragos, Nozomi); (3) Eliminar todos los accesos remotos no esenciales al PLC; (4) Cambiar todas las credenciales por defecto; (5) Controlar físicamente el acceso al panel donde está el PLC; (6) Contactar al fabricante para ETA del parche o buscar alternativa de firmware; (7) Documentar el riesgo residual aceptado formalmente por la dirección.</div>
-  </div>
-</div>
-
-<!-- ═══ SESIÓN 23 — IoT, IA y VEHÍCULOS ═══ -->
-<div class="slide" data-session="2">
-  <h2>Sesión 23 <span style="color:var(--purple)">— Tecnologías Emergentes: IoT, IA y Vehículos Conectados</span></h2>
-  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
-    <p>Cada dispositivo IoT que conectas a tu red industrial es como <strong>abrir una ventana nueva en tu fortaleza</strong>. Y a diferencia de las ventanas que puedes ver, los dispositivos IoT muchas veces son invisibles para los equipos de seguridad: no aparecen en los inventarios, nadie sabe que existen y corren firmware de 2015 sin actualizaciones.</p>
+  <div class="box box-meta"><div class="box-title">🏠 METÁFORA DE APERTURA</div>
+    <p>Mudarte a la nube es como mudarte de una <strong>casa propia a un condominio</strong>. El administrador del condominio (AWS/Azure/Google) cuida las áreas comunes: la fachada, los elevadores, la tubería principal. Pero <strong>TÚ sigues siendo responsable de lo que pasa dentro de tu departamento</strong>. Si dejas la puerta abierta, el condominio no tiene la culpa. Esta es la esencia del "modelo de responsabilidad compartida".</p>
   </div>
   <div class="stat-row" style="margin-top:16px;">
-    <div class="stat"><div class="num" style="color:var(--cyan)">29B</div><div class="lbl">Dispositivos IoT conectados en 2030 (Ericsson)</div></div>
-    <div class="stat"><div class="num" style="color:var(--red)">57%</div><div class="lbl">de dispositivos IoT son vulnerables a ataques de severidad media o alta (Palo Alto, 2020)</div></div>
-    <div class="stat"><div class="num" style="color:var(--orange)">98%</div><div class="lbl">del tráfico IoT no está cifrado (Palo Alto, 2020)</div></div>
+    <div class="stat"><div class="num" style="color:var(--cyan)">94%</div><div class="lbl">de empresas usa al menos un servicio en la nube (Flexera 2024)</div></div>
+    <div class="stat"><div class="num" style="color:var(--red)">82%</div><div class="lbl">de brechas de datos en la nube involucran error humano o mala configuración</div></div>
+    <div class="stat"><div class="num" style="color:var(--orange)">$4.75M</div><div class="lbl">USD costo promedio de una brecha en la nube (IBM 2023)</div></div>
   </div>
 </div>
 
-<div class="slide" data-session="2">
-  <h2>Seguridad en IoT Industrial (IIoT)</h2>
-  <div class="card-grid cols-2">
-    <div class="card red">
-      <h3>Vulnerabilidades Típicas de IoT</h3>
-      <ul>
-        <li>Credenciales por defecto sin cambiar (admin/admin)</li>
-        <li>Firmware sin actualizar y sin mecanismo de update seguro</li>
-        <li>Comunicaciones sin cifrado (HTTP, Telnet)</li>
-        <li>Sin autenticación en API de gestión</li>
-        <li>Superficie de ataque amplia: Bluetooth, WiFi, Zigbee, LoRa</li>
-        <li>Dispositivos invisibles para el SIEM (sin agente)</li>
-      </ul>
-    </div>
-    <div class="card green">
-      <h3>Controles para IIoT</h3>
-      <ul>
-        <li>Inventario automatizado de todos los dispositivos IoT</li>
-        <li>Segmentación: VLAN dedicada por tipo de dispositivo</li>
-        <li>Cambiar credenciales por defecto en deploy</li>
-        <li>Actualización automática de firmware</li>
-        <li>Monitoreo pasivo de comportamiento (Claroty, Dragos)</li>
-        <li>Deshabilitar servicios y puertos no necesarios</li>
-        <li>Network Access Control (NAC) para validar antes de conectar</li>
-      </ul>
-    </div>
-  </div>
-  <div class="box box-caso" style="margin-top:12px;"><div class="box-title">📰 CASO REAL — Mirai Botnet (2016)</div>
-    <p>Mirai infectó <strong>600,000 dispositivos IoT</strong> (cámaras IP, routers, DVRs) usando credenciales por defecto. Los usó para lanzar el mayor DDoS registrado: 1.2 Tbps contra Dyn DNS, dejando sin acceso a Twitter, Netflix, Reddit y Amazon por horas. El vector: credenciales admin/admin que nadie había cambiado.</p>
-  </div>
-</div>
-
-<div class="slide" data-session="2">
-  <h2>IA en Ciberseguridad: Doble Filo</h2>
-  <div class="card-grid cols-2">
-    <div class="card cyan">
-      <h3>IA como Defensa</h3>
-      <ul>
-        <li><strong>Detección de anomalías</strong>: ML identifica comportamiento inusual de usuarios, procesos, red sin firmas predefinidas</li>
-        <li><strong>UEBA</strong> (User Entity Behavior Analytics): detecta insider threats por desviación del baseline</li>
-        <li><strong>Análisis predictivo</strong>: predice qué sistemas serán atacados basado en tendencias</li>
-        <li><strong>Automatización SOC</strong>: SOAR + LLM para investigación automática de alertas</li>
-        <li><strong>NLP</strong>: análisis automático de logs y threat intel en texto</li>
-      </ul>
-    </div>
-    <div class="card red">
-      <h3>IA en Manos del Atacante</h3>
-      <ul>
-        <li><strong>Phishing con LLM</strong>: emails de spear phishing perfectamente redactados, sin errores gramaticales, personalizados con contexto OSINT</li>
-        <li><strong>Deepfakes de audio/video</strong>: suplantar a CEO en llamada para autorizar transferencia</li>
-        <li><strong>Malware polimórfico</strong>: código que muta automáticamente para evadir detección</li>
-        <li><strong>Fuzzing automatizado</strong>: IA encuentra vulnerabilidades en software más rápido</li>
-        <li><strong>Social engineering a escala</strong>: chatbots de phishing que mantienen conversaciones</li>
-      </ul>
-    </div>
-  </div>
-</div>
-
-<div class="slide" data-session="2">
-  <h2>Ciberseguridad en Vehículos Conectados</h2>
-  <div class="box box-dato"><div class="box-title">💡 DATO CLAVE</div>
-    <p>Un automóvil moderno tiene entre <strong>70 y 150 ECUs (Electronic Control Units)</strong> y corre hasta 150 millones de líneas de código — más que un avión de combate. Con la conectividad V2X, 5G, actualizaciones OTA y sistemas ADAS, la superficie de ataque de un vehículo rivaliza con la de una empresa mediana.</p>
-  </div>
-  <div class="card-grid cols-3" style="margin-top:12px;">
-    <div class="card orange">
-      <h3>Vectores de Ataque Vehicular</h3>
-      <ul>
-        <li>Bus CAN: sin autenticación, cualquier ECU puede enviar mensajes</li>
-        <li>OBD-II port: acceso físico total al bus</li>
-        <li>WiFi/Bluetooth del sistema infotainment</li>
-        <li>Carga inalámbrica y actualizaciones OTA</li>
-        <li>V2X (Vehicle-to-Everything): comunicaciones entre vehículos</li>
-      </ul>
-    </div>
-    <div class="card purple">
-      <h3>Estándares Regulatorios</h3>
-      <ul>
-        <li><strong>UNECE WP.29</strong>: obligatorio en UE, Japón, Corea para nuevos modelos desde 2022. Exige CSMS (Cybersecurity Management System) para fabricantes.</li>
-        <li><strong>ISO/SAE 21434</strong>: estándar técnico de ciberseguridad en ingeniería de vehículos</li>
-        <li><strong>TARA</strong>: Threat Analysis and Risk Assessment requerida para cada componente</li>
-      </ul>
-    </div>
-    <div class="card red">
-      <h3>Caso: Jeep Cherokee Hack (2015)</h3>
-      <p>Miller y Valasek tomaron control remoto de un Jeep en movimiento a través del sistema Uconnect (WiFi/Sprint). Controlaron climatización, música, frenos y dirección. FCA retiró 1.4M de vehículos. El hack se publicó en Wired.</p>
-    </div>
-  </div>
-</div>
-
-<div class="slide" data-session="2">
-  <h2>Seguridad en Transporte Inteligente e Industria 4.0</h2>
-  <div class="card-grid cols-2">
-    <div class="card cyan">
-      <h3>Flotas Conectadas y Telemática</h3>
-      <ul>
-        <li>Plataformas GPS/telemetría: superficie de ataque si no están protegidas</li>
-        <li>OBD-II dongles de terceros: acceso físico al bus CAN de toda la flota</li>
-        <li>APIs de las plataformas: autenticación robusta + rate limiting + WAF</li>
-        <li>Comunicación entre unidades y backend: TLS obligatorio, certificados válidos</li>
-        <li>Privacidad de datos de ubicación: LFPDPPP aplica a datos de conductores</li>
-      </ul>
-    </div>
-    <div class="card green">
-      <h3>Industria 4.0: Riesgos Emergentes</h3>
-      <ul>
-        <li>Digital Twin: gemelo digital puede usarse para planificar ataques físicos</li>
-        <li>Robots colaborativos (cobots): red interna accesible, firmware desactualizado</li>
-        <li>Manufactura aditiva (impresoras 3D): archivos STL modificados para sabotaje de calidad</li>
-        <li>Realidad aumentada para mantenimiento: dispositivos con WiFi en planta</li>
-        <li>Edge computing: procesamiento en planta sin los controles del datacenter central</li>
-      </ul>
-    </div>
-  </div>
-  <div class="box box-lab" style="margin-top:12px;"><div class="box-title">🔬 ACTIVIDAD PRÁCTICA</div>
-    <p>Análisis de riesgo TARA para un sistema IoT industrial o vehículo conectado: identificar componentes, interfaces, amenazas por interfaz, impacto potencial, y proponer controles técnicos y organizativos para las amenazas de mayor riesgo.</p>
-  </div>
-</div>
-
-<!-- ═══ SESIÓN 24 — TALLER PROYECTO ═══ -->
-<div class="slide" data-session="3">
-  <h2>Sesión 24 <span style="color:var(--yellow)">— Taller de Proyecto Integrador: Revisión y Preparación</span></h2>
-  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
-    <p>La sesión 24 es el <strong>ensayo general antes de la obra</strong>. Los actores ya saben sus líneas; ahora practican ante un público real, con las luces encendidas, para descubrir los momentos donde el ritmo se rompe o el argumento no convence. La retroalimentación del ensayo general es más valiosa que cualquier ensayo privado.</p>
-  </div>
-  <div class="card-grid cols-2" style="margin-top:14px;">
-    <div class="card orange">
-      <h3>Estructura de la Sesión</h3>
-      <ul>
-        <li><strong>30 min por equipo</strong>: presentación de avance al grupo completo</li>
-        <li><strong>Retroalimentación técnica</strong> del facilitador: rigor metodológico</li>
-        <li><strong>Retroalimentación estratégica</strong>: ¿tiene sentido para el negocio?</li>
-        <li><strong>Evaluación de pares</strong>: preguntas del grupo al equipo presentador</li>
-        <li><strong>Ajustes identificados</strong>: lista de correcciones antes de S25</li>
-      </ul>
-    </div>
-    <div class="card cyan">
-      <h3>Checklist Previa a S25</h3>
-      <ul>
-        <li>Inventario de activos completo (ISO 27001)</li>
-        <li>Matriz de riesgos con ALE calculado para top riesgos</li>
-        <li>Plan de tratamiento con controles propuestos y costo</li>
-        <li>Política de seguridad redactada</li>
-        <li>Plan de respuesta a incidentes (NIST 800-61)</li>
-        <li>BCP con BIA y RTO/RPO definidos</li>
-        <li>Dashboard de métricas (Power BI/Excel)</li>
-        <li>Presentación ejecutiva: 15-20 slides máximo</li>
-      </ul>
-    </div>
-  </div>
-</div>
-
-<div class="slide" data-session="3">
-  <h2>¿Qué Busca el Panel Evaluador?</h2>
+<div class="slide" data-session="0">
+  <h2>¿Qué es la Nube? — Sin Tecnicismos</h2>
+  <p style="color:var(--muted); margin-bottom:12px;">Tres modelos de servicio explicados con una sola analogía: el mercado inmobiliario</p>
   <div class="card-grid cols-3">
     <div class="card cyan">
-      <h3>Comprensión del Negocio</h3>
-      <p>¿Entiendes cómo la ciberseguridad impacta los objetivos de TU organización específica? No respuestas genéricas — contexto específico del sector.</p>
+      <h3>IaaS — Infraestructura como Servicio</h3>
+      <p style="font-size:1.5rem; text-align:center; margin:12px 0;">🏗️</p>
+      <p><strong>Analogía:</strong> Rentas el terreno y la estructura del edificio. Tú pones las paredes, la pintura, los muebles y la decoración.</p>
+      <p style="color:var(--muted); font-size:0.8rem; margin-top:8px;">Ejemplos: servidores virtuales (VMs), almacenamiento, redes virtuales. <br>Tú gestionas: SO, aplicaciones, datos.</p>
     </div>
     <div class="card orange">
-      <h3>Rigor Técnico</h3>
-      <p>¿Tus análisis de riesgo tienen sustento (datos, benchmarks, metodología)? ¿Los controles propuestos son apropiados para los riesgos identificados?</p>
-    </div>
-    <div class="card purple">
-      <h3>Pensamiento Estratégico</h3>
-      <p>¿Puedes defender por qué priorizas unos controles sobre otros? ¿Tienes en cuenta el presupuesto, la madurez actual y el ROI de seguridad?</p>
+      <h3>PaaS — Plataforma como Servicio</h3>
+      <p style="font-size:1.5rem; text-align:center; margin:12px 0;">🏠</p>
+      <p><strong>Analogía:</strong> Rentas el departamento sin amueblar. Las instalaciones están listas; tú solo pones los muebles y vives en él.</p>
+      <p style="color:var(--muted); font-size:0.8rem; margin-top:8px;">Ejemplos: bases de datos gestionadas, plataformas de desarrollo. <br>Tú gestionas: aplicaciones y datos.</p>
     </div>
     <div class="card green">
-      <h3>Comunicación Ejecutiva</h3>
-      <p>¿Tu presentación convencería a un CFO? ¿Usas lenguaje de riesgo financiero o solo jerga técnica? ¿Tienes recomendaciones accionables?</p>
+      <h3>SaaS — Software como Servicio</h3>
+      <p style="font-size:1.5rem; text-align:center; margin:12px 0;">🏨</p>
+      <p><strong>Analogía:</strong> Rentas el cuarto de hotel. Todo incluido: cama, toallas, limpieza. Tú solo traes tu maleta (tus datos).</p>
+      <p style="color:var(--muted); font-size:0.8rem; margin-top:8px;">Ejemplos: Gmail, Office 365, Salesforce, SAP en la nube. <br>Tú gestionas: solo tus datos y usuarios.</p>
     </div>
-    <div class="card red">
-      <h3>Manejo de Preguntas</h3>
-      <p>¿Puedes responder preguntas fuera del guion? ¿Admites lo que no sabes? ¿Manejas la presión sin perder el hilo?</p>
+  </div>
+  <div class="box box-dato" style="margin-top:12px;"><div class="box-title">💡 CLAVE</div>
+    <p>Mientras más control tienes (IaaS), más responsabilidad de seguridad tienes. Mientras menos control (SaaS), más dependes del proveedor — pero sigues siendo responsable de tus datos.</p>
+  </div>
+</div>
+
+<div class="slide" data-session="0">
+  <h2>El Modelo de Responsabilidad Compartida</h2>
+  <p><strong style="color:var(--red)">El error más común:</strong> pensar que "la nube es segura" = "mis datos en la nube son seguros automáticamente".</p>
+  <table style="margin-top:12px;">
+    <tr><th>¿Quién es responsable?</th><th>🏢 El Proveedor (AWS/Azure)</th><th>👤 Tu Empresa</th></tr>
+    <tr><td>Infraestructura física (data centers, servidores físicos)</td><td style="color:var(--green)">✅ Siempre</td><td>❌</td></tr>
+    <tr><td>Red global y conectividad del proveedor</td><td style="color:var(--green)">✅ Siempre</td><td>❌</td></tr>
+    <tr><td>Hipervisor y virtualización</td><td style="color:var(--green)">✅ Siempre</td><td>❌</td></tr>
+    <tr><td>Sistema Operativo de las VMs (IaaS)</td><td>❌</td><td style="color:var(--cyan)">✅ Tú</td></tr>
+    <tr><td>Configuración de accesos y permisos</td><td>❌</td><td style="color:var(--cyan)">✅ Tú</td></tr>
+    <tr><td>Cifrado de tus datos</td><td>⚙️ Herramientas disponibles</td><td style="color:var(--cyan)">✅ Tú debes activarlo</td></tr>
+    <tr><td>Gestión de usuarios y contraseñas</td><td>❌</td><td style="color:var(--cyan)">✅ Tú</td></tr>
+    <tr><td>Tus datos y cumplimiento legal</td><td>❌</td><td style="color:var(--cyan)">✅ Siempre Tú</td></tr>
+  </table>
+</div>
+
+<div class="slide" data-session="0">
+  <h2>Los 6 Riesgos Principales de la Nube</h2>
+  <div class="card-grid cols-2">
+    <div>
+      <div class="card red" style="margin-bottom:10px;">
+        <h3>1. 🔧 Mala Configuración</h3>
+        <p>Una sola opción marcada incorrectamente puede exponer millones de registros al público. Es el riesgo #1 en la nube. Ejemplo: carpeta de almacenamiento configurada como "pública" sin darse cuenta.</p>
+      </div>
+      <div class="card orange" style="margin-bottom:10px;">
+        <h3>2. 🔑 Accesos No Gestionados</h3>
+        <p>Empleados que se van sin que se cancelen sus credenciales. Contraseñas compartidas. Cuentas con más permisos de los necesarios. El principio de "mínimo privilegio" es crítico en la nube.</p>
+      </div>
+      <div class="card purple">
+        <h3>3. 🔒 Datos Sin Cifrar</h3>
+        <p>Datos confidenciales almacenados o transmitidos sin cifrado. Si alguien accede a tu almacenamiento en la nube, puede leer todo. El cifrado debe activarse explícitamente.</p>
+      </div>
     </div>
-    <div class="card cyan">
-      <h3>Completud del Entregable</h3>
-      <p>¿Todos los entregables requeridos están presentes, completos y coherentes entre sí? ¿Hay un hilo conductor claro entre el análisis y las recomendaciones?</p>
+    <div>
+      <div class="card cyan" style="margin-bottom:10px;">
+        <h3>4. 🏭 Riesgo de Proveedores (Shadow IT)</h3>
+        <p>Empleados que usan Dropbox, Google Drive personal o herramientas no aprobadas para datos corporativos. ¿Cuántos servicios en la nube usa tu empresa sin que IT lo sepa?</p>
+      </div>
+      <div class="card green" style="margin-bottom:10px;">
+        <h3>5. 👁️ Falta de Visibilidad</h3>
+        <p>No saber qué recursos tienes en la nube, quién los usa, ni qué datos contienen. Sin visibilidad, no hay seguridad posible.</p>
+      </div>
+      <div class="card yellow">
+        <h3>6. 🌍 Soberanía de Datos</h3>
+        <p>¿En qué país están físicamente tus datos? Las leyes locales (LFPDPPP) exigen ciertos controles. Un dato en un servidor en EEUU puede ser accedido por autoridades estadounidenses.</p>
+      </div>
     </div>
   </div>
 </div>
 
-<div class="slide" data-session="3">
-  <h2>Cómo Construir una Narrativa Ejecutiva Ganadora</h2>
-  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
-    <p>La diferencia entre un informe técnico y una presentación ejecutiva es la misma que entre un diagnóstico médico lleno de términos técnicos y la explicación del médico al paciente: <strong>mismo problema, dos lenguajes completamente distintos</strong>. El panel evaluador representa a la dirección; habla su idioma.</p>
+<div class="slide" data-session="0">
+  <h2>Casos Reales: Cuando la Nube Falla</h2>
+  <div class="box box-caso" style="margin-bottom:12px;"><div class="box-title">📰 CAPITAL ONE (2019) — $80M DE MULTA</div>
+    <p>Un ex-empleado de AWS explotó una mala configuración de firewall en la nube de Capital One. <strong>100 millones de registros de clientes expuestos</strong>: nombres, fechas de nacimiento, números de seguro social, cuentas bancarias. Capital One pagó $80M en multas y $190M en demandas colectivas. La causa: una sola regla de firewall mal configurada que Capital One no detectó durante meses.</p>
   </div>
-  <ul class="timeline" style="margin-top:14px;">
-    <li><div class="step cyan">1</div><div class="content"><h4>Contexto y Urgencia (por qué importa AHORA)</h4><p>1-2 slides. Caso real del sector + costo de no actuar. "Una empresa como la nuestra en nuestro sector perdió X por no tener Y."</p></div></li>
-    <li><div class="step orange">2</div><div class="content"><h4>Diagnóstico (dónde estamos)</h4><p>2-3 slides. Inventario de activos + top 5 riesgos con ALE. Nivel de madurez actual. "Estamos en nivel 1.5 de 5."</p></div></li>
-    <li><div class="step green">3</div><div class="content"><h4>Estrategia (qué proponemos)</h4><p>3-4 slides. Controles prioritarios con costo, impacto en riesgo y ROI. Quick wins vs. proyectos de largo plazo.</p></div></li>
-    <li><div class="step purple">4</div><div class="content"><h4>Plan de Acción (cómo llegamos)</h4><p>2-3 slides. Roadmap a 6-18 meses. Responsables, recursos, métricas de éxito.</p></div></li>
-    <li><div class="step red">5</div><div class="content"><h4>Solicitud y Próximos Pasos</h4><p>1 slide. Qué necesitas de la dirección: presupuesto, autorización, apoyo político.</p></div></li>
+  <div class="box box-caso" style="margin-bottom:12px;"><div class="box-title">📰 TOYOTA (2023) — 10 AÑOS DE EXPOSICIÓN</div>
+    <p>Toyota descubrió que los datos de <strong>2.15 millones de clientes</strong> habían estado públicamente accesibles en la nube durante 10 años (2013-2023). Causa: un servidor de almacenamiento configurado como público por error en 2013, nunca detectado hasta una auditoría interna en 2023. Incluía datos de ubicación de vehículos en tiempo real.</p>
+  </div>
+  <div class="box box-dato"><div class="box-title">💡 ¿QUÉ TIENEN EN COMÚN ESTOS CASOS?</div>
+    <p>Ninguno fue causado por una vulnerabilidad del proveedor de nube. Todos fueron causados por <strong>errores de configuración del cliente</strong>. El proveedor hizo su parte. El cliente no hizo la suya.</p>
+  </div>
+</div>
+
+<div class="slide" data-session="0">
+  <h2>El Shadow IT: La Amenaza Invisible</h2>
+  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
+    <p>Imagina que tu empresa tiene un almacén oficial con seguridad, cámaras y control de inventario. Pero algunos empleados, cansados de los trámites, guardan material en sus propios garajes. ¿Qué pasa si alguien roba en uno de esos garajes? <strong>Shadow IT es exactamente eso: recursos de tecnología usados sin el conocimiento ni el control de IT.</strong></p>
+  </div>
+  <div class="card-grid cols-2" style="margin-top:12px;">
+    <div class="card orange">
+      <h3>Ejemplos de Shadow IT en Empresas</h3>
+      <ul>
+        <li>Empleado comparte archivos con proveedores vía Dropbox personal</li>
+        <li>Equipo de ventas crea su propio CRM en Google Sheets</li>
+        <li>Desarrollador lanza servidor en AWS con tarjeta personal</li>
+        <li>RRHH guarda CVs en Google Drive compartido sin control</li>
+        <li>Empleado usa ChatGPT con información confidencial de clientes</li>
+      </ul>
+    </div>
+    <div class="card cyan">
+      <h3>¿Qué Puede Salir Mal?</h3>
+      <ul>
+        <li>Datos de clientes en manos de terceros sin contrato ni NDA</li>
+        <li>Incumplimiento de LFPDPPP sin saberlo</li>
+        <li>Exfiltración de datos por esa vía no monitoreada</li>
+        <li>Cuando el empleado se va, se lleva los datos</li>
+        <li>Imposible auditar ni investigar si no sabes que existe</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box box-dato" style="margin-top:10px;"><div class="box-title">📊 DATO</div>
+    <p>Según Gartner, el <strong>41% de los empleados adquirieron, modificaron o crearon tecnología fuera del control de IT</strong> en 2022. Se espera que sea el 75% para 2027.</p>
+  </div>
+</div>
+
+<div class="slide" data-session="0">
+  <h2>Cloud Security Posture Management (CSPM)</h2>
+  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
+    <p>El CSPM es como el <strong>inspector de condominios</strong> que recorre todos los departamentos verificando que las instalaciones cumplen el reglamento: que no haya cables colgando, puertas sin cerradura, ni ventanas rotas. Pero en lugar de un condominio, revisa tu infraestructura en la nube automáticamente y te reporta qué está mal configurado.</p>
+  </div>
+  <div class="card-grid cols-2" style="margin-top:12px;">
+    <div class="card cyan">
+      <h3>¿Qué hace el CSPM?</h3>
+      <ul>
+        <li>Detecta configuraciones incorrectas automáticamente</li>
+        <li>Verifica que todo cumple con estándares (ISO 27001, PCI-DSS)</li>
+        <li>Monitorea cambios de configuración en tiempo real</li>
+        <li>Genera reportes de cumplimiento para auditorías</li>
+        <li>Prioriza riesgos: "esto es urgente, esto puede esperar"</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h3>Controles Esenciales para Cualquier Empresa en la Nube</h3>
+      <ul>
+        <li><strong>MFA obligatorio</strong> para todos los accesos a la nube</li>
+        <li><strong>Principio de mínimo privilegio:</strong> cada usuario solo ve lo que necesita</li>
+        <li><strong>Cifrado activado</strong> en todos los datos almacenados</li>
+        <li><strong>Logs auditados:</strong> registrar quién accede a qué y cuándo</li>
+        <li><strong>Revisión periódica de accesos</strong> (especialmente ex-empleados)</li>
+        <li><strong>Inventario actualizado</strong> de todos los servicios en la nube</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-session="0">
+  <h2>Actividad: Responsabilidad en la Nube</h2>
+  <div class="box box-lab"><div class="box-title">🔬 ACTIVIDAD PRÁCTICA — 45 minutos</div>
+    <p><strong>Escenario:</strong> Tu empresa usa 3 servicios SaaS: Microsoft Office 365 (correo y documentos), Salesforce (CRM con datos de clientes), y un servicio de nómina en la nube.</p>
+    <p style="margin-top:8px;"><strong>Para cada servicio, identifica en equipo:</strong></p>
+    <ol style="margin-top:8px;">
+      <li>¿Qué tipos de datos confidenciales contiene este servicio? (nombra al menos 5)</li>
+      <li>¿Qué es responsabilidad del proveedor y qué es responsabilidad de tu empresa?</li>
+      <li>¿Qué 3 controles de seguridad son los más urgentes de implementar?</li>
+      <li>¿Qué pasa si este servicio sufre una brecha? ¿Quién es legalmente responsable ante la LFPDPPP?</li>
+    </ol>
+    <p style="margin-top:10px; color:var(--green);"><strong>Entregable:</strong> Tabla de 3 filas (una por servicio) × 4 columnas. Presentación de 3 minutos por equipo.</p>
+  </div>
+  <div class="box box-quiz" onclick="this.classList.toggle('revealed')" style="margin-top:12px;"><div class="box-title">❓ QUIZ — Click para ver respuesta</div>
+    <p>Un empleado usó su cuenta personal de Google Drive para compartir con un proveedor un contrato con datos de 500 clientes. El proveedor fue hackeado. ¿Quién es responsable según la LFPDPPP?</p>
+    <div class="quiz-answer"><strong>Tu empresa es responsable.</strong> Como "responsable del tratamiento de datos", la empresa es legalmente responsable de los datos de sus clientes sin importar que el empleado haya actuado de manera no autorizada. La empresa debe: notificar a los afectados, reportar al INAI, y demostrar que tenía políticas de seguridad. El empleado puede enfrentar consecuencias disciplinarias. <strong>Lección:</strong> Las políticas de uso aceptable y la capacitación no son opcionales.</div>
+  </div>
+</div>
+
+<div class="slide" data-session="0">
+  <h2>Reto de Aplicación: La Migración a la Nube</h2>
+  <div class="box box-reto"><div class="box-title">🎯 RETO — 30 minutos</div>
+    <p><strong>Situación:</strong> Eres el CISO (o asesor de seguridad) de una empresa manufacturera con 500 empleados.</p>
+    <p style="margin-top:8px;">El Director General convocó una junta urgente:</p>
+    <ul style="margin-top:8px;">
+      <li>El <strong>CTO dice:</strong> "Debemos migrar nuestro ERP a la nube. AWS tiene más expertos en seguridad que nosotros. ¡Es más seguro!"</li>
+      <li>El <strong>CFO dice:</strong> "Ahorramos $2 millones al año en infraestructura. ¡Hay que hacerlo ya!"</li>
+      <li>El <strong>Director de Producción dice:</strong> "El ERP tiene datos de todos nuestros procesos industriales. ¿Es seguro?"</li>
+    </ul>
+    <p style="margin-top:10px;"><strong>Tu tarea:</strong> Preparar una presentación de 5 minutos que responda:</p>
+    <ol style="margin-top:6px;">
+      <li>¿Tiene razón el CTO? ¿La nube es automáticamente más segura?</li>
+      <li>¿Cuáles son los 3 riesgos principales de esta migración para esta empresa?</li>
+      <li>¿Qué 5 controles de seguridad deben implementarse ANTES de migrar?</li>
+      <li>¿Cuál es tu recomendación final: ¿migrar o no migrar? ¿Con qué condiciones?</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 22 — OT, ICS Y SCADA ═══ -->
+<div class="slide" data-session="1">
+  <h2>Sesión 22 <span style="color:var(--orange)">— Ciberseguridad Industrial: OT, ICS y SCADA</span></h2>
+  <div class="box box-meta"><div class="box-title">⚠️ METÁFORA DE APERTURA</div>
+    <p>En el mundo IT, si alguien hackea tu computadora, <strong>pierdes datos</strong>. En el mundo OT, si alguien hackea el sistema de control de una planta química, puede causar <strong>una explosión real</strong>. La diferencia entre la ciberseguridad IT y OT es la diferencia entre perder archivos y perder vidas. Por eso, la ciberseguridad industrial es una de las responsabilidades más críticas que existen.</p>
+  </div>
+  <div class="stat-row" style="margin-top:16px;">
+    <div class="stat"><div class="num" style="color:var(--red)">+300%</div><div class="lbl">Aumento en ataques a infraestructura industrial entre 2020 y 2023 (IBM X-Force)</div></div>
+    <div class="stat"><div class="num" style="color:var(--orange)">73%</div><div class="lbl">de las organizaciones industriales sufrieron un incidente de ciberseguridad en 2023 (Claroty)</div></div>
+    <div class="stat"><div class="num" style="color:var(--cyan)">20-30 años</div><div class="lbl">Vida útil promedio de un sistema de control industrial — diseñados antes de que existiera internet</div></div>
+  </div>
+</div>
+
+<div class="slide" data-session="1">
+  <h2>IT vs OT: Dos Mundos Que se Fusionaron</h2>
+  <table>
+    <tr><th>Dimensión</th><th>🖥️ IT (Tecnología de Información)</th><th>🏭 OT (Tecnología Operacional)</th></tr>
+    <tr><td><strong>¿Qué hace?</strong></td><td>Procesa y almacena información: correos, ERP, bases de datos</td><td>Controla procesos físicos: robots, válvulas, sensores, motores</td></tr>
+    <tr><td><strong>Prioridad de seguridad</strong></td><td>Confidencialidad > Integridad > Disponibilidad</td><td><strong>Disponibilidad > Seguridad física > Integridad</strong></td></tr>
+    <tr><td><strong>¿Puedes reiniciarlo?</strong></td><td>Sí, es normal</td><td>No. Reiniciar un PLC puede descontrolar un proceso peligroso</td></tr>
+    <tr><td><strong>¿Puedes parchear?</strong></td><td>Sí, en horas</td><td>Parchear significa parar la línea de producción: millones en pérdidas</td></tr>
+    <tr><td><strong>Vida útil del sistema</strong></td><td>3-5 años, se renueva</td><td>20-30 años. Muchos corren Windows XP o sistemas sin soporte</td></tr>
+    <tr><td><strong>Conexión a internet</strong></td><td>Siempre conectado</td><td>Históricamente aislado — Industria 4.0 los conectó</td></tr>
+    <tr><td><strong>Consecuencia de un fallo</strong></td><td>Pérdida de datos, dinero, reputación</td><td>Accidentes físicos, contaminación, pérdida de vidas</td></tr>
+  </table>
+</div>
+
+<div class="slide" data-session="1">
+  <h2>El Ecosistema OT: Los Componentes Clave</h2>
+  <div class="card-grid cols-2">
+    <div>
+      <div class="card orange" style="margin-bottom:10px;">
+        <h3>🧠 PLC — Controlador Lógico Programable</h3>
+        <p>Es el "cerebro" de una máquina. Recibe señales de sensores y envía comandos a actuadores. <strong>Ejemplo:</strong> el PLC que controla el brazo robótico de soldadura en una planta automotriz.</p>
+        <p style="color:var(--muted);font-size:0.8rem;">Si alguien lo hackea: el robot puede soldar en lugares incorrectos o moverse de forma peligrosa.</p>
+      </div>
+      <div class="card cyan">
+        <h3>👁️ HMI — Interfaz Hombre-Máquina</h3>
+        <p>Es la pantalla con la que el operador "habla" con el PLC. Ve el estado de la máquina y envía comandos. <strong>Ejemplo:</strong> la pantalla en el panel de control de una planta.</p>
+        <p style="color:var(--muted);font-size:0.8rem;">Si alguien la hackea: el operador ve información falsa y toma decisiones incorrectas.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card green" style="margin-bottom:10px;">
+        <h3>🗼 SCADA — Control Supervisorio y Adquisición de Datos</h3>
+        <p>Supervisa múltiples PLCs desde un punto central. Ve toda la planta en tiempo real. <strong>Ejemplo:</strong> el sistema central que monitorea 200 máquinas en una planta.</p>
+        <p style="color:var(--muted);font-size:0.8rem;">Si el SCADA falla: pierdes visibilidad completa de toda la planta.</p>
+      </div>
+      <div class="card purple">
+        <h3>🌐 Convergencia IT/OT — El Momento Peligroso</h3>
+        <p>Industria 4.0 conectó las redes OT con las redes IT para eficiencia y monitoreo remoto. Resultado: los atacantes que antes solo podían afectar sistemas IT, ahora pueden llegar a los sistemas OT.</p>
+        <p style="color:var(--muted);font-size:0.8rem;"><strong>Colonial Pipeline 2021:</strong> entraron por IT, pararon la operación OT.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-session="1">
+  <h2>Ataques Reales que Cambiaron la Historia</h2>
+  <ul class="timeline">
+    <li>
+      <div class="step red">2010</div>
+      <div class="content">
+        <h4>Stuxnet — El Primer Ciberarma</h4>
+        <p>Código malicioso diseñado para sabotear las centrifugadoras de enriquecimiento de uranio en Irán. Causó daños físicos reales sin disparar un solo tiro. Considerado la primera arma cibernética de la historia. Fue obra conjunta de EEUU e Israel. Cambió para siempre la percepción de lo que un ciberataque puede hacer.</p>
+      </div>
+    </li>
+    <li>
+      <div class="step orange">2015</div>
+      <div class="content">
+        <h4>Ukraine Power Grid — La Primera Vez que un Ciberataque Apagó las Luces</h4>
+        <p>Hackers rusos (BlackEnergy) lograron apagar la electricidad de 230,000 personas en invierno. Tomaron control remoto de los sistemas SCADA de la compañía eléctrica ucraniana. Los operadores veían sus pantallas siendo controladas por alguien más.</p>
+      </div>
+    </li>
+    <li>
+      <div class="step red">2021</div>
+      <div class="content">
+        <h4>Colonial Pipeline — $4.4M de Rescate, Escasez de Combustible</h4>
+        <p>Ransomware entró por el sistema IT. Colonial Pipeline decidió parar el sistema OT "por precaución". Resultado: 45% del combustible de la costa este de EEUU cortado por 6 días. Filas de kilómetros en gasolineras. Pagaron $4.4M de rescate (el FBI recuperó parte).</p>
+      </div>
+    </li>
+    <li>
+      <div class="step cyan">2021</div>
+      <div class="content">
+        <h4>Oldsmar Water Treatment — Intento de Envenenamiento</h4>
+        <p>Un hacker entró remotamente al sistema de control de una planta potabilizadora en Florida e intentó aumentar el nivel de hidróxido de sodio (cloro) 111 veces — suficiente para envenenar el agua de 15,000 personas. Un operador alerta lo detuvo a tiempo.</p>
+      </div>
+    </li>
   </ul>
 </div>
 
+<div class="slide" data-session="1">
+  <h2>Casos por Sector Industrial</h2>
+  <div class="card-grid cols-2">
+    <div class="card orange">
+      <h3>🚗 Sector Automotriz</h3>
+      <p><strong>Toyota (2022):</strong> Un ataque a un proveedor de partes (Kojima Industries) obligó a Toyota a parar 14 plantas en Japón por un día entero. Pérdida: 13,000 vehículos no fabricados en 24 horas.</p>
+      <p style="margin-top:8px;"><strong>Riesgo específico:</strong> Los robots de soldadura controlados por PLCs, si son comprometidos, pueden soldar en posiciones incorrectas — defectos que se detectan semanas después cuando el vehículo ya salió de la planta.</p>
+    </div>
+    <div class="card cyan">
+      <h3>🚛 Sector Transporte</h3>
+      <p><strong>Maersk (NotPetya 2017):</strong> El mayor transportista marítimo del mundo fue devastado. 45,000 PCs y 1,000 servidores destruidos. Operaciones en 76 puertos paralizadas. Pérdida: $300M en 10 días.</p>
+      <p style="margin-top:8px;"><strong>Riesgo específico:</strong> Sistemas de gestión de flota comprometidos — rutas alteradas, GPS falso enviado a conductores, manifiestos de carga modificados para ocultar contrabando.</p>
+    </div>
+  </div>
+  <div class="card-grid cols-2" style="margin-top:12px;">
+    <div class="card green">
+      <h3>🏭 Manufactura General</h3>
+      <p><strong>DENSO (2022):</strong> Proveedor clave de Toyota en México y globalmente. El grupo ransomware Pandora robó 1.4TB de datos confidenciales: planos de piezas, contratos con clientes, información de empleados.</p>
+    </div>
+    <div class="card purple">
+      <h3>🛢️ Energía y Utilities</h3>
+      <p><strong>PEMEX (2019):</strong> Ataque de ransomware Ryuk afectó sistemas administrativos. PEMEX pagó parcialmente el rescate. Las plantas de producción no se pararon, pero la operación administrativa quedó paralizada días.</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-session="1">
+  <h2>IEC 62443 y el Modelo Purdue: La Arquitectura de Defensa</h2>
+  <div class="card-grid cols-2">
+    <div class="card orange">
+      <h3>IEC 62443: El ISO 27001 del Mundo Industrial</h3>
+      <p>Estándar internacional para ciberseguridad de sistemas de automatización y control industrial. Define 4 niveles de seguridad (SL0-SL4):</p>
+      <ul style="margin-top:8px;">
+        <li><span class="pill pill-green">SL1:</span> Protección contra intrusos accidentales</li>
+        <li><span class="pill pill-cyan">SL2:</span> Protección contra atacantes intencionales con medios básicos</li>
+        <li><span class="pill pill-orange">SL3:</span> Protección contra atacantes sofisticados</li>
+        <li><span class="pill pill-red">SL4:</span> Protección contra ataques de Estado — máxima seguridad</li>
+      </ul>
+    </div>
+    <div class="card cyan">
+      <h3>El Modelo Purdue: Zonas y Conductos</h3>
+      <p>Arquitectura de referencia para separar las redes OT de las redes IT:</p>
+      <ul style="margin-top:8px;">
+        <li><strong>Nivel 0:</strong> Los dispositivos físicos (sensores, actuadores)</li>
+        <li><strong>Nivel 1:</strong> Los PLCs que controlan los dispositivos</li>
+        <li><strong>Nivel 2:</strong> Los HMIs y sistemas de supervisión local</li>
+        <li><strong>Nivel 3:</strong> SCADA y sistemas de gestión de planta</li>
+        <li><strong>DMZ Industrial:</strong> La zona de amortiguamiento entre OT e IT</li>
+        <li><strong>Nivel 4:</strong> Red corporativa IT</li>
+      </ul>
+      <p style="color:var(--muted);font-size:0.8rem;margin-top:8px;">La regla: las redes deben estar segmentadas. Para que un atacante llegue del nivel 4 al nivel 1, debe cruzar múltiples defensas.</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-session="1">
+  <h2>Actividad: Análisis de Riesgo OT por Sector</h2>
+  <div class="box box-lab"><div class="box-title">🔬 ACTIVIDAD PRÁCTICA — 60 minutos · Por carrera</div>
+    <p>Cada equipo (organizado por carrera o sector) elige uno de los siguientes escenarios:</p>
+  </div>
+  <div class="carrera-grid" style="margin-top:12px;">
+    <div class="carrera-card" style="border-color:var(--orange)">
+      <div class="carrera-title" style="color:var(--orange)">🏭 Ing. Industrial / Automotriz</div>
+      <p style="font-size:0.82rem;">Planta de manufactura con 50 PLCs que controlan robots de soldadura, prensas y pintura. Recientemente conectados a la red corporativa para monitoreo remoto. Identificar: 5 riesgos críticos, 3 controles prioritarios, cómo implementar segmentación sin parar producción.</p>
+    </div>
+    <div class="carrera-card" style="border-color:var(--cyan)">
+      <div class="carrera-title" style="color:var(--cyan)">🚛 Ing. Transporte</div>
+      <p style="font-size:0.82rem;">Empresa de transporte con 300 camiones y sistema de gestión de flota conectado a internet (GPS, telemetría, rutas en tiempo real). Identificar: 5 riesgos críticos, 3 controles prioritarios, qué pasa si el GPS es falseado.</p>
+    </div>
+    <div class="carrera-card" style="border-color:var(--green)">
+      <div class="carrera-title" style="color:var(--green)">💻 Informática / Adm. Industrial</div>
+      <p style="font-size:0.82rem;">Empresa de energía con subestaciones eléctricas controladas por SCADA conectado a la red corporativa. Desde la perspectiva de gestión de riesgos: 5 riesgos, plan de tratamiento, estimación de impacto económico de un fallo.</p>
+    </div>
+  </div>
+  <div class="box box-quiz" onclick="this.classList.toggle('revealed')" style="margin-top:12px;"><div class="box-title">❓ QUIZ — Click para ver respuesta</div>
+    <p>En un sistema OT, si debes elegir entre Confidencialidad, Integridad o Disponibilidad como prioridad máxima, ¿cuál eliges y por qué?</p>
+    <div class="quiz-answer"><strong>Disponibilidad</strong>, seguida de Integridad, seguida de Confidencialidad. En OT, si el sistema no está disponible, el proceso industrial se detiene (con posibles consecuencias físicas peligrosas). La integridad es crítica porque datos falsos llevan a acciones físicas incorrectas. La confidencialidad, aunque importante, es menos crítica que las otras dos en la mayoría de los contextos industriales. Esta es la inversión de prioridades respecto al mundo IT.</div>
+  </div>
+</div>
+
+<div class="slide" data-session="1">
+  <h2>Reto de Aplicación: El Monitoreo Remoto</h2>
+  <div class="box box-reto"><div class="box-title">🎯 RETO — Debate y Propuesta · 30 minutos</div>
+    <p><strong>Situación:</strong> La empresa quiere implementar monitoreo remoto de sus 200 PLCs para reducir costos de mantenimiento (actualmente un técnico viaja físicamente a revisar cada uno).</p>
+    <p style="margin-top:8px;"><strong>El conflicto:</strong></p>
+    <ul>
+      <li>🔧 El Gerente de Producción: "Los necesitamos conectados a internet. ¡Los técnicos pueden trabajar desde casa!"</li>
+      <li>🔒 El CISO: "Imposible. Si los conectamos a internet, cualquier atacante del mundo podría llegar a los PLCs."</li>
+      <li>💰 El CFO: "El monitoreo remoto ahorra $500,000 al año. ¿Cuál es la solución?"</li>
+    </ul>
+    <p style="margin-top:10px;"><strong>Tu tarea:</strong> Proponer una solución técnica-gerencial que:</p>
+    <ol>
+      <li>Permita el monitoreo remoto que pide producción</li>
+      <li>No exponga directamente los PLCs a internet</li>
+      <li>Sea económicamente justificable</li>
+    </ol>
+    <p style="margin-top:8px; color:var(--muted); font-size:0.85rem;">Pista: piensa en la arquitectura Purdue, DMZ industrial, VPN industrial, acceso seguro...</p>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 23 — IoT, IA Y VEHÍCULOS ═══ -->
+<div class="slide" data-session="2">
+  <h2>Sesión 23 <span style="color:var(--green)">— Tecnologías Emergentes: IoT, IA y Vehículos Conectados</span></h2>
+  <div class="box box-meta"><div class="box-title">📡 METÁFORA DE APERTURA</div>
+    <p>Conectar un millón de dispositivos IoT sin seguridad es como dar un <strong>teléfono espía a cada empleado de tu empresa</strong> sin avisarles: el fabricante puede escuchar todas sus conversaciones y saber dónde están en todo momento. La Industria 4.0 creó eficiencias increíbles... y también <strong>la superficie de ataque más grande de la historia</strong>. Cada sensor conectado es una puerta potencial al corazón de tu operación.</p>
+  </div>
+  <div class="stat-row" style="margin-top:16px;">
+    <div class="stat"><div class="num" style="color:var(--cyan)">16.6B</div><div class="lbl">Dispositivos IoT conectados en el mundo en 2024 (IoT Analytics)</div></div>
+    <div class="stat"><div class="num" style="color:var(--red)">57%</div><div class="lbl">de los dispositivos IoT son vulnerables a ataques de severidad media o alta (Palo Alto Networks)</div></div>
+    <div class="stat"><div class="num" style="color:var(--orange)">$25M</div><div class="lbl">USD transferidos por deepfake de video en Hong Kong 2024</div></div>
+  </div>
+</div>
+
+<div class="slide" data-session="2">
+  <h2>IoT Industrial (IIoT): El Eslabón Más Débil</h2>
+  <div class="card-grid cols-2">
+    <div class="card cyan">
+      <h3>¿Qué es IIoT?</h3>
+      <p>Sensores inteligentes, máquinas conectadas, medidores remotos, cámaras IP industriales, wearables para trabajadores, termostatos inteligentes, medidores de energía.</p>
+      <p style="margin-top:8px;"><strong>El problema de fábrica:</strong> la mayoría de los dispositivos IoT fueron diseñados para ser <em>funcionales</em>, no <em>seguros</em>. Se vendieron con contraseñas predeterminadas iguales para millones de unidades (admin/admin), sin capacidad de actualización, sin cifrado.</p>
+    </div>
+    <div class="card red">
+      <h3>Mirai Botnet (2016): 600,000 Dispositivos Secuestrados</h3>
+      <p>Un estudiante universitario creó malware que buscó en internet dispositivos IoT con contraseñas predeterminadas (cámaras de seguridad, DVRs, routers). Encontró y secuestró <strong>600,000 dispositivos</strong> en días.</p>
+      <p style="margin-top:8px;">Los usó para lanzar el mayor ataque DDoS de la historia, tumbando: Netflix, Twitter, Spotify, Reddit, Airbnb — todos simultáneamente durante horas.</p>
+      <p style="color:var(--muted); font-size:0.8rem; margin-top:8px;">La lección: cada cámara de seguridad sin contraseña cambiada es un arma potencial.</p>
+    </div>
+  </div>
+  <div class="box box-dato" style="margin-top:12px;"><div class="box-title">🏭 EN TU EMPRESA — Los 5 Controles Mínimos para IoT</div>
+    <ul>
+      <li><strong>Inventario:</strong> Saber exactamente cuántos dispositivos IoT tienes y qué hace cada uno</li>
+      <li><strong>Cambio de contraseñas:</strong> Cambiar TODAS las contraseñas predeterminadas antes de conectar</li>
+      <li><strong>Segmentación de red:</strong> Los dispositivos IoT en su propia red, separada de la corporativa</li>
+      <li><strong>Actualizaciones:</strong> Protocolo para actualizar firmware de los dispositivos regularmente</li>
+      <li><strong>Monitoreo:</strong> Detectar comportamientos anómalos — un sensor que "habla" a sitios desconocidos</li>
+    </ul>
+  </div>
+</div>
+
+<div class="slide" data-session="2">
+  <h2>IA en Ciberseguridad: El Campo de Batalla del Futuro</h2>
+  <div class="card-grid cols-2">
+    <div class="card green">
+      <h3>🛡️ IA Defensiva — La Esperanza</h3>
+      <ul>
+        <li><strong>Detección de anomalías:</strong> Encuentra patrones de ataque en millones de logs que un humano nunca vería</li>
+        <li><strong>UEBA (User Behavior Analytics):</strong> Detecta cuando un empleado actúa de forma inusual — trabaja a las 3am, descarga datos masivamente</li>
+        <li><strong>Respuesta automática:</strong> Bloquea automáticamente una amenaza en microsegundos, antes de que cause daño</li>
+        <li><strong>Phishing detection:</strong> Identifica correos maliciosos con 99%+ de precisión</li>
+      </ul>
+    </div>
+    <div class="card red">
+      <h3>⚔️ IA Ofensiva — La Amenaza</h3>
+      <ul>
+        <li><strong>Deepfakes:</strong> Videos y audios falsos de CEOs dando instrucciones de transferir dinero</li>
+        <li><strong>Voice Cloning:</strong> Llama al tesorero con la voz exacta del director. "Transfiere $500,000 ahora"</li>
+        <li><strong>Phishing personalizado a escala:</strong> IA que crea 10,000 correos de phishing personalizados en segundos</li>
+        <li><strong>Automatización de ataques:</strong> Lo que antes tardaba semanas (reconocimiento, explotación) ahora tarda horas</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box box-caso" style="margin-top:12px;"><div class="box-title">📰 EL FRAUDE DE $25M CON DEEPFAKE (Hong Kong, 2024)</div>
+    <p>Un empleado del departamento financiero de una multinacional en Hong Kong recibió una "videollamada" con el Director Financiero y varios colegas, pidiéndole realizar transferencias urgentes por $25.6M USD. El empleado ejecutó 15 transacciones. <strong>Era una videollamada completamente generada por IA.</strong> Nadie en la llamada era real. Todos eran deepfakes. Las autoridades arrestaron a 6 personas relacionadas con el esquema.</p>
+  </div>
+</div>
+
+<div class="slide" data-session="2">
+  <h2>ChatGPT y la IA Generativa en la Empresa: Riesgo Real</h2>
+  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
+    <p>Usar ChatGPT con información confidencial de la empresa es como <strong>contratar a un asistente inteligentísimo sin firmar NDA</strong>. Es brillante y útil, pero lo que le cuentas puede ser usado para entrenar modelos futuros — y potencialmente ser accesible a otros usuarios.</p>
+  </div>
+  <div class="card-grid cols-2" style="margin-top:12px;">
+    <div class="card orange">
+      <h3>¿Qué NO deben meter los empleados a ChatGPT?</h3>
+      <ul>
+        <li>Contratos con clientes, proveedores o empleados</li>
+        <li>Datos personales de clientes o empleados (viola LFPDPPP/GDPR)</li>
+        <li>Estrategias de negocio, planes de expansión</li>
+        <li>Información financiera no pública</li>
+        <li>Código fuente de productos propietarios</li>
+        <li>Credenciales, contraseñas o configuraciones de sistemas</li>
+      </ul>
+    </div>
+    <div class="card cyan">
+      <h3>El Caso Samsung (2023)</h3>
+      <p>Tres empleados de Samsung filtró accidentalmente código fuente propietario de chips de semiconductores al usar ChatGPT para:</p>
+      <ul style="margin-top:8px;">
+        <li>Pegar código de producción para "optimizar" una base de datos</li>
+        <li>Pegar código para corregir errores de un programa de pruebas</li>
+        <li>Transcribir una reunión confidencial para hacer "notas"</li>
+      </ul>
+      <p style="color:var(--muted); font-size:0.8rem; margin-top:8px;">Samsung tuvo que prohibir temporalmente el uso de IA generativa externamente. Ahora desarrolla su propio modelo interno.</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-session="2">
+  <h2>Vehículos Conectados: La Nueva Frontera de la Ciberseguridad</h2>
+  <div class="box box-meta"><div class="box-title">🚗 METÁFORA</div>
+    <p>Un vehículo moderno es básicamente <strong>un smartphone con ruedas</strong>. Tiene más de 100 computadoras internas (ECUs), conectividad Wi-Fi, Bluetooth, 4G/5G, GPS, y recibe actualizaciones por internet. Pero a diferencia de tu smartphone — si alguien lo hackea mientras vas a 120 km/h, las consecuencias son físicas.</p>
+  </div>
+  <div class="card-grid cols-3" style="margin-top:12px;">
+    <div class="card orange">
+      <h3>🧠 ECU (Electronic Control Unit)</h3>
+      <p>Las "computadoras" internas del vehículo. Un auto moderno tiene 100+. Controlan todo: motor, frenos, dirección, airbags, entretenimiento.</p>
+    </div>
+    <div class="card red">
+      <h3>🔌 CAN Bus</h3>
+      <p>La "médula espinal" del vehículo. Red interna que conecta todas las ECUs entre sí. Si un atacante accede al CAN bus, puede enviar comandos a cualquier sistema del vehículo.</p>
+    </div>
+    <div class="card cyan">
+      <h3>📡 OTA Updates</h3>
+      <p>Actualizaciones remotas de software "Over The Air". Tesla las usa constantemente. ¿Qué pasa si alguien intercepta una actualización OTA y la reemplaza por malware?</p>
+    </div>
+  </div>
+  <div class="box box-caso" style="margin-top:12px;"><div class="box-title">📰 JEEP CHEROKEE HACK (2015) — 1.4M VEHÍCULOS RETIRADOS</div>
+    <p>Dos investigadores (Miller y Valasek) lograron tomar control remoto de un Jeep Cherokee en movimiento a 115 km/h por internet: controlaron el radio, los limpiaparabrisas, el aire acondicionado, y finalmente los <strong>frenos y la dirección</strong>. El conductor (un periodista de Wired) no podía hacer nada. Chrysler retiró 1.4 millones de vehículos para instalar un parche.</p>
+  </div>
+</div>
+
+<div class="slide" data-session="2">
+  <h2>Regulación de Vehículos Conectados</h2>
+  <div class="card-grid cols-2">
+    <div class="card orange">
+      <h3>ISO/SAE 21434:2021 — La "ISO 27001" Automotriz</h3>
+      <p>Estándar internacional para ingeniería de ciberseguridad en vehículos de carretera. Define procesos para:</p>
+      <ul style="margin-top:8px;">
+        <li><strong>TARA:</strong> Threat Analysis and Risk Assessment (como el análisis de riesgos en ISO 27001)</li>
+        <li>Ciberseguridad desde el diseño (security by design)</li>
+        <li>Gestión de vulnerabilidades durante toda la vida del vehículo</li>
+        <li>Requisitos para proveedores de la cadena de suministro automotriz</li>
+      </ul>
+      <p style="color:var(--muted); font-size:0.8rem; margin-top:8px;">Obligatorio para nuevos modelos en la UE desde julio 2024. México adoptará pronto.</p>
+    </div>
+    <div class="card cyan">
+      <h3>Hyundai/Kia — Vulnerabilidad Masiva (2022-2023)</h3>
+      <p>Se descubrió que millones de Hyundai y Kia 2015-2021 podían robarse con un cable USB y un destornillador. No tenían inmovilizador electrónico.</p>
+      <p style="margin-top:8px;">En redes sociales se viralizó el "Kia Challenge" — TikTok con instrucciones para robar el vehículo. Más de 8,000 robos en Chicago en un mes.</p>
+      <p style="color:var(--muted); font-size:0.8rem; margin-top:8px;">Hyundai lanzó una actualización OTA para corregirlo. Pero no todos los propietarios la instalaron.</p>
+    </div>
+  </div>
+  <div class="box box-dato" style="margin-top:12px;"><div class="box-title">🚛 FLOTAS DE TRANSPORTE: RIESGOS ESPECÍFICOS</div>
+    <ul>
+      <li><strong>GPS falso (GPS Spoofing):</strong> Enviar señales falsas de GPS para desviar rutas o esconder ubicación de vehículos de alto valor</li>
+      <li><strong>Acceso remoto a taquígrafos digitales:</strong> Manipulación de registros de horas de conducción</li>
+      <li><strong>Plataformas de logística comprometidas:</strong> Modificar manifiestos de carga para facilitar contrabando</li>
+    </ul>
+  </div>
+</div>
+
+<div class="slide" data-session="2">
+  <h2>Actividad: Mapa de Riesgos de Tecnología Emergente</h2>
+  <div class="box box-lab"><div class="box-title">🔬 ACTIVIDAD PRÁCTICA — 60 minutos · Por carrera</div>
+    <p>Cada equipo elige el escenario de su carrera y crea un mapa de riesgos:</p>
+  </div>
+  <div class="carrera-grid" style="margin-top:12px;">
+    <div class="carrera-card" style="border-color:var(--orange)">
+      <div class="carrera-title" style="color:var(--orange)">🚗 Ing. Automotriz</div>
+      <p style="font-size:0.82rem;">Tu empresa lanzará su primer vehículo eléctrico conectado con OTA updates y app móvil. Identificar 6 amenazas de ciberseguridad, el impacto de cada una, y el control recomendado. ¿Qué controles de ISO/SAE 21434 aplicarías?</p>
+    </div>
+    <div class="carrera-card" style="border-color:var(--cyan)">
+      <div class="carrera-title" style="color:var(--cyan)">🚛 Ing. Transporte</div>
+      <p style="font-size:0.82rem;">Tu empresa implementará telemetría GPS en 500 camiones y una plataforma de logística en la nube. Identificar 6 amenazas, impacto y controles. ¿Qué pasa si el sistema es hackeado mientras transportan mercancía de alto valor?</p>
+    </div>
+    <div class="carrera-card" style="border-color:var(--green)">
+      <div class="carrera-title" style="color:var(--green)">🏭 Ing. Industrial</div>
+      <p style="font-size:0.82rem;">Tu planta implementará 300 sensores IIoT y un gemelo digital para optimizar producción. Identificar 6 amenazas de ciberseguridad industrial, impacto en producción y controles. ¿Qué información confidencial podría extraerse del gemelo digital?</p>
+    </div>
+    <div class="carrera-card" style="border-color:var(--purple)">
+      <div class="carrera-title" style="color:var(--purple)">💻 Informática / Adm.</div>
+      <p style="font-size:0.82rem;">Tu empresa integrará un chatbot con IA generativa para atención a clientes con acceso a la base de datos de clientes. Identificar 6 amenazas (incluyendo prompt injection), impacto y controles. ¿Qué políticas de uso de IA implementarías?</p>
+    </div>
+  </div>
+  <div class="box box-quiz" onclick="this.classList.toggle('revealed')" style="margin-top:12px;"><div class="box-title">❓ QUIZ — Click para ver respuesta</div>
+    <p>Un empleado de finanzas recibe una videollamada de su Director General pidiéndole transferir urgentemente $1.5M. La voz y la cara son idénticas a su jefe. ¿Qué debe hacer?</p>
+    <div class="quiz-answer"><strong>Verificar por un canal alternativo ANTES de cualquier acción.</strong> Los protocolos anti-deepfake incluyen: (1) Colgar y llamar directamente al director por su número conocido, (2) Usar una "palabra clave de verificación" pre-acordada, (3) Seguir el protocolo: ninguna transferencia de más de X monto sin confirmación escrita por correo corporativo + aprobación de al menos 2 personas. Las empresas deben implementar políticas de "nunca transferir dinero por sola instrucción verbal en videollamada", sin importar quién parezca pedirlo.</div>
+  </div>
+</div>
+
+<!-- ═══ SESIÓN 24 — TALLER DEL PROYECTO ═══ -->
 <div class="slide" data-session="3">
-  <h2>Preguntas Difíciles del Panel: Prepárate</h2>
-  <div class="box box-quiz" onclick="this.classList.toggle('revealed')"><div class="box-title">❓ PREGUNTA 1 — Click para ver cómo responder</div>
-    <p>"Tu propuesta cuesta $500K. ¿Puedes garantizar que no vamos a sufrir un ataque si invertimos ese dinero?"</p>
-    <div class="quiz-answer"><strong>Respuesta correcta:</strong> "No puedo garantizar cero incidentes — ningún experto puede. Lo que puedo garantizar es que este plan reduce nuestro riesgo de pérdida anual esperada de $2.1M a $400K según nuestro análisis, y que cumpliremos con los requisitos regulatorios que actualmente nos exponen a multas de hasta $X. Es como el seguro de un edificio: no garantiza que nunca habrá incendio, pero sí que el impacto financiero será manejable."</div>
+  <h2>Sesión 24 <span style="color:var(--yellow)">— Taller del Proyecto Integrador: Revisión y Preparación de Defensa</span></h2>
+  <div style="text-align:center; padding: 20px 0;">
+    <p style="font-size:1.6rem; font-weight:800; color:var(--yellow);">⚡ Esta sesión es tuya.</p>
+    <p style="font-size:1.1rem; color:var(--muted); margin-top:8px;">Es el momento de convertir 4 bloques de aprendizaje en un <strong style="color:var(--cyan)">proyecto de negocio real</strong>.</p>
+    <p style="font-size:0.95rem; color:var(--muted); margin-top:16px;">Hoy no hay teoría nueva. Hay trabajo, retroalimentación y preparación para la defensa del próximo sábado.</p>
   </div>
-  <div class="box box-quiz" onclick="this.classList.toggle('revealed')" style="margin-top:8px;"><div class="box-title">❓ PREGUNTA 2 — Click para ver cómo responder</div>
-    <p>"¿Por qué comenzar con ISO 27001 y no simplemente comprar un buen antivirus y firewall?"</p>
-    <div class="quiz-answer"><strong>Respuesta correcta:</strong> "El antivirus y el firewall son controles técnicos que resuelven síntomas sin diagnosticar la enfermedad. ISO 27001 es el sistema de gestión que identifica sistemáticamente qué activos proteger, qué riesgos existen y qué controles son los más efectivos para NUESTRA organización específica. Sin esa base, compramos herramientas que quizás no cubren nuestros riesgos reales. Es la diferencia entre comprar medicamentos al azar vs. ir al médico primero."</div>
+  <div class="card-grid cols-3" style="margin-top:16px;">
+    <div class="card green">
+      <h3>🕐 Hora 1-2: Revisión Ronda 1</h3>
+      <p>Inventario de activos + Matriz de riesgos. El facilitador revisa y da retroalimentación específica a cada equipo.</p>
+    </div>
+    <div class="card orange">
+      <h3>🕐 Hora 3-4: Revisión Ronda 2</h3>
+      <p>Plan de tratamiento + Política de seguridad + BCP/DRP. Revisión de coherencia entre entregables.</p>
+    </div>
+    <div class="card cyan">
+      <h3>🕐 Hora 5-6: Simulacro de Defensa</h3>
+      <p>Cada equipo presenta 5 minutos. El grupo hace preguntas de panel. Retroalimentación colectiva.</p>
+    </div>
   </div>
-  <div class="box box-quiz" onclick="this.classList.toggle('revealed')" style="margin-top:8px;"><div class="box-title">❓ PREGUNTA 3 — Click para ver cómo responder</div>
-    <p>"¿Qué haría PRIMERO si mañana tuviéramos un presupuesto de solo $50,000 para seguridad?"</p>
-    <div class="quiz-answer"><strong>Respuesta correcta:</strong> Priorizar los CIS Controls de IG1 (básico): (1) Inventario de activos ($0, Excel); (2) MFA para todos los usuarios críticos (~$5K); (3) Gestión de parches (~$10K herramienta + proceso); (4) Segmentación básica de red ($15K firewall); (5) Backup offline verificado ($10K); (6) Capacitación de phishing ($5K). Estos controles mitigan el 80% de los vectores de ataque comunes por el menor costo.</div>
+</div>
+
+<div class="slide" data-session="3">
+  <h2>El Proyecto Integrador: ¿Qué es y Qué Demuestra?</h2>
+  <div class="box box-dato"><div class="box-title">💡 ¿QUÉ ES EL PROYECTO INTEGRADOR?</div>
+    <p>Simulas ser el <strong>CISO o Asesor de Ciberseguridad</strong> de una empresa real de tu sector. Propones una estrategia integral de ciberseguridad desde cero. No es un trabajo teórico — es un entregable que podría usarse en una empresa real.</p>
+  </div>
+  <div class="card-grid cols-2" style="margin-top:12px;">
+    <div class="card cyan">
+      <h3>¿Qué empresa eliges?</h3>
+      <ul>
+        <li>Puede ser la empresa donde trabajas o trabajaste</li>
+        <li>Puede ser una empresa real de tu sector (pública)</li>
+        <li>Puede ser una empresa ficticia representativa de tu carrera</li>
+        <li><strong>Debe ser específica:</strong> sector, tamaño, productos/servicios, procesos clave</li>
+        <li>Mientras más real y específica, más fácil de hacer y más impresionante para el panel</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h3>¿Qué demuestra?</h3>
+      <ul>
+        <li>Que entiendes los activos críticos de TU sector</li>
+        <li>Que puedes identificar y priorizar riesgos con metodología</li>
+        <li>Que puedes proponer controles viables y justificados</li>
+        <li>Que puedes comunicarle seguridad a un directivo (no solo a un técnico)</li>
+        <li>Que conectas la seguridad con el negocio</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-session="3">
+  <h2>Los 9 Entregables del Proyecto Integrador</h2>
+  <table>
+    <tr><th>#</th><th>Entregable</th><th>Qué debe incluir</th><th>Bloque de origen</th></tr>
+    <tr><td>1</td><td><strong>Inventario de Activos</strong></td><td>15+ activos, clasificación (C/I/A: Alto/Medio/Bajo), propietario, tipo</td><td>Bloque I</td></tr>
+    <tr><td>2</td><td><strong>Matriz de Riesgos Cualitativa</strong></td><td>10 riesgos en matriz 5×5, probabilidad × impacto, nivel de riesgo, tratamiento elegido</td><td>Bloque I</td></tr>
+    <tr><td>3</td><td><strong>Cálculo de ALE</strong></td><td>Los 3 riesgos más críticos con fórmula: ALE = ARO × SLE. Justifica las estimaciones.</td><td>Bloque I</td></tr>
+    <tr><td>4</td><td><strong>Plan de Tratamiento</strong></td><td>Tabla: riesgo → control → responsable → fecha → costo estimado → KPI de seguimiento</td><td>Bloque I</td></tr>
+    <tr><td>5</td><td><strong>Política de Seguridad</strong></td><td>2-3 páginas máx. Alcance, objetivos, responsabilidades, 5-7 políticas específicas del sector</td><td>Bloque IV</td></tr>
+    <tr><td>6</td><td><strong>Plan de Respuesta a Incidentes</strong></td><td>Los 2 incidentes más probables de tu sector. Fases NIST: preparación, detección, contención, erradicación, recuperación</td><td>Bloque III</td></tr>
+    <tr><td>7</td><td><strong>BCP/DRP</strong></td><td>Los 2 procesos más críticos. BIA con RTO y RPO. Estrategia de recuperación.</td><td>Bloque IV</td></tr>
+    <tr><td>8</td><td><strong>Dashboard de Métricas</strong></td><td>6 KPIs de seguridad, umbral de alerta, fuente de datos, frecuencia de medición</td><td>Bloque IV</td></tr>
+    <tr><td>9</td><td><strong>Presentación Ejecutiva</strong></td><td>15 slides máx. Para el consejo directivo. Sin tecnicismos. Con ROI justificado.</td><td>Integración</td></tr>
+  </table>
+</div>
+
+<div class="slide" data-session="3">
+  <h2>Checklist de Entregables: ¿Estás Listo?</h2>
+  <p style="margin-bottom:12px;">Haz click en cada elemento conforme lo vayas completando.</p>
+  <div class="card-grid cols-2">
+    <div>
+      <ul class="checklist" id="checklist1">
+        <li onclick="this.classList.toggle('done')">Empresa elegida y descrita (sector, tamaño, procesos)</li>
+        <li onclick="this.classList.toggle('done')">Inventario de 15+ activos completado con clasificación CIA</li>
+        <li onclick="this.classList.toggle('done')">Matriz de riesgos 5×5 con 10 riesgos identificados</li>
+        <li onclick="this.classList.toggle('done')">Cálculo de ALE para los 3 riesgos críticos</li>
+        <li onclick="this.classList.toggle('done')">Plan de tratamiento con responsables y costos</li>
+      </ul>
+    </div>
+    <div>
+      <ul class="checklist" id="checklist2">
+        <li onclick="this.classList.toggle('done')">Política de seguridad (2-3 páginas, específica del sector)</li>
+        <li onclick="this.classList.toggle('done')">Plan de respuesta a incidentes para 2 escenarios</li>
+        <li onclick="this.classList.toggle('done')">BCP/DRP con BIA, RTO y RPO definidos</li>
+        <li onclick="this.classList.toggle('done')">Dashboard con 6 KPIs y umbrales</li>
+        <li onclick="this.classList.toggle('done')">Presentación ejecutiva de 15 slides preparada</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box box-reto" style="margin-top:14px;"><div class="box-title">⚠️ ERRORES MÁS COMUNES — Evítalos</div>
+    <ul>
+      <li><strong>Inventario genérico:</strong> "Computadoras, servidores, datos". Debe ser específico: "Sistema SAP de producción planta Querétaro — Propietario: Dir. Producción"</li>
+      <li><strong>Política copiada de internet:</strong> El panel lo detecta inmediatamente. Debe mencionar tu sector, tu empresa, tus procesos específicos</li>
+      <li><strong>Entregables sin conectar:</strong> El riesgo #1 en la matriz debe generar el control #1 en el plan de tratamiento. Deben ser coherentes entre sí.</li>
+      <li><strong>Presentación técnica para directivos:</strong> Si mencionas CVE-2023-XXXX o SHA-256 en tu presentación ejecutiva, el panel te pedirá que lo expliques en términos de negocio</li>
+    </ul>
+  </div>
+</div>
+
+<div class="slide" data-session="3">
+  <h2>Las Preguntas Que Hará el Panel — Prepárate</h2>
+  <div class="card-grid cols-2">
+    <div>
+      <div class="card orange" style="margin-bottom:10px;">
+        <h3>"¿Por qué priorizaste ESTOS riesgos y no otros?"</h3>
+        <p><strong>Cómo responder:</strong> "Basé la priorización en la metodología FRAP/ISO 27001 considerando la probabilidad de ocurrencia en nuestro sector (datos de Verizon DBIR) y el impacto económico estimado con la fórmula ALE. El riesgo #1 tiene un ALE de $X, lo que justifica una inversión de hasta $Y en controles."</p>
+      </div>
+      <div class="card red">
+        <h3>"¿Cuánto cuesta implementar todo esto?"</h3>
+        <p><strong>Cómo responder:</strong> Tener una tabla con costo estimado por control (mano de obra + software + tiempo). Usar rangos: "Implementar MFA tiene un costo de $5,000-$15,000 anuales y reduce el riesgo de accesos no autorizados en un 99.9%." Siempre expresar en términos de ROI.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card cyan" style="margin-bottom:10px;">
+        <h3>"¿Qué pasa si el Director dice que no hay presupuesto?"</h3>
+        <p><strong>Cómo responder:</strong> "Propongo un plan por fases priorizando los 3 controles de mayor impacto con menor costo. Estos son: [lista]. Con $50,000 anuales podemos reducir el riesgo residual en un 60%. No implementar estos controles expone a la empresa a pérdidas potenciales de $X (ALE calculado)."</p>
+      </div>
+      <div class="card green">
+        <h3>"¿Cómo medirías el éxito del programa en 1 año?"</h3>
+        <p><strong>Cómo responder:</strong> Referenciar el dashboard de métricas. "Mediremos 6 KPIs, entre ellos: tiempo medio de detección de incidentes (reducir de X a Y días), porcentaje de empleados entrenados en phishing (meta: 100%), número de vulnerabilidades críticas sin parchear (meta: 0)."</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-session="3">
+  <h2>Tips para una Presentación Ejecutiva Memorable</h2>
+  <div class="box box-meta"><div class="box-title">🎭 METÁFORA — La Regla del "No le cuentes a tu abuela cómo se hace el motor"</div>
+    <p>Un ejecutivo necesita saber QUÉ significa el problema para su empresa y CUÁNTO cuesta — no CÓMO funciona técnicamente el ataque. Si explicas cómo funciona SQL injection en lugar de decir "un atacante puede robar todos los datos de clientes y exponerte a multas de INAI", pierdes al panel en los primeros 30 segundos.</p>
+  </div>
+  <div class="card-grid cols-2" style="margin-top:12px;">
+    <div class="card green">
+      <h3>✅ La Estructura que Funciona (15 slides)</h3>
+      <ol style="font-size:0.83rem;">
+        <li>Portada + ¿qué empresa y cuál es el contexto?</li>
+        <li>Situación actual: ¿cuál es el riesgo HOY?</li>
+        <li>Los 3 riesgos más críticos en términos de negocio</li>
+        <li>¿Qué podría pasar? (escenario de incidente realista)</li>
+        <li>Nuestra estrategia de seguridad (una página)</li>
+        <li>Los 5 controles prioritarios y su costo-beneficio</li>
+        <li>Plan de implementación por fases</li>
+        <li>Cómo mediremos el éxito (KPIs)</li>
+        <li>Inversión total y ROI estimado</li>
+        <li>Recomendación final y próximos pasos</li>
+      </ol>
+    </div>
+    <div class="card orange">
+      <h3>❌ Errores que Matan una Presentación</h3>
+      <ul style="font-size:0.83rem;">
+        <li>Más de 20 palabras por slide</li>
+        <li>Siglas sin explicar (SIEM, CVE, MTTR...)</li>
+        <li>Pantallas de código o comandos de terminal</li>
+        <li>No mencionar el impacto económico</li>
+        <li>Recomendar controles que no puedes justificar</li>
+        <li>No tener listo el "¿cuánto cuesta?"</li>
+        <li>Pasarte del tiempo asignado</li>
+        <li>No conectar los entregables entre sí</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-session="3">
+  <h2>Simulacro de Defensa: Instrucciones</h2>
+  <div class="box box-lab"><div class="box-title">🎤 ACTIVIDAD — Simulacro de Panel · Hora 5-6</div>
+    <p><strong>Reglas del simulacro:</strong></p>
+    <ol style="margin-top:8px;">
+      <li>Cada equipo tiene <strong>exactamente 5 minutos</strong> para presentar su proyecto (el facilitador tiene un cronómetro)</li>
+      <li>Cuando termine el tiempo, <strong>corte</strong>. Aprende a priorizar qué presentas en 5 minutos.</li>
+      <li>Después de cada presentación, <strong>3 minutos de preguntas</strong> del panel (el resto del grupo)</li>
+      <li>El facilitador da retroalimentación estructurada: qué funcionó, qué mejorar</li>
+      <li>Nadie se burla. El objetivo es mejorar, no juzgar.</li>
+    </ol>
+    <p style="margin-top:12px;"><strong>Panel de preguntas sugeridas para el grupo:</strong></p>
+    <ul>
+      <li>"¿Por qué ese riesgo es más crítico que [el otro que mencionaron]?"</li>
+      <li>"¿Cómo le explicarías esto al Director General que no sabe nada de tecnología?"</li>
+      <li>"¿Qué pasa si no hacen nada? Ponlo en números."</li>
+      <li>"¿Este plan ya considera lo que pide la LFPDPPP?"</li>
+    </ul>
+  </div>
+  <div class="box box-dato" style="margin-top:12px;"><div class="box-title">💡 RECUERDA</div>
+    <p>El mejor momento para aprender sobre ciberseguridad fue hace 10 años. El segundo mejor momento es hoy. Lo que estás construyendo en este proyecto tiene valor real en el mercado laboral. <strong>El 90% de las empresas mexicanas no tiene ni el 10% de lo que tú estás proponiendo.</strong></p>
   </div>
 </div>
 
 <!-- ═══ SESIÓN 25 — DEFENSA FINAL ═══ -->
 <div class="slide" data-session="4">
-  <h2>Sesión 25 <span style="color:var(--green)">— Presentación Final del Proyecto Integrador y Cierre</span></h2>
-  <div class="box box-dato"><div class="box-title">💡 ESTRUCTURA DE LA DEFENSA</div>
-    <p>Cada equipo dispone de <strong>15 a 20 minutos de presentación</strong> seguidos de <strong>10 a 15 minutos de preguntas</strong> del panel evaluador. El panel valora la profundidad del análisis, la coherencia de las recomendaciones y la seguridad con que el presentador defiende sus decisiones técnicas y estratégicas.</p>
-  </div>
-  <div class="card-grid cols-2" style="margin-top:14px;">
-    <div class="card green">
-      <h3>Rúbrica de Evaluación</h3>
-      <ul>
-        <li><strong>Análisis de riesgos (25%)</strong>: metodología, datos, priorización</li>
-        <li><strong>Controles propuestos (25%)</strong>: pertinencia, costo-beneficio, factibilidad</li>
-        <li><strong>Plan BCP/DRP (15%)</strong>: BIA, RTO/RPO, estrategia de recuperación</li>
-        <li><strong>Presentación ejecutiva (20%)</strong>: claridad, narrativa, lenguaje de negocio</li>
-        <li><strong>Defensa oral (15%)</strong>: respuestas, manejo de preguntas, seguridad</li>
-      </ul>
-    </div>
-    <div class="card purple">
-      <h3>Entregables Obligatorios</h3>
-      <ul>
-        <li>Inventario y clasificación de activos (ISO 27001)</li>
-        <li>Análisis de riesgos (cualitativo + cuantitativo ALE)</li>
-        <li>Plan de tratamiento de riesgos</li>
-        <li>Política de seguridad de la información</li>
-        <li>Plan de respuesta a incidentes (NIST 800-61)</li>
-        <li>BCP con análisis BIA</li>
-        <li>Dashboard de métricas (Power BI/Excel)</li>
-        <li>Presentación ejecutiva (15-20 slides)</li>
-      </ul>
+  <div class="celebration">
+    <p style="font-size:3rem; margin-bottom:10px;">🏆</p>
+    <h1>Día de la Defensa</h1>
+    <p style="font-size:1.2rem; color:var(--muted); margin-top:12px;">Sesión 25 — Presentación Final del Proyecto Integrador</p>
+    <p style="font-size:1rem; margin-top:20px; color:var(--text);">Hoy demuestras ante un panel lo que aprendiste en 25 sesiones y 150 horas.</p>
+    <p style="font-size:0.9rem; color:var(--muted); margin-top:8px;">No es solo un examen. Es una simulación real de lo que harás en tu carrera profesional.</p>
+    <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-top:24px;">
+      <div class="stat" style="min-width:140px;"><div class="num" style="color:var(--yellow)">25</div><div class="lbl">Sesiones completadas</div></div>
+      <div class="stat" style="min-width:140px;"><div class="num" style="color:var(--cyan)">150</div><div class="lbl">Horas de aprendizaje</div></div>
+      <div class="stat" style="min-width:140px;"><div class="num" style="color:var(--green)">9</div><div class="lbl">Entregables del proyecto</div></div>
+      <div class="stat" style="min-width:140px;"><div class="num" style="color:var(--orange)">1</div><div class="lbl">Estrategia de seguridad real</div></div>
     </div>
   </div>
 </div>
 
 <div class="slide" data-session="4">
-  <h2>El Proyecto Integrador por Carrera</h2>
+  <h2>Estructura del Día</h2>
+  <ul class="timeline">
+    <li>
+      <div class="step cyan">08:00</div>
+      <div class="content">
+        <h4>Preparación y Revisión Final (1 hora)</h4>
+        <p>Tiempo para ajustes finales, revisar entregables, practicar la presentación. El facilitador está disponible para preguntas de último minuto.</p>
+      </div>
+    </li>
+    <li>
+      <div class="step green">09:00</div>
+      <div class="content">
+        <h4>Presentaciones del Proyecto Integrador (3 horas)</h4>
+        <p>15 minutos de presentación + 5-10 minutos de preguntas por equipo. Orden aleatorio, determinado al inicio del día.</p>
+      </div>
+    </li>
+    <li>
+      <div class="step orange">12:00</div>
+      <div class="content">
+        <h4>Deliberación del Panel (1 hora)</h4>
+        <p>El panel evalúa todos los proyectos con la rúbrica. Los equipos tienen tiempo libre / receso.</p>
+      </div>
+    </li>
+    <li>
+      <div class="step yellow">13:00</div>
+      <div class="content">
+        <h4>Clausura y Reconocimientos (1 hora)</h4>
+        <p>Retroalimentación general del panel, anuncio de calificaciones, entrega de reconocimientos, reflexión final y siguiente pasos.</p>
+      </div>
+    </li>
+  </ul>
+</div>
+
+<div class="slide" data-session="4">
+  <h2>Rúbrica de Evaluación</h2>
   <table>
-    <tr><th>Carrera</th><th>Enfoque del Proyecto</th><th>Elemento Diferenciador</th></tr>
-    <tr><td><strong>Administración Industrial</strong></td><td>Programa integral de seguridad para empresa manufacturera o de servicios</td><td>Justificación financiera (ROI, ALE) y alineación con estrategia corporativa</td></tr>
-    <tr><td><strong>Ingeniería en Informática</strong></td><td>Arquitectura técnica de seguridad + operación SOC básico</td><td>Profundidad técnica: configuración real de herramientas (SIEM, IAM, firewall)</td></tr>
-    <tr><td><strong>Ingeniería Industrial</strong></td><td>Plan de ciberseguridad para entorno IT/OT convergente (planta)</td><td>Segmentación Purdue, IEC 62443, seguridad de PLCs y SCADA</td></tr>
-    <tr><td><strong>Ingeniería en Transporte</strong></td><td>Estrategia de seguridad para operación logística y flota conectada</td><td>Protección de plataformas telemáticas, GPS, privacidad de datos de conductores</td></tr>
-    <tr><td><strong>Ingeniería en Sistemas Automotrices</strong></td><td>Análisis de ciberseguridad para vehículo conectado o línea de ensamble</td><td>TARA, ISO/SAE 21434, seguridad de ECU y bus CAN, comunicaciones V2X</td></tr>
+    <tr><th>Criterio</th><th>Peso</th><th>Excelente (90-100)</th><th>Suficiente (70-89)</th><th>Insuficiente (&lt;70)</th></tr>
+    <tr><td><strong>Inventario y Análisis de Activos</strong></td><td><span class="pill pill-cyan">20%</span></td><td>15+ activos específicos del sector, clasificados correctamente con valoración CIA y propietario</td><td>10+ activos, clasificación básica, algunos errores en valoración</td><td>Activos genéricos sin especificidad del sector o sin clasificación correcta</td></tr>
+    <tr><td><strong>Análisis de Riesgos</strong></td><td><span class="pill pill-orange">25%</span></td><td>10 riesgos con metodología FRAP, cálculo de ALE, priorización justificada con datos</td><td>8+ riesgos, metodología aplicada con algunos errores, priorización razonable</td><td>Menos de 8 riesgos, metodología inconsistente, sin justificación de prioridades</td></tr>
+    <tr><td><strong>Plan de Tratamiento y Controles</strong></td><td><span class="pill pill-green">20%</span></td><td>Controles específicos, con costo estimado, responsable y KPI. Coherentes con los riesgos identificados</td><td>Controles genéricos pero aplicables, costo estimado básico</td><td>Controles no relacionados con los riesgos o sin viabilidad práctica</td></tr>
+    <tr><td><strong>Presentación Ejecutiva</strong></td><td><span class="pill pill-purple">20%</span></td><td>Lenguaje de negocio, impacto económico cuantificado, narrativa clara, dentro del tiempo, visual profesional</td><td>Mezcla de técnico y negocio, tiempo cumplido, claridad aceptable</td><td>Presentación técnica, fuera de tiempo, sin cuantificación de impacto</td></tr>
+    <tr><td><strong>Defensa Oral</strong></td><td><span class="pill pill-red">15%</span></td><td>Respuestas coherentes, pensamiento crítico, dominio del tema, referencias a metodologías</td><td>Respuestas básicas correctas, puede mejorar el pensamiento crítico</td><td>Incapaz de justificar decisiones, respuestas fuera de contexto</td></tr>
+  </table>
+  <div class="box box-dato" style="margin-top:10px;"><div class="box-title">📋 CALIFICACIÓN MÍNIMA: 70/100 — Asistencia mínima: 23 de 25 sesiones (90%)</div></div>
+</div>
+
+<div class="slide" data-session="4">
+  <h2>El Panel Evaluador</h2>
+  <div class="card-grid cols-3">
+    <div class="card orange">
+      <h3>🏢 El "Director General"</h3>
+      <p>Evalúa desde la perspectiva del negocio. Sus preguntas serán sobre: impacto económico, viabilidad de la inversión, alineación con los objetivos de la empresa, comunicación ejecutiva.</p>
+      <p style="color:var(--muted);font-size:0.8rem;margin-top:8px;">Pregunta típica: "¿Cuánto me va a costar y cuánto me va a ahorrar?"</p>
+    </div>
+    <div class="card cyan">
+      <h3>🔒 El "CISO Externo"</h3>
+      <p>Evalúa el rigor técnico-metodológico. Sus preguntas serán sobre: metodología usada, coherencia del análisis de riesgos, profundidad de los controles propuestos.</p>
+      <p style="color:var(--muted);font-size:0.8rem;margin-top:8px;">Pregunta típica: "¿Cómo calculaste ese nivel de riesgo?"</p>
+    </div>
+    <div class="card purple">
+      <h3>⚖️ El "Regulador / Auditor"</h3>
+      <p>Evalúa el cumplimiento legal y normativo. Sus preguntas serán sobre: aplicación de LFPDPPP, ISO 27001, regulaciones sectoriales, contratos con proveedores.</p>
+      <p style="color:var(--muted);font-size:0.8rem;margin-top:8px;">Pregunta típica: "¿Cómo aseguras el cumplimiento de la LFPDPPP en tu propuesta?"</p>
+    </div>
+  </div>
+  <div class="box box-reto" style="margin-top:14px;"><div class="box-title">🎯 LAS PREGUNTAS REALES DEL PANEL (sin sorpresas)</div>
+    <ul>
+      <li>"¿Por qué priorizaste estos 3 riesgos sobre todos los demás que identificaste?"</li>
+      <li>"Si el consejo directivo aprueba solo el 30% del presupuesto que propones, ¿qué implementas primero?"</li>
+      <li>"¿Cómo cambiaría tu plan de seguridad si la empresa creciera 3 veces en 2 años?"</li>
+      <li>"¿Qué incidente es el más probable que enfrente esta empresa en los próximos 12 meses? ¿Estás preparado para él?"</li>
+    </ul>
+  </div>
+</div>
+
+<div class="slide" data-session="4">
+  <h2>Las 5 Lecciones del Seminario: Una por Bloque</h2>
+  <ul class="timeline">
+    <li>
+      <div class="step cyan">I</div>
+      <div class="content">
+        <h4>La ciberseguridad es un problema de negocio, no solo de IT</h4>
+        <p>El riesgo cibernético tiene impacto financiero, legal y reputacional cuantificable. El CISO necesita hablar el idioma del CFO, del Director Legal y del Consejo.</p>
+      </div>
+    </li>
+    <li>
+      <div class="step green">II</div>
+      <div class="content">
+        <h4>No puedes proteger lo que no conoces</h4>
+        <p>El inventario de activos y el análisis de riesgos son la base de cualquier programa de seguridad. Sin entender tu superficie de ataque, no puedes priorizarla.</p>
+      </div>
+    </li>
+    <li>
+      <div class="step orange">III</div>
+      <div class="content">
+        <h4>Los incidentes no son un "si", son un "cuándo"</h4>
+        <p>La pregunta no es si tu empresa va a ser atacada — es cuándo, y qué tan preparada va a estar para responder. El plan de respuesta a incidentes no es burocracia, es supervivencia.</p>
+      </div>
+    </li>
+    <li>
+      <div class="step purple">IV</div>
+      <div class="content">
+        <h4>El cumplimiento normativo y la seguridad real son diferentes — pero complementarios</h4>
+        <p>Cumplir con ISO 27001 no garantiza que seas seguro. Pero sin estructura de gobierno, procesos y métricas, la seguridad improvisada siempre falla.</p>
+      </div>
+    </li>
+    <li>
+      <div class="step red">V</div>
+      <div class="content">
+        <h4>La superficie de ataque crece más rápido que nuestra capacidad de protegerla</h4>
+        <p>La nube, el IoT, la IA y los vehículos conectados no van a esperar a que "estemos listos". La ciberseguridad debe ser parte del diseño, no un parche al final.</p>
+      </div>
+    </li>
+  </ul>
+</div>
+
+<div class="slide" data-session="4">
+  <h2>Oportunidades de Mercado por Carrera</h2>
+  <div class="carrera-grid">
+    <div class="carrera-card" style="border-color:var(--cyan)">
+      <div class="carrera-title" style="color:var(--cyan)">💻 Ing. Informática / Sistemas</div>
+      <ul style="font-size:0.8rem;">
+        <li>SOC Analyst (Tier 1-3)</li>
+        <li>Security Architect</li>
+        <li>Penetration Tester</li>
+        <li>Cloud Security Engineer</li>
+        <li>CISO (con experiencia)</li>
+      </ul>
+    </div>
+    <div class="carrera-card" style="border-color:var(--orange)">
+      <div class="carrera-title" style="color:var(--orange)">🏭 Adm. Industrial</div>
+      <ul style="font-size:0.8rem;">
+        <li>Risk Manager</li>
+        <li>Compliance Officer</li>
+        <li>Data Protection Officer (DPO)</li>
+        <li>Auditor de Seguridad</li>
+        <li>Consultor de Gobernanza</li>
+      </ul>
+    </div>
+    <div class="carrera-card" style="border-color:var(--green)">
+      <div class="carrera-title" style="color:var(--green)">⚙️ Ing. Industrial</div>
+      <ul style="font-size:0.8rem;">
+        <li>OT Security Specialist</li>
+        <li>ICS Security Consultant</li>
+        <li>Industry 4.0 Security Advisor</li>
+        <li>SCADA Security Analyst</li>
+        <li>Cybersecurity for Manufacturing</li>
+      </ul>
+    </div>
+    <div class="carrera-card" style="border-color:var(--purple)">
+      <div class="carrera-title" style="color:var(--purple)">🚛 Ing. Transporte</div>
+      <ul style="font-size:0.8rem;">
+        <li>Fleet Cybersecurity Analyst</li>
+        <li>Connected Transport Security</li>
+        <li>Logistics IT Security</li>
+        <li>GPS/Telematics Security</li>
+        <li>Supply Chain Security Manager</li>
+      </ul>
+    </div>
+    <div class="carrera-card" style="border-color:var(--yellow)">
+      <div class="carrera-title" style="color:var(--yellow)">🚗 Ing. Automotriz</div>
+      <ul style="font-size:0.8rem;">
+        <li>Automotive Cybersecurity Engineer</li>
+        <li>ECU/CAN Bus Security Tester</li>
+        <li>ISO/SAE 21434 Specialist</li>
+        <li>OTA Security Architect</li>
+        <li>TARA Analyst (Threat Analysis)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box box-dato" style="margin-top:14px;"><div class="box-title">📊 EL MERCADO TE ESPERA</div>
+    <p>LATAM tiene un déficit de <strong>1.5 millones de profesionales de ciberseguridad</strong>. México necesita 300,000 especialistas adicionales para 2025 (CIDS-UNAM). El salario promedio de un profesional de ciberseguridad junior en México es <strong>$35,000-$55,000 MXN/mes</strong>. Senior CISO: $150,000-$300,000 MXN/mes.</p>
+  </div>
+</div>
+
+<div class="slide" data-session="4">
+  <h2>Próximos Pasos: Certificaciones Recomendadas</h2>
+  <table>
+    <tr><th>Certificación</th><th>Nivel</th><th>Ideal para</th><th>Costo aprox.</th></tr>
+    <tr><td><strong>CompTIA Security+</strong></td><td><span class="pill pill-green">Básico</span></td><td>Primer paso para cualquier carrera. Reconocida globalmente. Puerta de entrada al SOC.</td><td>$370 USD</td></tr>
+    <tr><td><strong>ISO 27001 Lead Implementer</strong></td><td><span class="pill pill-cyan">Intermedio</span></td><td>Administración, cumplimiento, gobierno. Ideal para Adm. Industrial y líderes de equipo.</td><td>$1,500-$3,000 USD</td></tr>
+    <tr><td><strong>CISM (ISACA)</strong></td><td><span class="pill pill-orange">Avanzado</span></td><td>Gestión de seguridad de la información. Perfil gerencial. Ideal para futuros CISOs.</td><td>$575 USD + experiencia</td></tr>
+    <tr><td><strong>AWS Security Specialty</strong></td><td><span class="pill pill-cyan">Intermedio</span></td><td>Ing. Informática y profesionales de nube. Alta demanda en el mercado actual.</td><td>$300 USD</td></tr>
+    <tr><td><strong>IEC 62443 Cybersecurity Certificate</strong></td><td><span class="pill pill-orange">Intermedio</span></td><td>Ing. Industrial y Automotriz. Especialización en seguridad OT/ICS. Nicho de alta demanda.</td><td>$1,500-$2,500 USD</td></tr>
+    <tr><td><strong>ISO/SAE 21434 Automotive</strong></td><td><span class="pill pill-orange">Intermedio</span></td><td>Ing. Automotriz. Obligatorio para trabajar en seguridad de vehículos conectados en empresas globales.</td><td>$800-$2,000 USD</td></tr>
   </table>
 </div>
 
 <div class="slide" data-session="4">
-  <h2>Certificaciones para Tu Siguiente Paso</h2>
-  <div class="card-grid cols-3">
+  <h2>Bibliografía del Bloque V</h2>
+  <div class="card-grid cols-2">
     <div class="card cyan">
-      <h3>CompTIA Security+</h3>
-      <p>Certificación de entrada más reconocida. Cubre fundamentos de todos los dominios del seminario. Examen: 90 preguntas, 90 min, $404 USD. Requisito en muchas empresas para roles de seguridad.</p>
+      <h3>🌐 Cloud Security</h3>
+      <ul style="font-size:0.82rem; line-height:1.7;">
+        <li>Cloud Security Alliance. (2023). <em>CCM (Cloud Controls Matrix) v4.0</em>. CSA.</li>
+        <li>Verizon. (2024). <em>Data Breach Investigations Report 2024</em>. Verizon Enterprise.</li>
+        <li>IBM Security. (2023). <em>Cost of a Data Breach Report 2023</em>. IBM.</li>
+        <li>NIST. (2023). <em>SP 800-210: General Access Control Guidance for Cloud Systems</em>. NIST.</li>
+        <li>Gartner. (2023). <em>Cloud Strategy Leadership</em>. Gartner Research.</li>
+      </ul>
     </div>
     <div class="card orange">
-      <h3>CEH (Certified Ethical Hacker)</h3>
-      <p>EC-Council. Orientada a pentesting y evaluación de vulnerabilidades. Requiere 2 años de experiencia o capacitación oficial. Costo: $1,199 USD. Muy valorada en sector privado México.</p>
+      <h3>🏭 OT / ICS / SCADA</h3>
+      <ul style="font-size:0.82rem; line-height:1.7;">
+        <li>ISA/IEC 62443. <em>Security for Industrial Automation and Control Systems</em>. ISA.</li>
+        <li>NIST. (2015). <em>SP 800-82 Rev. 2: Guide to ICS Security</em>. NIST.</li>
+        <li>Kaspersky ICS CERT. (2024). <em>Threat Landscape H2 2023</em>. Kaspersky.</li>
+        <li>Dragos. (2024). <em>Year in Review: ICS/OT Cybersecurity 2023</em>. Dragos Inc.</li>
+        <li>Claroty. (2023). <em>State of XIoT Security Report 2H 2023</em>. Claroty.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card-grid cols-2" style="margin-top:12px;">
+    <div class="card green">
+      <h3>🚗 IoT / IA / Vehículos</h3>
+      <ul style="font-size:0.82rem; line-height:1.7;">
+        <li>SAE/ISO 21434:2021. <em>Road Vehicles — Cybersecurity Engineering</em>. SAE/ISO.</li>
+        <li>UNECE WP.29. (2021). <em>UN Regulation 155 — Cybersecurity and CSMS</em>. UN.</li>
+        <li>NIST. (2024). <em>Cybersecurity for the Internet of Things Program</em>. NIST.</li>
+        <li>Shostack, A. (2014). <em>Threat Modeling: Designing for Security</em>. Wiley.</li>
+        <li>Palo Alto Networks. (2023). <em>State of IoT Security Report 2023</em>. Palo Alto.</li>
+      </ul>
     </div>
     <div class="card purple">
-      <h3>CISM (Certified IS Manager)</h3>
-      <p>ISACA. Para roles de gestión y gobierno (CISO). Requiere 5 años de experiencia. Costo: $575-760 USD. Complementa perfectamente los contenidos del Bloque IV del seminario.</p>
-    </div>
-    <div class="card green">
-      <h3>CISSP</h3>
-      <p>(ISC)². La certificación de mayor prestigio global. Requiere 5 años de experiencia en 2+ dominios. Costo: $749 USD. El estándar oro para CISO y roles senior de seguridad.</p>
-    </div>
-    <div class="card red">
-      <h3>AWS Security Specialty</h3>
-      <p>Amazon Web Services. Dominio avanzado de seguridad cloud en AWS. Requiere 5 años de IT + 2 en seguridad. Costo: $300 USD. Muy demandada por crecimiento de cloud en LatAm.</p>
-    </div>
-    <div class="card cyan">
-      <h3>ISO 27001 Lead Auditor</h3>
-      <p>PECB o Bureau Veritas. Para liderar implementaciones y auditorías ISO 27001. Costo: ~$1,500 USD (con examen). Habilitante para rol de consultor independiente o CISO.</p>
+      <h3>🎓 Proyecto Integrador</h3>
+      <ul style="font-size:0.82rem; line-height:1.7;">
+        <li>ISACA. (2023). <em>CISM Review Manual 2023</em>. ISACA.</li>
+        <li>Whitman, M. E., & Mattord, H. J. (2022). <em>Management of Information Security</em> (6th ed.). Cengage.</li>
+        <li>Peltier, T. R. (2016). <em>Information Security Policies, Procedures, and Standards</em>. CRC Press.</li>
+        <li>CIDS-UNAM. (2023). <em>Reporte de Ciberseguridad en México 2023</em>. UNAM.</li>
+        <li>Weil, T., & Murugesan, S. (2020). IT Risk and Resilience — COVID-19 Response. <em>IEEE IT Professional</em>.</li>
+      </ul>
     </div>
   </div>
 </div>
 
-<div class="slide" data-session="4">
-  <h2>El Mercado Laboral en Ciberseguridad</h2>
-  <div class="stat-row">
-    <div class="stat"><div class="num" style="color:var(--green)">3.5M</div><div class="lbl">Puestos de ciberseguridad sin cubrir globalmente en 2025 (ISC²)</div></div>
-    <div class="stat"><div class="num" style="color:var(--cyan)">$85K</div><div class="lbl">Salario promedio anual analista ciberseguridad en México (senior)</div></div>
-    <div class="stat"><div class="num" style="color:var(--orange)">0%</div><div class="lbl">Desempleo en ciberseguridad (ISC²) — demanda supera oferta</div></div>
-  </div>
-  <div class="card-grid cols-3" style="margin-top:16px;">
-    <div class="card cyan"><h3>Roles de Entrada</h3><ul><li>Analista SOC Tier 1</li><li>Analista GRC (Compliance)</li><li>Administrador de seguridad</li><li>Especialista en concientización</li></ul></div>
-    <div class="card orange"><h3>Roles Senior</h3><ul><li>Analista SOC Tier 2/3</li><li>Penetration Tester</li><li>Arquitecto de seguridad</li><li>Threat Intelligence Analyst</li></ul></div>
-    <div class="card purple"><h3>Roles de Dirección</h3><ul><li>CISO</li><li>Head of Security</li><li>Security Consultant</li><li>Director GRC</li></ul></div>
-  </div>
-</div>
-
-<!-- CIERRE FINAL DEL SEMINARIO -->
-<div class="slide cover" data-session="4">
-  <div class="block-badge">SEMINARIO — CIERRE FINAL</div>
-  <h1>De Estudiante a<br>Profesional de Ciberseguridad</h1>
-  <p style="max-width:650px;margin:16px auto;color:var(--muted);">150 horas, 25 sesiones, 5 bloques. El mundo necesita profesionales que entiendan que la ciberseguridad no es un departamento de TI — es una función estratégica que determina la supervivencia de las organizaciones modernas.</p>
-  <div class="stat-row" style="justify-content:center;max-width:800px;margin:20px auto;flex-wrap:wrap;">
-    <div class="stat"><div class="num" style="color:var(--red)">I</div><div class="lbl">Fundamentos y riesgos</div></div>
-    <div class="stat"><div class="num" style="color:var(--orange)">II</div><div class="lbl">Arquitectura defensiva</div></div>
-    <div class="stat"><div class="num" style="color:var(--cyan)">III</div><div class="lbl">Operaciones y respuesta</div></div>
-    <div class="stat"><div class="num" style="color:var(--purple)">IV</div><div class="lbl">Gobierno y cumplimiento</div></div>
-    <div class="stat"><div class="num" style="color:var(--green)">V</div><div class="lbl">Nube, OT y proyecto</div></div>
-  </div>
-  <div class="box box-meta" style="max-width:600px;margin:0 auto;"><div class="box-title">🎭 REFLEXIÓN FINAL</div>
-    <p>"La pregunta no es <em>si</em> tu organización será atacada. La pregunta es <em>cuándo</em> y si estarás listo cuando suceda. Tú ahora tienes las herramientas para que la respuesta sea sí."</p>
-  </div>
-  <div style="margin-top:20px;">
-    <span class="tag">AWS Security</span><span class="tag">IEC 62443</span><span class="tag">ISO/SAE 21434</span>
-    <span class="tag">Zero Trust</span><span class="tag">UNECE WP.29</span><span class="tag">CISSP</span><span class="tag">CISM</span>
+<!-- SLIDE FINAL DE CLAUSURA -->
+<div class="slide active" data-session="4" style="display:none;" id="slide-clausura">
+  <div class="celebration">
+    <p style="font-size:4rem; margin-bottom:16px;">🎓</p>
+    <h1 style="font-size:2.5rem; background: linear-gradient(135deg, var(--yellow), var(--cyan), var(--green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">¡Felicidades!</h1>
+    <p style="font-size:1.1rem; color:var(--muted); margin-top:16px;">Completaste el Seminario de Ciberseguridad Empresarial</p>
+    <p style="font-size:0.95rem; margin-top:12px; color:var(--text);">150 horas · 25 sesiones · 5 bloques · 1 estrategia de seguridad real</p>
+    <div style="margin-top:28px; padding:20px; background:var(--card); border-radius:14px; border:1px solid var(--border); max-width:600px; margin-left:auto; margin-right:auto;">
+      <p style="font-size:1rem; color:var(--cyan); font-weight:700; margin-bottom:12px;">"La ciberseguridad no es un problema de tecnología. Es un problema de personas, procesos y cultura."</p>
+      <p style="font-size:0.85rem; color:var(--muted);">— Bruce Schneier, Cryptographer & Security Technologist</p>
+    </div>
+    <p style="margin-top:24px; font-size:0.85rem; color:var(--muted);">UPIICSA · Seminario de Titulación — Ciberseguridad Empresarial</p>
+    <p style="font-size:0.8rem; color:var(--border); margin-top:8px;">Ciberseguridad Empresarial: Gestión de Riesgos, Protección de Activos Digitales y Resiliencia Organizacional</p>
   </div>
 </div>
 
-</div>
+</div><!-- /slides-container -->
 
 <div id="footer">
   <button onclick="prevSlide()">← Anterior</button>
-  <span class="hint">← → · Espacio</span>
+  <span class="hint">← → o Espacio para navegar</span>
   <button onclick="nextSlide()">Siguiente →</button>
 </div>
 
 <script>
-const slides = document.querySelectorAll('.slide');
-const total = slides.length;
-let current = 0;
-const sessionStarts = [];
-slides.forEach((s, i) => { const sess = parseInt(s.dataset.session); if (sessionStarts[sess] === undefined) sessionStarts[sess] = i; });
-function goTo(n) { if (n < 0 || n >= total) return; slides[current].classList.remove('active'); current = n; slides[current].classList.add('active'); document.getElementById('slide-counter').textContent = (current+1)+' / '+total; document.getElementById('progress-bar').style.width=((current+1)/total*100)+'%'; updateTabs(); slides[current].scrollTop=0; }
-function nextSlide() { goTo(current+1); }
-function prevSlide() { goTo(current-1); }
-function goToSession(idx) { goTo(sessionStarts[idx]); }
-function updateTabs() { const sess = parseInt(slides[current].dataset.session); for(let i=0;i<5;i++){const btn=document.getElementById('tab-'+i);if(btn)btn.classList.toggle('active',i===sess);} }
-document.addEventListener('keydown',e=>{ if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();nextSlide();} if(e.key==='ArrowLeft'){e.preventDefault();prevSlide();} });
-updateTabs();
+  const slides = document.querySelectorAll('.slide');
+  let current = 0;
+  const total = slides.length;
+
+  // Session start indices
+  const sessionStarts = [];
+  slides.forEach((s, i) => {
+    if (i === 0) sessionStarts.push(0);
+    else {
+      const prev = slides[i-1].dataset.session;
+      const curr = s.dataset.session;
+      if (curr !== prev) sessionStarts.push(i);
+    }
+  });
+
+  function updateUI() {
+    slides.forEach((s, i) => s.classList.toggle('active', i === current));
+    document.getElementById('slide-counter').textContent = `${current + 1} / ${total}`;
+    document.getElementById('progress-bar').style.width = `${((current + 1) / total) * 100}%`;
+
+    // Update tabs
+    const sess = parseInt(slides[current].dataset.session);
+    for (let i = 0; i < 5; i++) {
+      document.getElementById(`tab-${i}`).classList.toggle('active', i === sess);
+    }
+  }
+
+  function nextSlide() {
+    if (current < total - 1) { current++; updateUI(); }
+  }
+
+  function prevSlide() {
+    if (current > 0) { current--; updateUI(); }
+  }
+
+  function goToSession(s) {
+    current = sessionStarts[s] || 0;
+    updateUI();
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+  });
+
+  updateUI();
 </script>
 </body>
 </html>

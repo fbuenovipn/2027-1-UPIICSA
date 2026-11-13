@@ -3,584 +3,546 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bloque II — Arquitectura de Seguridad y Protección de Infraestructura</title>
+<title>Bloque II — Arquitectura de Seguridad e Infraestructura</title>
 <style>
-  :root {
-    --bg: #050a14; --card: #0d1a2e; --border: #1a3050;
-    --cyan: #00d4ff; --green: #00ff88; --orange: #ff8c42; --red: #ff3366;
-    --purple: #bb86fc; --yellow: #ffd60a; --text: #e0eaf8; --muted: #7a9bbf;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; overflow: hidden; height: 100vh; }
-  #navbar { position: fixed; top: 0; left: 0; right: 0; height: 54px; background: rgba(5,10,20,0.95); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 100; backdrop-filter: blur(8px); }
-  #navbar .brand { color: var(--orange); font-weight: 700; font-size: 0.85rem; letter-spacing: 1px; }
-  #navbar .brand span { color: var(--cyan); }
-  .session-tabs { display: flex; gap: 6px; }
-  .session-tabs button { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 4px 12px; border-radius: 20px; cursor: pointer; font-size: 0.75rem; transition: all 0.2s; }
-  .session-tabs button.active { background: var(--orange); border-color: var(--orange); color: #000; font-weight: 700; }
-  .session-tabs button:hover:not(.active) { border-color: var(--orange); color: var(--orange); }
-  #slide-counter { color: var(--muted); font-size: 0.8rem; min-width: 80px; text-align: right; }
-  #progress-bar { position: fixed; top: 54px; left: 0; height: 3px; background: linear-gradient(90deg, var(--orange), var(--red)); transition: width 0.3s ease; z-index: 100; }
-  #slides-container { position: fixed; top: 57px; left: 0; right: 0; bottom: 40px; overflow: hidden; }
-  .slide { position: absolute; top: 0; left: 0; right: 0; bottom: 0; padding: 28px 48px; display: none; overflow-y: auto; animation: fadeIn 0.35s ease; }
-  .slide.active { display: flex; flex-direction: column; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
-  #footer { position: fixed; bottom: 0; left: 0; right: 0; height: 40px; background: rgba(5,10,20,0.95); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 16px; z-index: 100; }
-  #footer button { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 5px 20px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; transition: all 0.2s; }
-  #footer button:hover { border-color: var(--orange); color: var(--orange); }
-  #footer .hint { color: var(--muted); font-size: 0.72rem; }
-  h1 { font-size: 2rem; font-weight: 800; line-height: 1.2; margin-bottom: 10px; }
-  h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 14px; }
-  h3 { font-size: 1.1rem; font-weight: 600; color: var(--orange); margin-bottom: 8px; margin-top: 14px; }
-  p { font-size: 0.92rem; line-height: 1.65; color: var(--text); margin-bottom: 8px; }
-  ul, ol { padding-left: 20px; font-size: 0.9rem; line-height: 1.8; }
-  li { margin-bottom: 4px; }
-  .subtitle { color: var(--muted); font-size: 1rem; margin-bottom: 6px; }
-  .tag { display: inline-block; background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 2px 10px; font-size: 0.75rem; color: var(--muted); margin-right: 6px; }
-  .cover { align-items: center; justify-content: center; text-align: center; }
-  .cover h1 { font-size: 2.4rem; background: linear-gradient(135deg, var(--orange), var(--red)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 16px; }
-  .cover .block-badge { display: inline-block; background: linear-gradient(135deg, #201000, #0d1a2e); border: 1px solid var(--orange); border-radius: 8px; padding: 8px 24px; color: var(--orange); font-size: 0.9rem; font-weight: 700; letter-spacing: 2px; margin-bottom: 20px; }
-  .cover .sessions-grid { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
-  .cover .sess-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; width: 160px; text-align: left; }
-  .cover .sess-card .num { color: var(--orange); font-size: 0.7rem; font-weight: 700; }
-  .cover .sess-card .name { font-size: 0.8rem; margin-top: 4px; }
-  .card-grid { display: grid; gap: 14px; margin-top: 8px; }
-  .card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
-  .card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
-  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; position: relative; overflow: hidden; }
-  .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
-  .card.cyan::before { background: var(--cyan); }
-  .card.green::before { background: var(--green); }
-  .card.orange::before { background: var(--orange); }
-  .card.red::before { background: var(--red); }
-  .card.purple::before { background: var(--purple); }
-  .card h3 { margin-top: 0; font-size: 0.95rem; }
-  .card p, .card ul, .card li { font-size: 0.85rem; }
-  .box { border-radius: 10px; padding: 14px 18px; margin: 10px 0; }
-  .box-meta { background: rgba(187,134,252,0.08); border: 1px solid rgba(187,134,252,0.4); }
-  .box-caso { background: rgba(255,140,66,0.08); border: 1px solid rgba(255,140,66,0.4); }
-  .box-lab  { background: rgba(0,255,136,0.08);  border: 1px solid rgba(0,255,136,0.4); }
-  .box-dato { background: rgba(0,212,255,0.08);  border: 1px solid rgba(0,212,255,0.4); }
-  .box-quiz { background: rgba(255,214,10,0.08); border: 1px solid rgba(255,214,10,0.4); cursor: pointer; }
-  .box-title { font-weight: 700; font-size: 0.8rem; margin-bottom: 6px; letter-spacing: 0.5px; }
-  .box-meta .box-title { color: var(--purple); }
-  .box-caso .box-title { color: var(--orange); }
-  .box-lab  .box-title { color: var(--green); }
-  .box-dato .box-title { color: var(--cyan); }
-  .box-quiz .box-title { color: var(--yellow); }
-  .box p, .box li, .box ul { font-size: 0.87rem; }
-  .quiz-answer { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,214,10,0.3); color: var(--green); font-size: 0.85rem; }
-  .box-quiz.revealed .quiz-answer { display: block; }
-  table { width: 100%; border-collapse: collapse; font-size: 0.83rem; margin-top: 8px; }
-  th { background: #0a1a30; color: var(--orange); text-align: left; padding: 8px 12px; border: 1px solid var(--border); }
-  td { padding: 7px 12px; border: 1px solid var(--border); vertical-align: top; }
-  tr:nth-child(even) td { background: rgba(13,26,46,0.6); }
-  .timeline { list-style: none; padding: 0; margin-top: 8px; }
-  .timeline li { display: flex; gap: 14px; margin-bottom: 12px; align-items: flex-start; }
-  .timeline .step { min-width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; flex-shrink: 0; }
-  .timeline .step.cyan   { background: rgba(0,212,255,0.15); border: 2px solid var(--cyan); color: var(--cyan); }
-  .timeline .step.green  { background: rgba(0,255,136,0.15); border: 2px solid var(--green); color: var(--green); }
-  .timeline .step.orange { background: rgba(255,140,66,0.15); border: 2px solid var(--orange); color: var(--orange); }
-  .timeline .step.red    { background: rgba(255,51,102,0.15); border: 2px solid var(--red); color: var(--red); }
-  .timeline .step.purple { background: rgba(187,134,252,0.15); border: 2px solid var(--purple); color: var(--purple); }
-  .timeline .content h4  { font-size: 0.9rem; color: var(--text); }
-  .timeline .content p   { font-size: 0.83rem; color: var(--muted); margin: 0; }
-  .stat-row { display: flex; gap: 16px; flex-wrap: wrap; margin: 10px 0; }
-  .stat { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; flex: 1; min-width: 120px; text-align: center; }
-  .stat .num { font-size: 1.8rem; font-weight: 800; line-height: 1; }
-  .stat .lbl { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
-  .pill { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; margin: 2px; }
-  .pill-cyan   { background: rgba(0,212,255,0.15); border: 1px solid var(--cyan); color: var(--cyan); }
-  .pill-green  { background: rgba(0,255,136,0.15); border: 1px solid var(--green); color: var(--green); }
-  .pill-orange { background: rgba(255,140,66,0.15); border: 1px solid var(--orange); color: var(--orange); }
-  .pill-red    { background: rgba(255,51,102,0.15); border: 1px solid var(--red); color: var(--red); }
-  .pill-purple { background: rgba(187,134,252,0.15); border: 1px solid var(--purple); color: var(--purple); }
-  .layer-diagram { display: flex; flex-direction: column; gap: 6px; margin: 10px 0; }
-  .layer { border-radius: 6px; padding: 8px 16px; font-size: 0.82rem; font-weight: 600; text-align: center; }
-  .slide::-webkit-scrollbar { width: 4px; }
-  .slide::-webkit-scrollbar-track { background: transparent; }
-  .slide::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+:root {
+  --bg: #050a14; --card: #0d1a2e; --border: #1a3050;
+  --cyan: #00d4ff; --green: #00ff88; --orange: #ff8c42; --red: #ff3366;
+  --purple: #bb86fc; --yellow: #ffd60a; --text: #e0eaf8; --muted: #7a9bbf;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; overflow: hidden; height: 100vh; }
+#navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(5,10,20,0.95); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; padding: 0 1.5rem; height: 52px; gap: 1rem;
+}
+.brand { font-weight: 700; font-size: 1rem; color: var(--green); white-space: nowrap; }
+.brand span { color: var(--text); }
+.session-tabs { display: flex; gap: .4rem; flex: 1; justify-content: center; }
+.session-tabs button {
+  background: transparent; border: 1px solid var(--border); color: var(--muted);
+  padding: .3rem .8rem; border-radius: 20px; cursor: pointer; font-size: .8rem; transition: all .2s;
+}
+.session-tabs button:hover, .session-tabs button.active { background: var(--green); color: #000; border-color: var(--green); font-weight: 600; }
+#slide-counter { font-size: .8rem; color: var(--muted); white-space: nowrap; }
+#progress-bar { position: fixed; top: 52px; left: 0; height: 3px; background: var(--green); transition: width .3s; z-index: 99; }
+#slides-container { margin-top: 52px; height: calc(100vh - 52px); overflow: hidden; position: relative; }
+.slide { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: none; overflow-y: auto; padding: 2.5rem 3rem; animation: fadeIn .4s ease; }
+.slide.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: .5rem; }
+h2 { font-size: 1.6rem; font-weight: 700; margin-bottom: 1rem; color: var(--green); }
+h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: .6rem; color: var(--cyan); }
+p { line-height: 1.7; margin-bottom: .8rem; }
+.subtitle { color: var(--muted); font-size: 1.1rem; margin-bottom: 1.5rem; }
+.tag { display: inline-block; padding: .2rem .7rem; border-radius: 20px; font-size: .75rem; font-weight: 600; margin: .2rem; }
+.tag-cyan { background: rgba(0,212,255,.15); color: var(--cyan); border: 1px solid var(--cyan); }
+.tag-green { background: rgba(0,255,136,.15); color: var(--green); border: 1px solid var(--green); }
+.tag-orange { background: rgba(255,140,66,.15); color: var(--orange); border: 1px solid var(--orange); }
+.tag-purple { background: rgba(187,134,252,.15); color: var(--purple); border: 1px solid var(--purple); }
+.tag-red { background: rgba(255,51,102,.15); color: var(--red); border: 1px solid var(--red); }
+.grid { display: grid; gap: 1rem; margin: 1rem 0; }
+.grid-2 { grid-template-columns: 1fr 1fr; }
+.grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem; transition: transform .2s; }
+.card:hover { transform: translateY(-2px); }
+.card.cyan { border-color: var(--cyan); }
+.card.green { border-color: var(--green); }
+.card.orange { border-color: var(--orange); }
+.card.red { border-color: var(--red); }
+.card.purple { border-color: var(--purple); }
+.card.yellow { border-color: var(--yellow); }
+.card h3 { font-size: 1rem; }
+.box-meta { background: rgba(187,134,252,.08); border: 1px solid var(--purple); border-radius: 10px; padding: 1.2rem; margin: 1rem 0; }
+.box-meta::before { content: "🧭 METÁFORA"; display: block; font-size: .7rem; font-weight: 700; color: var(--purple); margin-bottom: .5rem; letter-spacing: 1px; }
+.box-caso { background: rgba(255,140,66,.08); border: 1px solid var(--orange); border-radius: 10px; padding: 1.2rem; margin: 1rem 0; }
+.box-caso::before { content: "📰 CASO REAL"; display: block; font-size: .7rem; font-weight: 700; color: var(--orange); margin-bottom: .5rem; letter-spacing: 1px; }
+.box-lab { background: rgba(0,255,136,.08); border: 1px solid var(--green); border-radius: 10px; padding: 1.2rem; margin: 1rem 0; }
+.box-lab::before { content: "🛠 ACTIVIDAD PRÁCTICA"; display: block; font-size: .7rem; font-weight: 700; color: var(--green); margin-bottom: .5rem; letter-spacing: 1px; }
+.box-dato { background: rgba(0,212,255,.08); border: 1px solid var(--cyan); border-radius: 10px; padding: 1.2rem; margin: 1rem 0; }
+.box-dato::before { content: "💡 DATO CLAVE"; display: block; font-size: .7rem; font-weight: 700; color: var(--cyan); margin-bottom: .5rem; letter-spacing: 1px; }
+.box-quiz { background: rgba(255,214,10,.08); border: 1px solid var(--yellow); border-radius: 10px; padding: 1.2rem; margin: 1rem 0; cursor: pointer; user-select: none; }
+.box-quiz::before { content: "❓ QUIZ — haz clic para revelar"; display: block; font-size: .7rem; font-weight: 700; color: var(--yellow); margin-bottom: .5rem; letter-spacing: 1px; }
+.box-quiz .answer { display: none; margin-top: .8rem; padding-top: .8rem; border-top: 1px solid rgba(255,214,10,.3); color: var(--green); }
+.box-quiz.revealed .answer { display: block; }
+.box-reto { background: rgba(255,51,102,.08); border: 1px solid var(--red); border-radius: 10px; padding: 1.2rem; margin: 1rem 0; }
+.box-reto::before { content: "🚀 RETO DE APLICACIÓN"; display: block; font-size: .7rem; font-weight: 700; color: var(--red); margin-bottom: .5rem; letter-spacing: 1px; }
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .88rem; }
+th { background: var(--card); color: var(--green); padding: .6rem .8rem; text-align: left; border: 1px solid var(--border); }
+td { padding: .55rem .8rem; border: 1px solid var(--border); vertical-align: top; }
+tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+.stat-row { display: flex; gap: 1rem; margin: 1rem 0; flex-wrap: wrap; }
+.stat { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.5rem; text-align: center; flex: 1; min-width: 120px; }
+.stat .num { font-size: 2rem; font-weight: 800; color: var(--green); display: block; }
+.stat .lbl { font-size: .75rem; color: var(--muted); margin-top: .2rem; }
+ul, ol { padding-left: 1.5rem; margin-bottom: .8rem; }
+li { line-height: 1.7; margin-bottom: .2rem; }
+.slide-cover { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 80vh; }
+.session-header { background: linear-gradient(135deg, rgba(0,255,136,.08), rgba(0,212,255,.04)); border-radius: 16px; padding: 1.5rem 2rem; margin-bottom: 1.5rem; border: 1px solid var(--border); }
+.nav-hint { position: fixed; bottom: 1rem; right: 1rem; color: var(--muted); font-size: .75rem; }
 </style>
 </head>
 <body>
-
 <div id="navbar">
-  <div class="brand">🏗️ CIBER<span>SEG</span> · BLOQUE II</div>
+  <div class="brand">🔐 CIBER<span>SEG</span> · BLOQUE II</div>
   <div class="session-tabs">
-    <button onclick="goToSession(0)" id="tab-0">S6</button>
-    <button onclick="goToSession(1)" id="tab-1">S7</button>
-    <button onclick="goToSession(2)" id="tab-2">S8</button>
-    <button onclick="goToSession(3)" id="tab-3">S9</button>
-    <button onclick="goToSession(4)" id="tab-4">S10</button>
+    <button onclick="goToSession('s6')" id="tab-s6">S6</button>
+    <button onclick="goToSession('s7')" id="tab-s7">S7</button>
+    <button onclick="goToSession('s8')" id="tab-s8">S8</button>
+    <button onclick="goToSession('s9')" id="tab-s9">S9</button>
+    <button onclick="goToSession('s10')" id="tab-s10">S10</button>
   </div>
-  <div id="slide-counter">1 / 60</div>
+  <div id="slide-counter">1 / 1</div>
 </div>
-<div id="progress-bar" style="width:1.67%"></div>
-
+<div id="progress-bar"></div>
 <div id="slides-container">
 
 <!-- PORTADA -->
-<div class="slide active cover" data-session="0">
-  <div class="block-badge">BLOQUE II · SESIONES 6 – 10</div>
-  <h1>Arquitectura de Seguridad<br>y Protección de Infraestructura</h1>
-  <p class="subtitle">Ciberseguridad Empresarial · Seminario de Titulación · 30 horas</p>
-  <div class="sessions-grid">
-    <div class="sess-card"><div class="num">SESIÓN 6</div><div class="name">Arquitectura Seguridad</div></div>
-    <div class="sess-card"><div class="num">SESIÓN 7</div><div class="name">Redes y Perímetro</div></div>
-    <div class="sess-card"><div class="num">SESIÓN 8</div><div class="name">Apps, APIs y BD</div></div>
-    <div class="sess-card"><div class="num">SESIÓN 9</div><div class="name">Criptografía e IAM</div></div>
-    <div class="sess-card"><div class="num">SESIÓN 10</div><div class="name">Hardening y Parches</div></div>
-  </div>
-  <p style="margin-top:24px; color:var(--muted); font-size:0.82rem;">← → o barra espaciadora para navegar · Click en S6–S10 para ir a cada sesión</p>
-</div>
-
-<!-- ═══ SESIÓN 6 — ARQUITECTURA DE SEGURIDAD ═══ -->
-<div class="slide" data-session="0">
-  <h2>Sesión 6 <span style="color:var(--orange)">— Arquitectura de Seguridad Empresarial</span></h2>
-  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
-    <p>La arquitectura de seguridad es el <strong>plano del arquitecto antes de construir el edificio</strong>. Un edificio construido sin planos puede funcionar años hasta que se derrumba con el primer terremoto. La arquitectura de seguridad decide dónde van las paredes, las puertas de emergencia, los detectores de humo y las cámaras antes de colocar un solo ladrillo digital.</p>
-  </div>
-  <div class="card-grid cols-3" style="margin-top:14px;">
-    <div class="card orange"><h3>Defensa en Profundidad</h3><p>Múltiples capas de seguridad independientes. Si una falla, la siguiente detiene al atacante. Ninguna capa por sí sola es suficiente.</p></div>
-    <div class="card cyan"><h3>Mínimo Privilegio</h3><p>Cada usuario, proceso y sistema solo tiene los permisos estrictamente necesarios para su función. Reduce el blast radius de cualquier compromiso.</p></div>
-    <div class="card green"><h3>Separación de Funciones</h3><p>Quien autoriza no ejecuta; quien ejecuta no audita. Previene fraude interno y reduce el riesgo de errores no detectados.</p></div>
-  </div>
-</div>
-
-<div class="slide" data-session="0">
-  <h2>Defensa en Profundidad: Las Capas del Castillo</h2>
-  <div class="layer-diagram">
-    <div class="layer" style="background:rgba(255,51,102,0.1);border:1px solid var(--red);color:var(--red);">⚔️ DATOS — Cifrado en reposo y tránsito · DLP · Clasificación · Backups seguros</div>
-    <div class="layer" style="background:rgba(255,140,66,0.1);border:1px solid var(--orange);color:var(--orange);">🖥️ APLICACIONES — WAF · SAST/DAST · Parches · SDLC seguro · Autenticación robusta</div>
-    <div class="layer" style="background:rgba(187,134,252,0.1);border:1px solid var(--purple);color:var(--purple);">💻 ENDPOINT — EDR · Antivirus · Hardening OS · Gestión de parches · Cifrado disco</div>
-    <div class="layer" style="background:rgba(0,212,255,0.1);border:1px solid var(--cyan);color:var(--cyan);">🌐 RED — Firewall · IDS/IPS · Segmentación · VLANs · DMZ · VPN · Zero Trust</div>
-    <div class="layer" style="background:rgba(0,255,136,0.1);border:1px solid var(--green);color:var(--green);">👤 IDENTIDADES — IAM · MFA · PAM · SSO · Gestión de cuentas privilegiadas</div>
-    <div class="layer" style="background:rgba(255,214,10,0.1);border:1px solid var(--yellow);color:var(--yellow);">🏢 FÍSICO — Control acceso · CCTV · Mantrap · Seguridad datacenter</div>
-    <div class="layer" style="background:rgba(255,140,66,0.08);border:1px solid rgba(255,140,66,0.3);color:var(--muted);">👥 PERSONAS — Concientización · Cultura · Políticas · Ingeniería social awareness</div>
-  </div>
-</div>
-
-<div class="slide" data-session="0">
-  <h2>Frameworks de Arquitectura de Seguridad</h2>
-  <div class="card-grid cols-3">
-    <div class="card orange">
-      <h3>SABSA</h3>
-      <p>Sherwood Applied Business Security Architecture. Framework de arquitectura empresarial orientado al negocio. Define seguridad desde las necesidades de negocio hacia la tecnología. 6 capas (contextual → tecnología).</p>
+<div class="slide active" data-session="cover">
+  <div class="slide-cover">
+    <div style="font-size:4rem;margin-bottom:1rem;">🏗️</div>
+    <h1 style="font-size:2.8rem;">Arquitectura de Seguridad<br><span style="color:var(--green)">e Infraestructura</span></h1>
+    <p class="subtitle" style="font-size:1.2rem;margin-top:1rem;">BLOQUE II · Protección de la Infraestructura Digital · Sesiones 6–10</p>
+    <div style="margin-top:1.5rem;display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center;">
+      <span class="tag tag-green">30 Horas</span>
+      <span class="tag tag-cyan">Zero Trust</span>
+      <span class="tag tag-orange">OWASP Top 10</span>
+      <span class="tag tag-purple">MFA · IAM · PKI</span>
     </div>
+    <div class="stat-row" style="margin-top:2rem;max-width:800px;">
+      <div class="stat"><span class="num">99.9%</span><span class="lbl">de ataques de credenciales<br>bloqueados por MFA</span></div>
+      <div class="stat"><span class="num">60%</span><span class="lbl">de brechas explotan<br>vulnerabilidades conocidas</span></div>
+      <div class="stat"><span class="num">$141M</span><span class="lbl">USD perdidos por Target<br>por arquitectura insegura</span></div>
+      <div class="stat"><span class="num">94%</span><span class="lbl">del malware llega<br>por correo electrónico</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- S6: Arquitectura de Seguridad -->
+<div class="slide" data-session="s6">
+  <div class="session-header">
+    <span class="tag tag-green">SESIÓN 6 · 6 HORAS</span>
+    <h2 style="margin-top:.5rem;margin-bottom:.3rem;">Arquitectura de Seguridad Empresarial</h2>
+    <p class="subtitle">Principios fundamentales · Zero Trust · Defense in Depth · SABSA/TOGAF</p>
+  </div>
+  <div class="box-meta">
+    La arquitectura de seguridad es como el <strong>plano maestro de un aeropuerto</strong>. No solo diseñas las salas de espera — diseñas los puntos de control migratorio, zonas restringidas, cámaras, salidas de emergencia y protocolos de seguridad. Todo debe ser coherente. Un aeropuerto con buenas salas pero sin control de acceso no es seguro.
+  </div>
+</div>
+
+<div class="slide" data-session="s6">
+  <h2>Principios de Seguridad para No-Técnicos</h2>
+  <div class="grid grid-2">
     <div class="card cyan">
-      <h3>TOGAF Security</h3>
-      <p>The Open Group Architecture Framework. Extiende TOGAF para incluir requisitos de seguridad en cada fase del ciclo de vida de la arquitectura empresarial.</p>
+      <h3>🛡️ Defensa en Profundidad</h3>
+      <p>Como las capas de seguridad en un aeropuerto: facturación, migraciones, zona de abordaje, puerta de embarque. Si una capa falla, las otras detienen al atacante. No dependas de un solo control.</p>
+    </div>
+    <div class="card green">
+      <h3>🔑 Mínimo Privilegio</h3>
+      <p>Cada persona solo tiene acceso a lo estrictamente necesario para su función. El mesero puede entrar a la cocina, pero no a la caja. El vendedor ve datos de ventas, no de RH. Reduce el daño si una cuenta es comprometida.</p>
+    </div>
+    <div class="card orange">
+      <h3>🏦 Separación de Funciones</h3>
+      <p>Quien aprueba una transferencia bancaria no puede también ejecutarla. Dos personas para funciones críticas. Previene fraudes internos y errores graves por una sola persona.</p>
     </div>
     <div class="card purple">
-      <h3>NIST SP 800-160</h3>
-      <p>Systems Security Engineering: integra seguridad desde el diseño inicial del sistema, no como capa adicional. "Security by Design" para sistemas complejos.</p>
+      <h3>🏗️ Seguridad por Diseño</h3>
+      <p>Es 100x más barato incluir la seguridad desde el inicio que agregarla después. Como construir con materiales ignífugos vs instalar rociadores en un edificio existente.</p>
     </div>
   </div>
-  <div class="box box-caso" style="margin-top:12px;"><div class="box-title">📰 CASO REAL — SolarWinds (2020)</div>
-    <p>El ataque más sofisticado de la historia: actores rusos (APT29/Cozy Bear) comprometieron el pipeline de software de SolarWinds Orion. El software malicioso fue firmado digitalmente y distribuido como actualización legítima a <strong>18,000 organizaciones</strong>, incluyendo agencias del gobierno EE.UU. (Treasury, Homeland Security). Duró 9 meses sin detectarse. La arquitectura de la cadena de suministro de software falló completamente.</p>
+  <div class="box-dato">
+    <strong>Zero Trust — La Filosofía Moderna:</strong> "Nunca confíes, siempre verifica." Antes: si estás dentro de la red, eres de confianza. Ahora: aunque estés dentro, debes demostrar quién eres en cada acceso. Metáfora: el aeropuerto moderno te revisa en cada puerta de abordaje aunque ya hayas pasado migraciones.
   </div>
 </div>
 
-<div class="slide" data-session="0">
-  <h2>Modelos de Seguridad: La Teoría Detrás de los Controles</h2>
-  <div class="card-grid cols-3">
-    <div class="card cyan">
-      <h3>Bell-LaPadula</h3>
-      <p>Orientado a <strong>Confidencialidad</strong>. Regla "no read up, no write down": un usuario no puede leer información de nivel superior ni escribir en nivel inferior. Usado en sistemas militares y gubernamentales.</p>
-      <p style="color:var(--muted);font-size:0.78rem;margin-top:8px;">Ejemplo: nivel "secreto" no puede leer "top secret"; puede leer "confidencial".</p>
+<div class="slide" data-session="s6">
+  <h2>Arquitectura de Red — Lo que el Gerente Debe Entender</h2>
+  <div class="grid grid-3">
+    <div class="card red" style="text-align:center;">
+      <div style="font-size:2rem;">🌐</div>
+      <h3 style="color:var(--red);">Internet</h3>
+      <p style="font-size:.88rem;">El mundo exterior. Zona hostil. Nadie de confianza por defecto. Todo lo que entra debe ser verificado.</p>
     </div>
-    <div class="card orange">
-      <h3>Biba</h3>
-      <p>Orientado a <strong>Integridad</strong>. Opuesto a Bell-LaPadula. "No write up, no read down": un usuario no puede escribir en nivel superior ni leer de nivel inferior. Previene contaminación de datos.</p>
-      <p style="color:var(--muted);font-size:0.78rem;margin-top:8px;">Ejemplo: datos de internet (baja integridad) no pueden afectar sistemas de producción (alta integridad).</p>
+    <div class="card orange" style="text-align:center;">
+      <div style="font-size:2rem;">🏨</div>
+      <h3 style="color:var(--orange);">DMZ — Zona Desmilitarizada</h3>
+      <p style="font-size:.88rem;">La "zona de amortiguamiento". Como el lobby de un edificio — el público puede entrar al lobby pero no a las oficinas directamente. Aquí van los servidores web y de correo.</p>
     </div>
-    <div class="card green">
-      <h3>Clark-Wilson</h3>
-      <p>Orientado a <strong>Integridad comercial</strong>. Requiere transacciones bien formadas y separación de funciones. Modelo natural para sistemas financieros y ERP.</p>
-      <p style="color:var(--muted);font-size:0.78rem;margin-top:8px;">Ejemplo: quien registra una factura no puede también autorizarla.</p>
+    <div class="card green" style="text-align:center;">
+      <div style="font-size:2rem;">🏢</div>
+      <h3 style="color:var(--green);">Red Interna</h3>
+      <p style="font-size:.88rem;">Donde están los empleados y los sistemas internos. ERP, bases de datos, sistemas de producción. Acceso solo para personal autorizado, siempre verificado.</p>
+    </div>
+  </div>
+  <div class="box-caso">
+    <strong>Target — Diciembre 2013.</strong> Un proveedor de HVAC (aire acondicionado) tenía acceso a la red de puntos de venta de Target para monitoreo. Los atacantes comprometieron al proveedor y de ahí saltaron a los sistemas de pago. 110 millones de registros de tarjetas robados, $141M USD de pérdida. Lección: una arquitectura donde un proveedor de aire acondicionado tiene acceso a la red de tarjetas de crédito es un fallo de diseño catastrófico.
+  </div>
+</div>
+
+<div class="slide" data-session="s6">
+  <h2>Actividad · Quiz · Reto — Sesión 6</h2>
+  <div class="box-lab">
+    <strong>Actividad: Diseño de Arquitectura de Seguridad (60 min).</strong> En equipos por sector: dado un diagrama de empresa "antes" (todo conectado sin segmentación), diseñar el diagrama "después" aplicando: separación de zonas (internet/DMZ/red interna/OT si aplica), principio de mínimo privilegio por área, controles entre zonas. Usar cajas y flechas — no código. Identificar los 5 riesgos arquitectónicos del diagrama "antes" y cómo los resuelve el "después".
+  </div>
+  <div class="box-quiz" onclick="this.classList.toggle('revealed')">
+    <strong>Pregunta:</strong> La empresa quiere habilitar a 50 empleados para trabajar desde casa. El área de IT propone "darles acceso directo a todos los sistemas internos". Desde la arquitectura de seguridad, ¿qué está mal?
+    <div class="answer">
+      ✅ <strong>3 problemas críticos:</strong> 1) El dispositivo personal no está controlado (puede tener malware que entra a la red corporativa). 2) "Acceso a todos los sistemas" viola el principio de mínimo privilegio. 3) No hay forma de verificar la identidad del usuario de forma segura sin MFA. Solución correcta: VPN + MFA + acceso solo a los sistemas que cada empleado necesita según su rol.
+    </div>
+  </div>
+  <div class="box-reto">
+    <strong>Reto:</strong> La empresa acaba de adquirir otra empresa de 100 empleados con su propia red. Tienes 30 días para evaluar la arquitectura heredada e integrarla de forma segura a la red corporativa. ¿Cuál es tu plan de las primeras 4 semanas? ¿Qué riesgos arquitectónicos buscas primero?
+  </div>
+</div>
+
+<!-- S7: Seguridad en Redes -->
+<div class="slide" data-session="s7">
+  <div class="session-header">
+    <span class="tag tag-cyan">SESIÓN 7 · 6 HORAS</span>
+    <h2 style="margin-top:.5rem;margin-bottom:.3rem;">Seguridad en Redes y Comunicaciones</h2>
+    <p class="subtitle">Firewalls · IDS/IPS · VPN · Segmentación · Wi-Fi Seguro</p>
+  </div>
+  <div class="box-meta">
+    Un firewall es como el <strong>guardia de seguridad de un edificio corporativo</strong>. Revisa quién entra y quién sale, verifica credenciales válidas y bloquea a quien no debería pasar. Un Next-Gen Firewall es ese mismo guardia pero también puede detectar si alguien ya adentro está actuando sospechosamente.
+  </div>
+</div>
+
+<div class="slide" data-session="s7">
+  <h2>Controles de Red — Sin Tecnicismos</h2>
+  <div class="grid grid-2">
+    <div>
+      <div class="card cyan">
+        <h3>🔥 Firewall</h3>
+        <p style="font-size:.88rem;">El guardia que decide qué tráfico puede pasar. Reglas: "El tráfico de internet puede llegar al servidor web, pero no directamente a la base de datos". Revisa paquetes de datos, no su contenido.</p>
+        <p style="font-size:.82rem;color:var(--muted);">Next-Gen Firewall (UTM): el guardia que también analiza el contenido (antivirus, antimalware, filtrado web) y el comportamiento.</p>
+      </div>
+      <div class="card green" style="margin-top:.8rem;">
+        <h3>🚨 IDS vs IPS</h3>
+        <p style="font-size:.88rem;"><strong>IDS:</strong> el sistema de alarmas — detecta y avisa. Como la alarma del coche: suena pero no detiene al ladrón.</p>
+        <p style="font-size:.88rem;"><strong>IPS:</strong> detecta Y bloquea activamente. Como el airbag: reacciona automáticamente cuando detecta el impacto.</p>
+        <p style="font-size:.82rem;color:var(--muted);">Riesgo del IPS: falsos positivos que bloquean tráfico legítimo. Configurarlo bien es crucial.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card orange">
+        <h3>🔒 VPN — El Túnel Seguro</h3>
+        <p style="font-size:.88rem;">Una VPN es un tubo sellado y cifrado que conecta tu computadora de casa directamente con la oficina, aunque el camino pase por calles públicas (internet). Sin VPN, trabajar desde casa es como gritar información confidencial en la cafetería.</p>
+      </div>
+      <div class="card purple" style="margin-top:.8rem;">
+        <h3>📡 Wi-Fi — El Riesgo Invisible</h3>
+        <p style="font-size:.88rem;">La red Wi-Fi corporativa nunca debe estar en la misma red que la de producción u OT. Red de visitantes siempre separada.</p>
+        <p style="font-size:.88rem;"><strong>Evil Twin:</strong> una red Wi-Fi falsa con el mismo nombre que la corporativa, creada por un atacante en el estacionamiento. Los empleados se conectan sin saber.</p>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ═══ SESIÓN 7 — REDES Y PERÍMETRO ═══ -->
-<div class="slide" data-session="1">
-  <h2>Sesión 7 <span style="color:var(--red)">— Seguridad Perimetral, Redes y Comunicaciones</span></h2>
-  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
-    <p>La red de una empresa es como el <strong>sistema circulatorio del cuerpo</strong>. El firewall es el corazón que bombea solo la sangre correcta. El IDS es el sistema inmune que detecta patógenos. La segmentación es como los compartimentos del barco: si uno se inunda, no se hunde todo. Sin estas defensas, cualquier infección se extiende sin control.</p>
+<div class="slide" data-session="s7">
+  <h2>Segmentación de Red y Casos Reales</h2>
+  <div class="box-dato">
+    <strong>Segmentación de Red — Zonas Lógicas Separadas:</strong> Si todo está en "una red plana", cuando el ransomware infecta un PC de administración puede propagarse directamente a los PLCs de producción. Con segmentación, cada zona está separada: red administrativa, red de producción/OT, red de invitados, red de IoT/cámaras. Para ir de una zona a otra, el tráfico pasa por controles de seguridad.
   </div>
-  <div class="card-grid cols-3" style="margin-top:14px;">
-    <div class="card orange"><h3>Firewall Tradicional (L3-L4)</h3><p>Filtra tráfico por IP, puerto y protocolo. Stateful: trackea el estado de las conexiones. Rápido pero ciego al contenido de la capa 7.</p></div>
-    <div class="card red"><h3>Next-Gen Firewall (NGFW)</h3><p>Inspección profunda de paquetes (DPI): identifica aplicaciones, usuarios y contenido. Incluye IPS, antivirus, URL filtering, SSL inspection en un solo dispositivo.</p></div>
-    <div class="card cyan"><h3>UTM (Unified Threat Management)</h3><p>Todo en uno para PYMES: firewall + VPN + IDS + antivirus + filtro web + control de aplicaciones. Menos performance que appliances especializados.</p></div>
-  </div>
-</div>
-
-<div class="slide" data-session="1">
-  <h2>IDS vs IPS: Detectar y Prevenir</h2>
-  <div class="card-grid cols-2">
-    <div class="card cyan">
-      <h3>IDS (Intrusion Detection System)</h3>
-      <ul>
-        <li>Modo <strong>pasivo</strong>: copia del tráfico (port mirroring/TAP)</li>
-        <li>Genera alertas pero NO bloquea</li>
-        <li>Sin riesgo de falsos positivos que corten tráfico legítimo</li>
-        <li>Ideal como sensor de visibilidad adicional</li>
-        <li>Métodos: firmas, anomalías, comportamiento</li>
-      </ul>
+  <div class="grid grid-2">
+    <div class="box-caso">
+      <strong>Empresa Manufacturera con Red Plana.</strong> Un empleado de administración abrió un phishing que instaló ransomware en su PC. Como toda la empresa estaba en la misma red sin segmentación, el ransomware se propagó en minutos a los PLCs de las líneas de producción. La planta completa paró durante 3 días. Pérdida: $8M MXN. Si hubiera tenido segmentación de red, el impacto habría sido solo el PC del empleado.
     </div>
-    <div class="card red">
-      <h3>IPS (Intrusion Prevention System)</h3>
-      <ul>
-        <li>Modo <strong>inline</strong>: en el camino del tráfico</li>
-        <li>Puede bloquear, reiniciar conexiones, modificar paquetes</li>
-        <li>Riesgo: un falso positivo puede cortar tráfico de producción</li>
-        <li>Requiere tuning cuidadoso antes de activar modo bloqueo</li>
-        <li>Herramienta: Snort (open source), Suricata, Cisco Firepower</li>
-      </ul>
+    <div class="box-caso">
+      <strong>Starbucks y Redes Públicas.</strong> Empleados que trabajaban en cafeterías con sus laptops corporativas y datos de clientes. Sin VPN, el tráfico de red es visible para cualquiera en la misma red Wi-Fi pública. Un atacante puede interceptar las sesiones de trabajo activas. Lección: una política de "siempre VPN en redes no corporativas" y bloquear el acceso a sistemas críticos sin VPN.
     </div>
   </div>
-  <div class="box box-lab" style="margin-top:12px;"><div class="box-title">🔬 LABORATORIO — Wireshark + Snort</div>
-    <p>Capturar tráfico con Wireshark en una red de laboratorio → Identificar patrones de escaneo Nmap en el pcap → Configurar una regla Snort para detectar ese escaneo → Ejecutar el escaneo → Verificar alerta generada. Entender cómo el SOC ve los ataques desde los logs.</p>
+  <div class="box-lab">
+    <strong>Actividad: Diseño de Segmentación (45 min).</strong> Dado un diagrama de red "antes" (todo conectado), diseñar el diagrama "después" con zonas separadas para: producción/OT, administración/IT, red de invitados, IoT/cámaras. Identificar los controles entre zonas. ¿Qué pasa si el ransomware infecta la zona administrativa con el diseño "después"?
   </div>
-</div>
-
-<div class="slide" data-session="1">
-  <h2>Segmentación de Red: Divide y Protegerás</h2>
-  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
-    <p>Una red plana (sin segmentación) es como una oficina con una sola llave maestra: quien entra a recepción puede acceder a la sala de servidores, el área contable y los laboratorios. La segmentación es <strong>instalar puertas con diferentes llaves para cada zona</strong>, de modo que comprometer recepción no significa comprometer todo.</p>
-  </div>
-  <div class="card-grid cols-3" style="margin-top:14px;">
-    <div class="card orange"><h3>VLANs</h3><p>Segmentación lógica en switches. Separa tráfico de distintos grupos sin necesidad de infraestructura física separada. Una VLAN comprometida no puede acceder directamente a otra.</p></div>
-    <div class="card cyan"><h3>DMZ (Zona Desmilitarizada)</h3><p>Red intermedia entre internet e intranet. Aloja servidores públicos (web, mail, DNS). Si se compromete, el atacante no accede directamente a la red interna. Dos firewalls mínimo.</p></div>
-    <div class="card purple"><h3>Microsegmentación</h3><p>Segmentación a nivel de workload (máquina virtual o contenedor). Principio Zero Trust: cada servidor solo puede hablar con quienes necesita explícitamente.</p></div>
-  </div>
-  <div class="box box-dato" style="margin-top:12px;"><div class="box-title">💡 DATO CLAVE — Por qué segmentar la red OT</div>
-    <p>WannaCry se propagó por redes planas en minutos. Las organizaciones que sobrevivieron sin impacto en producción tenían la red OT <strong>completamente separada</strong> de la red IT. La segmentación es el control que más rápido reduce el blast radius de un ataque de movimiento lateral.</p>
-  </div>
-</div>
-
-<div class="slide" data-session="1">
-  <h2>VPN, WiFi Seguro y Comunicaciones Remotas</h2>
-  <div class="card-grid cols-2">
-    <div class="card green">
-      <h3>VPN (Virtual Private Network)</h3>
-      <ul>
-        <li><strong>Site-to-Site</strong>: conecta dos oficinas de forma permanente sobre internet</li>
-        <li><strong>Remote Access VPN</strong>: empleados conectan desde casa de forma segura</li>
-        <li><strong>SSL/TLS VPN</strong>: a través de navegador, sin cliente instalado</li>
-        <li><strong>IPsec</strong>: protocolo estándar para VPN de alta seguridad</li>
-        <li>Limitación: una vez dentro de la VPN, el usuario tiene acceso amplio (modelo castillo)</li>
-      </ul>
-    </div>
-    <div class="card cyan">
-      <h3>ZTNA: La Evolución de la VPN</h3>
-      <ul>
-        <li>Zero Trust Network Access: acceso solo al recurso específico que el usuario necesita</li>
-        <li>No da acceso a la red completa — cada conexión es verificada</li>
-        <li>Evalúa: identidad + dispositivo (health check) + contexto (hora, ubicación)</li>
-        <li>Productos: Cloudflare Access, Zscaler ZPA, Palo Alto Prisma</li>
-        <li>El futuro del acceso remoto en entornos híbridos</li>
-      </ul>
+  <div class="box-quiz" onclick="this.classList.toggle('revealed')">
+    <strong>Pregunta:</strong> ¿Es la VPN suficiente para el trabajo remoto seguro? ¿Qué más se necesita?
+    <div class="answer">
+      ✅ <strong>No es suficiente por sí sola.</strong> La VPN crea el túnel seguro, pero si la computadora del empleado tiene malware, el malware viaja por el túnel a la red corporativa. Además de VPN se necesita: MFA (para autenticar al usuario), control del dispositivo (que el PC de casa cumpla requisitos mínimos de seguridad), acceso mínimo privilegio (el empleado remoto solo ve lo que necesita, no todo), y monitoreo de sesiones remotas.
     </div>
   </div>
-  <div class="box box-dato" style="margin-top:12px;"><div class="box-title">💡 WiFi Corporativo — WPA3</div>
-    <p><strong>WPA3</strong> (2018) reemplaza a WPA2. Mejoras clave: SAE (Simultaneous Authentication of Equals) que protege contra ataques de diccionario offline, cifrado individualizado por dispositivo, y <strong>OWE</strong> (Opportunistic Wireless Encryption) para redes abiertas. En entornos corporativos: WPA3-Enterprise con certificados 802.1X, VLAN de invitados aislada, no usar PSK compartida.</p>
+  <div class="box-reto">
+    <strong>Reto:</strong> La empresa tiene 300 empleados remotos y todos usan VPN. El área de seguridad detecta que varios están usando Wi-Fi público sin saber los riesgos. Diseñar el programa de concientización (qué comunicar, cuándo, cómo) y los controles técnicos necesarios para que el trabajo remoto sea seguro.
   </div>
 </div>
 
-<!-- ═══ SESIÓN 8 — APPS, APIS Y BD ═══ -->
-<div class="slide" data-session="2">
-  <h2>Sesión 8 <span style="color:var(--purple)">— Seguridad en Aplicaciones, APIs y Bases de Datos</span></h2>
-  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
-    <p>Construir una aplicación sin pensar en seguridad es como diseñar una caja fuerte con una puerta trasera que olvidaste cerrar. El OWASP Top 10 existe precisamente porque los desarrolladores siguen cometiendo los mismos <strong>10 errores de siempre</strong>, algunos con décadas de antigüedad. La seguridad debe ser parte del diseño, no un parche de último momento.</p>
+<!-- S8: Seguridad en Aplicaciones -->
+<div class="slide" data-session="s8">
+  <div class="session-header">
+    <span class="tag tag-orange">SESIÓN 8 · 6 HORAS</span>
+    <h2 style="margin-top:.5rem;margin-bottom:.3rem;">Seguridad en Aplicaciones y Bases de Datos</h2>
+    <p class="subtitle">OWASP Top 10 para Gerentes · SQL Injection sin Código · APIs · Ciclo de Vida Seguro</p>
   </div>
-  <div class="stat-row" style="margin-top:16px;">
-    <div class="stat"><div class="num" style="color:var(--red)">43%</div><div class="lbl">de los ataques apuntan a aplicaciones web (Verizon DBIR)</div></div>
-    <div class="stat"><div class="num" style="color:var(--orange)">95%</div><div class="lbl">de brechas cloud son por error de configuración del cliente</div></div>
-    <div class="stat"><div class="num" style="color:var(--cyan)">OWASP</div><div class="lbl">Open Web Application Security Project — referencia global</div></div>
+  <div class="box-meta">
+    Una aplicación web insegura es como una <strong>caja fuerte con la clave escrita en la puerta</strong>. No importa qué tan buena sea la caja fuerte si la combinación está a la vista. Las vulnerabilidades en aplicaciones permiten a los atacantes entrar "por la puerta de servicio" aunque el resto de la seguridad sea perfecta.
   </div>
 </div>
 
-<div class="slide" data-session="2">
-  <h2>OWASP Top 10: Las Vulnerabilidades Más Costosas</h2>
+<div class="slide" data-session="s8">
+  <h2>OWASP Top 10 — Los 10 Riesgos Más Comunes en Apps Web (Sin Código)</h2>
   <table>
-    <tr><th>#</th><th>Vulnerabilidad</th><th>Descripción breve</th><th>Impacto</th></tr>
-    <tr><td>A01</td><td>Broken Access Control</td><td>Usuario accede a recursos de otro usuario o funciones de admin</td><td>Robo de datos, escalada</td></tr>
-    <tr><td>A02</td><td>Cryptographic Failures</td><td>Datos sensibles sin cifrar o con cifrado débil en tránsito/reposo</td><td>Exposición de datos</td></tr>
-    <tr><td>A03</td><td>Injection (SQL, LDAP, OS)</td><td>Entrada de usuario no validada ejecutada como código/comando</td><td>Acceso total a BD</td></tr>
-    <tr><td>A05</td><td>Security Misconfiguration</td><td>Configuraciones por defecto, puertos innecesarios abiertos, errores verbosos</td><td>Explotación directa</td></tr>
-    <tr><td>A06</td><td>Vulnerable Components</td><td>Librerías, frameworks desactualizados con CVEs conocidos (Log4j)</td><td>Explotación masiva</td></tr>
-    <tr><td>A07</td><td>Auth Failures</td><td>Contraseñas débiles, sin MFA, sesiones sin expiración, credenciales hardcoded</td><td>Toma de cuentas</td></tr>
-    <tr><td>A10</td><td>SSRF</td><td>Servidor hace requests hacia destinos internos controlados por el atacante</td><td>Acceso a red interna</td></tr>
+    <tr><th>#</th><th>Riesgo</th><th>Qué significa para el negocio</th><th>Ejemplo cotidiano</th></tr>
+    <tr><td>1</td><td><strong>Accesos Rotos</strong></td><td>Un empleado de ventas puede ver el sueldo de todos porque la app no limita roles</td><td>El empleado cambia la URL y ve el expediente del CEO</td></tr>
+    <tr><td>2</td><td><strong>Fallas Criptográficas</strong></td><td>Contraseñas guardadas en texto plano. Si hackean la DB, todo queda expuesto</td><td>El administrador de base de datos puede ver todas las contraseñas</td></tr>
+    <tr><td>3</td><td><strong>Inyección (SQL)</strong></td><td>Un atacante escribe comandos en un formulario y obtiene acceso a toda la base de datos</td><td>Escribir en el campo de búsqueda un código que devuelve todos los registros</td></tr>
+    <tr><td>4</td><td><strong>Diseño Inseguro</strong></td><td>La app fue construida sin pensar en seguridad desde el inicio</td><td>Un proceso de pago sin verificar si el precio fue manipulado</td></tr>
+    <tr><td>5</td><td><strong>Mala Configuración</strong></td><td>Sistema con contraseña "admin/admin" que nunca fue cambiada</td><td>Panel de administración expuesto en internet sin contraseña</td></tr>
+    <tr><td>6</td><td><strong>Componentes Vulnerables</strong></td><td>Librerías de terceros con vulnerabilidades conocidas y sin actualizar</td><td>Log4Shell afectó millones de apps que usaban una librería de Java</td></tr>
+    <tr><td>7</td><td><strong>Auth Rota</strong></td><td>Sesiones que no expiran, contraseñas débiles, falta de MFA</td><td>El token de sesión funciona semanas después de cerrar sesión</td></tr>
   </table>
 </div>
 
-<div class="slide" data-session="2">
-  <h2>SQL Injection: El Ataque de 30 Años que Sigue Matando</h2>
-  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
-    <p>La SQL Injection es como <strong>entregar a alguien un formulario de "nombre" y que escriba: "Cierra la caja fuerte Y dame todo el dinero"</strong>. Si el banco no valida que el campo solo acepta nombres, ejecutará la instrucción. La vulnerabilidad existe porque la aplicación mezcla datos del usuario con instrucciones de la base de datos.</p>
-  </div>
-  <div class="card-grid cols-2" style="margin-top:14px;">
-    <div class="card red">
-      <h3>Ejemplo de Ataque</h3>
-      <p>Campo login: <code style="color:var(--orange)">usuario' OR '1'='1</code></p>
-      <p>La consulta resultante: <code style="color:var(--orange)">SELECT * FROM users WHERE user='' OR '1'='1'</code></p>
-      <p>Resultado: siempre verdadero → acceso sin contraseña a TODOS los registros.</p>
+<div class="slide" data-session="s8">
+  <h2>Seguridad en APIs y Bases de Datos</h2>
+  <div class="grid grid-2">
+    <div>
+      <h3>APIs — El Nuevo Vector de Ataque</h3>
+      <p>Una API es como el <strong>menú de un restaurante</strong>: defines qué puedes pedir y cómo. Las APIs expuestas sin autenticación son como dejar el sistema de pedidos accesible para que cualquiera modifique los precios.</p>
+      <div class="box-caso">
+        <strong>Twitter — Enero 2023.</strong> Una vulnerabilidad en la API expuso los datos (correo o teléfono + perfil) de 200 millones de usuarios. El atacante no "hackeó" nada en el sentido técnico — simplemente usó una funcionalidad de la API que no debía ser pública. Lección: las APIs deben tener autenticación, control de acceso y límites de uso.
+      </div>
     </div>
-    <div class="card green">
-      <h3>Prevención</h3>
-      <ul>
-        <li><strong>Prepared Statements / Parameterized Queries</strong>: separa código de datos (la solución definitiva)</li>
-        <li><strong>Stored Procedures</strong>: lógica en la BD, no en la app</li>
-        <li><strong>Input Validation</strong>: whitelist de caracteres permitidos</li>
-        <li><strong>WAF</strong>: capa adicional que detecta patrones SQL injection</li>
-        <li><strong>ORM</strong>: frameworks que abstraen las queries (Hibernate, SQLAlchemy)</li>
-      </ul>
+    <div>
+      <h3>Seguridad en Bases de Datos</h3>
+      <div class="card orange">
+        <ul style="font-size:.88rem;">
+          <li><strong>Cifrado en reposo:</strong> aunque hackeen el servidor, los datos son ilegibles sin la llave</li>
+          <li><strong>Enmascaramiento:</strong> mostrar solo los últimos 4 dígitos de la tarjeta</li>
+          <li><strong>Mínimo privilegio:</strong> el sistema de ventas solo puede leer la base de clientes, no modificarla</li>
+          <li><strong>Respaldos seguros:</strong> los backups son un activo crítico que también debe protegerse y cifrarse</li>
+          <li><strong>Auditoría de accesos:</strong> registrar quién accedió a qué datos, cuándo y desde dónde</li>
+        </ul>
+      </div>
+      <div class="box-caso">
+        <strong>Heartland Payment Systems — 2008.</strong> $140M de pérdida, 134 millones de tarjetas robadas. El vector: SQL Injection en el formulario de pago en línea. Una validación de entrada insuficiente permitió al atacante extraer la base de datos completa de tarjetas en transacciones. Fue una de las brechas más grandes de su época.
+      </div>
     </div>
   </div>
-  <div class="box box-lab" style="margin-top:12px;"><div class="box-title">🔬 LABORATORIO — DVWA</div>
-    <p>Abrir DVWA (Damn Vulnerable Web Application) → nivel de seguridad "Low" → sección SQL Injection → probar: <code>' OR '1'='1</code> → observar acceso completo a BD → cambiar a "High" → analizar por qué falla el mismo ataque → identificar la mitigación implementada.</p>
+  <div class="box-lab">
+    <strong>Actividad: Análisis de Riesgos en Aplicación (45 min).</strong> Dado un formulario web con datos de clientes (mockup en papel), identificar 5 riesgos de seguridad del OWASP Top 10 y proponer el control para cada uno. Sin código — solo el análisis de qué puede salir mal y qué se debe hacer al respecto.
+  </div>
+  <div class="box-quiz" onclick="this.classList.toggle('revealed')">
+    <strong>Pregunta:</strong> Tu empresa desarrolló una app móvil para empleados que conecta con el sistema de RH. El proveedor dice "está segura". El CISO quiere verificarlo. ¿Qué preguntas haces?
+    <div class="answer">
+      ✅ <strong>Preguntas clave:</strong> 1) ¿Se hizo un pentest de la app y de la API? ¿Cuándo fue el último? 2) ¿Cómo se autentican los empleados? ¿Hay MFA? 3) ¿Qué datos se almacenan en el dispositivo móvil si lo roban? 4) ¿Los datos en tránsito van cifrados? 5) ¿Qué librerías de terceros usa y cuándo fue la última actualización? 6) ¿El contrato con el proveedor dice quién es responsable si hay una vulnerabilidad explotada?
+    </div>
+  </div>
+  <div class="box-reto">
+    <strong>Reto:</strong> Tu empresa va a lanzar un portal web para clientes que maneja datos personales sensibles. El proyecto tiene 3 meses y el equipo de desarrollo nunca ha trabajado con requisitos de seguridad. Diseñar el proceso de "SDL (Secure Development Lifecycle)" simplificado: qué actividades de seguridad incluyes en cada fase del proyecto y cómo lo explicas al director del proyecto sin usar jerga técnica.
   </div>
 </div>
 
-<div class="slide" data-session="2">
-  <h2>XSS, CSRF y Seguridad en APIs</h2>
-  <div class="card-grid cols-3">
-    <div class="card orange">
-      <h3>XSS (Cross-Site Scripting)</h3>
-      <p>Inyectar JavaScript malicioso en páginas web que otros usuarios visualizan. Permite robar cookies de sesión, redirigir a sitios falsos, keylogging.</p>
-      <p style="color:var(--muted);font-size:0.8rem;margin-top:8px;">Prevención: sanitizar output (htmlspecialchars), Content Security Policy (CSP), HttpOnly cookies.</p>
+<!-- S9: IAM y Criptografía -->
+<div class="slide" data-session="s9">
+  <div class="session-header">
+    <span class="tag tag-purple">SESIÓN 9 · 6 HORAS</span>
+    <h2 style="margin-top:.5rem;margin-bottom:.3rem;">Gestión de Identidades, Accesos y Criptografía</h2>
+    <p class="subtitle">IAM · MFA · RBAC · Contraseñas · Criptografía para Gerentes · Certificados Digitales</p>
+  </div>
+  <div class="box-meta">
+    La gestión de identidades es como el <strong>sistema de llaves de un hotel moderno</strong>. Cada empleado tiene una llave maestra diferente: la del cuarto de limpieza solo abre habitaciones, la del gerente abre todo, la del huésped solo abre su habitación durante su estancia. Si pierdes una llave, puedes desactivarla sin cambiar todas las cerraduras. Y cada apertura queda registrada.
+  </div>
+</div>
+
+<div class="slide" data-session="s9">
+  <h2>IAM — El Sistema de Control de Acceso de tu Empresa</h2>
+  <div class="grid grid-2">
+    <div>
+      <h3>Los 3 Conceptos Clave</h3>
+      <div class="card cyan">
+        <ul style="font-size:.88rem;">
+          <li><strong>Identidad:</strong> quién eres (usuario, rol, departamento, dispositivo)</li>
+          <li><strong>Autenticación:</strong> demostrar que eres quien dices ser (contraseña + MFA)</li>
+          <li><strong>Autorización:</strong> qué puedes hacer después de autenticarte (acceso a qué sistemas y con qué permisos)</li>
+        </ul>
+      </div>
+      <h3 style="margin-top:.8rem;">El Ciclo de Vida de una Identidad</h3>
+      <ul style="font-size:.88rem;">
+        <li>✅ <strong>Contratación (provisioning):</strong> crear la cuenta con los accesos correctos para el rol</li>
+        <li>🔄 <strong>Cambio de rol:</strong> ajustar los accesos cuando cambia de área o puesto</li>
+        <li>⚠️ <strong>Baja (deprovisioning):</strong> el paso más descuidado — desactivar TODOS los accesos el día de la baja</li>
+      </ul>
+      <div class="box-dato">
+        En promedio, las empresas tardan <strong>30 días o más</strong> en desactivar las credenciales de un empleado dado de baja. Durante ese tiempo, el ex-empleado (o quien robe sus credenciales) tiene acceso total.
+      </div>
     </div>
-    <div class="card red">
-      <h3>CSRF (Cross-Site Request Forgery)</h3>
-      <p>Forzar al navegador autenticado de la víctima a ejecutar acciones en su nombre (transferir dinero, cambiar contraseña). La víctima ni lo sabe.</p>
-      <p style="color:var(--muted);font-size:0.8rem;margin-top:8px;">Prevención: CSRF tokens, SameSite cookies, verificación de Origin/Referer.</p>
+    <div>
+      <h3>MFA — La Vacuna contra el Robo de Contraseñas</h3>
+      <div class="card green">
+        <p style="font-size:.88rem;">Los 3 factores de autenticación:</p>
+        <ul style="font-size:.88rem;">
+          <li>🧠 <strong>Algo que sabes:</strong> contraseña, PIN</li>
+          <li>📱 <strong>Algo que tienes:</strong> teléfono, llave física (YubiKey)</li>
+          <li>👁️ <strong>Algo que eres:</strong> huella, reconocimiento facial</li>
+        </ul>
+      </div>
+      <div class="box-caso">
+        <strong>MGM Resorts — Septiembre 2023.</strong> Los hackers no vulneraron ningún sistema técnico. Llamaron por teléfono al helpdesk haciéndose pasar por un empleado (encontraron su nombre en LinkedIn) y convencieron al agente de helpdesk de resetear el MFA del empleado. Con eso tuvieron acceso total al sistema de reservaciones. 10 días de operaciones comprometidas, $100M USD de pérdida. Lección: el proceso de reseteo del MFA es tan crítico como el MFA mismo.
+      </div>
     </div>
+  </div>
+</div>
+
+<div class="slide" data-session="s9">
+  <h2>Criptografía para Gerentes — Sin Matemáticas</h2>
+  <div class="grid grid-2">
+    <div>
+      <div class="card cyan">
+        <h3>🔒 Cifrado Simétrico</h3>
+        <p style="font-size:.88rem;">La misma llave cifra y descifra. Como la combinación de una caja fuerte que ambas partes conocen. Rápido y eficiente, pero el problema es: ¿cómo le mandas la llave al otro sin que nadie la intercepte?</p>
+      </div>
+      <div class="card green" style="margin-top:.8rem;">
+        <h3>🗝️ Cifrado Asimétrico (Llave Pública/Privada)</h3>
+        <p style="font-size:.88rem;">Dos llaves relacionadas: lo que cifra una, solo la otra puede descifrar. Metáfora: un buzón de correo — cualquiera puede echar una carta (llave pública), pero solo tú puedes abrir el buzón y leer las cartas (llave privada).</p>
+      </div>
+    </div>
+    <div>
+      <div class="card orange">
+        <h3>✍️ Firma Digital</h3>
+        <p style="font-size:.88rem;">Equivalente electrónico de tu firma autógrafa. Autentica que fue TÚ quien firmó y que el documento no fue modificado después. Usada en contratos electrónicos, correo firmado digitalmente (S/MIME) y código firmado de software.</p>
+      </div>
+      <div class="card purple" style="margin-top:.8rem;">
+        <h3>🌐 HTTPS y Certificados Digitales</h3>
+        <p style="font-size:.88rem;">El candado verde en el navegador significa: 1) la conexión está cifrada, 2) el sitio es quien dice ser (certificado emitido por autoridad de confianza). Sin HTTPS, cualquiera en la red puede ver y modificar la comunicación entre el empleado y el sistema.</p>
+      </div>
+    </div>
+  </div>
+  <div class="box-lab">
+    <strong>Actividad: Auditoría de Accesos (45 min).</strong> Dado un listado de 20 empleados con sus accesos actuales (incluyendo ex-empleados, cuentas compartidas, accesos excesivos para el rol), identificar los 10 problemas más graves y proponer el plan de corrección con prioridad, acción concreta, responsable y plazo.
+  </div>
+  <div class="box-quiz" onclick="this.classList.toggle('revealed')">
+    <strong>Pregunta:</strong> La empresa descubrió que 3 ex-empleados tienen acceso activo a sistemas críticos 60 días después de su baja. ¿Qué haces en las próximas 24 horas?
+    <div class="answer">
+      ✅ <strong>Acciones inmediatas en 24 horas:</strong> 1) Bloquear TODOS los accesos de esas 3 cuentas inmediatamente (email, VPN, ERP, aplicaciones, todo). 2) Revisar en los logs qué accedieron durante los 60 días. 3) Verificar si hay actividad sospechosa (accesos fuera de horario, descargas masivas, cambios en configuraciones). 4) Cambiar las contraseñas de los sistemas a los que tuvieron acceso. 5) Implementar proceso formal de baja que incluya checklist de accesos en el día D. 6) Comunicar al responsable de RH para alinear el proceso de baja de ahora en adelante.
+    </div>
+  </div>
+  <div class="box-reto">
+    <strong>Reto:</strong> La empresa tiene 500 empleados y no tiene un proceso formal de gestión de identidades — los accesos se dan "según el jefe pide" y nunca se retiran cuando alguien se va. Diseñar el proceso de IAM completo: cómo se solicitan accesos, quién los aprueba, cómo se revisan periódicamente, y qué pasa el día de la baja de un empleado.
+  </div>
+</div>
+
+<!-- S10: Hardening y Parches -->
+<div class="slide" data-session="s10">
+  <div class="session-header">
+    <span class="tag tag-red">SESIÓN 10 · 6 HORAS</span>
+    <h2 style="margin-top:.5rem;margin-bottom:.3rem;">Seguridad Operativa: Hardening y Gestión de Parches</h2>
+    <p class="subtitle">Configuraciones Seguras · Gestión de Vulnerabilidades · Inventario de Software · BYOD</p>
+  </div>
+  <div class="box-meta">
+    Hacer hardening de un sistema es como <strong>preparar una casa para el invierno</strong>: cierras las ventanas que no necesitas, aíslas las paredes, revisas que las cerraduras funcionen y retiras todo lo que no sirve. No es que tu casa sea débil — es que al instalarla vino con cosas innecesarias que debes eliminar para reducir lo que un intruso puede explotar.
+  </div>
+</div>
+
+<div class="slide" data-session="s10">
+  <h2>Gestión de Parches — El Proceso Más Descuidado y Más Crítico</h2>
+  <div class="grid grid-2">
+    <div>
+      <h3>¿Por qué el 60% de los Ataques Explotan Vulnerabilidades con Parche Disponible?</h3>
+      <ul>
+        <li>Los parches rompen cosas (compatibilidad con otros sistemas)</li>
+        <li>Requieren reiniciar servidores (no siempre posible en producción)</li>
+        <li>No hay inventario de qué sistemas tiene la empresa</li>
+        <li>No hay proceso formal: "lo hacemos cuando hay tiempo"</li>
+        <li>Los parches de OT/ICS son aún más complicados: no puedes reiniciar un PLC en producción cuando quieras</li>
+      </ul>
+      <div class="card orange" style="margin-top:.8rem;">
+        <h3>SLAs de Parcheo</h3>
+        <table style="font-size:.85rem;">
+          <tr><th>Severidad</th><th>Plazo Máximo</th></tr>
+          <tr><td style="color:var(--red)">Crítico (CVSS 9-10)</td><td>24 horas</td></tr>
+          <tr><td style="color:var(--orange)">Alto (CVSS 7-8.9)</td><td>7 días</td></tr>
+          <tr><td style="color:var(--yellow)">Medio (CVSS 4-6.9)</td><td>30 días</td></tr>
+          <tr><td style="color:var(--green)">Bajo (CVSS 0-3.9)</td><td>90 días</td></tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="box-caso">
+        <strong>Log4Shell — Diciembre 2021.</strong> La librería Log4j (usada por millones de aplicaciones Java) tenía una vulnerabilidad crítica (10/10). Las empresas con un inventario actualizado de software la parchearon en horas porque sabían exactamente qué aplicaciones usaban esa librería. Las que no tenían inventario tardaron semanas buscando. En México, empresas de manufactura, retail y financieras estuvieron expuestas durante días o semanas. Lección: el inventario de software (saber exactamente qué corre en tus sistemas) no es un lujo técnico — es una necesidad operativa.
+      </div>
+      <div class="box-dato">
+        <strong>SBOM (Software Bill of Materials):</strong> Como la lista de ingredientes de un restaurante. Si hay una alerta de salmonela en el pollo, el restaurante que sabe qué platos tienen pollo puede actuar inmediatamente. El restaurante que no lleva registro tiene que revisar todos los platos uno por uno.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-session="s10">
+  <h2>Actividad · Quiz · Reto — Sesión 10 (Cierre Bloque II)</h2>
+  <div class="box-lab">
+    <strong>Actividad: Remediación de Configuraciones Inseguras (45 min).</strong> Dado un listado de 15 "malas configuraciones típicas" (ej: contraseña admin/admin en router, Wi-Fi sin contraseña, sistema operativo sin actualizar desde 2019, software de terceros sin parche disponible hace 3 meses, ex-empleado con acceso activo, servidor expuesto en internet sin firewall), clasificar por riesgo (Crítico/Alto/Medio/Bajo) y proponer el plan de remediación con responsable y fecha límite.
+  </div>
+  <div class="box-quiz" onclick="this.classList.toggle('revealed')">
+    <strong>Pregunta:</strong> La empresa necesita aplicar un parche crítico a un servidor de producción. El área de operaciones dice "no podemos reiniciar el servidor, tenemos producción activa". ¿Qué haces?
+    <div class="answer">
+      ✅ <strong>Opciones de compensación mientras llega la ventana de mantenimiento:</strong> 1) Implementar controles compensatorios: aislar el servidor de internet si es posible, monitoreo intensificado, restricción de accesos. 2) Programar la ventana de mantenimiento más cercana fuera del horario crítico de producción (fin de semana, noche). 3) Documentar el riesgo aceptado hasta la ventana. 4) Si la vulnerabilidad es 10/10, considerar que el riesgo de producir con el sistema comprometido puede superar al de un reinicio temporal.
+    </div>
+  </div>
+  <div class="box-reto">
+    <strong>Reto Integrador Bloque II:</strong> La empresa acaba de recibir una alerta de que un grupo de ransomware está atacando activamente a empresas del mismo sector. La alerta incluye: el vector de entrada más común (phishing a empleados), la vulnerabilidad que explotan (sistema ERP desactualizado), y el método de propagación (red plana sin segmentación). Usando los conceptos del Bloque II, preparar el "plan de endurecimiento de emergencia" de los próximos 7 días: qué controles activas primero, en qué orden, con qué justificación.
+  </div>
+  <h2 style="margin-top:1.5rem;">Bibliografía — Bloque II</h2>
+  <div class="grid grid-2" style="margin-top:.5rem;">
     <div class="card cyan">
-      <h3>Seguridad en APIs REST</h3>
-      <ul>
-        <li><strong>Autenticación</strong>: OAuth 2.0 + JWT, no API keys en texto</li>
-        <li><strong>Autorización</strong>: validar en cada endpoint, no solo al login</li>
-        <li><strong>Rate limiting</strong>: limitar llamadas por usuario/IP</li>
-        <li><strong>Input validation</strong>: validar todos los parámetros</li>
-        <li><strong>HTTPS obligatorio</strong>: sin excepciones</li>
-        <li><strong>OWASP API Top 10</strong>: referencia específica para APIs</li>
-      </ul>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ SESIÓN 9 — CRIPTOGRAFÍA E IAM ═══ -->
-<div class="slide" data-session="3">
-  <h2>Sesión 9 <span style="color:var(--cyan)">— Criptografía, Identidades y Control de Acceso</span></h2>
-  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
-    <p>La criptografía es el <strong>sistema de sobres con candado del mundo digital</strong>. El cifrado simétrico es como un candado con una sola llave que tanto el emisor como el receptor tienen. El cifrado asimétrico es como un buzón con ranura: cualquiera puede meter el mensaje (clave pública), pero solo el dueño del buzón puede abrirlo (clave privada).</p>
-  </div>
-  <div class="card-grid cols-3" style="margin-top:14px;">
-    <div class="card orange"><h3>Cifrado Simétrico</h3><p><strong>Una sola clave</strong> para cifrar y descifrar. Muy rápido. Problema: ¿cómo compartes la clave de forma segura? Algoritmo: <strong>AES-256</strong> (estándar de la industria).</p></div>
-    <div class="card cyan"><h3>Cifrado Asimétrico</h3><p><strong>Par de claves</strong>: pública (compartir) + privada (guardar). Lento pero resuelve el problema de distribución de claves. Algoritmos: <strong>RSA-2048, ECC</strong>.</p></div>
-    <div class="card purple"><h3>Hashing</h3><p>Función unidireccional que produce un "fingerprint" único. No es cifrado (no reversible). Usos: verificar integridad de archivos, almacenar contraseñas. Algoritmos: <strong>SHA-256, SHA-3, bcrypt</strong>.</p></div>
-  </div>
-</div>
-
-<div class="slide" data-session="3">
-  <h2>PKI y TLS: La Seguridad de HTTPS</h2>
-  <div class="box box-dato"><div class="box-title">💡 DATO CLAVE — ¿Qué pasa cuando ves el candado verde?</div>
-    <p>HTTPS = HTTP + TLS. El proceso de handshake TLS: (1) El servidor presenta su <strong>certificado digital</strong> firmado por una CA (Certification Authority) de confianza; (2) El navegador verifica la firma → confirma que es el servidor legítimo; (3) Se negocia una clave de sesión simétrica (AES) usando el cifrado asimétrico (RSA/ECDH); (4) El resto de la comunicación se cifra con AES (rápido). PKI = toda la infraestructura de CAs, certificados y revocación (CRL/OCSP).</p>
-  </div>
-  <div class="card-grid cols-2" style="margin-top:12px;">
-    <div class="card orange">
-      <h3>Firma Digital: La Autenticidad en Digital</h3>
-      <p>Proceso: el emisor cifra el <strong>hash del documento</strong> con su clave privada → produce la firma. El receptor descifra la firma con la clave pública del emisor → compara el hash resultante con el del documento. Si coincide: autenticidad + integridad garantizados.</p>
-    </div>
-    <div class="card cyan">
-      <h3>Usos Empresariales</h3>
-      <ul>
-        <li>Firma de contratos electrónicos (FIEL/e.firma del SAT)</li>
-        <li>Certificados para servidores HTTPS internos</li>
-        <li>Code signing: verificar que el software no fue alterado</li>
-        <li>VPN con certificados: más seguro que PSK</li>
-        <li>Email seguro (S/MIME)</li>
-      </ul>
-    </div>
-  </div>
-</div>
-
-<div class="slide" data-session="3">
-  <h2>IAM: Gestión de Identidades y Accesos</h2>
-  <div class="card-grid cols-2">
-    <div class="card green">
-      <h3>Componentes del IAM</h3>
-      <ul>
-        <li><strong>Directorio</strong>: repositorio de identidades (Active Directory, LDAP)</li>
-        <li><strong>Autenticación</strong>: verificar que el usuario es quien dice ser</li>
-        <li><strong>Autorización</strong>: qué puede hacer una vez autenticado</li>
-        <li><strong>SSO</strong>: Single Sign-On — una credencial para todos los sistemas</li>
-        <li><strong>Aprovisionamiento</strong>: crear/modificar/eliminar cuentas (joiners/movers/leavers)</li>
-        <li><strong>Auditoría</strong>: registro de todos los accesos</li>
-      </ul>
-    </div>
-    <div class="card red">
-      <h3>MFA: La Segunda Línea de Defensa</h3>
-      <p>Combina al menos 2 de 3 factores:</p>
-      <ul>
-        <li><strong>Algo que sabes</strong>: contraseña, PIN</li>
-        <li><strong>Algo que tienes</strong>: token OTP, app autenticadora, SMS, llave hardware</li>
-        <li><strong>Algo que eres</strong>: huella, reconocimiento facial, iris</li>
-      </ul>
-      <p style="margin-top:8px;color:var(--muted);font-size:0.82rem;">MFA bloquea el 99.9% de los ataques de credenciales comprometidas (Microsoft). Resistente a phishing: FIDO2/WebAuthn (llaves hardware).</p>
-    </div>
-  </div>
-</div>
-
-<div class="slide" data-session="3">
-  <h2>Modelos de Control de Acceso</h2>
-  <table>
-    <tr><th>Modelo</th><th>Principio</th><th>Dónde aplica</th><th>Ventaja/Desventaja</th></tr>
-    <tr><td><strong>RBAC</strong><br><span style="color:var(--muted);font-size:0.78rem">Role-Based</span></td><td>Permisos asignados a roles; usuarios tienen roles</td><td>ERP, AD, aplicaciones corporativas</td><td>Simple de gestionar; rigido para casos edge</td></tr>
-    <tr><td><strong>ABAC</strong><br><span style="color:var(--muted);font-size:0.78rem">Attribute-Based</span></td><td>Permisos basados en atributos del usuario, recurso y entorno</td><td>Cloud (AWS IAM), sistemas sensibles</td><td>Muy granular y flexible; complejo de mantener</td></tr>
-    <tr><td><strong>MAC</strong><br><span style="color:var(--muted);font-size:0.78rem">Mandatory</span></td><td>Etiquetas de clasificación: el sistema define accesos, no el usuario</td><td>Gobierno, militar, sistemas de alta seguridad</td><td>Muy seguro; inflexible, difícil de implementar</td></tr>
-    <tr><td><strong>DAC</strong><br><span style="color:var(--muted);font-size:0.78rem">Discretionary</span></td><td>El propietario del recurso define los permisos (ej: compartir un folder)</td><td>Sistemas de archivos Windows/Linux tradicionales</td><td>Flexible; riesgo de sobre-compartición</td></tr>
-  </table>
-</div>
-
-<!-- ═══ SESIÓN 10 — HARDENING ═══ -->
-<div class="slide" data-session="4">
-  <h2>Sesión 10 <span style="color:var(--green)">— Seguridad Operativa: Hardening, Parches y Configuraciones Seguras</span></h2>
-  <div class="box box-meta"><div class="box-title">🎭 METÁFORA</div>
-    <p>Un sistema sin hardening es como una casa recién construida donde el constructor dejó abierta todas las puertas, encendidas las luces en todas las habitaciones y con las llaves puestas en todos los cajones. El <strong>hardening es cerrar, apagar y bloquear todo lo que no es necesario</strong>. La superficie de ataque es directamente proporcional a cuántas cosas innecesarias tienes abiertas.</p>
-  </div>
-  <div class="card-grid cols-2" style="margin-top:14px;">
-    <div class="card green">
-      <h3>¿Qué es Hardening?</h3>
-      <p>Proceso de reducir la superficie de ataque de un sistema operativo, servidor o dispositivo eliminando:</p>
-      <ul>
-        <li>Servicios innecesarios deshabilitados</li>
-        <li>Puertos cerrados si no se usan</li>
-        <li>Cuentas por defecto eliminadas o con contraseña robusta</li>
-        <li>Software no necesario desinstalado</li>
-        <li>Permisos de archivos al mínimo necesario</li>
-        <li>Configuraciones seguras activadas</li>
+      <ul style="font-size:.83rem;line-height:1.9;">
+        <li>Shostack, A. (2014). <em>Threat Modeling: Designing for Security</em>. Wiley.</li>
+        <li>OWASP Foundation. (2021). <em>OWASP Top Ten 2021</em>. OWASP.</li>
+        <li>CIS. (2023). <em>CIS Controls v8</em>. Center for Internet Security.</li>
+        <li>NIST. (2020). <em>SP 800-207: Zero Trust Architecture</em>. NIST.</li>
+        <li>Harris, S. (2022). <em>CISSP All-in-One Exam Guide</em> (9th ed.). McGraw-Hill.</li>
       </ul>
     </div>
     <div class="card orange">
-      <h3>CIS Benchmarks: El Estándar de Oro</h3>
-      <p>Center for Internet Security publica guías de configuración segura para 100+ tecnologías: Windows Server, Linux, macOS, AWS, Azure, GCP, Apache, MySQL, Docker, Kubernetes...</p>
-      <p style="margin-top:8px;color:var(--muted);font-size:0.82rem;">Nivel 1: controles básicos sin impacto operativo. Nivel 2: configuraciones más restrictivas. Gratuitos en cisecurity.org.</p>
-    </div>
-  </div>
-</div>
-
-<div class="slide" data-session="4">
-  <h2>Gestión de Vulnerabilidades y Parches</h2>
-  <ul class="timeline">
-    <li><div class="step cyan">1</div><div class="content"><h4>Inventario de Activos</h4><p>No puedes parchear lo que no sabes que tienes. Inventario actualizado de todos los sistemas con su versión de OS y software.</p></div></li>
-    <li><div class="step orange">2</div><div class="content"><h4>Escaneo de Vulnerabilidades</h4><p>Escaneo periódico con OpenVAS/Nessus → Lista de CVEs con su CVSS en cada sistema. Frecuencia: semanal para sistemas críticos.</p></div></li>
-    <li><div class="step red">3</div><div class="content"><h4>Priorización</h4><p>CVSS + contexto del negocio. Un CVSS 7.0 en un sistema aislado es menos urgente que un CVSS 6.0 en el servidor público. Usar EPSS (probabilidad real de explotación).</p></div></li>
-    <li><div class="step green">4</div><div class="content"><h4>Remediación</h4><p>Parchear según SLA: Crítico &lt;48h, Alto &lt;7 días, Medio &lt;30 días. Incluir control de cambios para sistemas de producción.</p></div></li>
-    <li><div class="step purple">5</div><div class="content"><h4>Verificación y Reporte</h4><p>Re-escanear para confirmar que el parche cerró la vulnerabilidad. Métricas al CISO: vulnerabilidades abiertas por severidad y antigüedad.</p></div></li>
-  </ul>
-</div>
-
-<div class="slide" data-session="4">
-  <h2>Hardening Linux con Lynis</h2>
-  <div class="card-grid cols-2">
-    <div class="card green">
-      <h3>Checklist de Hardening Linux (CIS)</h3>
-      <ul>
-        <li>Deshabilitar servicios no usados: <code>systemctl disable &lt;servicio&gt;</code></li>
-        <li>Configurar firewall: ufw/iptables — denegar todo, permitir solo lo necesario</li>
-        <li>SSH hardening: disable root login, PasswordAuthentication no, Puerto cambiado</li>
-        <li>Umask 027: permisos restrictivos por defecto en nuevos archivos</li>
-        <li>Activar SELinux/AppArmor: control obligatorio de acceso</li>
-        <li>Auditoría: instalar auditd, registrar acciones root</li>
-        <li>Contraseñas: mínimo 12 chars, complejidad, historial (PAM)</li>
-      </ul>
-    </div>
-    <div class="card cyan">
-      <h3>Lynis: Auditor Automático</h3>
-      <p>Herramienta open source que escanea el sistema Linux contra cientos de pruebas de seguridad (CIS Benchmarks, HIPAA, PCI-DSS, etc.) y genera un score de hardening + recomendaciones específicas.</p>
-      <p style="margin-top:8px;font-family:monospace;background:#0a1525;padding:8px;border-radius:6px;font-size:0.82rem;color:var(--green);">$ sudo lynis audit system<br>→ Hardening index: 62 [######    ]<br>→ Lista de sugerencias...</p>
-    </div>
-  </div>
-  <div class="box box-lab" style="margin-top:12px;"><div class="box-title">🔬 LABORATORIO — CIS Benchmark + Lynis</div>
-    <p>VM Ubuntu Server → Ejecutar Lynis audit → Documentar hardening index inicial → Aplicar 5 sugerencias de Lynis (SSH, servicios, permisos, contraseñas, firewall) → Re-ejecutar Lynis → Comparar hardening index. Documentar mejoras como si fuera un informe para el CISO.</p>
-  </div>
-</div>
-
-<div class="slide" data-session="4">
-  <h2>Seguridad en Dispositivos Móviles y BYOD</h2>
-  <div class="card-grid cols-2">
-    <div class="card orange">
-      <h3>Riesgos del BYOD</h3>
-      <ul>
-        <li>Datos corporativos en dispositivo personal sin control</li>
-        <li>Apps maliciosas instaladas sin revisión del área de TI</li>
-        <li>Red WiFi doméstica potencialmente comprometida</li>
-        <li>Pérdida/robo del dispositivo: acceso a datos corporativos</li>
-        <li>Mezcla de datos personales y corporativos</li>
-        <li>Imposibilidad de auditar o aplicar controles de seguridad</li>
-      </ul>
-    </div>
-    <div class="card cyan">
-      <h3>MDM/MAM: Control de Dispositivos</h3>
-      <ul>
-        <li><strong>MDM</strong> (Mobile Device Management): gestión del dispositivo completo. Wipe remoto, cifrado, políticas de contraseña, lista negra de apps.</li>
-        <li><strong>MAM</strong> (Mobile Application Management): solo gestiona las apps corporativas. Menos invasivo para BYOD.</li>
-        <li><strong>Contenedores</strong>: entorno seguro aislado dentro del dispositivo personal (ej: Samsung Knox, Intune)</li>
-        <li><strong>Política BYOD</strong>: acuerdo firmado por el empleado sobre uso aceptable</li>
+      <ul style="font-size:.83rem;line-height:1.9;">
+        <li>Microsoft. (2023). <em>Digital Defense Report 2023</em>. Microsoft.</li>
+        <li>Verizon. (2024). <em>Data Breach Investigations Report 2024</em>. Verizon.</li>
+        <li>Ponemon Institute. (2023). <em>Cost of Insider Risks Global Report 2023</em>. DTEX.</li>
+        <li>NIST. (2022). <em>SP 800-171 Rev. 2: Protecting CUI</em>. NIST.</li>
+        <li>Stallings, W., & Brown, L. (2018). <em>Computer Security</em> (4th ed.). Pearson.</li>
       </ul>
     </div>
   </div>
-  <div class="box box-quiz" onclick="this.classList.toggle('revealed')" style="margin-top:12px;"><div class="box-title">❓ QUIZ FINAL — Click para ver respuesta</div>
-    <p>Un empleado de ventas reporta que perdió su laptop con información de clientes. ¿Cuáles controles de seguridad operativa habrían minimizado el impacto de este incidente?</p>
-    <div class="quiz-answer"><strong>Controles que habrían mitigado:</strong> (1) <strong>Cifrado de disco completo</strong> (BitLocker/FileVault) — sin la contraseña o clave de recuperación, los datos son ilegibles; (2) <strong>MDM con wipe remoto</strong> — al reportar el robo, el equipo de TI borra remotamente el dispositivo; (3) <strong>MFA en todos los accesos corporativos</strong> — incluso si alguien accede al OS, no puede entrar a sistemas; (4) <strong>DLP</strong> — los datos sensibles nunca deberían haberse descargado localmente; (5) <strong>Inventario de activos</strong> — identificar qué datos tenía esa laptop para notificar correctamente al INAI en 72h.</div>
-  </div>
 </div>
 
-<!-- CIERRE BLOQUE II -->
-<div class="slide cover" data-session="4">
-  <div class="block-badge">BLOQUE II — CIERRE</div>
-  <h1>La Arquitectura que Aguanta el Ataque</h1>
-  <p style="max-width:600px;margin:16px auto;color:var(--muted);">No existe un solo control que lo proteja todo. La defensa en profundidad, el mínimo privilegio, la segmentación, el hardening y la criptografía aplicados en conjunto hacen que comprometer una organización sea costoso para el atacante — no imposible, pero suficientemente difícil para que busque otro objetivo.</p>
-  <div class="stat-row" style="justify-content:center;max-width:700px;margin:20px auto;">
-    <div class="stat"><div class="num" style="color:var(--orange)">DiD</div><div class="lbl">Defensa en profundidad</div></div>
-    <div class="stat"><div class="num" style="color:var(--red)">NGFW</div><div class="lbl">Perímetro inteligente</div></div>
-    <div class="stat"><div class="num" style="color:var(--purple)">OWASP</div><div class="lbl">Código seguro</div></div>
-    <div class="stat"><div class="num" style="color:var(--cyan)">AES/TLS</div><div class="lbl">Datos cifrados</div></div>
-    <div class="stat"><div class="num" style="color:var(--green)">CIS</div><div class="lbl">Sistemas endurecidos</div></div>
-  </div>
-  <div class="box box-dato" style="max-width:600px;margin:0 auto;"><div class="box-title">💡 SIGUIENTE</div>
-    <p>Bloque III: <strong>Operaciones de Seguridad, SIEM y Respuesta a Incidentes</strong> — cómo detectar en tiempo real cuando la arquitectura defensiva falla, responder de forma coordinada y aprender de cada incidente.</p>
-  </div>
-  <div style="margin-top:20px;">
-    <span class="tag">SABSA</span><span class="tag">NGFW</span><span class="tag">OWASP Top 10</span>
-    <span class="tag">SQL Injection</span><span class="tag">AES-256</span><span class="tag">PKI/TLS</span>
-    <span class="tag">CIS Benchmarks</span><span class="tag">Lynis</span><span class="tag">MFA</span>
-  </div>
-</div>
-
-</div>
-
-<div id="footer">
-  <button onclick="prevSlide()">← Anterior</button>
-  <span class="hint">← → · Espacio</span>
-  <button onclick="nextSlide()">Siguiente →</button>
-</div>
+</div><!-- /slides-container -->
+<div class="nav-hint">← → Space para navegar</div>
 
 <script>
 const slides = document.querySelectorAll('.slide');
-const total = slides.length;
+const counter = document.getElementById('slide-counter');
+const progressBar = document.getElementById('progress-bar');
 let current = 0;
-const sessionStarts = [];
-slides.forEach((s, i) => { const sess = parseInt(s.dataset.session); if (sessionStarts[sess] === undefined) sessionStarts[sess] = i; });
-function goTo(n) { if (n < 0 || n >= total) return; slides[current].classList.remove('active'); current = n; slides[current].classList.add('active'); document.getElementById('slide-counter').textContent = (current+1)+' / '+total; document.getElementById('progress-bar').style.width=((current+1)/total*100)+'%'; updateTabs(); slides[current].scrollTop=0; }
-function nextSlide() { goTo(current+1); }
-function prevSlide() { goTo(current-1); }
-function goToSession(idx) { goTo(sessionStarts[idx]); }
-function updateTabs() { const sess = parseInt(slides[current].dataset.session); for(let i=0;i<5;i++){const btn=document.getElementById('tab-'+i);if(btn)btn.classList.toggle('active',i===sess);} }
-document.addEventListener('keydown',e=>{ if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();nextSlide();} if(e.key==='ArrowLeft'){e.preventDefault();prevSlide();} });
-updateTabs();
+
+function updateTabs() {
+  const currentSession = slides[current].dataset.session;
+  ['s6','s7','s8','s9','s10'].forEach(s => {
+    const btn = document.getElementById('tab-' + s);
+    if (btn) btn.classList.toggle('active', s === currentSession);
+  });
+}
+
+function updateUI() {
+  slides.forEach((s, i) => s.classList.toggle('active', i === current));
+  counter.textContent = `${current + 1} / ${slides.length}`;
+  progressBar.style.width = `${((current + 1) / slides.length) * 100}%`;
+  updateTabs();
+}
+
+function nextSlide() { if (current < slides.length - 1) { current++; updateUI(); } }
+function prevSlide() { if (current > 0) { current--; updateUI(); } }
+
+function goToSession(session) {
+  for (let i = 0; i < slides.length; i++) {
+    if (slides[i].dataset.session === session) { current = i; break; }
+  }
+  updateUI();
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+});
+
+updateUI();
 </script>
 </body>
 </html>
